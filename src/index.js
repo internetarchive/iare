@@ -1,65 +1,64 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
+import RefData from './components/RefData.js';
+import PageData from './components/PageData.js';
 
-class Square extends React.Component {
-    render() {
-        return (
-            <button className="square">
-                {/* TODO */}
-            </button>
-        );
-    }
+function Clock(props) {
+    const [time, setTime] = useState(new Date().toLocaleTimeString());
+
+    setInterval(() => setTime(new Date().toLocaleTimeString()), 1000);
+
+    return <p>Current time: {time}</p>
 }
 
-class Board extends React.Component {
-    renderSquare(i) {
-        return <Square />;
-    }
-
-    render() {
-        const status = 'Next player: X';
-
-        return (
-            <div>
-                <div className="status">{status}</div>
-                <div className="board-row">
-                    {this.renderSquare(0)}
-                    {this.renderSquare(1)}
-                    {this.renderSquare(2)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(3)}
-                    {this.renderSquare(4)}
-                    {this.renderSquare(5)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(6)}
-                    {this.renderSquare(7)}
-                    {this.renderSquare(8)}
-                </div>
-            </div>
-        );
-    }
+function FileData(props) {
+    return <div className="j-view-file-info">
+        <p>File Name: {props.fileName}</p>
+    </div>
 }
 
-class Game extends React.Component {
-    render() {
-        return (
-            <div className="game">
-                <div className="game-board">
-                    <Board />
-                </div>
-                <div className="game-info">
-                    <div>{/* status */}</div>
-                    <ol>{/* TODO */}</ol>
-                </div>
-            </div>
-        );
-    }
+function JView() {
+
+    const [fileName, setFileName] = useState("/easter_island.json");
+    const [pageData, setPageData] = useState({"references" : {}});
+
+    useEffect(()=> {
+
+        fetch(fileName, {
+            headers : {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+            .then((res) => { return res.json();})
+            .then((data) => {
+                console.log("Received Data!") ;
+                setPageData(data);
+            }
+            );
+
+    }, [])
+
+    var {references, ...pageInfo} = pageData;
+    // var {details, ...refInfo} = references;
+
+    return <>
+        <div className="j-view">
+            <h1>JSON Viewer for archive.org wikipedia pages</h1>
+            <Clock />
+            <FileData fileName = {fileName} />
+            <PageData pageData = {pageInfo} />
+            <RefData refData = {references} />
+        </div>
+    </>
 }
+
+
+
 
 // ========================================
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<Game />);
+root.render(<JView />);
+
