@@ -3,28 +3,30 @@ import ArrayDisplay from './ArrayDisplay.js';
 
 /*
     expects props.detail
- */
-function RefDetail(props) {
 
-    const d = props.detail;
+    displays a reference detail by showing some top-level
+    information in table, followed by raw JSON
+
+ */
+function RefDetail( { detail }) {
 
     const dArr = [];
 
-    if (d.wikitext) {
-        dArr.push ( {wikitext: d.wikitext} )
+    if (detail.wikitext) {
+        dArr.push ( {wikitext: detail.wikitext} )
     }
 
-    if (d.urls) {
-        d.urls.map( (u) => dArr.push( {url: u.url} ));
+    if (detail.urls) {
+        detail.urls.map( (u) => dArr.push( {'url' : u.url} ));
     }
 
-    if (d.flds) {
-        d.flds.map( (fld) => dArr.push( {fld: fld} ));
+    if (detail.flds) {
+        detail.flds.map( (fld) => dArr.push( {'fld' : fld} ));
     }
 
     return <>
         <ArrayDisplay arr={dArr} className = {"single-detail"} />
-        <pre>{JSON.stringify(props.detail, null, 2)}</pre>
+        <pre>{JSON.stringify(detail, null, 2)}</pre>
     </>
 
 }

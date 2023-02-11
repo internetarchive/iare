@@ -9,7 +9,7 @@ function Clock(props) {
 
     setInterval(() => setTime(new Date().toLocaleTimeString()), 1000);
 
-    return <p>Current time: {time}</p>
+    return <div className="j-view-clock">Current time: {time}</div>
 }
 
 function FileData(props) {
@@ -22,6 +22,8 @@ function JView() {
 
     const [fileName, setFileName] = useState("/easter_island.json");
     const [pageData, setPageData] = useState({"references" : {}});
+
+    console.log("file location:" + fileName);
 
     useEffect(()=> {
 
@@ -41,20 +43,17 @@ function JView() {
     }, [])
 
     var {references, ...pageInfo} = pageData;
-    // var {details, ...refInfo} = references;
 
     return <>
         <div className="j-view">
-            <h1>JSON Viewer for archive.org wikipedia pages</h1>
-            <Clock />
+            <h1>JSON Viewer for archive.org wikipedia refs</h1>
             <FileData fileName = {fileName} />
+            <Clock />
             <PageData pageData = {pageInfo} />
             <RefData refData = {references} />
         </div>
     </>
 }
-
-
 
 
 // ========================================

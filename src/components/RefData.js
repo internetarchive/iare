@@ -32,18 +32,7 @@ function ShowTypes(props) {
 
     // special handle cs1_t and citeq_t properties
     var {cs1_t, citeq_t, ...aggInfo} = myTypes.content.agg;
-
     aggInfo["citeq_t"] = citeq_t.all;
-    // aggInfo["cs1_t"] = <table>
-    //     <tbody>
-    //     <TR label="all" value={cs1_t.all} />
-    //     <TR label="web" value={<MapDisplay map = {cs1_t.web} />} />
-    //     <TR label="journal" value={<MapDisplay map = {cs1_t.journal} />} />
-    //     <TR label="book" value={<MapDisplay map = {cs1_t.book} />} />
-    //     <TR label="others" value={cs1_t.others} />
-    //     </tbody>
-    // </table>;
-
 
     return <>
         <table className={"tight"}>
@@ -75,21 +64,15 @@ function ShowTypes(props) {
     </>
 }
 
-function DomainCounts(props) {
-    const myDomains = props.domains;
+function DomainCounts( { domains }) {
 
-    if (!myDomains) return "no domains to display";
+    if (!domains) return "no domains to display";
 
-    // each array value is of form:
-    // {
-    //    "value name" : <value>
-    //  }
-    //
-    // so, we have to treat each element as an object
+    // domains is an array of { <domain> : <count> } objects
 
     return <table>
         <tbody>
-        {myDomains.map((domain) => {
+        {domains.map((domain) => {
                 let dName = Object.keys(domain)[0];
                 return <TR label = { dName } value ={domain[dName]}  key={dName}/>
             }
@@ -97,18 +80,18 @@ function DomainCounts(props) {
         </tbody>
     </table>
 
-    // return <p>domain counts here</p>
 }
 
+
 function RefDetails(props) {
-    const d = props.details;
+    const deets = props.details;
 
     const [detail, setDetail] = useState({}); // initialize state
 
-    if (!d) return "no details to display";
+    if (!deets) return "no details to display";
 
     const showDetail = (d) => {
-        console.log("showDetail")
+        // console.log("showDetail")
         setDetail(d)
     }
 
@@ -116,18 +99,20 @@ function RefDetails(props) {
         <div className={"ref-details"}>
             <h3>References</h3>
 
-            <ul>
-                {props.details.map((d, i) => {
-                    const linkText = (d.flds.length
-                        ? d.flds.map((fld, j) => <p>{fld}</p>)
-                        : d.wikitext);
+            <div className={"ref-container"} >
+                <ul>
+                    {deets.map((d, i) => {
+                        const linkText = (d.flds.length
+                            ? d.flds.map((fld, j) => <p>{fld}</p>)
+                            : d.wikitext);
 
-                    return <button key={i} onClick={(e) => {
-                        showDetail(d)
-                    }
-                    }>{linkText}</button>
-                })}
-            </ul>
+                        return <button key={i} onClick={(e) => {
+                            showDetail(d)
+                        }
+                        }>{linkText}</button>
+                    })}
+                </ul>
+            </div>
         </div>
 
         <div className={"ref-detail"}>
@@ -143,7 +128,7 @@ function RefData(props) {
 
     return  <div className="j-view-refs">
         <div>
-            <h3>References Aggregate Data</h3>
+            <h3>Aggregate References Data</h3>
 
             <table>
                 <tbody>
@@ -160,7 +145,6 @@ function RefData(props) {
         </div>
 
         <RefDetails details = {rd.details} />
-
 
         {/*<pre>{JSON.stringify(rd, null, 2)}</pre>*/}
 

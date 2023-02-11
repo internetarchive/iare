@@ -4,17 +4,20 @@ import TR from './TR.js';
 /*
     Displays array of key : value objects as table
 
-    expected props: arr
-
+    props:
+        arr         array of { key : val } items to display
+        className   optional class of surrounding table
  */
+
 function ArrayDisplay(props) {
-    // return <pre>{JSON.stringify(props.map, null, 2)}</pre>;
 
     return <table className={props.className}>
         <tbody>
-        {props.arr.map((obj, i) => {
-            return <TR label={Object.keys(obj)[0]} value={obj[Object.keys(obj)[0]]} key={Object.keys(obj)[0].replace(" ","_")} />
-        })}
+        {props.arr.map((obj, i) => <TR
+            label={Object.keys(obj)[0]}
+            value={obj[Object.keys(obj)[0]]}
+            key={i} // using index is OK, as we will ALWAYS re-render
+        />)}
         </tbody>
     </table>
 
