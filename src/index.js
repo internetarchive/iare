@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import RefData from './components/RefData.js';
 import PageData from './components/PageData.js';
+import FileNameFetch from './components/FileNameFetch.js';
 
 function Clock(props) {
     const [time, setTime] = useState(new Date().toLocaleTimeString());
@@ -12,44 +13,89 @@ function Clock(props) {
     return <div className="j-view-clock">Current time: {time}</div>
 }
 
-function FileData(props) {
-    return <div className="j-view-file-info">
-        <p>File Name: {props.fileName}</p>
-    </div>
-}
 
 function JView() {
 
-    const [fileName, setFileName] = useState("/easter_island.json");
-    const [pageData, setPageData] = useState({"references" : {}});
+    // const [fileName, setFileName] = useState("/easter_island.json"); // default easter island
+    const [fileName, setFileName] = useState("");
+    const [pageData, setPageData] = useState(null);
+    const [myError, setMyError] = useState(null);
 
-    console.log("file location:" + fileName);
+    /*
+        callback function to be sent to fetch file name component
+     */
+    function handleFileName(newFileName) {
+        setFileName(newFileName)
+    }
 
-    useEffect(()=> {
+    /*
+        attempts to fetch json data
+
+        TODO account for error conditions, like wrong file format, not found, etc
+     */
+    function fileFetch(fileName) {
+
+        if (!fileName) {
+            setPageData(null);
+            return;
+        }
 
         fetch(fileName, {
-            headers : {
+            headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             }
-        })
-            .then((res) => { return res.json();})
+            })
+
+            .then((res) => {
+                if(!res.ok) throw new Error(res.status);
+                return res.json();
+            })
+
             .then((data) => {
-                console.log("Received Data!") ;
-                setPageData(data);
-            }
-            );
+                    console.log("Received Data!");
+                    setPageData(data);
+                }
+            )
 
-    }, [])
+            .catch((err) => {
+                console.error(err);
+                setMyError(err.toString())
+                setPageData(null);
+            })
 
-    var {references, ...pageInfo} = pageData;
+            .finally(() => {
+                console.log("fetch finally")
+            });
 
+    }
+
+    // when fileName changed, this runs
+    useEffect(()=> {
+        setMyError(null)
+        fileFetch(fileName)
+    }, [fileName])
+
+
+    // TODO need better way of faking null references and pageData (should not be re-declaring!)
+    if (pageData) {
+        // pull references out from page data
+        var {references, ...pageInfo} = pageData;
+    } else {
+        // fakify references and pageInfo so sub-components behave well
+        var references = null, pageInfo = null;
+    }
+
+    // render component
     return <>
         <div className="j-view">
             <h1>JSON Viewer for archive.org wikipedia refs</h1>
-            <FileData fileName = {fileName} />
             <Clock />
-            <PageData pageData = {pageInfo} />
+            <FileNameFetch handleFileName ={handleFileName} fileName = {fileName} />
+            {myError ? <div className={myError ? "error-display" : "error-display-none"}>
+                {myError}
+            </div> : ""}
+            <PageData pageData = {pageInfo} fileName = {fileName} />
             <RefData refData = {references} />
         </div>
     </>

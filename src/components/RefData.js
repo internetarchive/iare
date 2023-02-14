@@ -1,24 +1,20 @@
-import React, { setState, useState, useEffect } from "react";
+import React, { useState } from "react";
 import MapDisplay from './MapDisplay.js';
 import TR from './TR.js';
 import RefDetail from './RefDetail.js';
 
+/*
+    expected props:
+        urls
+ */
+function ShowUrls( { urls } ) {
 
-function ShowUrls(props) {
-    const myUrls = props.urls;
-
-    if (!myUrls) return "no urls to display";
-
-    // const unique = urls
-    //     ? (rd.urls.agg ? rd.urls.agg.unique : null)
-    //     : null;
-    //
-    // const uniqueMarkup = <MapDisplay mapObject = {unique} />;
+    if (!urls) return "no urls to display";
 
     return <table className={"tight"}>
         <tbody>
-        <TR label="count" value={myUrls.agg.all} />
-        <TR label="unique" value={<MapDisplay map = {myUrls.agg.unique} />} />
+        <TR label="count" value={urls.agg.all} />
+        <TR label="unique" value={<MapDisplay map = {urls.agg.unique} />} />
         </tbody>
     </table>
 
@@ -64,11 +60,13 @@ function ShowTypes(props) {
     </>
 }
 
+/*
+    expected props:
+        domains     array of { <domain> : <count> } objects
+ */
 function DomainCounts( { domains }) {
 
-    if (!domains) return "no domains to display";
-
-    // domains is an array of { <domain> : <count> } objects
+    if (!domains) return <p>{"no domains to display"}</p>;
 
     return <table>
         <tbody>
@@ -83,72 +81,83 @@ function DomainCounts( { domains }) {
 }
 
 
-function RefDetails(props) {
-    const deets = props.details;
+function RefDetails( { details } ) {
 
-    const [detail, setDetail] = useState({}); // initialize state
+    const [detail, setDetail] = useState({}); // initialize to empty
 
-    if (!deets) return "no details to display";
-
+    /*
+        callback for details buttons
+     */
     const showDetail = (d) => {
-        // console.log("showDetail")
         setDetail(d)
     }
 
     return <>
-        <div className={"ref-details"}>
-            <h3>References</h3>
-
-            <div className={"ref-container"} >
-                <ul>
-                    {deets.map((d, i) => {
-                        const linkText = (d.flds.length
-                            ? d.flds.map((fld, j) => <p>{fld}</p>)
-                            : d.wikitext);
-
-                        return <button key={i} onClick={(e) => {
-                            showDetail(d)
-                        }
-                        }>{linkText}</button>
-                    })}
-                </ul>
+        {!details
+            ? <div className={"ref-details"}>
+                <h3>References</h3>
+                <p>No references to display</p>
             </div>
-        </div>
+            : <>
+                <div className={"ref-details"}>
+                    <h3>References</h3>
 
-        <div className={"ref-detail"}>
-            <h3>Detail</h3>
-            {Object.keys(detail).length !== 0 ? <RefDetail detail={detail} /> : <p><i>Click a reference</i></p> }
-        </div>
-    </>
+                    <div className={"ref-container"}>
+                        <ul>
+                            {details.map((d, i) => {
 
+                                // create linktext based on ref detail specifics
+                                const linkText = (d.flds.length
+                                    ? d.flds.map((fld, j) => <p>{fld}</p>) // all flds
+                                    : d.wikitext);      // if no flds, then use wikitext
+
+                                return <button key={i} onClick={(e) => {
+                                    showDetail(d)
+                                }
+                                }>{linkText}</button>
+                            })}
+                        </ul>
+                    </div>
+                </div>
+
+                <div className={"ref-detail"}>
+                    <h3>Detail</h3>
+                    {Object.keys(detail).length !== 0
+                        ? <RefDetail detail={detail}/>
+                        : <p><i>Click a reference to display</i></p>}
+                </div>
+            </>
+        }
+        </>
 }
 
-function RefData(props) {
-    const rd = props.refData; // rd for "reference data"
+function RefData( { refData }) {
 
-    return  <div className="j-view-refs">
+    return  (!refData ? <div className="j-view-refs"><h3>No Reference Data to show</h3></div>
+
+        : <div className="j-view-refs">
         <div>
             <h3>Aggregate References Data</h3>
 
             <table>
                 <tbody>
-                <TR label="all" value={rd.all} />
-                <TR label="urls" value={<ShowUrls urls = {rd.urls} />} tight={true}/>
-                <TR label="types" value={<ShowTypes types = {rd.types} />} tight={true}/>
+                <TR label="all" value={refData.all} />
+                <TR label="urls" value={<ShowUrls urls = {refData.urls} />} tight={true}/>
+                <TR label="types" value={<ShowTypes types = {refData.types} />} tight={true}/>
                 </tbody>
             </table>
         </div>
 
         <div>
             <h3>First Level Domain Counts</h3>
-            <DomainCounts domains = {rd.first_level_domain_counts} />
+            <DomainCounts domains = {refData.first_level_domain_counts} />
         </div>
 
-        <RefDetails details = {rd.details} />
+        <RefDetails details = {refData.details} />
 
         {/*<pre>{JSON.stringify(rd, null, 2)}</pre>*/}
 
-    </div>
+    </div> )
 
 }
 

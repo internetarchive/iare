@@ -7,6 +7,19 @@ ol, ul {
     padding-left: 30px;
 }
 
+.error-display {
+    display:block;
+    margin-left:20px;
+    margin-top:1em;
+    border:1px solid #c92b2b;
+    padding:.5em;
+    font-weight: bold;
+    font-size:1.2rem;
+    color: #c92b2b;
+}
+.error-display-none {
+    display:none;
+}
 .j-view {
     display: flex;
     /*flex-direction: row;*/
@@ -19,6 +32,13 @@ ol, ul {
     margin-left: 20px;
 }
 
+.j-view-file-info {
+    padding:1rem;
+    margin-top:.5rem;
+
+    border:1px solid black;
+}
+
 .j-view-refs {
     display: flex;
     flex-direction: row;
@@ -27,7 +47,6 @@ ol, ul {
 
 .j-view-refs div:not(:first-child) {
     margin-left: 20px;
-    /*background-color: aquamarine;*/
 }
 
 .j-view-refs ol, ul {
@@ -58,6 +77,11 @@ ol, ul {
 
 }
 
+/* file name input box */
+.j-view-file-info #fileName {
+    width:40em;
+}
+
 table.single-detail {
     table-layout: fixed;
     width:24rem;
@@ -75,10 +99,4 @@ table td {
     border:1px solid black;
     vertical-align: top;
 }
-/*table td table  {*/
-/*    padding:0;*/
-/*    margin:0;*/
-/*}*/
-/*table td table td {*/
-/*    border-top:none;*/
-/*}*/
+
