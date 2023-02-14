@@ -41,10 +41,12 @@ function JView() {
         }
 
         fetch(fileName, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
+            // headers: {
+            //     'Content-Type': 'application/json',
+            //     'Accept': 'application/json'
+            // }
+
+            // hmmm...removing the headers seems to allow this to work...with CORS allowed in browser plugin
             })
 
             .then((res) => {

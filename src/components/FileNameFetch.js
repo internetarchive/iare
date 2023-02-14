@@ -15,6 +15,14 @@ function FileNameFetch(props) {
         setFileName(event.target.value); // set component-local version of fileName
     };
 
+    const handleKeyPress = (event) => {
+        var key = event.key;
+        if (key === "Enter") {
+            console.log("Return hit")
+            props.handleFileName(myFileName)
+        }
+    };
+
     const handleSubmit = (event) => {
         props.handleFileName(myFileName); // callback up to caller
     };
@@ -28,16 +36,23 @@ function FileNameFetch(props) {
                 name="fileName"
                 value={myFileName}
                 onChange={handleChange}
+                onKeyPress={handleKeyPress} // TODO deprecated - should change to onKeyDOwn
             />
 
             <button onClick={handleSubmit} style={{marginLeft:"10px"}}>
                 <span>{"Fetch"}</span>
             </button>
 
-            <button onClick={() => {
-                setFileName(GlobalVars.defaultFile.value)
-            }} style={{marginLeft:"10px"}}>
+            <button onClick={() => {setFileName(GlobalVars.defaultFile.value)}} className={"file-shortcut"}>
                 <span>{GlobalVars.defaultFile.label}</span>
+            </button>
+
+            <button onClick={() => {setFileName(GlobalVars.jamesWebb.value)}} className={"file-shortcut"}>
+                <span>{GlobalVars.jamesWebb.label}</span>
+            </button>
+
+            <button onClick={() => {setFileName(GlobalVars.marcBolan.value)}} className={"file-shortcut"}>
+                <span>{GlobalVars.marcBolan.label}</span>
             </button>
 
             <h3>File to process: {props.fileName}</h3>
