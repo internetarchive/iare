@@ -35,5 +35,7 @@
       "last 1 safari version"
     ]
   },
-  "homepage": "/assets/jview"
+
+  "homepage": ".",
+  "homepageComments": "/assets/jview"
 }
