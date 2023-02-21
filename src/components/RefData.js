@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import MapDisplay from './MapDisplay.js';
 import TR from './TR.js';
-import RefDetail from './RefDetail.js';
+import References from './References.js';
 
 /*
     expected props:
@@ -27,7 +27,7 @@ function ShowTypes(props) {
     if (!myTypes) return "no types to display";
 
     // special handle cs1_t and citeq_t properties
-    var {cs1_t, citeq_t, ...aggInfo} = myTypes.content.agg;
+    let {cs1_t, citeq_t, ...aggInfo} = myTypes.content.agg;
     aggInfo["citeq_t"] = citeq_t.all;
 
     return <>
@@ -81,55 +81,6 @@ function DomainCounts( { domains }) {
 }
 
 
-function RefDetails( { details } ) {
-
-    const [detail, setDetail] = useState({}); // initialize to empty
-
-    /*
-        callback for details buttons
-     */
-    const showDetail = (d) => {
-        setDetail(d)
-    }
-
-    return <>
-        {!details
-            ? <div className={"ref-details"}>
-                <h3>References</h3>
-                <p>No references to display</p>
-            </div>
-            : <>
-                <div className={"ref-details"}>
-                    <h3>References</h3>
-
-                    <div className={"ref-container"}>
-                        <ul>
-                            {details.map((d, i) => {
-
-                                // create linktext based on ref detail specifics
-                                const linkText = (d.flds.length
-                                    ? d.flds.map((fld, j) => <p>{fld}</p>) // all flds
-                                    : d.wikitext);      // if no flds, then use wikitext
-
-                                return <button key={i} onClick={(e) => {
-                                    showDetail(d)
-                                }
-                                }>{linkText}</button>
-                            })}
-                        </ul>
-                    </div>
-                </div>
-
-                <div className={"ref-detail"}>
-                    <h3>Detail</h3>
-                    {Object.keys(detail).length !== 0
-                        ? <RefDetail detail={detail}/>
-                        : <p><i>Click a reference to display</i></p>}
-                </div>
-            </>
-        }
-        </>
-}
 
 function RefData( { refData }) {
 
@@ -153,7 +104,7 @@ function RefData( { refData }) {
             <DomainCounts domains = {refData.first_level_domain_counts} />
         </div>
 
-        <RefDetails details = {refData.details} />
+        <References details = {refData.details} />
 
         {/*<pre>{JSON.stringify(rd, null, 2)}</pre>*/}
 

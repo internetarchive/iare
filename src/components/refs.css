@@ -1,0 +1,64 @@
+.j-view-refs {
+    display: flex;
+    flex-direction: row;
+    margin-left: 20px;
+}
+
+.j-view-refs div:not(:first-child) {
+    margin-left: 20px;
+}
+
+.j-view-refs ol, ul {
+    padding-left: 0;
+    margin-top:0;
+}
+
+.j-view-refs .filter-box{
+    border:1px solid black;
+    margin-left: 0 !important;
+    padding:.5em;
+}
+.j-view-refs .filter-box h4 {
+    margin:0 0 0.5em 0;
+}
+.j-view-refs .filter-box button {
+    /*width:12rem !important;*/
+    width:100% !important;
+}
+.j-view-refs .filter-box .btn-description {
+    font-style: italic;
+    font-size: smaller;
+    padding-left:1em;
+}
+
+
+.j-view-refs .ref-container {
+    margin-left:0 !important;
+    height: 90rem;
+    overflow-y: scroll;
+}
+
+.j-view-refs button.btn-pressed {
+    /*background-color: #bbeff3;*/
+    /*background-color: #1a73e8;*/
+    background-color: hsl(214deg 82% 77%);
+}
+
+.j-view-refs .ref-details button {
+    padding: 8px 12px; /* Some padding */
+    cursor: pointer; /* Pointer/hand icon */
+    width: 20rem; /* Set a width if needed */
+    display: block; /* Make the buttons appear below each other */
+    text-align: left;
+}
+.j-view-refs .ref-details button p {
+    margin:0;
+}
+.j-view-refs .ref-details button:hover {
+
+}
+
+xxx.j-view-refs button.ref-plain-text {
+    background: #ffb298;
+}
+

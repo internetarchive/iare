@@ -39,43 +39,7 @@ ol, ul {
     border:1px solid black;
 }
 
-.j-view-refs {
-    display: flex;
-    flex-direction: row;
-    margin-left: 20px;
-}
 
-.j-view-refs div:not(:first-child) {
-    margin-left: 20px;
-}
-
-.j-view-refs ol, ul {
-    padding-left: 0;
-    margin-top:0;
-}
-
-.j-view-refs .ref-container {
-    margin-left:0 !important;
-    height: 90rem;
-    overflow-y: scroll;
-}
-
-
-.j-view-refs .ref-details button {
-    padding: 8px 12px; /* Some padding */
-    cursor: pointer; /* Pointer/hand icon */
-    width: 20rem; /* Set a width if needed */
-    display: block; /* Make the buttons appear below each other */
-    text-align: left;
-}
-.j-view-refs .ref-details button p {
-    margin:0;
-}
-
-
-.j-view-refs .ref-details button:hover {
-
-}
 
 /* file name input box */
 .j-view-file-info #fileName {
