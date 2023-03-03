@@ -26,8 +26,8 @@ function JView() {
         callback function to be sent to fetch file name component
      */
     function handleFileName(newFileName) {
-        console.log("old fileName is:" + fileName)
-        console.log("new fileName is:" + newFileName)
+        // console.log("old fileName is:" + fileName)
+        // console.log("new fileName is:" + newFileName)
 
         // clear out current pageData and reset refreshTime
         setPageData(null);
@@ -100,7 +100,7 @@ function JView() {
     // render component
     return <>
         <div className="j-view">
-            <h1>JSON Viewer for archive.org wikipedia refs</h1>
+            <h1>JSON Viewer for archive.org wikipedia refs, version v2</h1>
             <Clock />
             <FileNameFetch handleFileName ={handleFileName} fileName = {fileName} />
             {myError ? <div className={myError ? "error-display" : "error-display-none"}>

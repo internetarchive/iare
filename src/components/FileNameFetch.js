@@ -1,5 +1,5 @@
 import React,{ useState } from "react";
-import GlobalVars from './GlobalVars.js';
+import ButtonFetch from './ButtonFetch.js';
 
 /*
 expected props
@@ -33,27 +33,24 @@ function FileNameFetch(props) {
 
     return (
         <div className={"j-view-file-info"}>
-            <input
-                type="text"
-                id="fileName"
-                name="fileName"
-                value={myFileName}
-                onChange={handleChange}
-                onKeyPress={handleKeyPress} // TODO deprecated - should change to onKeyDOwn
-            />
+            <div style={{ display: "inline-flex", flexDirection: "row" , flexWrap : "wrap"}}>
+                <div style={{marginBottom : ".5rem"}}><input
+                    type="text"
+                    id="fileName"
+                    name="fileName"
+                    value={myFileName}
+                    onChange={handleChange}
+                    onKeyPress={handleKeyPress} // TODO deprecated - should change to onKeyDOwn
+                /></div>
 
-            <button onClick={handleSubmit} style={{marginLeft:"10px"}}>
-                <span>{"Fetch"}</span>
-            </button>
-
-            <button onClick={() => {setMyFileName(GlobalVars.easterIsland.value)}} className={"file-shortcut"}>
-                <span>{GlobalVars.defaultFile.label}</span>
-            </button>
-
-            <button onClick={() => {setMyFileName(GlobalVars.internetArchive.value)}} className={"file-shortcut"}>
-                <span>{GlobalVars.internetArchive.label}</span>
-            </button>
-
+                <div style={{display:"block"}}>
+                    <button onClick={handleSubmit} style={{marginLeft:"10px"}}>
+                        <span>{"Fetch"}</span>
+                    </button>
+                    <ButtonFetch buttonKey={"easterIsland2"} onClick={setMyFileName} />
+                    <ButtonFetch buttonKey={"internetArchive2"} onClick={setMyFileName} />
+                </div>
+            </div>
             <h3>File to process: {props.fileName}</h3>
 
         </div>

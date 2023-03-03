@@ -9,9 +9,17 @@ const GlobalVars = {
         label : "Easter Island Shortcut",
         value : "http://18.217.22.248/v1/get-statistics?lang=en&site=wikipedia&title=Easter_Island"
     },
+    "easterIsland2"  : {
+        label : "Easter Island Shortcut v2",
+        value : "https://archive.org/services/context/wari/v2/statistics/article?lang=en&site=wikipedia&title=Easter_Island",
+    },
     "internetArchive"  : {
         label : "Internet Archive Shortcut",
         value : "http://18.217.22.248/v1/get-statistics?lang=en&site=wikipedia&title=Internet_Archive"
+    },
+    "internetArchive2"  : {
+        label : "Internet Archive Shortcut v2",
+        value : "https://archive.org/services/context/wari/v2/statistics/article?lang=en&site=wikipedia&title=Internet_Archive"
     },
     "jamesWebb"  : {
         label : "James Webb Shortcut",
