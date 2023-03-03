@@ -4,6 +4,7 @@ import './index.css';
 import RefData from './components/RefData.js';
 import PageData from './components/PageData.js';
 import FileNameFetch from './components/FileNameFetch.js';
+import Loader from './components/Loader.js';
 
 function Clock(props) {
     const [time, setTime] = useState(new Date().toLocaleTimeString());
@@ -16,15 +17,24 @@ function Clock(props) {
 
 function JView() {
 
-    // const [fileName, setFileName] = useState("/easter_island.json"); // default easter island
     const [fileName, setFileName] = useState("");
+    const [refreshTime, setRefreshTime] = useState(null);
     const [pageData, setPageData] = useState(null);
     const [myError, setMyError] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     /*
         callback function to be sent to fetch file name component
      */
     function handleFileName(newFileName) {
+        console.log("old fileName is:" + fileName)
+        console.log("new fileName is:" + newFileName)
+
+        // clear out current pageData and reset refreshTime
+        setPageData(null);
+
+        // changing refreshTie or fileName causes useEffect to engage, refreshing the page data
+        setRefreshTime( Date() );
         setFileName(newFileName)
     }
 
@@ -35,18 +45,22 @@ function JView() {
      */
     function fileFetch(fileName) {
 
+        // handle null fileName
         if (!fileName) {
             setPageData(null);
             return;
         }
 
+        // show loading feedback
+        setIsLoading(true);
+
+        // fetch the data
         fetch(fileName, {
             // headers: {
             //     'Content-Type': 'application/json',
             //     'Accept': 'application/json'
             // }
-
-            // hmmm...removing the headers seems to allow this to work...with CORS allowed in browser plugin
+            // // // hmmm...removing the headers seems to allow this to work...with CORS allowed in browser plugin
             })
 
             .then((res) => {
@@ -55,28 +69,33 @@ function JView() {
             })
 
             .then((data) => {
-                    console.log("Received Data!");
-                    setPageData(data);
-                }
-            )
+                setIsLoading(false);
+                setPageData(data);
+            })
 
             .catch((err) => {
-                console.error(err);
                 setMyError(err.toString())
                 setPageData(null);
+                setIsLoading(false);
+
             })
 
             .finally(() => {
-                console.log("fetch finally")
+                // console.log("fetch finally")
             });
 
     }
 
-    // when fileName changed, this runs
+    // when fileName or refreshTime changes, this function runs
     useEffect(()=> {
+
+        // clear error display
         setMyError(null)
+
+        // attempt to fetch new pageData
         fileFetch(fileName)
-    }, [fileName])
+
+    }, [fileName, refreshTime])
 
 
     // TODO need better way of faking null references and pageData (should not be re-declaring!)
@@ -84,7 +103,7 @@ function JView() {
         // pull references out from page data
         var {references, ...pageInfo} = pageData;
     } else {
-        // fakify references and pageInfo so sub-components behave well
+        // fakeify references and pageInfo so sub-components behave well TODO: make this cleaner!
         var references = null, pageInfo = null;
     }
 
@@ -97,8 +116,13 @@ function JView() {
             {myError ? <div className={myError ? "error-display" : "error-display-none"}>
                 {myError}
             </div> : ""}
-            <PageData pageData = {pageInfo} fileName = {fileName} />
-            <RefData refData = {references} />
+
+            {!isLoading ? <>
+                <PageData pageData = {pageInfo} fileName = {fileName} />
+                <RefData refData = {references} />
+            </>
+            : <Loader />
+            }
         </div>
     </>
 }

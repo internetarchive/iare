@@ -15,15 +15,18 @@ function FileNameFetch(props) {
         setFileName(event.target.value); // set component-local version of fileName
     };
 
+    // interpret Enter as submit button
     const handleKeyPress = (event) => {
-        var key = event.key;
+        let key = event.key;
         if (key === "Enter") {
-            console.log("Return hit")
+            console.log("FileNameFetch: submitting via enter-key")
             props.handleFileName(myFileName)
         }
     };
 
+    // submit form by calling passed in event handler for fileName
     const handleSubmit = (event) => {
+        console.log("FileNameFetch: submitting; myFileName is:" + myFileName)
         props.handleFileName(myFileName); // callback up to caller
     };
 
@@ -43,16 +46,12 @@ function FileNameFetch(props) {
                 <span>{"Fetch"}</span>
             </button>
 
-            <button onClick={() => {setFileName(GlobalVars.defaultFile.value)}} className={"file-shortcut"}>
+            <button onClick={() => {setFileName(GlobalVars.easterIsland.value)}} className={"file-shortcut"}>
                 <span>{GlobalVars.defaultFile.label}</span>
             </button>
 
-            <button onClick={() => {setFileName(GlobalVars.jamesWebb.value)}} className={"file-shortcut"}>
-                <span>{GlobalVars.jamesWebb.label}</span>
-            </button>
-
-            <button onClick={() => {setFileName(GlobalVars.marcBolan.value)}} className={"file-shortcut"}>
-                <span>{GlobalVars.marcBolan.label}</span>
+            <button onClick={() => {setFileName(GlobalVars.internetArchive.value)}} className={"file-shortcut"}>
+                <span>{GlobalVars.internetArchive.label}</span>
             </button>
 
             <h3>File to process: {props.fileName}</h3>

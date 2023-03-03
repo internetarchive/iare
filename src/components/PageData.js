@@ -10,7 +10,7 @@ expected props:
 function PageData( { pageData, fileName}) {
 
     const dataArray = pageData
-        ? [
+        ? [ // valid pageData
             {'site' : pageData.site },
             {'title' : pageData.title },
             {'page id' : pageData.page_id},
@@ -19,7 +19,7 @@ function PageData( { pageData, fileName}) {
             {'has refs' : pageData.has_references ? "YES" : "NO" },
             {'timing' : pageData["timing"] },
         ]
-        : [
+        : [ // pageData is falsey: null, blank, empty, etc.
             {'site' : "N/A" },
             {'title' : "N/A" },
             {'page id' : "N/A"},

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import MapDisplay from './MapDisplay.js';
 import TR from './TR.js';
 import References from './References.js';

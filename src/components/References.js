@@ -4,13 +4,6 @@ import './refs.css';
 import FilterButton from "./FilterButton";
 
 const FILTER_MAP = {
-    // All: () => true,
-    // PlainText: (d) => d.plain_text_in_reference,
-    // Named: (d) => d.is_named_reference,
-    // CitationTemplate: (d) => d.citation_template_found,
-    // Citation: (d) => d.is_citation_reference,
-    // Cs1: (d) => d.cs1_template_found,
-    // ISBN: (d) => d.isbn_template_found,
     All: {
         caption: "Show All Refs",
         desc: "no filter",
@@ -66,7 +59,7 @@ function getLinkText(d) {
     // "Arf!"];
 }
 
-function getClassName(d) {
+function getRefClassName(d) {
     return (d.plain_text_in_reference ? "ref-plain-text" : "") +
     (d.is_named_reference ? "ref-named" : "")
     ;
@@ -121,7 +114,7 @@ export default function References( { details } ) {
                             {filteredRefs.map((d, i) => {
                                 return <button
                                     key={i}
-                                    className = {getClassName(d)}
+                                    className = {getRefClassName(d)}
                                     onClick={(e) => {
                                         showDetail(d)
                                     }}>{getLinkText(d)}</button>
