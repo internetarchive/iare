@@ -87,28 +87,29 @@ function RefData( { refData }) {
     return  (!refData ? <div className="j-view-refs"><h3>No Reference Data to show</h3></div>
 
         : <div className="j-view-refs">
-        <div>
-            <h3>Aggregate References Data</h3>
+            <div>
+                <h3>Aggregate References Data</h3>
 
-            <table>
-                <tbody>
-                <TR label="all" value={refData.all} />
-                <TR label="urls" value={<ShowUrls urls = {refData.urls} />} tight={true}/>
-                <TR label="types" value={<ShowTypes types = {refData.types} />} tight={true}/>
-                </tbody>
-            </table>
-        </div>
+                <table>
+                    <tbody>
+                    <TR label="all" value={refData.all}/>
+                    <TR label="urls" value={<ShowUrls urls={refData.urls}/>} tight={true}/>
+                    <TR label="types" value={<ShowTypes types={refData.types}/>} tight={true}/>
+                    </tbody>
+                </table>
+            </div>
 
-        <div>
-            <h3>First Level Domain Counts</h3>
-            <DomainCounts domains = {refData.first_level_domain_counts} />
-        </div>
+            <div>
+                <h3>First Level Domain Counts</h3>
+                <DomainCounts domains={refData.first_level_domain_counts}/>
+            </div>
 
-        <References details = {refData.details} />
+            <References details={refData.details}/>
 
-        {/*<pre>{JSON.stringify(rd, null, 2)}</pre>*/}
+            {/*<pre>{JSON.stringify(rd, null, 2)}</pre>*/}
 
-    </div> )
+        </div>)
+
 
 }
 

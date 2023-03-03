@@ -9,9 +9,9 @@ import TR from './TR.js';
         className   optional class of surrounding table
  */
 
-function ArrayDisplay( {arr, className = ""}) {
+function ArrayDisplay( {arr, className = "", styleObj = null}) {
 
-    return <table className={className}>
+    return <table className={className} style={styleObj}>
         <tbody>
         {arr.map((obj, i) => <TR
             label={Object.keys(obj)[0]}

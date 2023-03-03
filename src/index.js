@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import RefData from './components/RefData.js';
 import PageData from './components/PageData.js';
 import FileNameFetch from './components/FileNameFetch.js';
 import Loader from './components/Loader.js';
@@ -98,15 +97,6 @@ function JView() {
     }, [fileName, refreshTime])
 
 
-    // TODO need better way of faking null references and pageData (should not be re-declaring!)
-    if (pageData) {
-        // pull references out from page data
-        var {references, ...pageInfo} = pageData;
-    } else {
-        // fakeify references and pageInfo so sub-components behave well TODO: make this cleaner!
-        var references = null, pageInfo = null;
-    }
-
     // render component
     return <>
         <div className="j-view">
@@ -117,11 +107,9 @@ function JView() {
                 {myError}
             </div> : ""}
 
-            {!isLoading ? <>
-                <PageData pageData = {pageInfo} fileName = {fileName} />
-                <RefData refData = {references} />
+            {isLoading ? <Loader /> : <>
+                <PageData pageData = {pageData} fileName = {fileName} />
             </>
-            : <Loader />
             }
         </div>
     </>

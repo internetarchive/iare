@@ -32,9 +32,17 @@ ol, ul {
     margin-left: 20px;
 }
 
+.j-view-page-info {
+    /*border: 1px solid black;*/
+    /*padding:.75rem;*/
+    /*padding-top:0;*/
+ }
+
 .j-view-file-info {
     padding:1rem;
+    padding-bottom:0;
     margin-top:.5rem;
+    margin-bottom:1rem;
 
     border:1px solid black;
 }

@@ -9,10 +9,10 @@ expected props
  */
 function FileNameFetch(props) {
 
-    const [myFileName, setFileName] = useState(props.fileName); // init with passed in name
+    const [myFileName, setMyFileName] = useState(props.fileName); // init with passed in name
 
     const handleChange = (event) => {
-        setFileName(event.target.value); // set component-local version of fileName
+        setMyFileName(event.target.value); // set component-local version of fileName
     };
 
     // interpret Enter as submit button
@@ -46,11 +46,11 @@ function FileNameFetch(props) {
                 <span>{"Fetch"}</span>
             </button>
 
-            <button onClick={() => {setFileName(GlobalVars.easterIsland.value)}} className={"file-shortcut"}>
+            <button onClick={() => {setMyFileName(GlobalVars.easterIsland.value)}} className={"file-shortcut"}>
                 <span>{GlobalVars.defaultFile.label}</span>
             </button>
 
-            <button onClick={() => {setFileName(GlobalVars.internetArchive.value)}} className={"file-shortcut"}>
+            <button onClick={() => {setMyFileName(GlobalVars.internetArchive.value)}} className={"file-shortcut"}>
                 <span>{GlobalVars.internetArchive.label}</span>
             </button>
 
