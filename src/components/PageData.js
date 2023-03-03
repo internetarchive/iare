@@ -2,6 +2,7 @@ import React from "react";
 import ArrayDisplay from './ArrayDisplay.js';
 import RefData from './RefData.js';
 
+// eslint-disable-next-line
 const regexVersion1 = new RegExp("\/v1\/");
 
 function parseVersion( pageData, fileName ) {
