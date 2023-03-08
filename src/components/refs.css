@@ -4,13 +4,24 @@
     margin-left: 20px;
 }
 
-.j-view-refs div:not(:first-child) {
+.j-view-refs > div:not(:first-child) {
     margin-left: 20px;
 }
 
 .j-view-refs ol, ul {
     padding-left: 0;
     margin-top:0;
+}
+
+
+.j-view-refs .ref-data-viz {
+    width: 67%;
+}
+.j-view-refs .raw-json-data {
+    width: 33%;
+    marginRight: 1rem;
+    padding:0 .75rem;
+    background-color: #a6c2c2;
 }
 
 .j-view-refs .filter-box{

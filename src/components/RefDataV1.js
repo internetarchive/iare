@@ -82,7 +82,7 @@ function DomainCounts( { domains }) {
 
 
 
-function RefDataV1( { pageData, version }) {
+function RefDataV1( { pageData }) {
 
     const refData = pageData ? pageData.references : null ;
 

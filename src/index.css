@@ -26,6 +26,13 @@ ol, ul {
     flex-direction: column;
 }
 
+.error-viz{
+    border:1px solid #c92b2b;
+    padding:.5em;
+    font-weight: bold;
+    font-size:1.2rem;
+    color: #c92b2b;
+}
 .j-view-file-info,
 .j-view-page-info,
 .j-view-clock {

@@ -16,11 +16,6 @@ export default function RefData( { pageData, version }) {
         default:
     }
 
-    return <div className="j-view-refs">
-        {refInfo}
-        </div>
-
-
-
+    return refInfo
 }
 
