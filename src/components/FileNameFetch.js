@@ -26,13 +26,13 @@ function FileNameFetch(props) {
 
     // submit form by calling passed in event handler for fileName
     const handleSubmit = (event) => {
-        console.log("FileNameFetch: submitting; myFileName is:" + myFileName)
+        // console.log("FileNameFetch: submitting; myFileName is:" + myFileName)
         props.handleFileName(myFileName); // callback up to caller
     };
 
 
     return (
-        <div className={"j-view-file-info"}>
+        <div className={"file-fetch"}>
             <div style={{ display: "inline-flex", flexDirection: "row" , flexWrap : "wrap"}}>
                 <div style={{marginBottom : ".5rem"}}><input
                     type="text"

@@ -32,7 +32,7 @@ function JView() {
         // clear out current pageData and reset refreshTime
         setPageData(null);
 
-        // changing refreshTie or fileName causes useEffect to engage, refreshing the page data
+        // changing refreshTime or fileName causes useEffect to engage, refreshing the page data
         setRefreshTime( Date() );
         setFileName(newFileName)
     }
@@ -85,7 +85,7 @@ function JView() {
 
     }
 
-    // when fileName or refreshTime changes, this function runs
+
     useEffect(()=> {
 
         // clear error display
@@ -94,7 +94,7 @@ function JView() {
         // attempt to fetch new pageData
         fileFetch(fileName)
 
-    }, [fileName, refreshTime])
+    }, [fileName, refreshTime]) // run this when fileName or refreshTime changes
 
 
     // render component
@@ -109,6 +109,7 @@ function JView() {
 
             {isLoading ? <Loader /> : <>
                 <PageData pageData = {pageData} fileName = {fileName} />
+                { /* todo: pass in an error callback here? */ }
             </>
             }
         </div>

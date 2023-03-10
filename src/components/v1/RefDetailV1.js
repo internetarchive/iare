@@ -1,5 +1,5 @@
 import React from "react";
-import ArrayDisplay from './ArrayDisplay.js';
+import ArrayDisplay from '../ArrayDisplay.js';
 
 /*
     expects props.detail
@@ -8,7 +8,7 @@ import ArrayDisplay from './ArrayDisplay.js';
     information in table, followed by raw JSON
 
  */
-function RefDetail( { detail }) {
+function RefDetailV1({ detail }) {
 
     const dArr = [];
 
@@ -31,4 +31,4 @@ function RefDetail( { detail }) {
 
 }
 
-export default RefDetail;
+export default RefDetailV1;

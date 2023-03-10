@@ -7,6 +7,18 @@ ol, ul {
     padding-left: 30px;
 }
 
+table {
+    border-collapse: collapse;
+}
+table td {
+    margin:0;
+    padding:4px;
+    border:1px solid black;
+    vertical-align: top;
+}
+
+
+
 .error-display {
     display:block;
     margin-left:20px;
@@ -20,12 +32,6 @@ ol, ul {
 .error-display-none {
     display:none;
 }
-.j-view {
-    display: flex;
-    /*flex-direction: row;*/
-    flex-direction: column;
-}
-
 .error-viz{
     border:1px solid #c92b2b;
     padding:.5em;
@@ -33,19 +39,14 @@ ol, ul {
     font-size:1.2rem;
     color: #c92b2b;
 }
-.j-view-file-info,
-.j-view-page-info,
-.j-view-clock {
-    margin-left: 20px;
+
+.j-view {
+    display: flex;
+    /*flex-direction: row;*/
+    flex-direction: column;
 }
 
-.j-view-page-info {
-    /*border: 1px solid black;*/
-    /*padding:.75rem;*/
-    /*padding-top:0;*/
- }
-
-.j-view-file-info {
+.j-view .file-fetch {
     padding:1rem;
     padding-bottom:0;
     margin-top:.5rem;
@@ -54,15 +55,13 @@ ol, ul {
     border:1px solid black;
 }
 
-
-
 /* file name input box */
-.j-view-file-info #fileName {
+.j-view .file-fetch #fileName {
     width:52rem;
     font-size: 1.1rem;
 }
 
-.j-view-file-info .file-shortcut {
+.j-view .file-fetch .file-shortcut {
     margin-left:10px;
 }
 
@@ -72,15 +71,5 @@ table.single-detail {
 }
 table.single-detail tr td:not(:first-child) {
     width:19rem;
-}
-
-table {
-    border-collapse: collapse;
-}
-table td {
-    margin:0;
-    padding:4px;
-    border:1px solid black;
-    vertical-align: top;
 }
 

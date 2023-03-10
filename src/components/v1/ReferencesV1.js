@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import RefDetail from './RefDetail.js';
-import './refs.css';
-import FilterButton from "./FilterButton";
+import RefDetailV1 from './RefDetailV1.js';
+import './refsV1.css';
+import FilterButton from "../FilterButton";
 
 const FILTER_MAP = {
     All: {
@@ -65,7 +65,7 @@ function getRefClassName(d) {
     ;
 }
 
-export default function References( { details } ) {
+export default function ReferencesV1({ details } ) {
 
     const [detail, setDetail] = useState({}); // initialize to empty
     const [refFilter, setRefFilter] = useState('All');
@@ -126,7 +126,7 @@ export default function References( { details } ) {
                 <div className={"ref-detail"}>
                     <h3>Detail</h3>
                     {Object.keys(detail).length !== 0
-                        ? <RefDetail detail={detail}/>
+                        ? <RefDetailV1 detail={detail}/>
                         : <p><i>Click a reference to display</i></p>}
                 </div>
             </>

@@ -1,7 +1,7 @@
 import React from "react";
-import MapDisplay from './MapDisplay.js';
-import TR from './TR.js';
-import References from './References.js';
+import MapDisplay from '../MapDisplay.js';
+import TR from '../TR.js';
+import ReferencesV1 from './ReferencesV1.js';
 
 /*
     expected props:
@@ -106,7 +106,7 @@ function RefDataV1( { pageData }) {
                 <DomainCounts domains={refData.first_level_domain_counts}/>
             </div>
 
-            <References details={refData.details}/>
+            <ReferencesV1 details={refData.details}/>
 
             {/*<pre>{JSON.stringify(rd, null, 2)}</pre>*/}
 

@@ -2,15 +2,15 @@
 
 const GlobalVars = {
     "defaultFile"  : {
-        label : "Easter Island Shortcut",
+        label : "Easter Island Version 1",
         value : "http://18.217.22.248/v1/get-statistics?lang=en&site=wikipedia&title=Easter_Island"
     },
     "easterIsland"  : {
-        label : "Easter Island Shortcut",
+        label : "Easter Island Version 1",
         value : "http://18.217.22.248/v1/get-statistics?lang=en&site=wikipedia&title=Easter_Island"
     },
     "easterIsland2"  : {
-        label : "Easter Island Shortcut v2",
+        label : "Easter Island Wiki Stats",
         value : "https://archive.org/services/context/wari/v2/statistics/article?lang=en&site=wikipedia&title=Easter_Island",
     },
     "internetArchive"  : {
@@ -18,7 +18,7 @@ const GlobalVars = {
         value : "http://18.217.22.248/v1/get-statistics?lang=en&site=wikipedia&title=Internet_Archive"
     },
     "internetArchive2"  : {
-        label : "Internet Archive Shortcut v2",
+        label : "Internet Archive Wiki Stats",
         value : "https://archive.org/services/context/wari/v2/statistics/article?lang=en&site=wikipedia&title=Internet_Archive"
     },
     "jamesWebb"  : {
@@ -28,6 +28,7 @@ const GlobalVars = {
     "marcBolan"  : {
         label : "Marc Bolan Shortcut",
         value : "http://18.217.22.248/v1/get-statistics?lang=en&site=wikipedia&title=Marc_Bolan"
-    }
+    },
+
 }
 export default GlobalVars;
