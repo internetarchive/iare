@@ -1,6 +1,11 @@
 // import React from "react";
 
 const GlobalVars = {
+    "easterIslandFilename"  : {
+        label : "Easter Island shortcut",
+        value : "https://en.wikipedia.org/Easter_Island"
+    },
+
     "defaultFile"  : {
         label : "Easter Island Version 1",
         value : "http://18.217.22.248/v1/get-statistics?lang=en&site=wikipedia&title=Easter_Island"

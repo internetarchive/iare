@@ -4,6 +4,8 @@ import './index.css';
 import PageData from './components/PageData.js';
 import FileNameFetch from './components/FileNameFetch.js';
 import Loader from './components/Loader.js';
+import { URLPART_STATS_ARTICLE } from "./constants/endpoints";
+import { REGEX_WIKIURL } from "./constants/regex.js";
 
 function Clock(props) {
     const [time, setTime] = useState(new Date().toLocaleTimeString());
@@ -17,6 +19,8 @@ function Clock(props) {
 function JView() {
 
     const [fileName, setFileName] = useState("");
+    const [wikiUrl, setWikiUrl] = useState("");
+
     const [refreshTime, setRefreshTime] = useState(null);
     const [pageData, setPageData] = useState(null);
     const [myError, setMyError] = useState(null);
@@ -37,6 +41,38 @@ function JView() {
         setFileName(newFileName)
     }
 
+    function handleWikiUrl(newWikiUrl) {
+        // clear out current pageData and reset refreshTime
+        setPageData(null);
+
+        // changing refreshTime or fileName causes useEffect to engage, refreshing the page data
+        setRefreshTime( Date() );
+        setWikiUrl(newWikiUrl)
+    }
+
+    // replace URLPART_STATS_ARTICLE =
+    // "https://archive.org/services/context/wari/v2/statistics/article?lang={LANG}}&site={SITE}&title={TITLE}"
+    // 1:lang
+    // 2: site
+    // 3: title
+    function convertWikiToEndpoint(wikiUrl) {
+
+        if (wikiUrl) {
+            // const match = testRegex.exec(wikiUrl);
+            let matches = wikiUrl.match(REGEX_WIKIURL);
+            // console.log('Regex match for wikiUrl:' , wikiUrl , ":",  matches);
+            return URLPART_STATS_ARTICLE.replace(
+                "{LANG}", matches[1])
+                .replace("{SITE}", matches[2])
+                .replace("{TITLE}", matches[3]);
+
+        } else {
+            return null;
+        }
+
+    }
+
+
     /*
         attempts to fetch json data
 
@@ -44,15 +80,17 @@ function JView() {
      */
     function fileFetch(fileName) {
 
+        console.log("fileFetch: fileName = ", fileName)
+
         // handle null fileName
         if (!fileName) {
             setPageData(null);
             return;
         }
+        console.log("fileFetch 2.0: fileName: ", fileName)
 
         // show loading feedback
         setIsLoading(true);
-
         // fetch the data
         fetch(fileName, {
             // headers: {
@@ -63,6 +101,8 @@ function JView() {
             })
 
             .then((res) => {
+                console.log("fileFetch 3.0: return 1");
+
                 if(!res.ok) throw new Error(res.status);
                 return res.json();
             })
@@ -85,7 +125,22 @@ function JView() {
 
     }
 
+    // run this when wikiUrl changes
+    useEffect(()=> {
+        console.log("useEffect[wikiUrl]");
 
+        // clear error display
+        setMyError(null)
+
+        // attempt to fetch new pageData
+        setFileName(convertWikiToEndpoint(wikiUrl))
+        // fileFetch(c)
+
+    }, [wikiUrl])
+
+
+
+    // run when fileName or refreshTime changes
     useEffect(()=> {
 
         // clear error display
@@ -94,7 +149,7 @@ function JView() {
         // attempt to fetch new pageData
         fileFetch(fileName)
 
-    }, [fileName, refreshTime]) // run this when fileName or refreshTime changes
+    }, [fileName, refreshTime])
 
 
     // render component
@@ -102,7 +157,10 @@ function JView() {
         <div className="j-view">
             <h1>JSON Viewer for archive.org wikipedia refs, version v2</h1>
             <Clock />
-            <FileNameFetch handleFileName ={handleFileName} fileName = {fileName} />
+            <FileNameFetch
+                // handleFileName ={handleFileName} fileName = {fileName}
+                handleWikiUrl ={handleWikiUrl} wikiUrl = {wikiUrl}
+            />
             {myError ? <div className={myError ? "error-display" : "error-display-none"}>
                 {myError}
             </div> : ""}

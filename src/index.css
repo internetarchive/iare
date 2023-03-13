@@ -65,6 +65,28 @@ table td {
     margin-left:10px;
 }
 
+.file-fetch-wrap {
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-bottom: .5rem;
+}
+.file-fetch-wrap #urlSource {
+    width:28rem;
+    font-size: 1.1rem;
+}
+
+.wiki-fetch-wrap {
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-bottom: .5rem;
+}
+.wiki-fetch-wrap #urlSource {
+    width:28rem;
+    font-size: 1.1rem;
+}
+
 table.single-detail {
     table-layout: fixed;
     width:24rem;

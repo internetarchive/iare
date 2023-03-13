@@ -45,7 +45,8 @@
 }
 .ref-button {
     background-color: #ced9ef; /* #c1d4e0;*/
-    width: 22rem;
+    /*width: 22rem;*/
+    width: 100%;
     text-align: left;
     cursor: pointer; /* Pointer/hand icon */
 }
@@ -58,6 +59,7 @@
 .urls a {
     display:block;
     margin-bottom:.5rem;
+    overflow-wrap: break-word;
 }
 .flds {
     width:25%;

@@ -38,9 +38,9 @@ export default function PageOverview({pageData, version}) {
                         <h4>Reference Types (will soon be filters)</h4>
                         {Object.keys(pageData.reference_statistics).map((key, i) => {
                                 return <>
-                                    <button key={i} onClick={() => {
+                                    <button key={key} onClick={() => {
                                     }} className={"button-ref-type"}>
-                                        <span>{key} : {pageData.reference_statistics[key]}</span>
+                                        <span>X{key} : {pageData.reference_statistics[key]}</span>
                                     </button>
                                 </>
                             }
