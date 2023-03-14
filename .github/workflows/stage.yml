@@ -14,7 +14,7 @@ jobs:
       - name: Install dependencies and build arrtifacts
         run: |
           npm install
-          npm run build
+          CI=false npm run build
       - name: Upload artifacts
         uses: actions/upload-pages-artifact@v1
         with:
