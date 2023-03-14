@@ -5,7 +5,7 @@ import PageData from './components/PageData.js';
 import FileNameFetch from './components/FileNameFetch.js';
 import Loader from './components/Loader.js';
 // import { URLPART_STATS_ARTICLE } from "./constants/endpoints";
-import { REGEX_WIKIURL } from "./constants/regex.js";
+// import { REGEX_WIKIURL } from "./constants/regex.js";
 
 function Clock(props) {
     const [time, setTime] = useState(new Date().toLocaleTimeString());
@@ -52,14 +52,33 @@ function JView() {
 
 
     // const REGEX_WIKIURL = new RegExp(/https?:\/\/(?<lang>\w+)\.(?<site>\w+)\.org\/wiki\/(?<title>\S+)/);
+    // const APIURL_BASE = 'https://archive.org/services/context/wari/v2';
+    //
+    // function convertWikiToEndpoint(wikiUrl='') {
+    //     if (!wikiUrl) return null;
+    //     const matches = wikiUrl.match(REGEX_WIKIURL);
+    //     if(!matches) return null;
+    //     const {lang, site, title} = matches.groups;
+    //     return `${APIURL_BASE}/statistics/article?lang=${lang}&site=${site}&title=${title}`;
+    // }
+    //
+
+
+    // seems like not all versions of js like named groups in regular exprsssions, so avoiding for now
+    // const REGEX_WIKIURL = new RegExp(/https?:\/\/(?<lang>\w+)\.(?<site>\w+)\.org\/wiki\/(?<title>\S+)/);
+    const REGEX_WIKIURL = new RegExp(/https?:\/\/(\w+)\.(\w+)\.org\/wiki\/(\S+)/);
     const APIURL_BASE = 'https://archive.org/services/context/wari/v2';
 
     function convertWikiToEndpoint(wikiUrl='') {
+        if (!wikiUrl) return null;
         const matches = wikiUrl.match(REGEX_WIKIURL);
         if(!matches) return null;
-        const {lang, site, title} = matches.groups;
+
+        const [lang, site, title] = [matches[1],matches[2],matches[3]];
+
         return `${APIURL_BASE}/statistics/article?lang=${lang}&site=${site}&title=${title}`;
     }
+
 
 
     /*
