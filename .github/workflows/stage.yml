@@ -1,9 +1,10 @@
 name: Staging Deployment
 
 on:
-  push:
-    branches: [$default-branch]
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
