@@ -11,6 +11,7 @@ apiurl = API.format(**m.groupdict())
 Home
  */
 
+// eslint-disable-next-line
 // export const regexWikiUrl = new RegExp("https?://(?<lang>\w+)\.(?<site>\w+)\.org/wiki/(?<title>\S+)", "g");
 // eslint-disable-next-line
 //export const regexWikiUrl = new RegExp("https?://(?<lang>\w+)\.(?<site>\w+)\.org/wiki/(?<title>\S+)", "g");

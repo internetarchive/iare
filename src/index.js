@@ -26,20 +26,20 @@ function JView() {
     const [myError, setMyError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    /*
-        callback function to be sent to fetch file name component
-     */
-    function handleFileName(newFileName) {
-        // console.log("old fileName is:" + fileName)
-        // console.log("new fileName is:" + newFileName)
-
-        // clear out current pageData and reset refreshTime
-        setPageData(null);
-
-        // changing refreshTime or fileName causes useEffect to engage, refreshing the page data
-        setRefreshTime( Date() );
-        setFileName(newFileName)
-    }
+    // /*
+    //     callback function to be sent to fetch file name component
+    //  */
+    // function handleFileName(newFileName) {
+    //     // console.log("old fileName is:" + fileName)
+    //     // console.log("new fileName is:" + newFileName)
+    //
+    //     // clear out current pageData and reset refreshTime
+    //     setPageData(null);
+    //
+    //     // changing refreshTime or fileName causes useEffect to engage, refreshing the page data
+    //     setRefreshTime( Date() );
+    //     setFileName(newFileName)
+    // }
 
     function handleWikiUrl(newWikiUrl) {
         // clear out current pageData and reset refreshTime

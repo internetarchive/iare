@@ -40,7 +40,7 @@ export default function PageOverview({pageData, version}) {
                                 return <>
                                     <button key={key} onClick={() => {
                                     }} className={"button-ref-type"}>
-                                        <span>X{key} : {pageData.reference_statistics[key]}</span>
+                                        <span>{key} : {pageData.reference_statistics[key]}</span>
                                     </button>
                                 </>
                             }
