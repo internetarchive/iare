@@ -3,7 +3,11 @@
 const GlobalVars = {
     "easterIslandFilename"  : {
         label : "Easter Island shortcut",
-        value : "https://en.wikipedia.org/Easter_Island"
+        value : "https://en.wikipedia.org/wiki/Easter_Island"
+    },
+    "internetArchiveFilename"  : {
+        label : "Internet Archive shortcut",
+        value : "https://en.wikipedia.org/wiki/Internet_Archive"
     },
 
     "defaultFile"  : {

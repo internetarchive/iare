@@ -4,7 +4,7 @@ import './index.css';
 import PageData from './components/PageData.js';
 import FileNameFetch from './components/FileNameFetch.js';
 import Loader from './components/Loader.js';
-import { URLPART_STATS_ARTICLE } from "./constants/endpoints";
+// import { URLPART_STATS_ARTICLE } from "./constants/endpoints";
 import { REGEX_WIKIURL } from "./constants/regex.js";
 
 function Clock(props) {
@@ -50,26 +50,15 @@ function JView() {
         setWikiUrl(newWikiUrl)
     }
 
-    // replace URLPART_STATS_ARTICLE =
-    // "https://archive.org/services/context/wari/v2/statistics/article?lang={LANG}}&site={SITE}&title={TITLE}"
-    // 1:lang
-    // 2: site
-    // 3: title
-    function convertWikiToEndpoint(wikiUrl) {
 
-        if (wikiUrl) {
-            // const match = testRegex.exec(wikiUrl);
-            let matches = wikiUrl.match(REGEX_WIKIURL);
-            // console.log('Regex match for wikiUrl:' , wikiUrl , ":",  matches);
-            return URLPART_STATS_ARTICLE.replace(
-                "{LANG}", matches[1])
-                .replace("{SITE}", matches[2])
-                .replace("{TITLE}", matches[3]);
+    // const REGEX_WIKIURL = new RegExp(/https?:\/\/(?<lang>\w+)\.(?<site>\w+)\.org\/wiki\/(?<title>\S+)/);
+    const APIURL_BASE = 'https://archive.org/services/context/wari/v2';
 
-        } else {
-            return null;
-        }
-
+    function convertWikiToEndpoint(wikiUrl='') {
+        const matches = wikiUrl.match(REGEX_WIKIURL);
+        if(!matches) return null;
+        const {lang, site, title} = matches.groups;
+        return `${APIURL_BASE}/statistics/article?lang=${lang}&site=${site}&title=${title}`;
     }
 
 
@@ -87,7 +76,6 @@ function JView() {
             setPageData(null);
             return;
         }
-        console.log("fileFetch 2.0: fileName: ", fileName)
 
         // show loading feedback
         setIsLoading(true);
@@ -101,8 +89,6 @@ function JView() {
             })
 
             .then((res) => {
-                console.log("fileFetch 3.0: return 1");
-
                 if(!res.ok) throw new Error(res.status);
                 return res.json();
             })
@@ -127,7 +113,6 @@ function JView() {
 
     // run this when wikiUrl changes
     useEffect(()=> {
-        console.log("useEffect[wikiUrl]");
 
         // clear error display
         setMyError(null)

@@ -10,30 +10,31 @@ expected props
  */
 function FileNameFetch(props) {
 
-        // const [myFileName, setMyFileName] = useState(props.fileName); // init with passed in name
+    // const [myFileName, setMyFileName] = useState(props.fileName); // init with passed in name
     const [wikiUrl, setWikiUrl] = useState(props.wikiUrl); // init with passed in name
 
-    const handleFileName = {
+    // const handleFileName = {
+    //     //
+    //     handleChange: (event) => {
+    //         setMyFileName(event.target.value); // set component-local version of fileName
+    //     },
+    //
+    //     // interpret Enter as submit button
+    //     handleKeyPress: (event) => {
+    //         let key = event.key;
+    //         if (key === "Enter") {
+    //             console.log("FileNameFetch: submitting via enter-key")
+    //             props.handleFileName(myFileName)
+    //         }
+    //     },
+    //
+    //     // submit form by calling passed in event handler for fileName
+    //     handleSubmit: (event) => {
+    //         // console.log("FileNameFetch: submitting; myFileName is:" + myFileName)
+    //         props.handleFileName(myFileName); // callback up to caller
+    //     }
+    // }
 
-        handleChange: (event) => {
-            setMyFileName(event.target.value); // set component-local version of fileName
-        },
-
-        // interpret Enter as submit button
-        handleKeyPress: (event) => {
-            let key = event.key;
-            if (key === "Enter") {
-                console.log("FileNameFetch: submitting via enter-key")
-                props.handleFileName(myFileName)
-            }
-        },
-
-        // submit form by calling passed in event handler for fileName
-        handleSubmit: (event) => {
-            // console.log("FileNameFetch: submitting; myFileName is:" + myFileName)
-            props.handleFileName(myFileName); // callback up to caller
-        }
-    }
     const handleWiki = {
         handleChange : (event) => {
             setWikiUrl(event.target.value); // set component-local version of fileName
@@ -96,6 +97,7 @@ function FileNameFetch(props) {
                         <span>{"Fetch Ref Data"}</span>
                     </button>
                     <ButtonFetch buttonKey={"easterIslandFilename"} onClick={setWikiUrl}/>
+                    <ButtonFetch buttonKey={"internetArchiveFilename"} onClick={setWikiUrl}/>
                 </div>
             </div>
 
