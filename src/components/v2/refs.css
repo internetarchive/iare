@@ -1,9 +1,20 @@
 .page-overview {
+    /*display:flex;*/
+    /*flex-direction: row;*/
+    /*padding:1rem;*/
+    /*padding-top:0;*/
+    /*border:1px solid black;*/
+}
+
+.page-overview-wrap {
     display:flex;
     flex-direction: row;
     padding:1rem;
     padding-top:0;
     border:1px solid black;
+}
+.page-overview-wrap > div {
+    margin-right:2rem;
 }
 
 .reference-types {
@@ -12,18 +23,44 @@
 
 }
 
-.button-ref-type {
-    display:block;
-    width:12em;
-    height:2em;
-    margin-bottom:.25rem;
+.reference-types p {
+    margin: 0 0 .5rem;
+    }
+
+.reference-filters {
+    display:flex;
+    flex-direction: column;
+
+}
+.reference-filters button {
+    /*width:100% !important;*/
+    padding:.25rem .5rem;
+    text-align:left;
+    font-weight: bold;
+}
+.reference-filters .btn-description {
+    font-style: italic;
+    font-size: smaller;
+    font-weight: normal;
+    padding-left:1em;
 }
 
-.reference-data {
+/*.button-ref-type {*/
+/*    display:block;*/
+/*    width:12em;*/
+/*    height:2em;*/
+/*    margin-bottom:.25rem;*/
+/*}*/
+/*.reference-data {*/
+/*    display:flex;*/
+/*    flex-direction: row;*/
+/*}*/
+
+.page-data {
     display:flex;
     flex-direction: row;
+    border-top:1px solid black;
 }
-
 .references {
     width:50%;
     overflow:hidden;

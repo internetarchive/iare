@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import PageData from './components/PageData.js';
+import PageDisplay from './components/PageDisplay.js';
 import FileNameFetch from './components/FileNameFetch.js';
 import Loader from './components/Loader.js';
-// import { URLPART_STATS_ARTICLE } from "./constants/endpoints";
-// import { REGEX_WIKIURL } from "./constants/regex.js";
+import { API_V2_URL_BASE } from './constants/endpoints.js';
 
 function Clock(props) {
     const [time, setTime] = useState(new Date().toLocaleTimeString());
@@ -26,6 +25,24 @@ function JView() {
     const [myError, setMyError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
+
+    function getWariVersion( pageData, fileName ) {
+        // eslint-disable-next-line
+        const regexVersion1 = new RegExp("\/v1\/");
+        // eslint-disable-next-line
+        const regexVersion2 = new RegExp("\/v2\/");
+
+        if (!fileName) {return "unknown";}
+        if (regexVersion1.test(fileName))
+            return "v1"
+        else if (regexVersion2.test(fileName))
+            return "v2"
+        else
+            return "unknown";
+    }
+
+
+    // N.B. this was used before when we specified the entire endpoint. Leaving it here just in case we want that again
     // /*
     //     callback function to be sent to fetch file name component
     //  */
@@ -51,32 +68,21 @@ function JView() {
     }
 
 
-    // const REGEX_WIKIURL = new RegExp(/https?:\/\/(?<lang>\w+)\.(?<site>\w+)\.org\/wiki\/(?<title>\S+)/);
-    // const APIURL_BASE = 'https://archive.org/services/context/wari/v2';
-    //
-    // function convertWikiToEndpoint(wikiUrl='') {
-    //     if (!wikiUrl) return null;
-    //     const matches = wikiUrl.match(REGEX_WIKIURL);
-    //     if(!matches) return null;
-    //     const {lang, site, title} = matches.groups;
-    //     return `${APIURL_BASE}/statistics/article?lang=${lang}&site=${site}&title=${title}`;
-    // }
-    //
-
-
-    // seems like not all versions of js like named groups in regular exprsssions, so avoiding for now
+    // 2023.03.15 mojomonger : seems like not all versions of js like named groups in regular expressions, so avoiding for now
     // const REGEX_WIKIURL = new RegExp(/https?:\/\/(?<lang>\w+)\.(?<site>\w+)\.org\/wiki\/(?<title>\S+)/);
     const REGEX_WIKIURL = new RegExp(/https?:\/\/(\w+)\.(\w+)\.org\/wiki\/(\S+)/);
-    const APIURL_BASE = 'https://archive.org/services/context/wari/v2';
+    // const API_V2_URL_BASE = 'https://archive.org/services/context/wari/v2';
 
     function convertWikiToEndpoint(wikiUrl='') {
         if (!wikiUrl) return null;
         const matches = wikiUrl.match(REGEX_WIKIURL);
         if(!matches) return null;
 
-        const [lang, site, title] = [matches[1],matches[2],matches[3]];
+        // const [lang, site, title] = [matches[1],matches[2],matches[3]];
+// eslint-disable-next-line
+        const [url, lang, site, title] = matches;
 
-        return `${APIURL_BASE}/statistics/article?lang=${lang}&site=${site}&title=${title}`;
+        return `${API_V2_URL_BASE}/statistics/article?lang=${lang}&site=${site}&title=${title}`;
     }
 
 
@@ -98,7 +104,11 @@ function JView() {
 
         // show loading feedback
         setIsLoading(true);
+
         // fetch the data
+        //
+        // upon successful return of data, add a "version" field to it
+        //
         fetch(fileName, {
             // headers: {
             //     'Content-Type': 'application/json',
@@ -114,6 +124,8 @@ function JView() {
 
             .then((data) => {
                 setIsLoading(false);
+                data.fileName = fileName;
+                data.version = getWariVersion(pageData, fileName);
                 setPageData(data);
             })
 
@@ -137,9 +149,10 @@ function JView() {
         setMyError(null)
 
         // attempt to fetch new pageData
-        setFileName(convertWikiToEndpoint(wikiUrl))
+        setFileName(convertWikiToEndpoint(wikiUrl)) // triggers fileFetch in other useEffect[fileName, refreshTime]
         // fileFetch(c)
 
+// eslint-disable-next-line react-hooks/exhaustive-deps
     }, [wikiUrl])
 
 
@@ -153,11 +166,13 @@ function JView() {
         // attempt to fetch new pageData
         fileFetch(fileName)
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fileName, refreshTime])
 
 
     // render component
     return <>
+
         <div className="j-view">
             <h1>JSON Viewer for archive.org wikipedia refs, version v2</h1>
             <Clock />
@@ -165,19 +180,24 @@ function JView() {
                 // handleFileName ={handleFileName} fileName = {fileName}
                 handleWikiUrl ={handleWikiUrl} wikiUrl = {wikiUrl}
             />
+
             {myError ? <div className={myError ? "error-display" : "error-display-none"}>
                 {myError}
             </div> : ""}
 
+            {/*{isLoading ? <Loader /> : <>*/}
+            {/*    <PageData pageData = {pageData} fileName = {fileName} />*/}
+            {/*    { /* todo: pass in an error callback here? */ }
+            {/*</>*/}
+
             {isLoading ? <Loader /> : <>
-                <PageData pageData = {pageData} fileName = {fileName} />
+                <PageDisplay pageData = {pageData} />
                 { /* todo: pass in an error callback here? */ }
-            </>
-            }
+                </>
+           }
         </div>
     </>
 }
-
 
 // ========================================
 

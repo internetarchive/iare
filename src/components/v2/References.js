@@ -1,53 +1,8 @@
 // import React, {useEffect, useState} from 'react';
 import React, { useState } from 'react';
 import RefDetails from './RefDetails.js';
-import * as Constants from "../../constants/endpoints";
-// import FilterButton from "./FilterButton";
+// import { API_V2_URL_BASE } from '../../constants/endpoints.js';
 
-// const FILTER_MAP = {
-//     All: {
-//         caption: "Show All Refs",
-//         desc: "no filter",
-//         filter: () => true,
-//     },
-//     Plain: {
-//         caption: "Show Refs with Plain Text",
-//         desc: "plain_text_in_reference = true",
-//         filter: (d) => d.plain_text_in_reference,
-//     },
-//     Named: {
-//         caption: "Show Named Refs",
-//         desc: '<ref name="FOO" />',
-//         filter: (d) => d.is_named_reference,
-//     },
-//     Citation: {
-//         caption: "Show Citation Refs",
-//         desc: "is_citation_reference = true",
-//         filter: (d) => d.is_citation_reference,
-//     },
-//     Cs1: {
-//         caption: "Show Refs using cs1 template",
-//         desc: "cs1_template_found = true",
-//         filter: (d) => d.cs1_template_found,
-//     },
-//     ISBN: {
-//         caption: "Show Refs with ISBN",
-//         desc: "isbn_template_found = true",
-//         filter: (d) => d.isbn_template_found,
-//     },
-//
-//     // TODO: this algorithm is not returning the number of refs as given in agg[without_a_template]
-//     NoTemplate: {
-//         caption: "Show Refs without a template",
-//         desc: "d.templates.length < 1",
-//         // filter: () => true,
-//         filter: (d) => d.templates.length < 1,
-//     },
-//
-//
-// };
-//
-// const FILTER_NAMES = Object.keys(FILTER_MAP);
 //
 // function getLinkText(d) {
 //
@@ -99,23 +54,24 @@ function getLinkText(ref) {
     //     null ];
 }
 
-function References( { refs, wariID } ) {
+function References( { refs, filter } ) {
 
-    const [details, setDetails] = useState(null);
+    const [refDetails, setRefDetails] = useState(null);
     // const [isLoading, setIsLoading] = useState(false);
 
 
     const fetchDetail = (ref) => {
         // handle null pageData
         if (!ref) {
-            setDetails("Trying to fetch invalid reference");
+            setRefDetails("Trying to fetch invalid reference");
             return;
         }
 
-        const fetchUrl = Constants.URLPART_STATS_REF.replace("{REFID}", ref.id)
+        const API_V2_URL_BASE = 'https://archive.org/services/context/wari/v2';
+        const endpoint = `${API_V2_URL_BASE}/statistics/reference/${ref.id}`;
 
         // fetch the data
-        fetch(fetchUrl, {
+        fetch(endpoint, {
         })
 
             .then((res) => {
@@ -124,11 +80,11 @@ function References( { refs, wariID } ) {
             })
 
             .then((data) => {
-                setDetails(data);
+                setRefDetails(data);
             })
 
             .catch((err) => {
-                setDetails("Error with details");
+                setRefDetails("Error with details");
             })
 
             .finally(() => {
@@ -139,12 +95,14 @@ function References( { refs, wariID } ) {
     }
 
 
+    const filteredRefs = filter ? refs.filter( filter ) : refs;
+
     return <div className={"references"}>
 
         <div className={"refs-container"}>
             <h3>References</h3>
-            {!refs ? <><p>No references!</p></> :
-                refs.map((ref, i) => {
+            {!filteredRefs ? <><p>No references!</p></> :
+                filteredRefs.map((ref, i) => {
                     return <button key={i}
                                    className={"ref-button"}
                                    onClick={(e) => {
@@ -164,7 +122,7 @@ function References( { refs, wariID } ) {
 
         <div className={"ref-details"}>
             <h3>Reference Details</h3>
-            <RefDetails details={details} />
+            <RefDetails details={refDetails} />
         </div>
 
     </div>
