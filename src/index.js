@@ -174,7 +174,7 @@ function JView() {
     return <>
 
         <div className="j-view">
-            <h1>JSON Viewer for archive.org wikipedia refs, version v2</h1>
+            <h1>Wiki Article Reference Explorer, version v2</h1>
             <Clock />
             <FileNameFetch
                 // handleFileName ={handleFileName} fileName = {fileName}
