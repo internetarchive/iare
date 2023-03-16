@@ -2,11 +2,12 @@ FROM node
 
 WORKDIR /app
 
+CMD ["serve", "-s", "build"]
+
 RUN npm install -g serve
 
-COPY . ./
-
+COPY package*.json ./
 RUN npm install
-RUN npm run build
 
-CMD ["serve", "-s", "build"]
+COPY . ./
+RUN npm run build
