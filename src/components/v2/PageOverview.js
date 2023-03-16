@@ -22,22 +22,19 @@ const FILTER_MAP = {
         caption: "Cite Web",
         desc: "template_names[] contains 'cite web'",
         filter: () => (d) => {
-            let found = false;
-            d.template_names.map((t,i) => {
-                if (t === "cite web") found = true;
-            })
-            return found;
+            // let found = false;
+            // d.template_names.map((t,i) => {
+            //     if (t === "cite web") found = true;
+            // })
+            // return found;
+            return d.template_names.includes("cite web");
         },
     },
     CiteMap: {
         caption: "Cite Map",
         desc: "template_names[] contains 'cite web'",
         filter: () => (d) => {
-            let found = false;
-            d.template_names.map((t,i) => {
-                if (t === "cite map") found = true;
-            })
-            return found;
+            return d.template_names.includes("cite map");
         },
     },
     Cs1: {
@@ -72,7 +69,7 @@ export default function PageOverview({pageData, setRefFilter}) {
 
     const [filterName, setFilterName] = useState( null );
 
-    const nullCall = () => { alert("placeholder call for filter"); }
+    // const nullCall = () => { alert("placeholder call for filter"); }
 
     function handleRefButton(name) {
         const f = FILTER_MAP[name];
