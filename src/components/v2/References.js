@@ -101,6 +101,8 @@ function References( { refs, filter } ) {
 
         <div className={"refs-container"}>
             <h3>References</h3>
+            <p style={{marginTop:0}}>all refs.count = {refs.length}
+                <br/>filtered refs.count = {filteredRefs.length}</p>
             {!filteredRefs ? <><p>No references!</p></> :
                 filteredRefs.map((ref, i) => {
                     return <button key={i}

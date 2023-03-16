@@ -3,6 +3,11 @@ body {
     margin: 20px;
 }
 
+body.env-staging {
+    /*background-color: #339966;*/
+
+}
+
 ol, ul {
     padding-left: 30px;
 }
@@ -16,7 +21,6 @@ table td {
     border:1px solid black;
     vertical-align: top;
 }
-
 
 
 .error-display {
@@ -38,6 +42,14 @@ table td {
     font-weight: bold;
     font-size:1.2rem;
     color: #c92b2b;
+}
+
+table.single-detail {
+    table-layout: fixed;
+    width:24rem;
+}
+table.single-detail tr td:not(:first-child) {
+    width:19rem;
 }
 
 .j-view {
@@ -65,16 +77,16 @@ table td {
     margin-left:10px;
 }
 
-.file-fetch-wrap {
-    display: inline-flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    margin-bottom: .5rem;
-}
-.file-fetch-wrap #urlSource {
-    width:28rem;
-    font-size: 1.1rem;
-}
+            /*.file-fetch-wrap {*/
+            /*    display: inline-flex;*/
+            /*    flex-direction: row;*/
+            /*    flex-wrap: wrap;*/
+            /*    margin-bottom: .5rem;*/
+            /*}*/
+            /*.file-fetch-wrap #urlSource {*/
+            /*    width:28rem;*/
+            /*    font-size: 1.1rem;*/
+            /*}*/
 
 .wiki-fetch-wrap {
     display: inline-flex;
@@ -87,11 +99,4 @@ table td {
     font-size: 1.1rem;
 }
 
-table.single-detail {
-    table-layout: fixed;
-    width:24rem;
-}
-table.single-detail tr td:not(:first-child) {
-    width:19rem;
-}
 

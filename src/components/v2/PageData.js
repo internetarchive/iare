@@ -10,11 +10,12 @@ export default function PageData( { pageData }) {
 
     const [endpoint, setEndpoint] = useState("");
     const [refs, setRefs] = useState([]);
-    const [filter, setFilter] = useState(null); // filter to apply to displayed refs
+    const [filter, setFilter] = useState( null ); // filter to apply to displayed refs
+        // (see PageOverview for filter definitions)
 
     const wariID = pageData ? pageData.wari_id : null;
 
-    // fetch refs based on wariID
+    // fetch references when wariID changes
     useEffect(()=> {
 
                         // // handle null pageData
@@ -23,10 +24,10 @@ export default function PageData( { pageData }) {
                         //     return;
                         // }
 
-        const endpoint = `${API_V2_URL_BASE}/statistics/references?wari_id=${wariID}`;
+        const myEndpoint = `${API_V2_URL_BASE}/statistics/references?wari_id=${wariID}&offset=0`;
 
         // fetch the data
-        fetch(endpoint, {
+        fetch(myEndpoint, {
         })
 
             .then((res) => {
@@ -49,22 +50,18 @@ export default function PageData( { pageData }) {
             .finally(() => {
                 // console.log("fetch finally")
                 // setIsLoading(false);
-                setEndpoint(endpoint)
+                setEndpoint(myEndpoint) // changes endpoint display
             });
 
-    }, [wariID]) // run this when wariID
-
+    }, [wariID]) // run this when wariID changes
 
     return <>
 
-        <PageOverview pageData={pageData} setFilter={setFilter} />
+        <PageOverview pageData={pageData} setRefFilter={setFilter} />
 
         <h3>Page Data</h3>
-
         {/*{ <!-- display endpoint for debugging -->}*/}
-        {/*<p>endpoint: {endpoint}</p>*/}
         <p>endpoint: <a href={endpoint} target={"_blank"} rel={"noreferrer"} >{endpoint}</a></p>
-
 
         <div className={"page-data"}>
             <References refs={refs} filter={filter}/>

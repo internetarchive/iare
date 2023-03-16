@@ -185,11 +185,6 @@ function JView() {
                 {myError}
             </div> : ""}
 
-            {/*{isLoading ? <Loader /> : <>*/}
-            {/*    <PageData pageData = {pageData} fileName = {fileName} />*/}
-            {/*    { /* todo: pass in an error callback here? */ }
-            {/*</>*/}
-
             {isLoading ? <Loader /> : <>
                 <PageDisplay pageData = {pageData} />
                 { /* todo: pass in an error callback here? */ }
