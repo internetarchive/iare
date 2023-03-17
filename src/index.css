@@ -1,11 +1,18 @@
 body {
     font: 14px "Century Gothic", Futura, sans-serif;
-    margin: 20px;
+    margin: 20px 20px 20px;
 }
 
-body.env-staging {
-    /*background-color: #339966;*/
+body.env-other {
+    background-color: #e5e8e3 !important;
 
+    /*background-image: url('./images/bg.staging.20.png') !important;*/
+}
+div.environment-tag {
+    position:absolute;
+    font-size:1rem;
+    top:8px;
+    color:#9b9b9b;
 }
 
 ol, ul {

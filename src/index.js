@@ -5,6 +5,7 @@ import PageDisplay from './components/PageDisplay.js';
 import FileNameFetch from './components/FileNameFetch.js';
 import Loader from './components/Loader.js';
 import { API_V2_URL_BASE } from './constants/endpoints.js';
+const package_json = require('../package.json');
 
 function Clock(props) {
     const [time, setTime] = useState(new Date().toLocaleTimeString());
@@ -142,6 +143,14 @@ function JView() {
 
     }
 
+    // add class to body to show environment
+    useEffect( () => {
+        console.log('name: ' + package_json.name, 'version: ' + package_json.version )
+        console.log('host: ' + window.location.host )
+        document.body.classList.add(env);
+    }, [])
+
+
     // run this when wikiUrl changes
     useEffect(()=> {
 
@@ -169,12 +178,14 @@ function JView() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fileName, refreshTime])
 
+    const env = window.location.host === "archive.org" ? 'env-production' : 'env-other';
 
     // render component
     return <>
+        { env !== 'env-production' ? <div className={"environment-tag"}>NON-PRODUCTION&nbsp;&nbsp;NON-PRODUCTION&nbsp;&nbsp;NON-PRODUCTION&nbsp;&nbsp;NON-PRODUCTION&nbsp;&nbsp;NON-PRODUCTION</div> : null}
 
         <div className="j-view">
-            <h1>Wiki Article Reference Explorer, version v2</h1>
+            <h1>Wiki Article Reference Explorer <span style={{fontSize:".7em", fontWeight:"normal", color:"grey"}}> version {package_json.version}</span></h1>
             <Clock />
             <FileNameFetch
                 // handleFileName ={handleFileName} fileName = {fileName}

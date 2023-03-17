@@ -32,7 +32,7 @@ const FILTER_MAP = {
     },
     CiteMap: {
         caption: "Cite Map",
-        desc: "template_names[] contains 'cite web'",
+        desc: "template_names[] contains 'cite map'",
         filter: () => (d) => {
             return d.template_names.includes("cite map");
         },
