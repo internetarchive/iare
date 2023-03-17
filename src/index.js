@@ -143,12 +143,14 @@ function JView() {
 
     }
 
+    const env = window.location.host === "archive.org" ? 'env-production' : 'env-other';
+
     // add class to body to show environment
     useEffect( () => {
         console.log('name: ' + package_json.name, 'version: ' + package_json.version )
         console.log('host: ' + window.location.host )
         document.body.classList.add(env);
-    }, [])
+    }, [env])
 
 
     // run this when wikiUrl changes
@@ -178,7 +180,6 @@ function JView() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fileName, refreshTime])
 
-    const env = window.location.host === "archive.org" ? 'env-production' : 'env-other';
 
     // render component
     return <>
