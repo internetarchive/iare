@@ -16,7 +16,7 @@ function Clock(props) {
 }
 
 
-function JView() {
+function App() {
 
     const [fileName, setFileName] = useState("");
     const [wikiUrl, setWikiUrl] = useState("");
@@ -72,18 +72,28 @@ function JView() {
     // 2023.03.15 mojomonger : seems like not all versions of js like named groups in regular expressions, so avoiding for now
     // const REGEX_WIKIURL = new RegExp(/https?:\/\/(?<lang>\w+)\.(?<site>\w+)\.org\/wiki\/(?<title>\S+)/);
     const REGEX_WIKIURL = new RegExp(/https?:\/\/(\w+)\.(\w+)\.org\/wiki\/(\S+)/);
-    // const API_V2_URL_BASE = 'https://archive.org/services/context/wari/v2';
 
-    function convertWikiToEndpoint(wikiUrl='') {
+    // eslint-disable-next-line
+    function convertWikiToArticleEndpoint(wikiUrl='') {
         if (!wikiUrl) return null;
         const matches = wikiUrl.match(REGEX_WIKIURL);
         if(!matches) return null;
 
-        // const [lang, site, title] = [matches[1],matches[2],matches[3]];
-// eslint-disable-next-line
+        // eslint-disable-next-line no-unused-vars
         const [url, lang, site, title] = matches;
 
         return `${API_V2_URL_BASE}/statistics/article?lang=${lang}&site=${site}&title=${title}`;
+    }
+
+    function convertWikiToAllEndpoint(wikiUrl='') {
+        if (!wikiUrl) return null;
+        const matches = wikiUrl.match(REGEX_WIKIURL);
+        if(!matches) return null;
+
+        // eslint-disable-next-line no-unused-vars
+        const [url, lang, site, title] = matches;
+
+        return `${API_V2_URL_BASE}/statistics/all?lang=${lang}&site=${site}&title=${title}`;
     }
 
 
@@ -126,7 +136,7 @@ function JView() {
             .then((data) => {
                 setIsLoading(false);
                 data.fileName = fileName;
-                data.version = getWariVersion(pageData, fileName);
+                data.version = getWariVersion(data, fileName);
                 setPageData(data);
             })
 
@@ -159,16 +169,20 @@ function JView() {
         // clear error display
         setMyError(null)
 
+//        // setFileName(convertWikiToEndpoint(wikiUrl)) // trigger useEffect[fileName, refreshTime]
+
         // attempt to fetch new pageData
-        setFileName(convertWikiToEndpoint(wikiUrl)) // triggers fileFetch in other useEffect[fileName, refreshTime]
-        // fileFetch(c)
+        // const myFileName = convertWikiToArticleEndpoint(wikiUrl)
+        const myFileName = convertWikiToAllEndpoint(wikiUrl);
+        setFileName(myFileName) // trigger useEffect[fileName, refreshTime]
+            // useEffect calls fileFetch, which does the actual fetching of data
 
 // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [wikiUrl])
 
 
 
-    // run when fileName or refreshTime changes
+    // fetch contents of fileName (aka endpoint) when fileName or refreshTime changes
     useEffect(()=> {
 
         // clear error display
@@ -209,5 +223,5 @@ function JView() {
 // ========================================
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<JView />);
+root.render(<App />);
 

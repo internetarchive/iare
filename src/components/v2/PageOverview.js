@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import FilterButton from "../FilterButton";
 
 
-const FILTER_MAP = {
+const REF_FILTER_MAP = {
     All: {
         caption: "Show All Refs",
         desc: "no filter",
@@ -37,15 +37,21 @@ const FILTER_MAP = {
             return d.template_names.includes("cite map");
         },
     },
-    Cs1: {
-        caption: "Show Refs using cs1 template",
-        desc: "what is condition?",
-        filter: () => (d) => 0,
-    },
+    // Cs1: {
+    //     caption: "Show Refs using cs1 template",
+    //     desc: "what is condition?",
+    //     filter: () => (d) => 0,
+    // },
     ISBN: {
+        /*
+        ISBN references I would define as: references with a template name "isbn" aka
+        naked isbn or references with a cite book + parameter isbn that is not none.
+         */
         caption: "Show Refs with ISBN",
-        desc: "what is condition?",
-        filter: () => (d) => 0,
+        desc: "d.template_names.includes ['cite book','isbn']",
+        filter: () => (d) => {
+            return d.template_names.includes("cite book") || d.template_names.includes("isbn");
+        },
     },
 
     // TODO: this algorithm is not returning the number of refs as given in agg[without_a_template]
@@ -58,33 +64,146 @@ const FILTER_MAP = {
 
 };
 
-const FILTER_NAMES = Object.keys(FILTER_MAP);
+const REF_FILTER_NAMES = Object.keys(REF_FILTER_MAP);
+
+
+
+const URL_FILTER_MAP = {
+    All: {
+        caption: "Show All Urls",
+        desc: "no filter",
+        filter: () => () => {return true},
+    },
+    Status2XX: {
+        caption: "Status 2XX",
+        desc: "'",
+        filter: () => (d) => {
+            // let found = false;
+            // d.template_names.map((t,i) => {
+            //     if (t === "cite web") found = true;
+            // })
+            // return found;
+            return [200,201,202,203,204,205,206,207,208,226].includes(d.data.status_code);
+        },
+    },
+    Status3XX: {
+        caption: "Status 3XX",
+        desc: "'",
+        filter: () => (d) => {
+            // let found = false;
+            // d.template_names.map((t,i) => {
+            //     if (t === "cite web") found = true;
+            // })
+            // return found;
+            return [300,301,302,303,304,305,306,307,308].includes(d.data.status_code);
+        },
+    },
+    Status4XX: {
+        caption: "Status 4XX",
+        desc: "'",
+        filter: () => (d) => {
+            // let found = false;
+            // d.template_names.map((t,i) => {
+            //     if (t === "cite web") found = true;
+            // })
+            // return found;
+            return d.data.status_code >= 400 && d.data.status_code < 500;
+        },
+    },
+    Status5XX: {
+        caption: "Status 5XX",
+        desc: "'",
+        filter: () => (d) => {
+            // let found = false;
+            // d.template_names.map((t,i) => {
+            //     if (t === "cite web") found = true;
+            // })
+            // return found;
+            return d.data.status_code >= 500 && d.data.status_code < 600;
+        },
+    },
+
+};
+
+const URL_FILTER_NAMES = Object.keys(URL_FILTER_MAP);
+
+// display filter buttons
+const ReferenceFilters = ( {filterList, filterCaption}) => {
+    return <div>
+        <h4>Reference Filters<br/><span style={{fontSize:"smaller", fontWeight:"normal"}}>Current filter: {filterCaption}</span></h4>
+        <div className={"reference-filters"}>
+            {filterList}
+        </div>
+    </div>
+
+}
+
+// display filter buttons
+const UrlFilters = ( {filterList, filterCaption}) => {
+    return <div>
+        <h4>URL Filters<br/><span style={{fontSize:"smaller", fontWeight:"normal"}}>Current filter: {filterCaption}</span></h4>
+        <div className={"url-filters"}>
+            {filterList}
+        </div>
+    </div>
+
+}
+
+// display url info
+const UrlDisplay = ( { urls } ) => {
+
+    return <div>
+        <h4>Urls</h4>
+        <div className={"url-display"}>
+            <p>Will show status code breakdown here</p>
+        </div>
+    </div>
+
+}
 
 /*
     props
         pageData
         setRefFilter   callback to set filter when filter button pressed
  */
-export default function PageOverview({pageData, setRefFilter}) {
+export default function PageOverview({pageData, setRefFilter, setUrlFilter}) {
 
-    const [filterName, setFilterName] = useState( null );
+    const [refFilterName, setRefFilterName] = useState( null );
+    const [urlFilterName, setUrlFilterName] = useState( null );
 
     // const nullCall = () => { alert("placeholder call for filter"); }
 
     function handleRefButton(name) {
-        const f = FILTER_MAP[name];
-        setFilterName(f.caption);
+        setRefFilterName(name);
+        const f = REF_FILTER_MAP[name];
         setRefFilter(f ? f.filter : null)
     }
 
-    const filterList = FILTER_NAMES.map((name) => {
-        let f = FILTER_MAP[name];
+    const refFilterList = REF_FILTER_NAMES.map((name) => {
+        let f = REF_FILTER_MAP[name];
         return <FilterButton key={name}
                              name={name}
                              caption={f.caption}
                              desc={f.desc}
-                             isPressed={name===filterName}
+                             isPressed={name===refFilterName}
                              onClick = {handleRefButton}
+        />
+    });
+
+    function handleUrlButton(name) {
+        setUrlFilterName(name);
+        const f = URL_FILTER_MAP[name];
+        setUrlFilter(f ? f.filter : null)
+    }
+
+    const urlFilterList = URL_FILTER_NAMES.map((name) => {
+        let f = URL_FILTER_MAP[name];
+        return <FilterButton key={name}
+                             name={name}
+                             caption={f.caption}
+                             desc={f.desc}
+                             isPressed={name===urlFilterName}
+                             onClick = {handleUrlButton}
         />
     });
 
@@ -97,30 +216,23 @@ export default function PageOverview({pageData, setRefFilter}) {
         <h3>Page Overview</h3>
 
         { !pageData.reference_statistics ? <p>Missing reference_statistics</p>
-        : <div className={"page-overview-wrap"}>
+            : <div className={"page-overview-wrap"}>
 
-            <div>
-                <h4>Reference Types</h4>
-                <div className={"reference-types"}>
-                    {Object.keys(pageData.reference_statistics).map((key, i) => {
-                        return <p key={i}><span>{key} : {pageData.reference_statistics[key]}</span></p>
-                    }
-                    )}
+                <div>
+                    <h4>Reference Types</h4>
+                    <div className={"reference-types"}>
+                        {Object.keys(pageData.reference_statistics).map((key, i) => {
+                            return <p key={i}><span>{key} : {pageData.reference_statistics[key]}</span></p>
+                        }
+                        )}
+                    </div>
                 </div>
-            </div>
 
-            {/* display filter buttons; callbacks to handleRefButton */}
-            <div>
-                <h4>Filters for References</h4>
-                <div className={"reference-filters"}>
-                    {filterList}
-                </div>
-            </div>
+                <ReferenceFilters filterList={refFilterList} filterCaption={REF_FILTER_MAP[refFilterName] ? REF_FILTER_MAP[refFilterName].caption : ""} />
 
-            {/* information display */}
-            <div>
-                <p>Current filter: {filterName}</p>
-            </div>
+                <UrlDisplay urls={pageData.urls}/>
+
+                <UrlFilters filterList={urlFilterList} filterCaption={URL_FILTER_MAP[urlFilterName] ? URL_FILTER_MAP[urlFilterName].caption : ""} />
 
 
             </div> }

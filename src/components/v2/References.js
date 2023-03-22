@@ -101,9 +101,11 @@ function References( { refs, filter } ) {
 
         <div className={"refs-container"}>
             <h3>References</h3>
-            <p style={{marginTop:0}}>all refs.count = {refs.length}
-                <br/>filtered refs.count = {filteredRefs.length}</p>
-            {!filteredRefs ? <><p>No references!</p></> :
+
+            {!filteredRefs ? <><p>No references!</p></>
+                : <><p style={{marginTop:0}}>all refs.count = {refs.length}
+                    <br/>filtered refs.count = {filteredRefs.length}</p>
+                {
                 filteredRefs.map((ref, i) => {
                     return <button key={i}
                                    className={"ref-button"}
@@ -111,15 +113,7 @@ function References( { refs, filter } ) {
                                        fetchDetail(ref)
                                    }}>{getLinkText(ref)}</button>
                 })}
-
-            {
-                // <pre>{JSON.stringify(refs, null, 2)}</pre>
-
-                // refs.references.map((obj, i) => <div key={i} >
-                //     <pre>{JSON.stringify(obj, null, 2)}</pre>
-                // </div>)
-
-            }
+                </>}
         </div>
 
         <div className={"ref-details"}>
