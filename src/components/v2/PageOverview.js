@@ -22,11 +22,6 @@ const REF_FILTER_MAP = {
         caption: "Cite Web",
         desc: "template_names[] contains 'cite web'",
         filter: () => (d) => {
-            // let found = false;
-            // d.template_names.map((t,i) => {
-            //     if (t === "cite web") found = true;
-            // })
-            // return found;
             return d.template_names.includes("cite web");
         },
     },
@@ -78,11 +73,6 @@ const URL_FILTER_MAP = {
         caption: "Status 2XX",
         desc: "'",
         filter: () => (d) => {
-            // let found = false;
-            // d.template_names.map((t,i) => {
-            //     if (t === "cite web") found = true;
-            // })
-            // return found;
             return [200,201,202,203,204,205,206,207,208,226].includes(d.data.status_code);
         },
     },
@@ -90,11 +80,6 @@ const URL_FILTER_MAP = {
         caption: "Status 3XX",
         desc: "'",
         filter: () => (d) => {
-            // let found = false;
-            // d.template_names.map((t,i) => {
-            //     if (t === "cite web") found = true;
-            // })
-            // return found;
             return [300,301,302,303,304,305,306,307,308].includes(d.data.status_code);
         },
     },
@@ -102,11 +87,6 @@ const URL_FILTER_MAP = {
         caption: "Status 4XX",
         desc: "'",
         filter: () => (d) => {
-            // let found = false;
-            // d.template_names.map((t,i) => {
-            //     if (t === "cite web") found = true;
-            // })
-            // return found;
             return d.data.status_code >= 400 && d.data.status_code < 500;
         },
     },
@@ -114,12 +94,14 @@ const URL_FILTER_MAP = {
         caption: "Status 5XX",
         desc: "'",
         filter: () => (d) => {
-            // let found = false;
-            // d.template_names.map((t,i) => {
-            //     if (t === "cite web") found = true;
-            // })
-            // return found;
             return d.data.status_code >= 500 && d.data.status_code < 600;
+        },
+    },
+    Unknown: {
+        caption: "Unknown",
+        desc: "'",
+        filter: () => (d) => {
+            return !d.data.status_code;
         },
     },
 

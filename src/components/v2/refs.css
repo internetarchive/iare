@@ -149,6 +149,23 @@
 .url-display .url-row:first-child {
     border-top:1px solid black;
 }
+.url-display .url-row.url-is-unknown,
+.url-display .url-row.url-is-unknown a{
+    color:red !important;
+}
+.url-display .url-row.url-is-redirect,
+.url-display .url-row.url-is-redirect a{
+    /*color: #b700ff !important;*/
+}
+.url-display .url-row.url-is-notfound,
+.url-display .url-row.url-is-notfound a{
+    color: red !important;
+}
+.url-display .url-row.url-is-error,
+.url-display .url-row.url-is-error a{
+    color: red !important;
+}
+
 .url-display .url-name {
     width: 80%;
     min-width: 80%;

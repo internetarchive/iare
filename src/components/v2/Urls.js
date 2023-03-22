@@ -25,7 +25,12 @@ export default function Urls( { urlArray, filter } ) {
             //     <td><a href={url} target={"_blank"} rel={"noreferrer"} key={i}>{url}</a></td>
             //     <td>{urlMap[url].status}</td>
             // </tr>
-            return <div className={"url-row"} key={i}>
+
+            return <div className={`url-row ${u.data.status_code == 0 
+                ? "url-is-unknown" : ""} ${u.data.status_code >= 300 && u.data.status_code < 400 
+                ? "url-is-redirect" : ""} ${u.data.status_code >= 400 && u.data.status_code < 500
+                ? "url-is-notfound" : ""} ${u.data.status_code >= 500 && u.data.status_code < 600
+                ? "url-is-error" : ""}`} key={i}>
                 <div className={"url-name"}><a href={u.data.url} target={"_blank"} rel={"noreferrer"} key={i}>{u.data.url}</a></div>
                 <div className={"url-status"}>{u.data.status_code}</div>
             </div>
