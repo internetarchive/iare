@@ -142,6 +142,7 @@ export default function PageData( { pageData = {} }) {
 // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    const references = pageData.reference_details && pageData.reference_details.length ? pageData.reference_details : pageData.dehydrated_references
 
     return <>
 
@@ -155,7 +156,7 @@ export default function PageData( { pageData = {} }) {
         <div className={"page-data"}>
             {/* TODO this should be pageData.refs soon enough */}
             {/*<References refs={refs} filter={refFilter}/>*/}
-            <References refs={pageData.reference_details} filter={refFilter}/>
+            <References refs={references} filter={refFilter}/>
             <Urls urlArray={urlBigArray} filter={urlFilter}/>
             <Flds flds={pageData.fld_counts}/>
         </div>

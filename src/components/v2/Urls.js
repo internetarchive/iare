@@ -15,16 +15,9 @@ export default function Urls( { urlArray, filter } ) {
     }
     else {
         const filteredUrls = filter ? urlArray.filter( filter ) : urlArray;
-        // iterate over URL array and make faux table rows
-        //itemList.push(JSON.stringify( urlMap, null, 2));
 
         // iterate over array of url objects
         const rows = filteredUrls.map((u, i) => {
-            // return <TR label={url} value={urlMap[url].status} key={i} />
-            // return <tr>
-            //     <td><a href={url} target={"_blank"} rel={"noreferrer"} key={i}>{url}</a></td>
-            //     <td>{urlMap[url].status}</td>
-            // </tr>
 
             return <div className={`url-row ${u.data.status_code === 0 
                 ? "url-is-unknown" : ""} ${u.data.status_code >= 300 && u.data.status_code < 400 
@@ -54,12 +47,6 @@ export default function Urls( { urlArray, filter } ) {
         <div className={"urls"}>
             <h3>URL's</h3>
             {urlDisplay}
-            {/*<h4>raw url array</h4>*/}
-            {/*{ !urls ? <><p>No urls to show!</p></> :*/}
-            {/*    urls.map((url, i) => {*/}
-            {/*        return <a href={url} target={"_blank"} rel={"noreferrer"} key={i}>{url}</a>*/}
-            {/*    })*/}
-            {/*}*/}
         </div>
     </>
 }

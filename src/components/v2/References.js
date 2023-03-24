@@ -1,25 +1,6 @@
-// import React, {useEffect, useState} from 'react';
 import React, { useState } from 'react';
 import RefDetails from './RefDetails.js';
-// import { API_V2_URL_BASE } from '../../constants/endpoints.js';
-
-//
-// function getLinkText(d) {
-//
-//     return [
-//         (( d.flds && d.flds.length )
-//         ? d.flds.map((fld, j) => <p>{fld}</p>) // all flds
-//         : [d.wikitext] ),
-//
-//         null ];
-//     // "Arf!"];
-// }
-//
-// function getRefClassName(d) {
-//     return (d.plain_text_in_reference ? "ref-plain-text" : "") +
-//     (d.is_named_reference ? "ref-named" : "")
-//     ;
-// }
+import { API_V2_URL_BASE } from '../../constants/endpoints.js';
 
 function getLinkText(ref) {
 
@@ -43,22 +24,14 @@ function getLinkText(ref) {
 
     if (!text) text += "ref id: " + ref.id;
 
-    //text = <span style={{fontWeight : "bold"}}>cite web</span>
     return <p>{text}</p>
-
-    // return [
-    //     (( d.flds && d.flds.length )
-    //     ? d.flds.map((fld, j) => <p>{fld}</p>) // all flds
-    //     : [d.wikitext] ),
-    //
-    //     null ];
 }
 
 function References( { refs, filter } ) {
 
     const [refDetails, setRefDetails] = useState(null);
     // const [isLoading, setIsLoading] = useState(false);
-
+    const [referenceEndpoint, setReferenceEndpoint] = useState( "" );
 
     const fetchDetail = (ref) => {
         // handle null pageData
@@ -67,8 +40,8 @@ function References( { refs, filter } ) {
             return;
         }
 
-        const API_V2_URL_BASE = 'https://archive.org/services/context/wari/v2';
         const endpoint = `${API_V2_URL_BASE}/statistics/reference/${ref.id}`;
+        setReferenceEndpoint(endpoint)
 
         // fetch the data
         fetch(endpoint, {
@@ -118,6 +91,7 @@ function References( { refs, filter } ) {
 
         <div className={"ref-details"}>
             <h3>Reference Details</h3>
+            <p>endpoint: <a href={referenceEndpoint} target={"_blank"} rel={"noreferrer"}>{referenceEndpoint}</a></p>
             <RefDetails details={refDetails} />
         </div>
 

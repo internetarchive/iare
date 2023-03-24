@@ -18,14 +18,11 @@ function Clock(props) {
 
 function App() {
 
-    const [fileName, setFileName] = useState("");
     const [wikiUrl, setWikiUrl] = useState("");
 
-    const [refreshTime, setRefreshTime] = useState(null);
     const [pageData, setPageData] = useState(null);
     const [myError, setMyError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-
 
     function getWariVersion( pageData, fileName ) {
         // eslint-disable-next-line
@@ -41,61 +38,6 @@ function App() {
         else
             return "unknown";
     }
-
-
-    // N.B. this was used before when we specified the entire endpoint. Leaving it here just in case we want that again
-    // /*
-    //     callback function to be sent to fetch file name component
-    //  */
-    // function handleFileName(newFileName) {
-    //     // console.log("old fileName is:" + fileName)
-    //     // console.log("new fileName is:" + newFileName)
-    //
-    //     // clear out current pageData and reset refreshTime
-    //     setPageData(null);
-    //
-    //     // changing refreshTime or fileName causes useEffect to engage, refreshing the page data
-    //     setRefreshTime( Date() );
-    //     setFileName(newFileName)
-    // }
-
-    function handleWikiUrl(newWikiUrl) {
-        // clear out current pageData and reset refreshTime
-        setPageData(null);
-
-        // changing refreshTime or fileName causes useEffect to engage, refreshing the page data
-        setRefreshTime( Date() );
-        setWikiUrl(newWikiUrl)
-    }
-
-
-    // 2023.03.15 mojomonger : seems like not all versions of js like named groups in regular expressions, so avoiding for now
-    // const REGEX_WIKIURL = new RegExp(/https?:\/\/(?<lang>\w+)\.(?<site>\w+)\.org\/wiki\/(?<title>\S+)/);
-    const REGEX_WIKIURL = new RegExp(/https?:\/\/(\w+)\.(\w+)\.org\/wiki\/(\S+)/);
-
-    // eslint-disable-next-line
-    function convertWikiToArticleEndpoint(wikiUrl='') {
-        if (!wikiUrl) return null;
-        const matches = wikiUrl.match(REGEX_WIKIURL);
-        if(!matches) return null;
-
-        // eslint-disable-next-line no-unused-vars
-        const [url, lang, site, title] = matches;
-
-        return `${API_V2_URL_BASE}/statistics/article?lang=${lang}&site=${site}&title=${title}`;
-    }
-
-    function convertWikiToAllEndpoint(wikiUrl='') {
-        if (!wikiUrl) return null;
-        const matches = wikiUrl.match(REGEX_WIKIURL);
-        if(!matches) return null;
-
-        // eslint-disable-next-line no-unused-vars
-        const [url, lang, site, title] = matches;
-
-        return `${API_V2_URL_BASE}/statistics/all?lang=${lang}&site=${site}&title=${title}`;
-    }
-
 
 
     /*
@@ -134,7 +76,6 @@ function App() {
             })
 
             .then((data) => {
-                setIsLoading(false);
                 data.fileName = fileName;
                 data.version = getWariVersion(data, fileName);
                 setPageData(data);
@@ -143,12 +84,12 @@ function App() {
             .catch((err) => {
                 setMyError(err.toString())
                 setPageData(null);
-                setIsLoading(false);
 
             })
 
             .finally(() => {
                 // console.log("fetch finally")
+                setIsLoading(false);
             });
 
     }
@@ -163,36 +104,24 @@ function App() {
     }, [env])
 
 
-    // run this when wikiUrl changes
-    useEffect(()=> {
+    function convertWikiToAllEndpoint(wikiUrl='') {
+        return `${API_V2_URL_BASE}/statistics/all?url=${wikiUrl}`;
+    }
 
-        // clear error display
+    function handleWikiUrl(wikiUrl) {
+
+        // clear pageData and error
+        setPageData(null);
         setMyError(null)
 
-//        // setFileName(convertWikiToEndpoint(wikiUrl)) // trigger useEffect[fileName, refreshTime]
-
-        // attempt to fetch new pageData
-        // const myFileName = convertWikiToArticleEndpoint(wikiUrl)
         const myFileName = convertWikiToAllEndpoint(wikiUrl);
-        setFileName(myFileName) // trigger useEffect[fileName, refreshTime]
-            // useEffect calls fileFetch, which does the actual fetching of data
 
-// eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [wikiUrl])
-
-
-
-    // fetch contents of fileName (aka endpoint) when fileName or refreshTime changes
-    useEffect(()=> {
-
-        // clear error display
-        setMyError(null)
+        setWikiUrl(wikiUrl);
 
         // attempt to fetch new pageData
-        fileFetch(fileName)
+        fileFetch(myFileName)
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [fileName, refreshTime])
+    }
 
 
     // render component
@@ -200,8 +129,10 @@ function App() {
         { env !== 'env-production' ? <div className={"environment-tag"}>NON-PRODUCTION&nbsp;&nbsp;NON-PRODUCTION&nbsp;&nbsp;NON-PRODUCTION&nbsp;&nbsp;NON-PRODUCTION&nbsp;&nbsp;NON-PRODUCTION</div> : null}
 
         <div className="j-view">
+
             <h1>Wiki Article Reference Explorer <span style={{fontSize:".7em", fontWeight:"normal", color:"grey"}}> version {package_json.version}</span></h1>
             <Clock />
+
             <FileNameFetch
                 // handleFileName ={handleFileName} fileName = {fileName}
                 handleWikiUrl ={handleWikiUrl} wikiUrl = {wikiUrl}
