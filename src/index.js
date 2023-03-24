@@ -130,7 +130,7 @@ function App() {
 
         <div className="j-view">
 
-            <h1>Wiki Article Reference Explorer <span style={{fontSize:".7em", fontWeight:"normal", color:"grey"}}> version {package_json.version}</span></h1>
+            <h1>Wikipedia Article Reference Explorer <span style={{fontSize:".7em", fontWeight:"normal", color:"grey"}}> version {package_json.version}</span></h1>
             <Clock />
 
             <FileNameFetch
