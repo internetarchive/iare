@@ -1,5 +1,16 @@
 import React, {useState} from "react";
 import FilterButton from "../FilterButton";
+import { URL_FILTER_MAP, URL_FILTER_NAMES } from './filterMaps.js';
+import PieChart from "./PieChart.js";
+import {Chart, ArcElement, Legend, Tooltip} from 'chart.js'
+
+Chart.register(ArcElement);
+Chart.register(Legend);
+Chart.register(Tooltip);
+
+// this will register all chart.js things
+// import { Chart, registerables } from 'chart.js';
+// Chart.register(...registerables);
 
 
 const REF_FILTER_MAP = {
@@ -63,52 +74,6 @@ const REF_FILTER_NAMES = Object.keys(REF_FILTER_MAP);
 
 
 
-const URL_FILTER_MAP = {
-    All: {
-        caption: "Show All Urls",
-        desc: "no filter",
-        filter: () => () => {return true},
-    },
-    Status2XX: {
-        caption: "Status 2XX",
-        desc: "'",
-        filter: () => (d) => {
-            return [200,201,202,203,204,205,206,207,208,226].includes(d.data.status_code);
-        },
-    },
-    Status3XX: {
-        caption: "Status 3XX",
-        desc: "'",
-        filter: () => (d) => {
-            return [300,301,302,303,304,305,306,307,308].includes(d.data.status_code);
-        },
-    },
-    Status4XX: {
-        caption: "Status 4XX",
-        desc: "'",
-        filter: () => (d) => {
-            return d.data.status_code >= 400 && d.data.status_code < 500;
-        },
-    },
-    Status5XX: {
-        caption: "Status 5XX",
-        desc: "'",
-        filter: () => (d) => {
-            return d.data.status_code >= 500 && d.data.status_code < 600;
-        },
-    },
-    Unknown: {
-        caption: "Unknown",
-        desc: "'",
-        filter: () => (d) => {
-            return !d.data.status_code;
-        },
-    },
-
-};
-
-const URL_FILTER_NAMES = Object.keys(URL_FILTER_MAP);
-
 // display filter buttons
 const ReferenceFilters = ( {filterList, filterCaption}) => {
     return <div>
@@ -132,12 +97,32 @@ const UrlFilters = ( {filterList, filterCaption}) => {
 }
 
 // display url info
-const UrlDisplay = ( { urls } ) => {
+const UrlOverview = ( { overview } ) => {
+
+    if (!overview) {
+        return <p>Nothing to show.</p>
+    }
+
+    const chartData = {
+        labels: Object.keys(overview).map( s => s.replace("status", "")),
+
+        datasets: [{
+            label: "URLs",
+            data: Object.values(overview),
+            backgroundColor: [
+                "green", "orange", "red", "magenta", "grey"
+            ],
+        }],
+        borderColor: "black",
+        borderWidth: 2,
+    }
+
 
     return <div>
         <h4>Urls</h4>
         <div className={"url-display"}>
-            <p>Will show status code breakdown here</p>
+            {/*<pre className={"raw-json"}>{JSON.stringify(overview, null, 2)}</pre>*/}
+            <PieChart chartData={chartData} />
         </div>
     </div>
 
@@ -148,7 +133,7 @@ const UrlDisplay = ( { urls } ) => {
         pageData
         setRefFilter   callback to set filter when filter button pressed
  */
-export default function PageOverview({pageData, setRefFilter, setUrlFilter}) {
+export default function PageOverview({pageData, overview, setRefFilter, setUrlFilter}) {
 
     const [refFilterName, setRefFilterName] = useState( null );
     const [urlFilterName, setUrlFilterName] = useState( null );
@@ -212,7 +197,7 @@ export default function PageOverview({pageData, setRefFilter, setUrlFilter}) {
 
                 <ReferenceFilters filterList={refFilterList} filterCaption={REF_FILTER_MAP[refFilterName] ? REF_FILTER_MAP[refFilterName].caption : ""} />
 
-                <UrlDisplay urls={pageData.urls}/>
+                <UrlOverview overview={overview}/>
 
                 <UrlFilters filterList={urlFilterList} filterCaption={URL_FILTER_MAP[urlFilterName] ? URL_FILTER_MAP[urlFilterName].caption : ""} />
 

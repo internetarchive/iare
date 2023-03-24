@@ -12,6 +12,7 @@ export default function PageData( { pageData = {} }) {
     // const [endpointRefs, setEndpointRefs] = useState("");
     // const [endpointAll, setEndpointAll] = useState("");
     // const [refs, setRefs] = useState([]);
+
     const [refFilter, setRefFilter] = useState( null ); // filter to apply to displayed refs
     const [urlFilter, setUrlFilter] = useState( null ); // filter to apply to displayed refs
         // (see PageOverview for filter definitions)
@@ -19,57 +20,7 @@ export default function PageData( { pageData = {} }) {
     // const [urlMap, setUrlMap] = useState({}); // keyed pointers to array elements
     const [urlBigArray, setUrlBigArray] = useState([]);
     // const [refreshTime, setRefreshTime] = useState(null);
-
-    // const wariID = pageData ? pageData.wari_id : null;
-    //
-    // // fetch references when wariID changes
-    // useEffect(()=> {
-    //
-    //                     // // handle null pageData
-    //                     // if (!pageData) {
-    //                     //     setRefs(null);
-    //                     //     return;
-    //                     // }
-    //
-    //     const myEndpointRefs = `${API_V2_URL_BASE}/statistics/references?wari_id=${wariID}&offset=0`;
-    //     // const myEndpointAll = `${API_V2_URL_BASE}/statistics/all?lang=en&site=wikipedia&title=Car`;
-    //     const myEndpointAll = `${API_V2_URL_BASE}/statistics/all?lang=${pageData.lang}&site=${pageData.site}&title=${pageData.title}`;
-    //
-    //
-    //     // fetch the data
-    //     fetch(myEndpointRefs, {
-    //     })
-    //
-    //         .then((res) => {
-    //             if(!res.ok) throw new Error(res.status);
-    //             return res.json();
-    //         })
-    //
-    //         .then((data) => {
-    //             setRefs(data.references);
-    //         })
-    //
-    //         .catch((err) => {
-    //             //setMyError(err.toString())
-    //
-    //             // todo: what to do here on error?
-    //
-    //             setRefs(null);
-    //         })
-    //
-    //         .finally(() => {
-    //             // console.log("fetch finally")
-    //             // setIsLoading(false);
-    //             setEndpointRefs(myEndpointRefs) // changes endpoint display
-    //             setEndpointAll(myEndpointAll) // changes endpoint display
-    //         });
-    //
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    //     }, [wariID])
-    //
-
-    // const endpointRefs = `${API_V2_URL_BASE}/statistics/references?wari_id=${pageData.wari_id}&offset=0`;
-    // const endpointAll = `${API_V2_URL_BASE}/statistics/all?lang=${pageData.lang}&site=${pageData.site}&title=${pageData.title}`;
+    const [overview, setOverview] = useState({}); // overview statistics; set in sub-components, passed to PageOverview
 
 
     async function fetchOneUrl(url) {
@@ -94,45 +45,44 @@ export default function PageData( { pageData = {} }) {
         return encodeURI( url )
     }
 
-
-//     // transform url array of strings into array of objects
-//     useEffect( () => {
-//         let myMap = {};
-//         let myUrls = pageData.urls.map((url, i) => {
-//             const uObj = { url: url, status_code : 0 }
-//             myMap[url] = uObj;
-//             return uObj; // as array object
-//         });
-//
-//         setUrlArray(myUrls);
-//         setUrlMap(myMap);
-//
-// // eslint-disable-next-line react-hooks/exhaustive-deps
-//     }, [])
-
     // transform url array of strings into array of objects
     useEffect( () => {
 
         fetchAllUrls(pageData.urls)
-            .then(results => {
-                console.log(`fetchAllUrls: ${results.length} results found`); // Do whatever you want with the results
-                console.log(results);
+            .then(urlResults => {
+                console.log(`fetchAllUrls: ${urlResults.length} results found`); // Do whatever you want with the results
 
-                setUrlBigArray( results );
-                // // we have an array of url objects as results...deal with them...
-                // results.forEach( d => {
-                //     let urlClean = cleanUrl(d.data.url);
-                //
-                //     console.log( `url: ${urlClean}, status code: ${d.data.status_code}, cached: ${d.data.served_from_cache ? 'YES' : 'NO'}`)
-                //
-                //     let u = urlMap[urlClean];
-                //     if (u) {
-                //         u.status_code = d.data.status_code;
-                //         u.data = d.data;
-                //     } else {
-                //         console.error(`No url entry found for return url ${urlClean}`)
-                //     }
-                // })
+                setUrlBigArray( urlResults );
+
+                // TODO: process url array for overview
+
+                const urlCounts = {}
+                let furls = urlResults.filter((d) => {
+                    return d.data.status_code >= 200 && d.data.status_code < 300;
+                });
+                urlCounts.status2xx = furls.length;
+
+                furls = urlResults.filter((d) => {
+                    return d.data.status_code >= 300 && d.data.status_code < 400;
+                });
+                urlCounts.status3xx = furls.length;
+
+                furls = urlResults.filter((d) => {
+                    return d.data.status_code >= 400 && d.data.status_code < 500;
+                });
+                urlCounts.status4xx = furls.length;
+
+                furls = urlResults.filter((d) => {
+                    return d.data.status_code >= 500 && d.data.status_code < 600;
+                });
+                urlCounts.status5xx = furls.length;
+
+                furls = urlResults.filter((d) => {
+                    return d.data.status_code === 0;
+                });
+                urlCounts.statusUnknown = furls.length;
+
+                setOverview(urlCounts);
 
             })
             .catch(error => {
@@ -146,16 +96,11 @@ export default function PageData( { pageData = {} }) {
 
     return <>
 
-        <PageOverview pageData={pageData} setRefFilter={setRefFilter} setUrlFilter={setUrlFilter} /> {/* setFilter in turn sets the filter for <References /> component */ }
+        <PageOverview pageData={pageData} overview={overview} setRefFilter={setRefFilter} setUrlFilter={setUrlFilter}/> {/* setFilter in turn sets the filter for <References /> component */ }
 
         <h3>Page Data</h3>
-        {/*{ <!-- display endpoint for debugging -->}*/}
-        {/*<p>references endpoint: <a href={endpointRefs} target={"_blank"} rel={"noreferrer"} >{endpointRefs}</a></p>*/}
-        {/*<p>all endpoint: <a href={endpointAll} target={"_blank"} rel={"noreferrer"} >{endpointAll}</a></p>*/}
 
         <div className={"page-data"}>
-            {/* TODO this should be pageData.refs soon enough */}
-            {/*<References refs={refs} filter={refFilter}/>*/}
             <References refs={references} filter={refFilter}/>
             <Urls urlArray={urlBigArray} filter={urlFilter}/>
             <Flds flds={pageData.fld_counts}/>
