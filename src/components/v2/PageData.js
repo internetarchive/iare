@@ -85,9 +85,10 @@ export default function PageData( { pageData = {} }) {
 
         const urlCounts = Object.keys(URL_FILTER_MAP).map( k => {
             const f = URL_FILTER_MAP[k];
+            const count = urlBigArray.filter((f.filterFunction)()).length; // Note the self-evaluating filterFunction!
             return {
-                label: f.caption,
-                count: urlBigArray.filter((f.filterFunction)()).length, // Note the self-evaluating filter function!
+                label: f.caption + " (" + count + ")",
+                count: count,
                 link: k
             }
         });

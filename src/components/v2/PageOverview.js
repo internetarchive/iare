@@ -213,8 +213,11 @@ const UrlOverview = ( { overview, onClickUrl } ) => {
         onClickUrl(link);
     }
 
+    const total = overview.urlCounts && overview.urlCounts
+        ? overview.urlCounts.filter(s => s.link === "all")[0].count
+        : ""
     return <div>
-        <h4>URL Status Codes</h4>
+        <h4>URLs - {total} total</h4>
         <div className={"url-display"}>
             {/*<pre className={"raw-json"}>{JSON.stringify(overview, null, 2)}</pre>*/}
             <PieChart chartData={chartData} options={options} onClick={onClick}/>
@@ -257,11 +260,15 @@ export default function PageOverview({refOverview, urlOverview, setRefFilter, se
 
     const urlFilterList = URL_FILTER_NAMES.map((name) => {
         const f = URL_FILTER_MAP[name];
-        /// we have urlOverview; we want to extract name's count.
-        const count =urlOverview.urlCounts.filter( s => s.link === name)[0].count;
+        // we have urlOverview; we want to extract name's count.
+        // if urlOverview.urlCounts is bad, we skip the counts
+        const count = urlOverview && urlOverview.urlCounts
+            ? " (" + urlOverview.urlCounts.filter( s => s.link === name)[0].count + ")"
+            : "";
+
         return <FilterButton key={name}
                              name={name}
-                             caption={f.caption + " (" + count + ")"}
+                             caption={f.caption + count}
                              desc={f.desc}
                              isPressed={name===urlFilterName}
                              onClick = {handleUrlButton}
