@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import FilterButton from "../FilterButton";
-import { URL_FILTER_MAP, URL_FILTER_NAMES } from './filterMaps.js';
+// import { URL_FILTER_MAP, URL_FILTER_NAMES } from './filterMaps.js';
+import { URL_FILTER_MAP } from './filterMaps.js';
 import PieChart from "../PieChart.js";
 
 
@@ -26,6 +27,16 @@ Chart.register(
 // import { Chart, registerables } from 'chart.js';
 // Chart.register(...registerables);
 
+const colors = {
+    blue   : "#35a2eb",
+    red    : "#ff6384",
+    teal   : "#4bc0c0",
+    orange : "#ff9f40",
+    purple : "#9866ff",
+    yellow : "#ffcd57",
+    grey   : "#c9cbcf",
+    magenta: "#f763ff",
+}
 
 const REF_FILTER_MAP = {
     All: {
@@ -103,7 +114,8 @@ const ReferenceFilters = ( {filterList, filterCaption}) => {
 const UrlFilters = ( {filterList, filterCaption}) => {
     return <div>
         {/*<h4>URL Filters<br/><span style={{fontSize:"smaller", fontWeight:"normal"}}>Current filter: {filterCaption}</span></h4>*/}
-        <h4>URL Filters</h4>
+        {/*<h4>URL Filters</h4>*/}
+        <h4>{'\u00A0'}</h4>
         <div className={"url-filters"}>
             {filterList}
         </div>
@@ -155,10 +167,7 @@ const UrlOverview = ( { overview, onClickUrl } ) => {
             label: "URLs",
             data: overviewWithoutAll.map( d => d.count),
             links: overviewWithoutAll.map( d => d.link),
-            //// using default color scheme for now, but uncomment if specific desired
-                    // backgroundColor: [
-                    //     "green", "orange", "red", "magenta", "grey"
-                    // ],
+            backgroundColor: [ colors.teal, colors.yellow, colors.red, colors.magenta, colors.grey, ]
         }],
 
         borderColor: "black",
@@ -196,10 +205,10 @@ const UrlOverview = ( { overview, onClickUrl } ) => {
                 animateScale: true,
                     animateRotate: true
             },
-            colors: {
-                enabled: true,
-                forceOverride: true
-            }
+            // colors: { // color library for automatic coloration
+            //     enabled: true,
+            //     forceOverride: true
+            // }
         },
     }
 
@@ -218,7 +227,7 @@ const UrlOverview = ( { overview, onClickUrl } ) => {
         : ""
     return <div>
         <h4>URLs - {total} total</h4>
-        <div className={"url-display"}>
+        <div className={"url-chart-display"}>
             {/*<pre className={"raw-json"}>{JSON.stringify(overview, null, 2)}</pre>*/}
             <PieChart chartData={chartData} options={options} onClick={onClick}/>
         </div>
@@ -258,7 +267,8 @@ export default function PageOverview({refOverview, urlOverview, setRefFilter, se
         setUrlFilter(f ? f.filterFunction : null)
     }
 
-    const urlFilterList = URL_FILTER_NAMES.map((name) => {
+//    const urlFilterList = URL_FILTER_NAMES.map((name) => {
+    const urlFilterList = ["all"].map((name) => { // just show the All for now...
         const f = URL_FILTER_MAP[name];
         // we have urlOverview; we want to extract name's count.
         // if urlOverview.urlCounts is bad, we skip the counts
@@ -287,7 +297,6 @@ export default function PageOverview({refOverview, urlOverview, setRefFilter, se
                                   filterCaption={REF_FILTER_MAP[refFilterName] ? REF_FILTER_MAP[refFilterName].caption : ""} />
 
                 <UrlOverview overview={urlOverview} onClickUrl={handleUrlButton}/>
-                {/*<UrlOverview overview={urlOverview} />*/}
 
                 <UrlFilters filterList={urlFilterList} filterCaption={URL_FILTER_MAP[urlFilterName] ? URL_FILTER_MAP[urlFilterName].caption : ""} />
 

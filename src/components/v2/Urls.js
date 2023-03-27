@@ -32,7 +32,7 @@ export default function Urls( { urlArray, filter } ) {
 
         // urlDisplay = <table className={"url-display"}><tbody>{rows}</tbody></table>
         urlDisplay = <>
-            <h4 style={{color:"grey"}}>Filtered URL count: {filteredUrls.length}</h4>
+            <h4 style={{color:"grey"}}>{filteredUrls.length === urlArray.length ? `All URLs - ${urlArray.length}` :`Filtered URL count: ${filteredUrls.length}`}</h4>
             <div className={"url-display"}>
                 <div className={"url-row"}>
                     <div className={"url-name"}>url</div>
@@ -45,7 +45,7 @@ export default function Urls( { urlArray, filter } ) {
 
     return <>
         <div className={"urls"}>
-            <h3>URL's</h3>
+            <h3>URLs</h3>
             {urlDisplay}
         </div>
     </>
