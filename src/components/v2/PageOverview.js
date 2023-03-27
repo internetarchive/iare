@@ -258,15 +258,17 @@ export default function PageOverview({refOverview, urlOverview, setRefFilter, se
     const urlFilterList = URL_FILTER_NAMES.map((name) => {
         const f = URL_FILTER_MAP[name];
         /// we have urlOverview; we want to extract name's count.
-
+        const count =urlOverview.urlCounts.filter( s => s.link === name)[0].count;
         return <FilterButton key={name}
                              name={name}
-                             caption={f.caption}
+                             caption={f.caption + " (" + count + ")"}
                              desc={f.desc}
                              isPressed={name===urlFilterName}
                              onClick = {handleUrlButton}
         />
     });
+
+    console.log("urlOverview:", urlOverview);
 
     return <div className={"page-overview"}>
         <h3>Page Overview</h3>
