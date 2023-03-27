@@ -117,7 +117,7 @@ const UrlFilters = ( {filterList, filterCaption}) => {
         {/*<h4>URL Filters</h4>*/}
         <h4>{'\u00A0'}</h4>
         <div className={"url-filters"}>
-            {filterList}
+            {/*{filterList}*/}
         </div>
     </div>
 
@@ -262,8 +262,10 @@ export default function PageOverview({refOverview, urlOverview, setRefFilter, se
     });
 
     const handleUrlButton= (name) => {
-        setUrlFilterName(name);
-        const f = URL_FILTER_MAP[name];
+        // set to "all" if new name === current name
+        const newName = urlFilterName === name ? "all" : name;
+        setUrlFilterName(newName);
+        const f = URL_FILTER_MAP[newName];
         setUrlFilter(f ? f.filterFunction : null)
     }
 
