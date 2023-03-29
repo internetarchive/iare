@@ -1,17 +1,43 @@
 import React, {useState} from "react";
 import FilterButton from "../FilterButton";
-import { URL_FILTER_MAP, URL_FILTER_NAMES } from './filterMaps.js';
-import PieChart from "./PieChart.js";
-import {Chart, ArcElement, Legend, Tooltip} from 'chart.js'
+// import { URL_FILTER_MAP, URL_FILTER_NAMES } from './filterMaps.js';
+import { URL_FILTER_MAP } from './filterMaps.js';
+import PieChart from "../PieChart.js";
 
-Chart.register(ArcElement);
-Chart.register(Legend);
-Chart.register(Tooltip);
+
+import {
+    Chart,
+    ArcElement,
+    Legend,
+    Tooltip,
+    Title,
+    SubTitle,
+    Colors,
+} from 'chart.js'
+// import {getElementsAtEvent} from "react-chartjs-2";
+
+Chart.register(
+    ArcElement,
+    Legend,
+    Tooltip,
+    Title,
+    SubTitle,
+    Colors);
 
 // this will register all chart.js things
 // import { Chart, registerables } from 'chart.js';
 // Chart.register(...registerables);
 
+const colors = {
+    blue   : "#35a2eb",
+    red    : "#ff6384",
+    teal   : "#4bc0c0",
+    orange : "#ff9f40",
+    purple : "#9866ff",
+    yellow : "#ffcd57",
+    grey   : "#c9cbcf",
+    magenta: "#f763ff",
+}
 
 const REF_FILTER_MAP = {
     All: {
@@ -88,52 +114,144 @@ const ReferenceFilters = ( {filterList, filterCaption}) => {
 // display filter buttons
 const UrlFilters = ( {filterList, filterCaption}) => {
     return <div>
-        <h4>URL Filters<br/><span style={{fontSize:"smaller", fontWeight:"normal"}}>Current filter: {filterCaption}</span></h4>
+        {/*<h4>URL Filters<br/><span style={{fontSize:"smaller", fontWeight:"normal"}}>Current filter: {filterCaption}</span></h4>*/}
+        {/*<h4>URL Filters</h4>*/}
+        <h4>{'\u00A0'}</h4>
         <div className={"url-filters"}>
-            {filterList}
+            {/*{filterList}*/}
         </div>
     </div>
 
 }
 
 // display url info
-const UrlOverview = ( { overview } ) => {
+const RefOverview = ( { overview, onClickLink } ) => {
 
-    if (!overview) {
-        return <p>Nothing to show.</p>
+    return <div>
+        <h4>Reference Types</h4>
+        { !overview ? <p>Missing reference overview data.</p>
+        : <div>
+            <div className={"reference-types"}>
+                {Object.keys(overview).map((key, i) => {
+                        return <p key={i}><span>{key} : {overview[key]}</span></p>
+                    }
+                )}
+            </div>
+        </div>}
+    </div>
+}
+
+/* display url info
+    assumed structure of overview:
+
+    { urlCounts : [
+        {label:, count:, link: },
+        ...
+      ]
+    }
+*/
+const UrlOverview = ( { overview, onClickChart } ) => {
+
+    if (!overview) { return <div>
+            <h4>Urls</h4>
+            <p>No Url statistics to show.</p>
+        </div>}
+
+    const overviewWithoutAll = overview.urlCounts
+        ? overview.urlCounts.filter(s => s.link !== "all")
+        : [];
+
+    const onClickLegend = (event, legendItem, legend) => {
+        const index = legendItem.index;
+        const ci = legend.chart;
+        const link = ci.data.datasets[0].links[index];
+        // console.log(`legend index: ${index}, link: ${link}`);
+
+        // pass link up to passed in click routine
+        onClickChart(link)
     }
 
     const chartData = {
-        labels: Object.keys(overview).map( s => s.replace("status", "")),
 
+        labels: overviewWithoutAll.map( d => d.label),
         datasets: [{
             label: "URLs",
-            data: Object.values(overview),
-            backgroundColor: [
-                "green", "orange", "red", "magenta", "grey"
-            ],
+            data: overviewWithoutAll.map( d => d.count),
+            links: overviewWithoutAll.map( d => d.link),
+            backgroundColor: [ colors.teal, colors.yellow, colors.red, colors.magenta, colors.grey, ]
         }],
+
         borderColor: "black",
         borderWidth: 2,
     }
 
+    const options = {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top',
+                align: 'start',
+                // title: {
+                //     text: "Legend",
+                //     display: true,
+                // },
+                labels : {
+                    boxWidth : 30,
+                    boxHeight : 16,
+                    font: {
+                        size: 14
+                    },
+                },
+                onClick : onClickLegend,
+            },
+            // subtitle: {
+            //     display: true,
+            //     text: 'Custom Chart Subtitle'
+            // },
+            // title: {
+            //     display: true,
+            //     text: 'URL Return Status Code Breakdown'
+            // },
+            animation: {
+                animateScale: true,
+                    animateRotate: true
+            },
+            // colors: { // color library for automatic coloration
+            //     enabled: true,
+            //     forceOverride: true
+            // }
+        },
+    }
+
+    // debug display for chartData
+    // return <div>
+    //     <h4>Urls</h4>
+    //     <RawJson obj={chartData} />
+    // </div>
+
+    const onClick = (link) => {
+        console.log("pie chart clicked, link=", link)
+        onClickChart(link);
+    }
+
+    const total = overview.urlCounts && overview.urlCounts
+        ? overview.urlCounts.filter(s => s.link === "all")[0].count
+        : ""
 
     return <div>
-        <h4>Urls</h4>
-        <div className={"url-display"}>
+        <h4>URLs - {total} total</h4>
+        <div className={"url-chart-display"}>
             {/*<pre className={"raw-json"}>{JSON.stringify(overview, null, 2)}</pre>*/}
-            <PieChart chartData={chartData} />
+            <PieChart chartData={chartData} options={options} onClick={onClick}/>
         </div>
     </div>
 
 }
 
 /*
-    props
-        pageData
-        setRefFilter   callback to set filter when filter button pressed
  */
-export default function PageOverview({pageData, overview, setRefFilter, setUrlFilter}) {
+export default function PageOverview({refOverview, urlOverview, setRefFilter, setUrlFilter}) {
 
     const [refFilterName, setRefFilterName] = useState( null );
     const [urlFilterName, setUrlFilterName] = useState( null );
@@ -157,51 +275,48 @@ export default function PageOverview({pageData, overview, setRefFilter, setUrlFi
         />
     });
 
-    function handleUrlButton(name) {
-        setUrlFilterName(name);
-        const f = URL_FILTER_MAP[name];
-        setUrlFilter(f ? f.filter : null)
+    const handleUrlButton= (name) => {
+        // if new name === current name, toggle between "all" and new name
+        const newName = urlFilterName === name ? "all" : name;
+        setUrlFilterName(newName);
+        const f = URL_FILTER_MAP[newName];
+        // setUrlFilter(f ? f.filterFunction : null)
+        setUrlFilter(f)
     }
 
-    const urlFilterList = URL_FILTER_NAMES.map((name) => {
-        let f = URL_FILTER_MAP[name];
+//    const urlFilterList = URL_FILTER_NAMES.map((name) => {
+    const urlFilterList = ["all"].map((name) => { // just show the All for now...
+        const f = URL_FILTER_MAP[name];
+        // we have urlOverview; we want to extract name's count.
+        // if urlOverview.urlCounts is bad, we skip the counts
+        const count = urlOverview && urlOverview.urlCounts
+            ? " (" + urlOverview.urlCounts.filter( s => s.link === name)[0].count + ")"
+            : "";
+
         return <FilterButton key={name}
                              name={name}
-                             caption={f.caption}
+                             caption={f.caption + count}
                              desc={f.desc}
                              isPressed={name===urlFilterName}
                              onClick = {handleUrlButton}
         />
     });
 
-    if (!pageData) return <div className={"page-overview"}>
-        <h3>Page Overview</h3>
-        <p>No page data to display</p>;
-    </div>;
+    console.log("urlOverview:", urlOverview);
 
     return <div className={"page-overview"}>
         <h3>Page Overview</h3>
+        <div className={"page-overview-wrap"}>
 
-        { !pageData.reference_statistics ? <p>Missing reference_statistics</p>
-            : <div className={"page-overview-wrap"}>
+                <RefOverview overview={refOverview} onClickLink={()=>{}} />
 
-                <div>
-                    <h4>Reference Types</h4>
-                    <div className={"reference-types"}>
-                        {Object.keys(pageData.reference_statistics).map((key, i) => {
-                            return <p key={i}><span>{key} : {pageData.reference_statistics[key]}</span></p>
-                        }
-                        )}
-                    </div>
-                </div>
+                <ReferenceFilters filterList={refFilterList}
+                                  filterCaption={REF_FILTER_MAP[refFilterName] ? REF_FILTER_MAP[refFilterName].caption : ""} />
 
-                <ReferenceFilters filterList={refFilterList} filterCaption={REF_FILTER_MAP[refFilterName] ? REF_FILTER_MAP[refFilterName].caption : ""} />
-
-                <UrlOverview overview={overview}/>
+                <UrlOverview overview={urlOverview} onClickChart={handleUrlButton}/>
 
                 <UrlFilters filterList={urlFilterList} filterCaption={URL_FILTER_MAP[urlFilterName] ? URL_FILTER_MAP[urlFilterName].caption : ""} />
 
-
-            </div> }
+        </div>
     </div>
 }
