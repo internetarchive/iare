@@ -1,8 +1,7 @@
 import React from 'react';
-// import TR from "../TR";
 
 /*
-assumes urls is an array of url objects with:
+assumes urls is an array of url data objects with:
     url : <url>
     status_code : <status_code>
     (and maybe data property)
@@ -14,7 +13,7 @@ export default function Urls( { urlArray, filter } ) {
         urlDisplay = <p>No urls to show!</p>;
     }
     else {
-        const filteredUrls = filter ? urlArray.filter( filter ) : urlArray;
+        const filteredUrls = filter ? urlArray.filter( (filter.filterFunction)() ) : urlArray;
 
         // iterate over array of url objects
         const rows = filteredUrls.map((u, i) => {
@@ -30,9 +29,12 @@ export default function Urls( { urlArray, filter } ) {
 
         } )
 
-        // urlDisplay = <table className={"url-display"}><tbody>{rows}</tbody></table>
+        const label = filteredUrls.length === urlArray.length
+            ? `All URLs - ${urlArray.length}`
+            : `${filter ? filter.caption : "No Filter"} - count: ${filteredUrls.length}`;
+
         urlDisplay = <>
-            <h4 style={{color:"grey"}}>{filteredUrls.length === urlArray.length ? `All URLs - ${urlArray.length}` :`Filtered URL count: ${filteredUrls.length}`}</h4>
+            <h4 style={{color:"grey"}}>{label}</h4>
             <div className={"url-display"}>
                 <div className={"url-row"}>
                     <div className={"url-name"}>url</div>

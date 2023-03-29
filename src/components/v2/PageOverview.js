@@ -14,6 +14,7 @@ import {
     SubTitle,
     Colors,
 } from 'chart.js'
+// import {getElementsAtEvent} from "react-chartjs-2";
 
 Chart.register(
     ArcElement,
@@ -141,15 +142,15 @@ const RefOverview = ( { overview, onClickLink } ) => {
 }
 
 /* display url info
-    assume structure of overview:
+    assumed structure of overview:
 
-    { urlcounts : [
+    { urlCounts : [
         {label:, count:, link: },
         ...
       ]
-     }
-* */
-const UrlOverview = ( { overview, onClickUrl } ) => {
+    }
+*/
+const UrlOverview = ( { overview, onClickChart } ) => {
 
     if (!overview) { return <div>
             <h4>Urls</h4>
@@ -159,6 +160,16 @@ const UrlOverview = ( { overview, onClickUrl } ) => {
     const overviewWithoutAll = overview.urlCounts
         ? overview.urlCounts.filter(s => s.link !== "all")
         : [];
+
+    const onClickLegend = (event, legendItem, legend) => {
+        const index = legendItem.index;
+        const ci = legend.chart;
+        const link = ci.data.datasets[0].links[index];
+        // console.log(`legend index: ${index}, link: ${link}`);
+
+        // pass link up to passed in click routine
+        onClickChart(link)
+    }
 
     const chartData = {
 
@@ -192,6 +203,7 @@ const UrlOverview = ( { overview, onClickUrl } ) => {
                         size: 14
                     },
                 },
+                onClick : onClickLegend,
             },
             // subtitle: {
             //     display: true,
@@ -212,6 +224,7 @@ const UrlOverview = ( { overview, onClickUrl } ) => {
         },
     }
 
+    // debug display for chartData
     // return <div>
     //     <h4>Urls</h4>
     //     <RawJson obj={chartData} />
@@ -219,12 +232,13 @@ const UrlOverview = ( { overview, onClickUrl } ) => {
 
     const onClick = (link) => {
         console.log("pie chart clicked, link=", link)
-        onClickUrl(link);
+        onClickChart(link);
     }
 
     const total = overview.urlCounts && overview.urlCounts
         ? overview.urlCounts.filter(s => s.link === "all")[0].count
         : ""
+
     return <div>
         <h4>URLs - {total} total</h4>
         <div className={"url-chart-display"}>
@@ -262,11 +276,12 @@ export default function PageOverview({refOverview, urlOverview, setRefFilter, se
     });
 
     const handleUrlButton= (name) => {
-        // set to "all" if new name === current name
+        // if new name === current name, toggle between "all" and new name
         const newName = urlFilterName === name ? "all" : name;
         setUrlFilterName(newName);
         const f = URL_FILTER_MAP[newName];
-        setUrlFilter(f ? f.filterFunction : null)
+        // setUrlFilter(f ? f.filterFunction : null)
+        setUrlFilter(f)
     }
 
 //    const urlFilterList = URL_FILTER_NAMES.map((name) => {
@@ -298,7 +313,7 @@ export default function PageOverview({refOverview, urlOverview, setRefFilter, se
                 <ReferenceFilters filterList={refFilterList}
                                   filterCaption={REF_FILTER_MAP[refFilterName] ? REF_FILTER_MAP[refFilterName].caption : ""} />
 
-                <UrlOverview overview={urlOverview} onClickUrl={handleUrlButton}/>
+                <UrlOverview overview={urlOverview} onClickChart={handleUrlButton}/>
 
                 <UrlFilters filterList={urlFilterList} filterCaption={URL_FILTER_MAP[urlFilterName] ? URL_FILTER_MAP[urlFilterName].caption : ""} />
 
