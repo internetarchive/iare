@@ -43,7 +43,7 @@ export default function PageData( { pageData = {} }) {
 
     async function fetchOneUrl(url) {
         const endpoint = `${API_V2_URL_BASE}/check-url?url=${encodeURIComponent(url)}`;
-        // console.log("fetchOneUrl: ", endpoint)
+        // console.log("fetchOneUrl: endpoint = ", endpoint)
         const response = await fetch(endpoint);
         const data = await response.json();
         const status_code = response.status;
