@@ -96,6 +96,12 @@
     flex-direction: row;
     border-top:1px solid black;
 }
+.page-data > div {
+    margin-left: 1rem;
+}
+.page-data > div:first-child {
+    margin-left:0;
+}
 .references {
     width:50%;
     overflow:hidden;
@@ -132,7 +138,7 @@
 
 .urls {
     width:25%;
-    margin-left:1rem;
+    /*margin-left:1rem;*/
     overflow: auto;
 }
 .urls a {

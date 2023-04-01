@@ -1,12 +1,13 @@
 import React, {useState} from "react";
 import FilterButton from "../FilterButton";
-// import { URL_FILTER_MAP, URL_FILTER_NAMES } from './filterMaps.js';
 import { URL_FILTER_MAP } from './filterMaps.js';
 import PieChart from "../PieChart.js";
-
+// import BarChart from "../BarChart.js";
 
 import {
     Chart,
+    LinearScale,
+    BarElement,
     ArcElement,
     Legend,
     Tooltip,
@@ -17,6 +18,8 @@ import {
 // import {getElementsAtEvent} from "react-chartjs-2";
 
 Chart.register(
+    LinearScale,
+    BarElement,
     ArcElement,
     Legend,
     Tooltip,
@@ -24,9 +27,9 @@ Chart.register(
     SubTitle,
     Colors);
 
-// this will register all chart.js things
-// import { Chart, registerables } from 'chart.js';
-// Chart.register(...registerables);
+        // the following two lines will register all chart.js things
+        // import { Chart, registerables } from 'chart.js';
+        // Chart.register(...registerables);
 
 const colors = {
     blue   : "#35a2eb",
@@ -94,6 +97,17 @@ const REF_FILTER_MAP = {
         filter: () => (d) => d.template_names.length < 1,
     },
 
+    booksArchive: {
+        /*
+        ISBN or book refs with
+         */
+        caption: "Show Refs with ISBN",
+        desc: "d.template_names.includes ['cite book','isbn']",
+        filter: () => (d) => {
+            return d.template_names.includes("cite book") || d.template_names.includes("isbn");
+        },
+    },
+
 };
 
 const REF_FILTER_NAMES = Object.keys(REF_FILTER_MAP);
@@ -124,6 +138,7 @@ const UrlFilters = ( {filterList, filterCaption}) => {
 
 }
 
+
 // display url info
 const RefOverview = ( { overview, onClickLink } ) => {
 
@@ -138,10 +153,13 @@ const RefOverview = ( { overview, onClickLink } ) => {
                 )}
             </div>
         </div>}
+
     </div>
 }
 
-/* display url info
+/*
+    displays url overview info
+
     assumed structure of overview:
 
     { urlCounts : [
@@ -217,21 +235,17 @@ const UrlOverview = ( { overview, onClickChart } ) => {
                 animateScale: true,
                     animateRotate: true
             },
-            // colors: { // color library for automatic coloration
-            //     enabled: true,
-            //     forceOverride: true
-            // }
         },
     }
 
-    // debug display for chartData
+    // // debug display for chartData
     // return <div>
     //     <h4>Urls</h4>
     //     <RawJson obj={chartData} />
     // </div>
 
     const onClick = (link) => {
-        console.log("pie chart clicked, link=", link)
+        // console.log("pie chart clicked, link=", link)
         onClickChart(link);
     }
 
@@ -255,8 +269,6 @@ export default function PageOverview({refOverview, urlOverview, setRefFilter, se
 
     const [refFilterName, setRefFilterName] = useState( null );
     const [urlFilterName, setUrlFilterName] = useState( null );
-
-    // const nullCall = () => { alert("placeholder call for filter"); }
 
     function handleRefButton(name) {
         setRefFilterName(name);
@@ -284,7 +296,6 @@ export default function PageOverview({refOverview, urlOverview, setRefFilter, se
         setUrlFilter(f)
     }
 
-//    const urlFilterList = URL_FILTER_NAMES.map((name) => {
     const urlFilterList = ["all"].map((name) => { // just show the All for now...
         const f = URL_FILTER_MAP[name];
         // we have urlOverview; we want to extract name's count.
@@ -302,20 +313,21 @@ export default function PageOverview({refOverview, urlOverview, setRefFilter, se
         />
     });
 
-    console.log("urlOverview:", urlOverview);
+    // console.log("urlOverview:", urlOverview);
 
     return <div className={"page-overview"}>
-        <h3>Page Overview</h3>
+        <h3>Reference Overview</h3>
         <div className={"page-overview-wrap"}>
 
-                <RefOverview overview={refOverview} onClickLink={()=>{}} />
+            <UrlOverview overview={urlOverview} onClickChart={handleUrlButton}/>
 
-                <ReferenceFilters filterList={refFilterList}
-                                  filterCaption={REF_FILTER_MAP[refFilterName] ? REF_FILTER_MAP[refFilterName].caption : ""} />
+            <UrlFilters filterList={urlFilterList} filterCaption={URL_FILTER_MAP[urlFilterName] ? URL_FILTER_MAP[urlFilterName].caption : ""} />
 
-                <UrlOverview overview={urlOverview} onClickChart={handleUrlButton}/>
+            <RefOverview overview={refOverview} onClickLink={()=>{}} />
 
-                <UrlFilters filterList={urlFilterList} filterCaption={URL_FILTER_MAP[urlFilterName] ? URL_FILTER_MAP[urlFilterName].caption : ""} />
+            <ReferenceFilters filterList={refFilterList}
+                              filterCaption={REF_FILTER_MAP[refFilterName] ? REF_FILTER_MAP[refFilterName].caption : ""} />
+
 
         </div>
     </div>

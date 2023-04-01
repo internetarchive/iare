@@ -78,10 +78,8 @@ export default function PageData( { pageData = {} }) {
 // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pageData])
 
-    // calc url overview data when urlBigArray changes
+    // calc url overview from urlBigArray when changed
     useEffect( () => {
-        // process returned url elements for overview
-        console.log("URL_FILTER_MAP:",URL_FILTER_MAP);
 
         const urlCounts = Object.keys(URL_FILTER_MAP).map( k => {
             const f = URL_FILTER_MAP[k];
@@ -96,7 +94,7 @@ export default function PageData( { pageData = {} }) {
         setUrlOverview({urlCounts: urlCounts});
     }, [urlBigArray])
 
-    // TODO: change this to get references by iterative fetch on refID's
+    // TODO: change this to get references by iterative fetch on refID array
     const references = pageData.reference_details && pageData.reference_details.length ? pageData.reference_details : pageData.dehydrated_references
 
     return <>
@@ -108,8 +106,8 @@ export default function PageData( { pageData = {} }) {
                     />
         <h3>Page Data</h3>
         <div className={"page-data"}>
-            <References refs={references} filter={refFilter}/>
             <Urls urlArray={urlBigArray} filter={urlFilter}/>
+            <References refs={references} filter={refFilter}/>
             <Flds flds={pageData.fld_counts}/>
         </div>
     </>
