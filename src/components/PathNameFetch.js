@@ -6,7 +6,7 @@ expected props
     pathInitial         path string to put in input field
     handlePathName      callback function to call when "Load" button clicked
  */
-export default function PathNameFetch({ pathInitial, handlePathName } ) {
+export default function PathNameFetch({ pathInitial='', handlePathName } ) {
 
     const [pathName, setPathName] = useState(pathInitial); // init with passed in name
 
@@ -50,8 +50,8 @@ export default function PathNameFetch({ pathInitial, handlePathName } ) {
                 <button onClick={myHandlePath.handleSubmit} style={{marginLeft: "10px"}}>
                     <span>{"Load References"}</span>
                 </button>
-                <ButtonFetch buttonKey={"easterIslandFilename"} onClick={setPathName}/>
-                <ButtonFetch buttonKey={"internetArchiveFilename"} onClick={setPathName}/>
+                <ButtonFetch buttonKey={"easterIslandFilename"} onClick={setPathName} className={"path-shortcut"}/>
+                <ButtonFetch buttonKey={"internetArchiveFilename"} onClick={setPathName} className={"path-shortcut"}/>
             </div>
 
         </div>

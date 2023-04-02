@@ -1,13 +1,18 @@
-import React from "react";
+import React, {useState} from "react";
 import ArrayDisplay from "../ArrayDisplay";
 
 
 export default function PageInfo({ pageData }) {
 
+    const [showDetail, setShowDetail] = useState(false);
+
     return <div className="page-info">
-        <h3>Page analyzed: <a href={pageData.pathName} target={"_blank"} rel={"noreferrer"}>{pageData.pathName}</a></h3>
+        <h3>Page analyzed: <a href={pageData.pathName} target={"_blank"} rel={"noreferrer"}>{pageData.pathName}</a
+            > <button onClick={()=>setShowDetail(!showDetail)} className={"more-button"}>{ showDetail ? "less" : "more" } details</button>
+        </h3>
+
         {pageData
-            ? <div className={"detail-show"}>
+            ? <div className={ showDetail ? "detail-show" : "detail-hide" }>
                 <p>endpoint: <a href={pageData.endpoint} target={"_blank"} rel={"noreferrer"}>{pageData.endpoint}</a></p>
 
                 <div style={{display: "flex", flexDirection: "row"}}>
@@ -30,7 +35,8 @@ export default function PageInfo({ pageData }) {
                 </div>
             </div>
 
-            : <p>Nothing to display - pageData is missing.</p>}
+            : <p>Nothing to display - pageData is missing.</p>
+        }
 
     </div>
 

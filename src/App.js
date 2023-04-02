@@ -4,21 +4,36 @@ import {API_V2_URL_BASE} from "./constants/endpoints";
 import PathNameFetch from "./components/PathNameFetch";
 import Loader from "./components/Loader";
 import PageDisplay from "./components/PageDisplay";
-
-const useDebugAlerts = false;
+import MakeLink from "./components/MakeLink";
 
 export default function App() {
 
+    const [isDebug, setDebug] = useState(false);
+    const [isDebugAlerts, setDebugAlerts] = useState(false);
+
     const env = window.location.host === "archive.org" ? 'env-production' : 'env-other';
 
-    /* if there is a url on the request address, then use it as pathName */
-    const [pathName, setPathName] = useState(window.location.pathname ? window.location.pathname.replace(/^\/+/g, '') : '');
+    // /* if there is a url on the request address, then use it as pathName */
+    // const [pathName, setPathName] = useState(window.location.pathname ? window.location.pathname.replace(/^\/+/g, '') : '');
+    const [pathName, setPathName] = useState('');
     const [endpointPath, setEndpointPath] = useState("");
 
     const [pageData, setPageData] = useState(null);
     const [myError, setMyError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
+
+    const toggleDebug = () => {
+        setDebug(!isDebug);
+    }
+
+    const toggleDebugAlert = () => {
+        setDebugAlerts(!isDebugAlerts);
+    }
+
+    const debugAlert = (msg) => {
+        if (isDebug && isDebugAlerts) alert(msg)
+    }
 
     // add class to body to indicate environment
     useEffect(() => {
@@ -66,6 +81,8 @@ export default function App() {
             return;
         }
 
+        setMyError(null);
+
         // show loading feedback
         setIsLoading(true);
 
@@ -103,14 +120,14 @@ export default function App() {
     };
 
     function handlePathName(newPathName) {
-        useDebugAlerts && alert("APP::handlePathName: new pathName is:" + newPathName)
+        debugAlert("APP::handlePathName: new pathName is:" + newPathName)
         // console.log("APP::handlePathName: before setPathName, pathName = ", newPathName)
         setPathName(newPathName);
     }
 
     // fetch new data when endpointPath changes
     useEffect(() => {
-        useDebugAlerts && alert("APP:::useEffect[pathName]: pathName is:" + pathName)
+        debugAlert("APP:::useEffect[pathName]: pathName is:" + pathName)
 
         const myEndpointPath = convertPathToEndpoint(pathName);
         setEndpointPath(myEndpointPath);
@@ -144,13 +161,23 @@ export default function App() {
             <div className={"header"}>
                 {env === 'env-production' ? null : <div className={"environment-tag"}>{"NON-PRODUCTION\u00A0\u00A0".repeat(8)}</div> }
                 <h1>Wikipedia Article Reference Explorer <span className={"version-display"}> version {package_json.version}
-                    <span className={"non-production"}> STAGING SITE</span></span></h1>
+                    <span className={"non-production"}
+                    > STAGING SITE <
+                        button onClick={toggleDebug} className={"debug-button"}
+                        >{ isDebug ? "hide" : "show" } debug</button
+                        ></span></span></h1>
                 {/*<Clock />*/}
 
-                {/*<div className={"debug"}>*/}
-                {/*    <p>pathName : {pathName}</p>*/}
-                {/*    <p>endpointPath: {endpointPath}</p>*/}
-                {/*</div>*/}
+                <div className={ isDebug ? "debug-on" : "debug-off" }>
+                    <div>
+                    <button onClick={toggleDebugAlert} className={"debug-button"}>{ isDebugAlerts ? "hide" : "show" } alerts
+                    </button
+                    >{isDebugAlerts
+                        ?<span className={"debug-info"}> user alerts will be engaged for certain tasks</span>
+                    : ''}</div>
+                    <p>pathName : <MakeLink href={pathName}/></p>
+                    <p>endpointPath: <MakeLink href={endpointPath}/></p>
+                </div>
 
             </div>
 
@@ -160,7 +187,7 @@ export default function App() {
                 {myError}
             </div> : ""}
 
-            {isLoading ? <Loader/> : <>
+            {isLoading ? <Loader message={"Analyzing Page References..."}/> : <>
                 <PageDisplay pageData={pageData}/>
                 { /* TODO: pass in an error callback here? */}
             </>

@@ -316,18 +316,17 @@ export default function PageOverview({refOverview, urlOverview, setRefFilter, se
     // console.log("urlOverview:", urlOverview);
 
     return <div className={"page-overview"}>
-        <h3>Reference Overview</h3>
+        <h3>Page Overview</h3>
         <div className={"page-overview-wrap"}>
 
             <UrlOverview overview={urlOverview} onClickChart={handleUrlButton}/>
 
             <UrlFilters filterList={urlFilterList} filterCaption={URL_FILTER_MAP[urlFilterName] ? URL_FILTER_MAP[urlFilterName].caption : ""} />
 
-            <RefOverview overview={refOverview} onClickLink={()=>{}} />
-
             <ReferenceFilters filterList={refFilterList}
                               filterCaption={REF_FILTER_MAP[refFilterName] ? REF_FILTER_MAP[refFilterName].caption : ""} />
 
+            <RefOverview overview={refOverview} onClickLink={()=>{}} />
 
         </div>
     </div>

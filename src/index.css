@@ -38,12 +38,48 @@ body.env-other .version-display span.non-production {
     display:inherit;
 }
 
+.debug-on {
+    display: inherit;
+    border: 1px black solid;
+    padding: 0.5rem 1rem 0;
+    background: #2f357d;
+    color: white;
+}
+.debug-on a {
+    color:lightskyblue;
+}
+
+.debug-off {
+    display:none;
+}
+.debug-info {
+    font-style: italic;
+    color:#8191a4;
+}
+.debug-button, more-button {
+    border-radius: 0.75rem;
+    background-color: #dadffd;
+    padding:0.14em .5em;
+    color: #454545;
+    border: 1px solid black;
+    font-size: .85rem;
+}
+.more-button {
+    background-color: transparent;
+    border:none;
+    text-decoration: underline;
+    color:grey;
+}
+.debug-on .debug-button {
+    background-color: #c9e3f9;
+}
+
 /* GENERAL ELEMENTS */
 
-.debug {
-    display:initial;
-}
 .detail-show {
+    display:inherit;
+}
+.detail-hide {
     display:none;
 }
 ol, ul {
@@ -95,6 +131,9 @@ table.single-detail tr td:not(:first-child) {
     /*flex-direction: row;*/
     flex-direction: column;
 }
+.ware-view h3 {
+    color:#666666;
+}
 
 
 .ware-view .path-fetch {
@@ -115,7 +154,7 @@ table.single-detail tr td:not(:first-child) {
     width:36rem;
     font-size: 1.1rem;
 }
-.path-fetch .name-shortcut {
+.path-fetch .path-shortcut {
     margin-left:10px;
 }
 

@@ -64,7 +64,6 @@ export default function PageData( { pageData = {} }) {
         return encodeURI( url )
     }
 
-
     // process fetched url array by simply saving results
     useEffect( () => {
         fetchAllUrls(pageData.urls)
@@ -104,6 +103,7 @@ export default function PageData( { pageData = {} }) {
                       setRefFilter={setRefFilter}   // refFilter passed to <References /> component
                       setUrlFilter={setUrlFilter}   // urlFilter passed to <Urls /> component */
                     />
+
         <h3>Page Data</h3>
         <div className={"page-data"}>
             <Urls urlArray={urlBigArray} filter={urlFilter}/>

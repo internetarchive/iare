@@ -1,11 +1,6 @@
-.page-overview {
-    /*display:flex;*/
-    /*flex-direction: row;*/
-    /*padding:1rem;*/
-    /*padding-top:0;*/
-    /*border:1px solid black;*/
+.page-overview > h3 {
+    margin-top:.3em;
 }
-
 .page-overview-wrap {
     display:flex;
     flex-direction: row;
@@ -14,7 +9,7 @@
     border:1px solid black;
 }
 .page-overview-wrap > div {
-    margin-right:2rem;
+    margin-right:1rem;
 }
 
 .reference-types {
@@ -49,7 +44,7 @@
 }
 
 .url-chart-display {
-    width:350px;
+    width:335px;
 }
 
 .url-filters {
