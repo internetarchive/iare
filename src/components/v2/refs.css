@@ -89,7 +89,7 @@
 .page-data {
     display:flex;
     flex-direction: row;
-    border-top:1px solid black;
+    /*border-top:1px solid black;*/
 }
 .page-data > div {
     margin-left: 1rem;

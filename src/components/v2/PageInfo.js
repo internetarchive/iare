@@ -7,7 +7,7 @@ export default function PageInfo({ pageData }) {
     const [showDetail, setShowDetail] = useState(false);
 
     return <div className="page-info">
-        <h3>Page analyzed: <a href={pageData.pathName} target={"_blank"} rel={"noreferrer"}>{pageData.pathName}</a
+        <h3>Page Analyzed: <a href={pageData.pathName} target={"_blank"} rel={"noreferrer"}>{pageData.pathName}</a
             > <button onClick={()=>setShowDetail(!showDetail)} className={"more-button"}>{ showDetail ? "less" : "more" } details</button>
         </h3>
 

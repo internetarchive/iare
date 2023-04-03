@@ -1,14 +1,24 @@
-import React,{ useState } from "react";
+import React, {useEffect, useState} from "react";
 import ButtonFetch from './ButtonFetch.js';
+import Checkbox from "./Checkbox";
 
 /*
 expected props
     pathInitial         path string to put in input field
     handlePathName      callback function to call when "Load" button clicked
  */
-export default function PathNameFetch({ pathInitial='', handlePathName } ) {
+export default function PathNameFetch({ pathInitial='', handlePathName, handleRefreshCheck } ) {
 
     const [pathName, setPathName] = useState(pathInitial); // init with passed in name
+    const [checked, setChecked] = React.useState(false);
+
+    const handleCheckChange = () => {
+        setChecked(!checked);
+    };
+
+    useEffect( () => {
+        handleRefreshCheck(checked)
+    }, [checked])
 
     const myHandlePath = {
         handleChange : (event) => {
@@ -49,7 +59,7 @@ export default function PathNameFetch({ pathInitial='', handlePathName } ) {
             <div style={{display: "block"}}>
                 <button onClick={myHandlePath.handleSubmit} style={{marginLeft: "10px"}}>
                     <span>{"Load References"}</span>
-                </button>
+                </button> <Checkbox label={"Force Refresh"} value={checked} onChange={handleCheckChange} />
                 <ButtonFetch buttonKey={"easterIslandFilename"} onClick={setPathName} className={"path-shortcut"}/>
                 <ButtonFetch buttonKey={"internetArchiveFilename"} onClick={setPathName} className={"path-shortcut"}/>
             </div>

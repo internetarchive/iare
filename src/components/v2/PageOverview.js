@@ -15,7 +15,6 @@ import {
     SubTitle,
     Colors,
 } from 'chart.js'
-// import {getElementsAtEvent} from "react-chartjs-2";
 
 Chart.register(
     LinearScale,
@@ -125,20 +124,6 @@ const ReferenceFilters = ( {filterList, filterCaption}) => {
 
 }
 
-// display filter buttons
-const UrlFilters = ( {filterList, filterCaption}) => {
-    return <div>
-        {/*<h4>URL Filters<br/><span style={{fontSize:"smaller", fontWeight:"normal"}}>Current filter: {filterCaption}</span></h4>*/}
-        {/*<h4>URL Filters</h4>*/}
-        <h4>{'\u00A0'}</h4>
-        <div className={"url-filters"}>
-            {/*{filterList}*/}
-        </div>
-    </div>
-
-}
-
-
 // display url info
 const RefOverview = ( { overview, onClickLink } ) => {
 
@@ -204,6 +189,7 @@ const UrlOverview = ( { overview, onClickChart } ) => {
     }
 
     const options = {
+        cutout: "50%",
         responsive: true,
         plugins: {
             legend: {
@@ -263,10 +249,25 @@ const UrlOverview = ( { overview, onClickChart } ) => {
 
 }
 
-/*
- */
-export default function PageOverview({refOverview, urlOverview, setRefFilter, setUrlFilter}) {
+// // display filter buttons
+// const UrlFilters = ( {filterList, filterCaption}) => {
+//     return !filterList || !filterList.length ? null : <div>
+//         {/*<h4>URL Filters<br/><span style={{fontSize:"smaller", fontWeight:"normal"}}>Current filter: {filterCaption}</span></h4>*/}
+//         {/*<h4>URL Filters</h4>*/}
+//         <h4>{'\u00A0'}</h4>
+//         <div className={"url-filters"}>
+//             {/*{filterList}*/}
+//         </div>
+//     </div>
+//
+// }
 
+export default function PageOverview( { refOverview,
+                                          urlOverview,
+                                          setRefFilter,
+                                          setUrlFilter
+                                        })
+{
     const [refFilterName, setRefFilterName] = useState( null );
     const [urlFilterName, setUrlFilterName] = useState( null );
 
@@ -290,28 +291,27 @@ export default function PageOverview({refOverview, urlOverview, setRefFilter, se
     const handleUrlButton= (name) => {
         // if new name === current name, toggle between "all" and new name
         const newName = urlFilterName === name ? "all" : name;
-        setUrlFilterName(newName);
+        setUrlFilterName(newName); // calls "UP" to the enclosing component
         const f = URL_FILTER_MAP[newName];
-        // setUrlFilter(f ? f.filterFunction : null)
         setUrlFilter(f)
     }
 
-    const urlFilterList = ["all"].map((name) => { // just show the All for now...
-        const f = URL_FILTER_MAP[name];
-        // we have urlOverview; we want to extract name's count.
-        // if urlOverview.urlCounts is bad, we skip the counts
-        const count = urlOverview && urlOverview.urlCounts
-            ? " (" + urlOverview.urlCounts.filter( s => s.link === name)[0].count + ")"
-            : "";
-
-        return <FilterButton key={name}
-                             name={name}
-                             caption={f.caption + count}
-                             desc={f.desc}
-                             isPressed={name===urlFilterName}
-                             onClick = {handleUrlButton}
-        />
-    });
+    // const urlFilterList = ["all"].map((name) => { // just show the All for now...
+    //     const f = URL_FILTER_MAP[name];
+    //     // we have urlOverview; we want to extract count for filter matching name.
+    //     // if urlOverview.urlCounts is bad, we skip the counts
+    //     const count = urlOverview && urlOverview.urlCounts
+    //         ? " (" + urlOverview.urlCounts.filter( s => s.link === name)[0].count + ")"
+    //         : "";
+    //
+    //     return <FilterButton key={name}
+    //                          name={name}
+    //                          caption={f.caption + count}
+    //                          desc={f.desc}
+    //                          isPressed={name===urlFilterName}
+    //                          onClick = {handleUrlButton}
+    //     />
+    // });
 
     // console.log("urlOverview:", urlOverview);
 
@@ -320,8 +320,9 @@ export default function PageOverview({refOverview, urlOverview, setRefFilter, se
         <div className={"page-overview-wrap"}>
 
             <UrlOverview overview={urlOverview} onClickChart={handleUrlButton}/>
+            {/*<Urls urlArray={urlBigArray} filter={myUrlFilter}/>*/}
 
-            <UrlFilters filterList={urlFilterList} filterCaption={URL_FILTER_MAP[urlFilterName] ? URL_FILTER_MAP[urlFilterName].caption : ""} />
+            {/*<UrlFilters filterList={urlFilterList} filterCaption={URL_FILTER_MAP[urlFilterName] ? URL_FILTER_MAP[urlFilterName].caption : ""} />*/}
 
             <ReferenceFilters filterList={refFilterList}
                               filterCaption={REF_FILTER_MAP[refFilterName] ? REF_FILTER_MAP[refFilterName].caption : ""} />

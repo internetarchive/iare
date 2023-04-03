@@ -5,7 +5,8 @@ import Urls from "./Urls";
 import Flds from "./Flds";
 import { API_V2_URL_BASE } from '../../constants/endpoints.js';
 import { URL_FILTER_MAP } from "./filterMaps";
-
+import Loader from "../Loader";
+import PageDisplay from "../PageDisplay";
 
 export default function PageData( { pageData = {} }) {
 
@@ -15,6 +16,8 @@ export default function PageData( { pageData = {} }) {
     const [urlBigArray, setUrlBigArray] = useState([]);
     const [urlOverview, setUrlOverview] = useState({}); // overview statistics for Urls; set in effects, passed to PageOverview
     const [urlFilter, setUrlFilter] = useState( null ); // filter to apply to displayed refs
+
+    const [isLoadingUrls, setIsLoadingUrls] = useState(false);
 
     // async function fetchOneRef(refID) {
     //     const endpoint = `${API_V2_URL_BASE}/statistics/reference/${refID}`;
@@ -41,19 +44,20 @@ export default function PageData( { pageData = {} }) {
     }, [pageData])
 
 
-    async function fetchOneUrl(url) {
-        const endpoint = `${API_V2_URL_BASE}/check-url?url=${encodeURIComponent(url)}`;
+    async function fetchOneUrl(url, refresh=false) {
+        // const endpoint = `${API_V2_URL_BASE}/check-url?url=${encodeURIComponent(url)}`;
+        const endpoint = `${API_V2_URL_BASE}/check-url?url=${encodeURIComponent(url)}${refresh?"&refresh=true":''}`;
         // console.log("fetchOneUrl: endpoint = ", endpoint)
         const response = await fetch(endpoint);
         const data = await response.json();
         const status_code = response.status;
         return { data, status_code };
     }
-    async function fetchAllUrls(urls) {
+    async function fetchAllUrls(urls, refresh=false) {
         if (!urls) return [];
         const promises = urls.map(url => {
             // console.log("fetchAllUrls: fetching: ", url)
-            return fetchOneUrl(url)
+            return fetchOneUrl(url, refresh)
         });
         const results = await Promise.all(promises);
         return results;
@@ -66,16 +70,23 @@ export default function PageData( { pageData = {} }) {
 
     // process fetched url array by simply saving results
     useEffect( () => {
-        fetchAllUrls(pageData.urls)
+        setIsLoadingUrls(true);
+        fetchAllUrls(pageData.urls, pageData.forceRefresh)
             .then(urlResults => {
                 console.log(`fetchAllUrls: ${urlResults.length} results found`);
                 setUrlBigArray( urlResults );
             })
             .catch(error => {
                 console.error(error);
-            });
+            })
+
+            .finally(() => {
+                // turn off "Loading" icon
+                setIsLoadingUrls(false);
+            });;
+
 // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [pageData])
+    }, [pageData]) // TODO: remove dependency (if eslint pragma removed) for fetchAllUrls somehow
 
     // calc url overview from urlBigArray when changed
     useEffect( () => {
@@ -98,15 +109,24 @@ export default function PageData( { pageData = {} }) {
 
     return <>
 
-        <PageOverview refOverview={refOverview}
-                      urlOverview={urlOverview}
-                      setRefFilter={setRefFilter}   // refFilter passed to <References /> component
-                      setUrlFilter={setUrlFilter}   // urlFilter passed to <Urls /> component */
-                    />
+        <PageOverview
+            refOverview={refOverview}
+            urlOverview={urlOverview}
+            setRefFilter={setRefFilter}   // refFilter passed to <References /> component
+            setUrlFilter={setUrlFilter}   // urlFilter passed to <Urls /> component */
+        />
 
-        <h3>Page Data</h3>
+        {/*<h3>Page Data</h3>*/}
         <div className={"page-data"}>
-            <Urls urlArray={urlBigArray} filter={urlFilter}/>
+
+            {isLoadingUrls ? <Loader message={"retrieving URL information..."}/> : <>
+                <Urls urlArray={urlBigArray} filter={urlFilter}/>
+                { /* TODO: pass in an error callback here? */}
+            </>}
+
+            {/*<Urls urlArray={urlBigArray} filter={urlFilter}/>*/}
+
+
             <References refs={references} filter={refFilter}/>
             <Flds flds={pageData.fld_counts}/>
         </div>

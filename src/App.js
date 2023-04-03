@@ -16,6 +16,8 @@ export default function App() {
     // /* if there is a url on the request address, then use it as pathName */
     // const [pathName, setPathName] = useState(window.location.pathname ? window.location.pathname.replace(/^\/+/g, '') : '');
     const [pathName, setPathName] = useState('');
+    const [refreshCheck, setRefreshCheck] = useState(false);
+
     const [endpointPath, setEndpointPath] = useState("");
 
     const [pageData, setPageData] = useState(null);
@@ -62,7 +64,7 @@ export default function App() {
 
     function convertPathToEndpoint(path = '') {
         // TODO: should change this to /article
-        return `${API_V2_URL_BASE}/statistics/all?url=${path}`;
+        return `${API_V2_URL_BASE}/statistics/all?url=${path}${refreshCheck?"&refresh=true":''}`;
     }
 
     /*
@@ -102,6 +104,8 @@ export default function App() {
                 data.pathName = pathName;
                 data.endpoint = endpointPath;
                 data.version = getWariVersion(data, endpointPath);
+                data.forceRefresh = refreshCheck;
+
                 // and set the new pageData state
                 setPageData(data);
             })
@@ -127,12 +131,12 @@ export default function App() {
 
     // fetch new data when endpointPath changes
     useEffect(() => {
-        debugAlert("APP:::useEffect[pathName]: pathName is:" + pathName)
+        debugAlert("APP:::useEffect[pathName]:  pathName is:" + pathName)
 
         const myEndpointPath = convertPathToEndpoint(pathName);
         setEndpointPath(myEndpointPath);
 
-        console.log("APP: useEffect[pathName] AFTER setEndpointPath")
+        console.log("APP: useEffect[pathName] AFTER setEndpointPath pathName is:" + pathName)
 
 // eslint-disable-next-line
     }, [pathName])
@@ -177,11 +181,12 @@ export default function App() {
                     : ''}</div>
                     <p>pathName : <MakeLink href={pathName}/></p>
                     <p>endpointPath: <MakeLink href={endpointPath}/></p>
+                    <p>"Force Refresh" checked? {refreshCheck.toString()}</p>
                 </div>
 
             </div>
 
-            <PathNameFetch pathInitial={pathName} handlePathName={handlePathName} />
+            <PathNameFetch pathInitial={pathName} handlePathName={handlePathName} handleRefreshCheck={setRefreshCheck} />
 
             {myError ? <div className={myError ? "error-display" : "error-display-none"}>
                 {myError}
