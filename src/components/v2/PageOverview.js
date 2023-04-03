@@ -1,12 +1,13 @@
 import React, {useState} from "react";
 import FilterButton from "../FilterButton";
-// import { URL_FILTER_MAP, URL_FILTER_NAMES } from './filterMaps.js';
 import { URL_FILTER_MAP } from './filterMaps.js';
 import PieChart from "../PieChart.js";
-
+// import BarChart from "../BarChart.js";
 
 import {
     Chart,
+    LinearScale,
+    BarElement,
     ArcElement,
     Legend,
     Tooltip,
@@ -14,9 +15,10 @@ import {
     SubTitle,
     Colors,
 } from 'chart.js'
-// import {getElementsAtEvent} from "react-chartjs-2";
 
 Chart.register(
+    LinearScale,
+    BarElement,
     ArcElement,
     Legend,
     Tooltip,
@@ -24,9 +26,9 @@ Chart.register(
     SubTitle,
     Colors);
 
-// this will register all chart.js things
-// import { Chart, registerables } from 'chart.js';
-// Chart.register(...registerables);
+        // the following two lines will register all chart.js things
+        // import { Chart, registerables } from 'chart.js';
+        // Chart.register(...registerables);
 
 const colors = {
     blue   : "#35a2eb",
@@ -94,6 +96,17 @@ const REF_FILTER_MAP = {
         filter: () => (d) => d.template_names.length < 1,
     },
 
+    booksArchive: {
+        /*
+        ISBN or book refs with
+         */
+        caption: "Show Refs with ISBN",
+        desc: "d.template_names.includes ['cite book','isbn']",
+        filter: () => (d) => {
+            return d.template_names.includes("cite book") || d.template_names.includes("isbn");
+        },
+    },
+
 };
 
 const REF_FILTER_NAMES = Object.keys(REF_FILTER_MAP);
@@ -106,19 +119,6 @@ const ReferenceFilters = ( {filterList, filterCaption}) => {
         <h4>Reference Filters<br/><span style={{fontSize:"smaller", fontWeight:"normal"}}>Current filter: {filterCaption}</span></h4>
         <div className={"reference-filters"}>
             {filterList}
-        </div>
-    </div>
-
-}
-
-// display filter buttons
-const UrlFilters = ( {filterList, filterCaption}) => {
-    return <div>
-        {/*<h4>URL Filters<br/><span style={{fontSize:"smaller", fontWeight:"normal"}}>Current filter: {filterCaption}</span></h4>*/}
-        {/*<h4>URL Filters</h4>*/}
-        <h4>{'\u00A0'}</h4>
-        <div className={"url-filters"}>
-            {/*{filterList}*/}
         </div>
     </div>
 
@@ -138,10 +138,13 @@ const RefOverview = ( { overview, onClickLink } ) => {
                 )}
             </div>
         </div>}
+
     </div>
 }
 
-/* display url info
+/*
+    displays url overview info
+
     assumed structure of overview:
 
     { urlCounts : [
@@ -186,6 +189,7 @@ const UrlOverview = ( { overview, onClickChart } ) => {
     }
 
     const options = {
+        cutout: "50%",
         responsive: true,
         plugins: {
             legend: {
@@ -217,21 +221,17 @@ const UrlOverview = ( { overview, onClickChart } ) => {
                 animateScale: true,
                     animateRotate: true
             },
-            // colors: { // color library for automatic coloration
-            //     enabled: true,
-            //     forceOverride: true
-            // }
         },
     }
 
-    // debug display for chartData
+    // // debug display for chartData
     // return <div>
     //     <h4>Urls</h4>
     //     <RawJson obj={chartData} />
     // </div>
 
     const onClick = (link) => {
-        console.log("pie chart clicked, link=", link)
+        // console.log("pie chart clicked, link=", link)
         onClickChart(link);
     }
 
@@ -249,14 +249,27 @@ const UrlOverview = ( { overview, onClickChart } ) => {
 
 }
 
-/*
- */
-export default function PageOverview({refOverview, urlOverview, setRefFilter, setUrlFilter}) {
+// // display filter buttons
+// const UrlFilters = ( {filterList, filterCaption}) => {
+//     return !filterList || !filterList.length ? null : <div>
+//         {/*<h4>URL Filters<br/><span style={{fontSize:"smaller", fontWeight:"normal"}}>Current filter: {filterCaption}</span></h4>*/}
+//         {/*<h4>URL Filters</h4>*/}
+//         <h4>{'\u00A0'}</h4>
+//         <div className={"url-filters"}>
+//             {/*{filterList}*/}
+//         </div>
+//     </div>
+//
+// }
 
+export default function PageOverview( { refOverview,
+                                          urlOverview,
+                                          setRefFilter,
+                                          setUrlFilter
+                                        })
+{
     const [refFilterName, setRefFilterName] = useState( null );
     const [urlFilterName, setUrlFilterName] = useState( null );
-
-    // const nullCall = () => { alert("placeholder call for filter"); }
 
     function handleRefButton(name) {
         setRefFilterName(name);
@@ -278,44 +291,43 @@ export default function PageOverview({refOverview, urlOverview, setRefFilter, se
     const handleUrlButton= (name) => {
         // if new name === current name, toggle between "all" and new name
         const newName = urlFilterName === name ? "all" : name;
-        setUrlFilterName(newName);
+        setUrlFilterName(newName); // calls "UP" to the enclosing component
         const f = URL_FILTER_MAP[newName];
-        // setUrlFilter(f ? f.filterFunction : null)
         setUrlFilter(f)
     }
 
-//    const urlFilterList = URL_FILTER_NAMES.map((name) => {
-    const urlFilterList = ["all"].map((name) => { // just show the All for now...
-        const f = URL_FILTER_MAP[name];
-        // we have urlOverview; we want to extract name's count.
-        // if urlOverview.urlCounts is bad, we skip the counts
-        const count = urlOverview && urlOverview.urlCounts
-            ? " (" + urlOverview.urlCounts.filter( s => s.link === name)[0].count + ")"
-            : "";
+    // const urlFilterList = ["all"].map((name) => { // just show the All for now...
+    //     const f = URL_FILTER_MAP[name];
+    //     // we have urlOverview; we want to extract count for filter matching name.
+    //     // if urlOverview.urlCounts is bad, we skip the counts
+    //     const count = urlOverview && urlOverview.urlCounts
+    //         ? " (" + urlOverview.urlCounts.filter( s => s.link === name)[0].count + ")"
+    //         : "";
+    //
+    //     return <FilterButton key={name}
+    //                          name={name}
+    //                          caption={f.caption + count}
+    //                          desc={f.desc}
+    //                          isPressed={name===urlFilterName}
+    //                          onClick = {handleUrlButton}
+    //     />
+    // });
 
-        return <FilterButton key={name}
-                             name={name}
-                             caption={f.caption + count}
-                             desc={f.desc}
-                             isPressed={name===urlFilterName}
-                             onClick = {handleUrlButton}
-        />
-    });
-
-    console.log("urlOverview:", urlOverview);
+    // console.log("urlOverview:", urlOverview);
 
     return <div className={"page-overview"}>
         <h3>Page Overview</h3>
         <div className={"page-overview-wrap"}>
 
-                <RefOverview overview={refOverview} onClickLink={()=>{}} />
+            <UrlOverview overview={urlOverview} onClickChart={handleUrlButton}/>
+            {/*<Urls urlArray={urlBigArray} filter={myUrlFilter}/>*/}
 
-                <ReferenceFilters filterList={refFilterList}
-                                  filterCaption={REF_FILTER_MAP[refFilterName] ? REF_FILTER_MAP[refFilterName].caption : ""} />
+            {/*<UrlFilters filterList={urlFilterList} filterCaption={URL_FILTER_MAP[urlFilterName] ? URL_FILTER_MAP[urlFilterName].caption : ""} />*/}
 
-                <UrlOverview overview={urlOverview} onClickChart={handleUrlButton}/>
+            <ReferenceFilters filterList={refFilterList}
+                              filterCaption={REF_FILTER_MAP[refFilterName] ? REF_FILTER_MAP[refFilterName].caption : ""} />
 
-                <UrlFilters filterList={urlFilterList} filterCaption={URL_FILTER_MAP[urlFilterName] ? URL_FILTER_MAP[urlFilterName].caption : ""} />
+            <RefOverview overview={refOverview} onClickLink={()=>{}} />
 
         </div>
     </div>

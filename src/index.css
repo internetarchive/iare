@@ -3,18 +3,85 @@ body {
     margin: 20px 20px 20px;
 }
 
-body.env-other {
-    background-color: #e5e8e3 !important;
-
-    /*background-image: url('./images/bg.staging.20.png') !important;*/
-}
+/* environment-tag is for non-production indication */
 div.environment-tag {
+    display:none;
     position:absolute;
-    font-size:1rem;
-    top:8px;
-    color:#9b9b9b;
+    font-size:1.1rem;
+    top:6px; /*8px;*/
+    color: #b2b2b2;
+    white-space: nowrap;
+    z-index: 1;
 }
 
+.ware-view .header h1 {
+    position:relative;
+    z-index: 10;
+    margin-top:0;
+    padding-left:.3rem;
+}
+body.env-other .ware-view .header h1 {
+    color:red;
+}
+.version-display {
+    font-size: .7em;
+    font-weight: normal;
+    color: grey;
+}
+.version-display span.non-production {
+    font-size: .8em;
+}
+body.env-production .version-display span.non-production {
+    display:none;
+}
+body.env-other .version-display span.non-production {
+    display:inherit;
+}
+
+.debug-on {
+    display: inherit;
+    border: 1px black solid;
+    padding: 0.5rem 1rem 0;
+    background: #2f357d;
+    color: white;
+}
+.debug-on a {
+    color:lightskyblue;
+}
+
+.debug-off {
+    display:none;
+}
+.debug-info {
+    font-style: italic;
+    color:#8191a4;
+}
+.debug-button, more-button {
+    border-radius: 0.75rem;
+    background-color: #dadffd;
+    padding:0.14em .5em;
+    color: #454545;
+    border: 1px solid black;
+    font-size: .85rem;
+}
+.more-button {
+    background-color: transparent;
+    border:none;
+    text-decoration: underline;
+    color:grey;
+}
+.debug-on .debug-button {
+    background-color: #c9e3f9;
+}
+
+/* GENERAL ELEMENTS */
+
+.detail-show {
+    display:inherit;
+}
+.detail-hide {
+    display:none;
+}
 ol, ul {
     padding-left: 30px;
 }
@@ -59,13 +126,17 @@ table.single-detail tr td:not(:first-child) {
     width:19rem;
 }
 
-.j-view {
+.ware-view {
     display: flex;
     /*flex-direction: row;*/
     flex-direction: column;
 }
+.ware-view h3 {
+    color:#666666;
+}
 
-.j-view .file-fetch {
+
+.ware-view .path-fetch {
     padding:1rem;
     padding-bottom:0;
     margin-top:.5rem;
@@ -73,37 +144,17 @@ table.single-detail tr td:not(:first-child) {
 
     border:1px solid black;
 }
-
-/* file name input box */
-.j-view .file-fetch #fileName {
-    width:52rem;
-    font-size: 1.1rem;
-}
-
-.j-view .file-fetch .file-shortcut {
-    margin-left:10px;
-}
-
-            /*.file-fetch-wrap {*/
-            /*    display: inline-flex;*/
-            /*    flex-direction: row;*/
-            /*    flex-wrap: wrap;*/
-            /*    margin-bottom: .5rem;*/
-            /*}*/
-            /*.file-fetch-wrap #urlSource {*/
-            /*    width:28rem;*/
-            /*    font-size: 1.1rem;*/
-            /*}*/
-
-.wiki-fetch-wrap {
+.path-fetch-wrap {
     display: inline-flex;
     flex-direction: row;
     flex-wrap: wrap;
     margin-bottom: .5rem;
 }
-.wiki-fetch-wrap #urlSource {
-    width:28rem;
+.path-fetch #pathInput {
+    width:36rem;
     font-size: 1.1rem;
 }
-
+.path-fetch .path-shortcut {
+    margin-left:10px;
+}
 

@@ -91,7 +91,7 @@ function References( { refs, filter } ) {
 
         <div className={"ref-details"}>
             <h3>Reference Details</h3>
-            <p>endpoint: <a href={referenceEndpoint} target={"_blank"} rel={"noreferrer"}>{referenceEndpoint}</a></p>
+            <p>source: <a href={referenceEndpoint} target={"_blank"} rel={"noreferrer"}>{referenceEndpoint}</a></p>
             <RefDetails details={refDetails} />
         </div>
 

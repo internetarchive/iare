@@ -43,4 +43,3 @@ export const URL_FILTER_MAP = {
 };
 
 export const URL_FILTER_NAMES = Object.keys(URL_FILTER_MAP);
-
