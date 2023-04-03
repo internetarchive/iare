@@ -1,4 +1,4 @@
-import React from 'react';
+import React , { useState } from 'react';
 
 /*
 assumes urls is an array of url data objects with:
@@ -8,12 +8,22 @@ assumes urls is an array of url data objects with:
  */
 export default function Urls( { urlArray, filter } ) {
 
+    const [sort, setSort] = useState(true); // true = Ascending; false = descending
+
     let urlDisplay = [];
     if (!urlArray || urlArray.length === 0) {
         urlDisplay = <p>No urls to show!</p>;
     }
     else {
-        const filteredUrls = filter ? urlArray.filter( (filter.filterFunction)() ) : urlArray;
+        const filteredUrls = filter ? urlArray.filter( (filter.filterFunction)() )
+
+            : urlArray;
+
+        filteredUrls.sort((a,b) => {
+            if (a.data.status_code < b.data.status_code) return sort ? -1 : 1;
+            if (a.data.status_code > b.data.status_code) return sort ? 1 : -1;
+            return 0;
+        })
 
         // iterate over array of url objects
         const rows = filteredUrls.map((u, i) => {
@@ -35,10 +45,11 @@ export default function Urls( { urlArray, filter } ) {
 
         urlDisplay = <>
             <h4 style={{color:"grey"}}>{label}</h4>
+            <p>sort = {sort?"true":"false"}</p>
             <div className={"url-display"}>
-                <div className={"url-row"}>
-                    <div className={"url-name"}>url</div>
-                    <div className={"url-status"}>status</div>
+                <div className={"url-row url-header-row"}>
+                    <div className={"url-name"} >url</div>
+                    <div className={"url-status"} onClick={() => {console.log("arf"); setSort(!sort)}}>status</div>
                 </div>
                 {rows}
             </div>

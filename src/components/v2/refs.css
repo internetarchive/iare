@@ -131,6 +131,12 @@
     /*width: 22rem;*/
 }
 
+/*
+
+URLs
+
+ */
+
 .urls {
     width:25%;
     /*margin-left:1rem;*/
@@ -180,6 +186,12 @@
 .url-display .url-status {
     width: 10%;
     padding:.25rem;
+}
+.url-display .url-header-row .url-status {
+    cursor: pointer;
+    width:100%;
+    text-align: center;
+    color:#0000EE;
 }
 .url-display a {
     width:80%;
