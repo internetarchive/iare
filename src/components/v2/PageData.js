@@ -6,7 +6,6 @@ import Flds from "./Flds";
 import { API_V2_URL_BASE } from '../../constants/endpoints.js';
 import { URL_FILTER_MAP } from "./filterMaps";
 import Loader from "../Loader";
-import PageDisplay from "../PageDisplay";
 
 export default function PageData( { pageData = {} }) {
 
@@ -119,7 +118,10 @@ export default function PageData( { pageData = {} }) {
         {/*<h3>Page Data</h3>*/}
         <div className={"page-data"}>
 
-            {isLoadingUrls ? <Loader message={"retrieving URL information..."}/> : <>
+            {isLoadingUrls ? <div className={"urls"}>
+                <h3 style={{marginBottom:0}}>URLs</h3>
+                <Loader message={"retrieving URL information..."}/>
+            </div> : <>
                 <Urls urlArray={urlBigArray} filter={urlFilter}/>
                 { /* TODO: pass in an error callback here? */}
             </>}

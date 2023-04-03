@@ -18,7 +18,7 @@ export default function PathNameFetch({ pathInitial='', handlePathName, handleRe
 
     useEffect( () => {
         handleRefreshCheck(checked)
-    }, [checked])
+    }, [checked, handleRefreshCheck])
 
     const myHandlePath = {
         handleChange : (event) => {

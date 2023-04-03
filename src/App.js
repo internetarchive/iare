@@ -17,6 +17,7 @@ export default function App() {
     // const [pathName, setPathName] = useState(window.location.pathname ? window.location.pathname.replace(/^\/+/g, '') : '');
     const [pathName, setPathName] = useState('');
     const [refreshCheck, setRefreshCheck] = useState(false);
+    const [refreshTime, setRefreshTime] = useState(null);
 
     const [endpointPath, setEndpointPath] = useState("");
 
@@ -125,7 +126,8 @@ export default function App() {
 
     function handlePathName(newPathName) {
         debugAlert("APP::handlePathName: new pathName is:" + newPathName)
-        // console.log("APP::handlePathName: before setPathName, pathName = ", newPathName)
+        console.log("APP::handlePathName: before setPathName, new pathName = ", newPathName)
+        setRefreshTime( Date() );
         setPathName(newPathName);
     }
 
@@ -152,7 +154,7 @@ export default function App() {
         }
 
 // eslint-disable-next-line
-    }, [endpointPath])
+    }, [endpointPath, refreshTime])
 
 
     // console.log("APP: pathName:", pathName);
