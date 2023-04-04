@@ -17,6 +17,7 @@ export default function PageData( { pageData = {} }) {
     const [urlFilter, setUrlFilter] = useState( null ); // filter to apply to displayed refs
 
     const [isLoadingUrls, setIsLoadingUrls] = useState(false);
+    const [options, setOptions] = useState({});
 
     // async function fetchOneRef(refID) {
     //     const endpoint = `${API_V2_URL_BASE}/statistics/reference/${refID}`;
@@ -113,6 +114,7 @@ export default function PageData( { pageData = {} }) {
             urlOverview={urlOverview}
             setRefFilter={setRefFilter}   // refFilter passed to <References /> component
             setUrlFilter={setUrlFilter}   // urlFilter passed to <Urls /> component */
+            options={options}
         />
 
         {/*<h3>Page Data</h3>*/}
@@ -127,7 +129,6 @@ export default function PageData( { pageData = {} }) {
             </>}
 
             {/*<Urls urlArray={urlBigArray} filter={urlFilter}/>*/}
-
 
             <References refs={references} filter={refFilter}/>
             <Flds flds={pageData.fld_counts}/>

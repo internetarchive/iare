@@ -265,7 +265,8 @@ const UrlOverview = ( { overview, onClickChart } ) => {
 export default function PageOverview( { refOverview,
                                           urlOverview,
                                           setRefFilter,
-                                          setUrlFilter
+                                          setUrlFilter,
+                                          options
                                         })
 {
     const [refFilterName, setRefFilterName] = useState( null );
@@ -285,6 +286,7 @@ export default function PageOverview( { refOverview,
                              desc={f.desc}
                              isPressed={name===refFilterName}
                              onClick = {handleRefButton}
+                             useDesc = {false}
         />
     });
 

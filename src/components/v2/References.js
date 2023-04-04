@@ -67,6 +67,7 @@ function References( { refs, filter } ) {
 
     }
 
+    if (!refs) return <><p>No references!</p></>
 
     const filteredRefs = filter ? refs.filter( filter ) : refs;
 
