@@ -1,8 +1,10 @@
 import React, {useState} from "react";
 import FilterButton from "../FilterButton";
-import { URL_FILTER_MAP } from './filterMaps.js';
 import PieChart from "../PieChart.js";
 // import BarChart from "../BarChart.js";
+
+import { URL_FILTER_MAP } from './filterMaps.js';
+import { REF_FILTER_MAP, REF_FILTER_NAMES } from './filters/refFilterMaps.js';
 
 import {
     Chart,
@@ -41,77 +43,6 @@ const colors = {
     magenta: "#f763ff",
 }
 
-const REF_FILTER_MAP = {
-    All: {
-        caption: "Show All Refs",
-        desc: "no filter",
-        filter: () => () => {return true},
-    },
-    // Plain: {
-    //     caption: "Show Refs with Plain Text",
-    //     desc: "plain_text_in_reference = true",
-    //     filter: (d) => d.plain_text_in_reference,
-    // },
-    NamedTemplate: {
-        caption: "Named Templates",
-        desc: 'template_names[]',
-        filter: () => (d) => {return d.template_names.length > 0},
-    },
-    CiteWeb: {
-        caption: "Cite Web",
-        desc: "template_names[] contains 'cite web'",
-        filter: () => (d) => {
-            return d.template_names.includes("cite web");
-        },
-    },
-    CiteMap: {
-        caption: "Cite Map",
-        desc: "template_names[] contains 'cite map'",
-        filter: () => (d) => {
-            return d.template_names.includes("cite map");
-        },
-    },
-    // Cs1: {
-    //     caption: "Show Refs using cs1 template",
-    //     desc: "what is condition?",
-    //     filter: () => (d) => 0,
-    // },
-    ISBN: {
-        /*
-        ISBN references I would define as: references with a template name "isbn" aka
-        naked isbn or references with a cite book + parameter isbn that is not none.
-         */
-        caption: "Show Refs with ISBN",
-        desc: "d.template_names.includes ['cite book','isbn']",
-        filter: () => (d) => {
-            return d.template_names.includes("cite book") || d.template_names.includes("isbn");
-        },
-    },
-
-    // TODO: this algorithm is not returning the number of refs as given in agg[without_a_template]
-    NoTemplate: {
-        caption: "Refs without a Template",
-        desc: "d.template_names.length < 1",
-        // filter: () => true,
-        filter: () => (d) => d.template_names.length < 1,
-    },
-
-    booksArchive: {
-        /*
-        ISBN or book refs with
-         */
-        caption: "Show Refs with ISBN",
-        desc: "d.template_names.includes ['cite book','isbn']",
-        filter: () => (d) => {
-            return d.template_names.includes("cite book") || d.template_names.includes("isbn");
-        },
-    },
-
-};
-
-const REF_FILTER_NAMES = Object.keys(REF_FILTER_MAP);
-
-
 
 // display filter buttons
 const ReferenceFilters = ( {filterList, filterCaption}) => {
@@ -143,14 +74,17 @@ const RefOverview = ( { overview, onClickLink } ) => {
 }
 
 /*
-    displays url overview info
-
-    assumed structure of overview:
+    UrlOverview:
+    assumed structure of overview object:
 
     { urlCounts : [
-        {label:, count:, link: },
-        ...
-      ]
+            {
+            label:,
+            count:,
+            link:
+            }
+        ,...
+        ]
     }
 */
 const UrlOverview = ( { overview, onClickChart } ) => {
@@ -160,6 +94,7 @@ const UrlOverview = ( { overview, onClickChart } ) => {
             <p>No Url statistics to show.</p>
         </div>}
 
+    // remove "all" entry for pie chart
     const overviewWithoutAll = overview.urlCounts
         ? overview.urlCounts.filter(s => s.link !== "all")
         : [];
@@ -262,7 +197,8 @@ const UrlOverview = ( { overview, onClickChart } ) => {
 //
 // }
 
-export default function PageOverview( { refOverview,
+export default function PageOverview( { references,
+                                          refOverview,
                                           urlOverview,
                                           setRefFilter,
                                           setUrlFilter,
@@ -279,11 +215,13 @@ export default function PageOverview( { refOverview,
     }
 
     const refFilterList = REF_FILTER_NAMES.map((name) => {
-        let f = REF_FILTER_MAP[name];
+        let f = REF_FILTER_MAP[name]; // TODO: catch null f error?
+        f.count = references ? references.filter((f.filterFunction)()).length : 0; // Note the self-evaluating filterFunction!
         return <FilterButton key={name}
                              name={name}
                              caption={f.caption}
                              desc={f.desc}
+                             count={f.count}
                              isPressed={name===refFilterName}
                              onClick = {handleRefButton}
                              useDesc = {false}

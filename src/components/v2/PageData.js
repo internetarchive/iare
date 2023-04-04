@@ -110,6 +110,7 @@ export default function PageData( { pageData = {} }) {
     return <>
 
         <PageOverview
+            references={references}
             refOverview={refOverview}
             urlOverview={urlOverview}
             setRefFilter={setRefFilter}   // refFilter passed to <References /> component
