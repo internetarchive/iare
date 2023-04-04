@@ -203,7 +203,6 @@ export default function PageOverview( { references,
                                           urlOverview,
                                           setRefFilter,
                                           setUrlFilter,
-                                          options
                                         })
 {
     const [refFilterName, setRefFilterName] = useState( null );
