@@ -3,7 +3,7 @@ import FilterButton from "../FilterButton";
 import PieChart from "../PieChart.js";
 // import BarChart from "../BarChart.js";
 
-import { URL_FILTER_MAP } from './filterMaps.js';
+import { URL_FILTER_MAP } from './filters/urlFilterMaps.js';
 import { REF_FILTER_MAP, REF_FILTER_NAMES } from './filters/refFilterMaps.js';
 
 import {
@@ -47,7 +47,8 @@ const colors = {
 // display filter buttons
 const ReferenceFilters = ( {filterList, filterCaption}) => {
     return <div>
-        <h4>Reference Filters<br/><span style={{fontSize:"smaller", fontWeight:"normal"}}>Current filter: {filterCaption}</span></h4>
+        {/*<h4>Reference Filters<br/><span style={{fontSize:"smaller", fontWeight:"normal"}}>Current filter: {filterCaption}</span></h4>*/}
+        <h4>References</h4>
         <div className={"reference-filters"}>
             {filterList}
         </div>
@@ -211,7 +212,7 @@ export default function PageOverview( { references,
     function handleRefButton(name) {
         setRefFilterName(name);
         const f = REF_FILTER_MAP[name];
-        setRefFilter(f ? f.filter : null)
+        setRefFilter(f ? f.filterFunction : null)
     }
 
     const refFilterList = REF_FILTER_NAMES.map((name) => {

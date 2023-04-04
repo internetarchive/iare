@@ -45,7 +45,7 @@ export default function Urls( { urlArray, filter } ) {
 
         urlDisplay = <>
             <h4 style={{color:"grey"}}>{label}</h4>
-            <p>sort = {sort?"true":"false"}</p>
+            {/* USE ONLY WHEN DEBUG <p>sort = {sort?"true":"false"}</p>*/}
             <div className={"url-display"}>
                 <div className={"url-row url-header-row"}>
                     <div className={"url-name"} >url</div>

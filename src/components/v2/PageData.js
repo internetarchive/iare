@@ -4,7 +4,7 @@ import References from "./References";
 import Urls from "./Urls";
 import Flds from "./Flds";
 import { API_V2_URL_BASE } from '../../constants/endpoints.js';
-import { URL_FILTER_MAP } from "./filterMaps";
+import { URL_FILTER_MAP } from "./filters/urlFilterMaps.js";
 import Loader from "../Loader";
 
 export default function PageData( { pageData = {} }) {

@@ -1,6 +1,6 @@
 export const REF_FILTER_MAP = {
     All: {
-        caption: "Show All Refs",
+        caption: "Show All",
         desc: "no filter",
         filterFunction: () => () => {return true},
     },
@@ -38,31 +38,42 @@ export const REF_FILTER_MAP = {
         ISBN references I would define as: references with a template name "isbn" aka
         naked isbn or references with a cite book + parameter isbn that is not none.
          */
-        caption: "Show Refs with ISBN",
+        caption: "Has ISBN",
         desc: "d.template_names.includes ['cite book','isbn']",
         filterFunction: () => (d) => {
             return d.template_names.includes("cite book") || d.template_names.includes("isbn");
         },
     },
 
+    archiveBook: {
+        /*
+        ISBN or book refs with
+         */
+        caption: "Books with archive.org",
+        rule: "d.template_names.includes ['cite book','isbn'] and URLs include \"https://archive.org/details/\"",
+        desc: "['cite book'], with \"https://archive.org/details/\"",
+        filterFunction: () => (d) => {
+            return !!d.urls.find((url) => url.includes("https://archive.org/details/"))
+        }
+    },
+
     // TODO: this algorithm is not returning the number of refs as given in agg[without_a_template]
     NoTemplate: {
-        caption: "Refs without a Template",
+        caption: "No Template",
         desc: "d.template_names.length < 1",
         // filterFunction: () => true,
         filterFunction: () => (d) => d.template_names.length < 1,
     },
 
-    booksArchive: {
-        /*
-        ISBN or book refs with
-         */
-        caption: "Show Refs with ISBN",
-        desc: "d.template_names.includes ['cite book','isbn']",
-        filterFunction: () => (d) => {
-            return d.template_names.includes("cite book") || d.template_names.includes("isbn");
-        },
-    },
+
+    // archiveAny: {
+    //     caption: "Anything with archive.org/details",
+    //     rule: "URLs include \"https://archive.org/details/\" snippet",
+    //     desc: "urls include snippet: \"https://archive.org/details/\"",
+    //     filterFunction: () => (d) => {
+    //         return !!d.wikitext.includes("https://archive.org/details/")
+    //     },
+    // },
 
 };
 

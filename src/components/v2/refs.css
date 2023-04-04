@@ -9,7 +9,7 @@
     border:1px solid black;
 }
 .page-overview-wrap > div {
-    margin-right:1rem;
+    margin-right:1.25rem;
 }
 
 .reference-types {
@@ -32,6 +32,7 @@
     padding:.5rem;
     text-align:left;
     font-weight: bold;
+    min-width:13.5rem;
 }
 .reference-filters button.btn-pressed {
     background-color: #b9cbc3;
@@ -44,12 +45,12 @@
 }
 
 .url-chart-display {
-    width:335px;
+    width:317px;
 }
 
 .url-filters {
     display:flex;
-    flex-direction: column;
+    flex-d5irection: column;
 
 }
 .url-filters button {
