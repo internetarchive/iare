@@ -76,17 +76,6 @@
 }
 
 
-/*.button-ref-type {*/
-/*    display:block;*/
-/*    width:12em;*/
-/*    height:2em;*/
-/*    margin-bottom:.25rem;*/
-/*}*/
-/*.reference-data {*/
-/*    display:flex;*/
-/*    flex-direction: row;*/
-/*}*/
-
 .page-data {
     display:flex;
     flex-direction: row;
@@ -121,7 +110,6 @@
 .ref-button {
     /*background-color: #ced9ef; !* #c1d4e0;*!*/
     background-color: #ceefd9; /* #c1d4e0;*/
-    /*width: 22rem;*/
 
     width: 100%;
     text-align: left;
@@ -207,29 +195,3 @@ URLs
 .flds a {
     color: #339966;
 }
-
-/*.j-view-refs .filter-box{*/
-/*    border:1px solid black;*/
-/*    margin-left: 0 !important;*/
-/*    padding:.5em;*/
-/*}*/
-/*.j-view-refs .filter-box h4 {*/
-/*    margin:0 0 0.5em 0;*/
-/*}*/
-/*.j-view-refs .filter-box button {*/
-/*    !*width:12rem !important;*!*/
-/*    width:100% !important;*/
-/*}*/
-/*.j-view-refs .filter-box .btn-description {*/
-/*    font-style: italic;*/
-/*    font-size: smaller;*/
-/*    padding-left:1em;*/
-/*}*/
-
-/*.j-view-refs button.btn-pressed {*/
-/*    !*background-color: #bbeff3;*!*/
-/*    !*background-color: #1a73e8;*!*/
-/*    background-color: hsl(214deg 82% 77%);*/
-/*}*/
-
-

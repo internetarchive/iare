@@ -40,13 +40,14 @@ export default function PageData( { pageData = {} }) {
         const refStats = pageData ? (pageData.reference_statistics ? pageData.reference_statistics : {} )
         : {};
         setRefOverview(refStats);
-    }, [pageData])
+    }, [pageData]) // TODO: change deps to [] ?
 
 
     async function fetchOneUrl(url, refresh=false) {
         // const endpoint = `${API_V2_URL_BASE}/check-url?url=${encodeURIComponent(url)}`;
+
         const endpoint = `${API_V2_URL_BASE}/check-url?url=${encodeURIComponent(url)}${refresh?"&refresh=true":''}`;
-        // console.log("fetchOneUrl: endpoint = ", endpoint)
+
         const response = await fetch(endpoint);
         const data = await response.json();
         const status_code = response.status;
@@ -54,6 +55,7 @@ export default function PageData( { pageData = {} }) {
     }
     async function fetchAllUrls(urls, refresh=false) {
         if (!urls) return [];
+        console.log(`fetchAllUrls: refresh = ${refresh}`)
         const promises = urls.map(url => {
             // console.log("fetchAllUrls: fetching: ", url)
             return fetchOneUrl(url, refresh)

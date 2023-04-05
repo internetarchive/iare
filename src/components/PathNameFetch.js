@@ -1,24 +1,25 @@
-import React, {useEffect, useState} from "react";
+import React, { useState } from "react";
 import ButtonFetch from './ButtonFetch.js';
 import Checkbox from "./Checkbox";
 
 /*
 expected props
-    pathInitial         path string to put in input field
-    handlePathName      callback function to call when "Load" button clicked
+    pathInitial            path string to put in input field
+    checkInitial           initial checkbox state for "Force Refresh"
+    handlePathResults      callback "Load" button clicked; expects 2 element array: [pathName, checked]
  */
-export default function PathNameFetch({ pathInitial='', handlePathName, handleRefreshCheck } ) {
+export default function PathNameFetch({ pathInitial='', checkInitial= false, handlePathResults } ) {
 
     const [pathName, setPathName] = useState(pathInitial); // init with passed in name
-    const [checked, setChecked] = React.useState(false);
+    const [checked, setChecked] = React.useState(checkInitial);
 
     const handleCheckChange = () => {
         setChecked(!checked);
     };
 
-    useEffect( () => {
-        handleRefreshCheck(checked)
-    }, [checked, handleRefreshCheck])
+    const returnResults = () => {
+        handlePathResults([pathName, checked])
+    }
 
     const myHandlePath = {
         handleChange : (event) => {
@@ -31,14 +32,14 @@ export default function PathNameFetch({ pathInitial='', handlePathName, handleRe
             let key = event.key;
             if (key === "Enter") {
                 // console.log("PathNameFetch::myHandleFetch.handleKeyPress: submitting via enter-key")
-                handlePathName(pathName)
+                returnResults()
             }
         },
 
         // submit form by calling event handler for pathName, handlePathName
         handleSubmit : (event) => {
             // console.log("PathNameFetch::myHandleFetch.handleSubmit, pathName is:" + pathName)
-            handlePathName(pathName); // callback up to caller
+            returnResults()
         }
     };
 

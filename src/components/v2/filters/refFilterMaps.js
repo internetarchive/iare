@@ -65,7 +65,6 @@ export const REF_FILTER_MAP = {
         filterFunction: () => (d) => d.template_names.length < 1,
     },
 
-
     // archiveAny: {
     //     caption: "Anything with archive.org/details",
     //     rule: "URLs include \"https://archive.org/details/\" snippet",
