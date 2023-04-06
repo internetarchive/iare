@@ -15,17 +15,25 @@ export const REF_FILTER_MAP = {
         filterFunction: () => (d) => {return d.template_names.length > 0},
     },
     CiteWeb: {
-        caption: "Cite Web",
+        caption: "{{cite web}} templates",
         desc: "template_names[] contains 'cite web'",
         filterFunction: () => (d) => {
             return d.template_names.includes("cite web");
         },
     },
     CiteMap: {
-        caption: "Cite Map",
+        caption: "{{cite map}} templates",
         desc: "template_names[] contains 'cite map'",
         filterFunction: () => (d) => {
             return d.template_names.includes("cite map");
+        },
+    },
+    CiteJournal: {
+        caption: "{{cite journal}} templates",
+        desc: "template_names[] contains 'cite journal'",
+        tooltip: "there is a {{cite journal}}",
+        filterFunction: () => (d) => {
+            return d.template_names.includes("cite journal");
         },
     },
     // Cs1: {

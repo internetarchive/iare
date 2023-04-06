@@ -20,6 +20,9 @@ div.environment-tag {
     margin-top:0;
     padding-left:.3rem;
 }
+body.env-production .ware-view .header h1 {
+    color:#e30040;
+}
 body.env-other .ware-view .header h1 {
     color:red;
 }
