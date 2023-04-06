@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import package_json from "../package.json";
 import {API_V2_URL_BASE} from "./constants/endpoints";
 import PathNameFetch from "./components/PathNameFetch";
@@ -8,16 +8,16 @@ import MakeLink from "./components/MakeLink";
 
 export default function App() {
 
+    const env = window.location.host === "archive.org" ? 'env-production' : 'env-other';
     const [isDebug, setDebug] = useState(false);
     const [isDebugAlerts, setDebugAlerts] = useState(false);
 
-    const env = window.location.host === "archive.org" ? 'env-production' : 'env-other';
-
-    // /* if there is a url on the request address, then use it as pathName */
-    // const [pathName, setPathName] = useState(window.location.pathname ? window.location.pathname.replace(/^\/+/g, '') : '');
-    const [pathName, setPathName] = useState('');
-    const [refreshCheck, setRefreshCheck] = useState(false);
-    const [refreshTime, setRefreshTime] = useState(null);
+    // transfer url and refresh params from address line, if there
+    const queryParameters = new URLSearchParams(window.location.search)
+    const myUrl = queryParameters.has("url") ? queryParameters.get("url") : '';
+    const [pathName, setPathName] = useState(myUrl);
+    const myRefresh = queryParameters.has("refresh") ? queryParameters.get("refresh").toLowerCase() === 'true' : false;
+    const [refreshCheck, setRefreshCheck] = useState(myRefresh);
 
     const [endpointPath, setEndpointPath] = useState("");
 
@@ -34,9 +34,9 @@ export default function App() {
         setDebugAlerts(!isDebugAlerts);
     }
 
-    const debugAlert = (msg) => {
+    const debugAlert = useCallback((msg) => {
         if (isDebug && isDebugAlerts) alert(msg)
-    }
+    }, [isDebug, isDebugAlerts]);
 
     // add class to body to indicate environment
     useEffect(() => {
@@ -62,38 +62,31 @@ export default function App() {
             return "unknown";
     }
 
+    const convertPathToArticleEndpoint = (path = '', refresh=false) => {
+        return`${API_V2_URL_BASE}/statistics/article?url=${path}${ refresh ? "&refresh=true":''}`;
+    };
 
-    function convertPathToEndpoint(path = '') {
-        // TODO: should change this to /article
-        return `${API_V2_URL_BASE}/statistics/all?url=${path}${refreshCheck?"&refresh=true":''}`;
-    }
+    // fetch article data
+    // TODO: account for error conditions, like wrong file format, not found, etc
+    const articleFetch = useCallback((pathName, refresh=false) => {
 
-    /*
-        attempt to fetch json data from endpoint
-
-        TODO account for error conditions, like wrong file format, not found, etc
-     */
-    const fileFetch = (endpointPath) => {
-
-        console.log("APP::fileFetch: endpointPath = ", endpointPath)
-
-        // handle null endpointPath
-        if (!endpointPath) {
-            console.log ("APP::fileFetch: endpointPath is null-ish");
+        // handle null pathName
+        if (!pathName) {
+            console.log ("APP::articleFetch: pathName is null-ish");
             setPageData(null);
             return;
         }
 
-        setMyError(null);
+        const myEndpoint = convertPathToArticleEndpoint(pathName, refresh);
+        console.log("APP::articleFetch: endpoint = ", myEndpoint)
+        setEndpointPath(myEndpoint); // for display
 
-        // show loading feedback
+        // TODO: ERR: maybe always clear pageData, so components get cleared while waiting?
+        setMyError(null);
         setIsLoading(true);
 
-        // fetch the data
-        //
-        // upon successful return of data, decorate the data with some informative fields
-        //
-        fetch(endpointPath, {})
+        // fetch the article data
+        fetch(myEndpoint, {})
 
             .then((res) => {
                 if (!res.ok) throw new Error(res.status);
@@ -101,18 +94,23 @@ export default function App() {
             })
 
             .then((data) => {
-                // decorate with some values
+                // upon successful return of data, decorate the data with some informative fields
                 data.pathName = pathName;
-                data.endpoint = endpointPath;
-                data.version = getWariVersion(data, endpointPath);
-                data.forceRefresh = refreshCheck;
+                data.endpoint = myEndpoint;
+                data.version = getWariVersion(data, myEndpoint);
+                data.forceRefresh = refresh;
 
                 // and set the new pageData state
                 setPageData(data);
             })
 
             .catch((err) => {
-                setMyError(err.toString())
+                // TODO: set false pageData for display?
+                if (err.message === "404") {
+                    setMyError("Error finding target page.")
+                } else {
+                    setMyError(err.toString())
+                }
                 setPageData(null);
 
             })
@@ -122,42 +120,31 @@ export default function App() {
                 setIsLoading(false);
             });
 
-    };
+    }, []);
 
-    function handlePathName(newPathName) {
-        debugAlert("APP::handlePathName: new pathName is:" + newPathName)
-        console.log("APP::handlePathName: before setPathName, new pathName = ", newPathName)
-        setRefreshTime( Date() );
-        setPathName(newPathName);
-    }
+    // callback for PathNameFetch component
+    // pathResults[0] = pathName (string)
+    // pathResults[1] = refreshCheck (boolean)
+    const handlePathResults = useCallback( (pathResults) => {
 
-    // fetch new data when endpointPath changes
+        debugAlert(`APP::handlePathResults: pathName=${pathResults[0]}, checked=${pathResults[1]}`)
+        console.log(`---------\nAPP::handlePathResults: pathName=${pathResults[0]}, checked=${pathResults[1]}`)
+
+        setPathName(pathResults[0]);
+        setRefreshCheck(pathResults[1]);
+
+        articleFetch(pathResults[0], pathResults[1])
+
+    }, [debugAlert, articleFetch] );
+
+
+    // fetch initial article if specified on address bar with url param
     useEffect(() => {
-        debugAlert("APP:::useEffect[pathName]:  pathName is:" + pathName)
+        debugAlert(`APP:::useEffect[myUrl, myRefresh]: calling handlePathName: ${myUrl}, ${myRefresh}`)
+        console.log(`APP:::useEffect[myUrl, myRefresh]: calling handlePathName: ${myUrl}, ${myRefresh}`)
+        handlePathResults([myUrl, myRefresh])
+    }, [myUrl, myRefresh, debugAlert, handlePathResults])
 
-        const myEndpointPath = convertPathToEndpoint(pathName);
-        setEndpointPath(myEndpointPath);
-
-        console.log("APP: useEffect[pathName] AFTER setEndpointPath pathName is:" + pathName)
-
-// eslint-disable-next-line
-    }, [pathName])
-
-
-    // fetch new data when endpointPath changes
-    useEffect(() => {
-        console.log("APP: useEffect[endpointPath] endpointPath:", endpointPath)
-
-        if (endpointPath) {
-            console.log("APP: useEffect[endpointPath] fileFetch[endpointPath]")
-            fileFetch(endpointPath)
-        }
-
-// eslint-disable-next-line
-    }, [endpointPath, refreshTime])
-
-
-    // console.log("APP: pathName:", pathName);
 
     // render component
     return <>
@@ -177,18 +164,17 @@ export default function App() {
                 <div className={ isDebug ? "debug-on" : "debug-off" }>
                     <div>
                     <button onClick={toggleDebugAlert} className={"debug-button"}>{ isDebugAlerts ? "hide" : "show" } alerts
-                    </button
-                    >{isDebugAlerts
-                        ?<span className={"debug-info"}> user alerts will be engaged for certain tasks</span>
+                    </button>{isDebugAlerts ? <span className={"debug-info"}> user alerts will be engaged for certain tasks</span>
                     : ''}</div>
                     <p>pathName : <MakeLink href={pathName}/></p>
                     <p>endpointPath: <MakeLink href={endpointPath}/></p>
-                    <p>"Force Refresh" checked? {refreshCheck.toString()}</p>
+                    <p>Force Refresh: {refreshCheck ? "TRUE" : "false"}</p>
+                    <p>inline target URL: {myUrl}</p>
                 </div>
 
             </div>
 
-            <PathNameFetch pathInitial={pathName} handlePathName={handlePathName} handleRefreshCheck={setRefreshCheck} />
+            <PathNameFetch pathInitial={pathName} checkInitial={refreshCheck} handlePathResults={handlePathResults} />
 
             {myError ? <div className={myError ? "error-display" : "error-display-none"}>
                 {myError}

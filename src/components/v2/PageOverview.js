@@ -185,19 +185,6 @@ const UrlOverview = ( { overview, onClickChart } ) => {
 
 }
 
-// // display filter buttons
-// const UrlFilters = ( {filterList, filterCaption}) => {
-//     return !filterList || !filterList.length ? null : <div>
-//         {/*<h4>URL Filters<br/><span style={{fontSize:"smaller", fontWeight:"normal"}}>Current filter: {filterCaption}</span></h4>*/}
-//         {/*<h4>URL Filters</h4>*/}
-//         <h4>{'\u00A0'}</h4>
-//         <div className={"url-filters"}>
-//             {/*{filterList}*/}
-//         </div>
-//     </div>
-//
-// }
-
 export default function PageOverview( { references,
                                           refOverview,
                                           urlOverview,
@@ -235,23 +222,6 @@ export default function PageOverview( { references,
         const f = URL_FILTER_MAP[newName];
         setUrlFilter(f)
     }
-
-    // const urlFilterList = ["all"].map((name) => { // just show the All for now...
-    //     const f = URL_FILTER_MAP[name];
-    //     // we have urlOverview; we want to extract count for filter matching name.
-    //     // if urlOverview.urlCounts is bad, we skip the counts
-    //     const count = urlOverview && urlOverview.urlCounts
-    //         ? " (" + urlOverview.urlCounts.filter( s => s.link === name)[0].count + ")"
-    //         : "";
-    //
-    //     return <FilterButton key={name}
-    //                          name={name}
-    //                          caption={f.caption + count}
-    //                          desc={f.desc}
-    //                          isPressed={name===urlFilterName}
-    //                          onClick = {handleUrlButton}
-    //     />
-    // });
 
     // console.log("urlOverview:", urlOverview);
 
