@@ -150,7 +150,7 @@ URLs
 }
 .url-display .url-row.url-is-unknown,
 .url-display .url-row.url-is-unknown a{
-    color:red !important;
+    color:dimgrey !important;
 }
 .url-display .url-row.url-is-redirect,
 .url-display .url-row.url-is-redirect a{

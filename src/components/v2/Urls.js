@@ -1,10 +1,16 @@
 import React , { useState } from 'react';
 
 /*
-assumes urls is an array of url data objects with:
-    url : <url>
-    status_code : <status_code>
-    (and maybe data property)
+assumes urls is an array of url data objects as:
+{
+    url : <url>,
+    status_code : <status_code>,
+
+    [and, as of 2023 7 april, array comes in as a collection of data{} objects, with
+    the underlying url objects beneath them:]
+    data: {
+        status_code: XXX,
+        <url_data>
  */
 export default function Urls( { urlArray, filter } ) {
 
@@ -12,11 +18,11 @@ export default function Urls( { urlArray, filter } ) {
 
     let urlDisplay = [];
     if (!urlArray || urlArray.length === 0) {
-        urlDisplay = <p>No urls to show!</p>;
+        urlDisplay = <p>No URLs to show!</p>;
     }
     else {
-        const filteredUrls = filter ? urlArray.filter( (filter.filterFunction)() )
-
+        const filteredUrls = filter
+            ? urlArray.filter( (filter.filterFunction)() )
             : urlArray;
 
         filteredUrls.sort((a,b) => {
