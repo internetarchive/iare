@@ -43,14 +43,17 @@ export default function PageData( { pageData = {} }) {
     }, [pageData]) // TODO: change deps to [] ?
 
 
-    async function fetchOneUrl(url, refresh=false) {
+    async function fetchOneUrl(url, refresh=false, timeout=0) {
 
         const endpoint = `${API_V2_URL_BASE}/check-url`
             + `?url=${encodeURIComponent(url)}`
-            + (refresh ? "&refresh=true" : '');
+            + (refresh ? "&refresh=true" : '')
+            + (timeout > 0 ? `&timeout=${timeout}` : '')
+        ;
 
         // TODO: do we want no-cache, even if no refresh?
         const response = await fetch(endpoint, {cache: "no-cache"});
+        console.log("return from fetch for endpoint: ", endpoint )
         const data = await response.json();
 
         const status_code = response.status; // Note: status_code is from the check-url call, NOT the target url
@@ -59,9 +62,10 @@ export default function PageData( { pageData = {} }) {
 
     async function fetchAllUrls(urls, refresh=false) {
         if (!urls) return [];
-        console.log(`fetchAllUrls: refresh = ${refresh}`)
+        const timeout=29; // # seconds, for now...
+        console.log(`fetchAllUrls: refresh = ${refresh}, timeout = ${timeout}`)
         const promises = urls.map(url => {
-            return fetchOneUrl(url, refresh)
+            return fetchOneUrl(url, refresh, timeout)
         });
         const results = await Promise.all(promises);
         return results;
@@ -77,11 +81,11 @@ export default function PageData( { pageData = {} }) {
         setIsLoadingUrls(true);
         fetchAllUrls(pageData.urls, pageData.forceRefresh)
             .then(urlResults => {
-                console.log(`fetchAllUrls: ${urlResults.length} results found`);
+                console.log(`After fetchAllUrls: ${urlResults.length} results found`);
                 setUrlBigArray( urlResults );
             })
             .catch(error => {
-                console.error(error);
+                console.error("After fetchAllUrls:", error);
             })
 
             .finally(() => {
