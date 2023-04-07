@@ -15,7 +15,7 @@ export default function App() {
     // transfer url and refresh params from address line, if there
     const queryParameters = new URLSearchParams(window.location.search)
     const myUrl = queryParameters.has("url") ? queryParameters.get("url") : '';
-    const [pathName, setPathName] = useState(myUrl);
+    const [targetPath, setTargetPath] = useState(myUrl);
     const myRefresh = queryParameters.has("refresh") ? queryParameters.get("refresh").toLowerCase() === 'true' : false;
     const [refreshCheck, setRefreshCheck] = useState(myRefresh);
 
@@ -127,23 +127,35 @@ export default function App() {
     // pathResults[1] = refreshCheck (boolean)
     const handlePathResults = useCallback( (pathResults) => {
 
-        debugAlert(`APP::handlePathResults: pathName=${pathResults[0]}, checked=${pathResults[1]}`)
-        console.log(`---------\nAPP::handlePathResults: pathName=${pathResults[0]}, checked=${pathResults[1]}`)
+        const newUrl = window.location.protocol + "//"
+            + window.location.host
+            + window.location.pathname
+            + "?url=" + pathResults[0]
+            + (pathResults[1] ? "&refresh=true" : '');
 
-        setPathName(pathResults[0]);
-        setRefreshCheck(pathResults[1]);
+        // window.location.href = newUrl;
+        console.log("new url path = ", newUrl)
 
-        articleFetch(pathResults[0], pathResults[1])
+        debugAlert(`APP::handlePathResults: newUrl=${newUrl}`)
+        console.log(`---------\nAPP::handlePathResults: newUrl=${newUrl}`)
 
-    }, [debugAlert, articleFetch] );
+        window.location.href = newUrl;
+
+    }, [debugAlert] );
 
 
     // fetch initial article if specified on address bar with url param
     useEffect(() => {
         debugAlert(`APP:::useEffect[myUrl, myRefresh]: calling handlePathName: ${myUrl}, ${myRefresh}`)
         console.log(`APP:::useEffect[myUrl, myRefresh]: calling handlePathName: ${myUrl}, ${myRefresh}`)
-        handlePathResults([myUrl, myRefresh])
-    }, [myUrl, myRefresh, debugAlert, handlePathResults])
+
+        // set these states only for debugging, essentially
+        setTargetPath(myUrl);
+        setRefreshCheck(myRefresh);
+
+        articleFetch(myUrl, myRefresh)
+
+    }, [myUrl, myRefresh, debugAlert, articleFetch])
 
 
     // render component
@@ -166,15 +178,17 @@ export default function App() {
                     <button onClick={toggleDebugAlert} className={"debug-button"}>{ isDebugAlerts ? "hide" : "show" } alerts
                     </button>{isDebugAlerts ? <span className={"debug-info"}> user alerts will be engaged for certain tasks</span>
                     : ''}</div>
-                    <p>pathName : <MakeLink href={pathName}/></p>
+                    <p>pathName : <MakeLink href={targetPath}/></p>
                     <p>endpointPath: <MakeLink href={endpointPath}/></p>
                     <p>Force Refresh: {refreshCheck ? "TRUE" : "false"}</p>
                     <p>inline target URL: {myUrl}</p>
+                    <p>window.location:</p>
+                    <pre>{JSON.stringify(window.location,null,2)}</pre>
                 </div>
 
             </div>
 
-            <PathNameFetch pathInitial={pathName} checkInitial={refreshCheck} handlePathResults={handlePathResults} />
+            <PathNameFetch pathInitial={targetPath} checkInitial={refreshCheck} handlePathResults={handlePathResults} />
 
             {myError ? <div className={myError ? "error-display" : "error-display-none"}>
                 {myError}
