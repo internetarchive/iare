@@ -8,7 +8,7 @@ import MakeLink from "./components/MakeLink";
 
 export default function App() {
 
-    const env = 1 || window.location.host === "archive.org" ? 'env-production' : 'env-other';
+    const env = window.location.host === "archive.org" ? 'env-production' : 'env-other';
     const [isDebug, setDebug] = useState(false);
     const [isDebugAlerts, setDebugAlerts] = useState(false);
 
