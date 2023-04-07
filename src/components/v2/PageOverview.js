@@ -17,6 +17,7 @@ import {
     SubTitle,
     Colors,
 } from 'chart.js'
+// import {getRelativePosition} from "chart.js/dist/helpers/helpers.dom";
 
 Chart.register(
     LinearScale,
@@ -31,6 +32,7 @@ Chart.register(
         // the following two lines will register all chart.js things
         // import { Chart, registerables } from 'chart.js';
         // Chart.register(...registerables);
+
 
 const colors = {
     blue   : "#35a2eb",
@@ -179,7 +181,9 @@ const UrlOverview = ( { overview, onClickChart } ) => {
         <h4>URLs - {total} total</h4>
         <div className={"url-chart-display"}>
             {/*<pre className={"raw-json"}>{JSON.stringify(overview, null, 2)}</pre>*/}
-            <PieChart chartData={chartData} options={options} onClick={onClick}/>
+            {chartData.datasets[0].data.length > 0 ?
+            <PieChart chartData={chartData} options={options} onClick={onClick} />
+            : <p>No Pie</p>}
         </div>
     </div>
 
