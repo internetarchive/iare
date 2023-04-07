@@ -44,20 +44,23 @@ export default function PageData( { pageData = {} }) {
 
 
     async function fetchOneUrl(url, refresh=false) {
-        // const endpoint = `${API_V2_URL_BASE}/check-url?url=${encodeURIComponent(url)}`;
 
-        const endpoint = `${API_V2_URL_BASE}/check-url?url=${encodeURIComponent(url)}${refresh?"&refresh=true":''}`;
+        const endpoint = `${API_V2_URL_BASE}/check-url`
+            + `?url=${encodeURIComponent(url)}`
+            + (refresh ? "&refresh=true" : '');
 
-        const response = await fetch(endpoint);
+        // TODO: do we want no-cache, even if no refresh?
+        const response = await fetch(endpoint, {cache: "no-cache"});
         const data = await response.json();
-        const status_code = response.status;
+
+        const status_code = response.status; // Note: status_code is from the check-url call, NOT the target url
         return { data, status_code };
     }
+
     async function fetchAllUrls(urls, refresh=false) {
         if (!urls) return [];
         console.log(`fetchAllUrls: refresh = ${refresh}`)
         const promises = urls.map(url => {
-            // console.log("fetchAllUrls: fetching: ", url)
             return fetchOneUrl(url, refresh)
         });
         const results = await Promise.all(promises);
@@ -106,7 +109,9 @@ export default function PageData( { pageData = {} }) {
     }, [urlBigArray])
 
     // TODO: change this to get references by iterative fetch on refID array
-    const references = pageData.reference_details && pageData.reference_details.length ? pageData.reference_details : pageData.dehydrated_references
+    const references = pageData.reference_details && pageData.reference_details.length
+        ? pageData.reference_details // "old" way
+        : pageData.dehydrated_references
 
     return <>
 
