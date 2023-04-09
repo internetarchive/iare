@@ -18,7 +18,7 @@ export default function PageData( { pageData = {} }) {
     const [urlFilter, setUrlFilter] = useState( null ); // filter to apply to displayed refs
 
     // const [timeoutCheckUrl, setTimeoutCheckUrl] = useState(24);
-    const timeoutCheckUrl = 30;
+    const timeoutCheckUrl = 60;
     const [isLoadingUrls, setIsLoadingUrls] = useState(false);
 
     const [showDetail, setShowDetail] = useState(false);
@@ -43,7 +43,7 @@ export default function PageData( { pageData = {} }) {
             + (refresh ? "&refresh=true" : '')
             + (timeout > 0 ? `&timeout=${timeout}` : '');
 
-        let status_code;
+        let status_code = 0;
 
         // TODO: do we want no-cache, even if no refresh?
         const urlData = await fetch(endpoint, {cache: "no-cache"})
@@ -54,6 +54,8 @@ export default function PageData( { pageData = {} }) {
                 if (response.ok) {
                     return response.json()
                 } else {
+                    console.warn(`fetchOneUrl: Error fetching url: ${url}`)
+
                     // TODO: would be nice to use response.statusText, but
                     // as of 2023.04.08, response.statusText is empty
                     return Promise.resolve({
@@ -67,9 +69,9 @@ export default function PageData( { pageData = {} }) {
                 }
             })
 
-            .catch( (err) => {
-                status_code=0; // something bad happened in http request
-                console.warn(`fetchOneUrl: Error when fetching url: ${url}, error: ${err.message}`)
+            .catch( (_) => { // if something really bad happened, still return fake synthesized url object
+
+                console.warn(`fetchOneUrl: Something went wrong when fetching url: ${url}`)
 
                 // return fake url data object so URL display interface is not broken
                 return Promise.resolve({
@@ -77,7 +79,6 @@ export default function PageData( { pageData = {} }) {
                     status_code: 0,
                     status_text: "unknown",
                     error_text: "Failure during check-url",
-                    error_info: err.message
                     })
                 }
             );
