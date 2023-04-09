@@ -21,7 +21,6 @@ export default function Urls( { urlArray, filter } ) {
         urlDisplay = <p>No URLs to show!</p>;
     }
     else {
-        // TODO: data sanity check of urlArray elements: data, status_code, url, etc.
         const filteredUrls = filter
             ? urlArray.filter( (filter.filterFunction)() )
             : urlArray;
@@ -52,7 +51,7 @@ export default function Urls( { urlArray, filter } ) {
 
         urlDisplay = <>
             <h4 style={{color:"grey"}}>{label}</h4>
-            {/* TODO: SHOW ONLY WHEN DEBUG ON <p>sort = {sort?"true":"false"}</p>*/}
+            {/* USE ONLY WHEN DEBUG <p>sort = {sort?"true":"false"}</p>*/}
             <div className={"url-display"}>
                 <div className={"url-row url-header-row"}>
                     <div className={"url-name"} >url</div>
