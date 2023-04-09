@@ -27,6 +27,8 @@ export default function Urls( { urlArray, filter } ) {
             : urlArray;
 
         filteredUrls.sort((a,b) => {
+            if (!a.data || !b.data || !a.data.status_code || !b.data.status_code) return 0;
+
             if (a.data.status_code < b.data.status_code) return sort ? -1 : 1;
             if (a.data.status_code > b.data.status_code) return sort ? 1 : -1;
             return 0;
@@ -34,6 +36,8 @@ export default function Urls( { urlArray, filter } ) {
 
         // iterate over array of url objects
         const rows = filteredUrls.map((u, i) => {
+
+            // TODO: error if fields not present
 
             return <div className={`url-row ${u.data.status_code === 0 
                 ? "url-is-unknown" : ""} ${u.data.status_code >= 300 && u.data.status_code < 400 

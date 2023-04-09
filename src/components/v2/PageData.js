@@ -62,15 +62,17 @@ export default function PageData( { pageData = {} }) {
                         status_text: response.statusText,
                         error_text: "error from archive server"
                     })
+                    // return Promise.reject(response)
+
                 }
             })
 
             .catch( (err) => {
                 status_code=0; // something bad happened in http request
-                console.warn(`fetchOneUrl: Erro when fetching url: ${url}, error: ${err.message}`)
+                console.warn(`fetchOneUrl: Error when fetching url: ${url}, error: ${err.message}`)
 
                 // return fake url data object so URL display interface is not broken
-                Promise.resolve({
+                return Promise.resolve({
                     url: url,
                     status_code: 0,
                     status_text: "unknown",
@@ -89,7 +91,7 @@ export default function PageData( { pageData = {} }) {
             return fetchOneUrl(url, refresh, timeoutCheckUrl)
         });
         const results = await Promise.all(promises);
-        // console.log("fetchAllUrls: after Promise.all, results:" , results)
+        console.log("fetchAllUrls: after Promise.all, results:" , results)
         return results;
     }
 
