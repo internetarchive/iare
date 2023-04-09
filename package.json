@@ -1,6 +1,6 @@
 {
   "name": "ware",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
