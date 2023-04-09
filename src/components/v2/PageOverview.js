@@ -230,7 +230,7 @@ export default function PageOverview( { references,
     // console.log("urlOverview:", urlOverview);
 
     return <div className={"page-overview"}>
-        <h3>Page Overview</h3>
+        {/*<h3>Page Overview</h3>*/}
         <div className={"page-overview-wrap"}>
 
             <UrlOverview overview={urlOverview} onClickChart={handleUrlButton}/>

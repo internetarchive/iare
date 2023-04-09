@@ -81,7 +81,6 @@ body.env-other .version-display span.non-production {
 
 .detail-show {
     display:inherit;
-    margin-bottom:1rem;
 }
 .detail-hide {
     display:none;
