@@ -6,6 +6,7 @@ import Flds from "./Flds";
 import { API_V2_URL_BASE } from '../../constants/endpoints.js';
 import { URL_FILTER_MAP } from "./filters/urlFilterMaps.js";
 import Loader from "../Loader";
+import ArrayDisplay from "../ArrayDisplay";
 
 export default function PageData( { pageData = {} }) {
 
@@ -16,24 +17,11 @@ export default function PageData( { pageData = {} }) {
     const [urlOverview, setUrlOverview] = useState({}); // overview statistics for Urls; set in effects, passed to PageOverview
     const [urlFilter, setUrlFilter] = useState( null ); // filter to apply to displayed refs
 
+    // const [timeoutCheckUrl, setTimeoutCheckUrl] = useState(24);
+    const timeoutCheckUrl = 30;
     const [isLoadingUrls, setIsLoadingUrls] = useState(false);
 
-    // async function fetchOneRef(refID) {
-    //     const endpoint = `${API_V2_URL_BASE}/statistics/reference/${refID}`;
-    //     console.log("fetchOneRef: ", endpoint)
-    //     const response = await fetch(endpoint);
-    //     const data = await response.json();
-    //     const status_code = response.status;
-    //     return { data, status_code };
-    // }
-    // async function fetchAllRefs(refIDs) {
-    //     const promises = refIDs.map(refID => {
-    //         // console.log("fetchAllRefs: fetching: ", ref)
-    //         return fetchOneRef(refID) // ?? return fetchOneRef(refID).data?
-    //     });
-    //     const results = await Promise.all(promises);
-    //     return results;
-    // }
+    const [showDetail, setShowDetail] = useState(false);
 
     // calc ref overview data when pageData changes
     useEffect( () => {
@@ -43,49 +31,79 @@ export default function PageData( { pageData = {} }) {
     }, [pageData]) // TODO: change deps to [] ?
 
 
+    // returns an object:
+    //  {
+    //      data: {...url info...},
+    //      status_code: XXX
+    //  }
     async function fetchOneUrl(url, refresh=false, timeout=0) {
 
         const endpoint = `${API_V2_URL_BASE}/check-url`
             + `?url=${encodeURIComponent(url)}`
             + (refresh ? "&refresh=true" : '')
-            + (timeout > 0 ? `&timeout=${timeout}` : '')
-        ;
+            + (timeout > 0 ? `&timeout=${timeout}` : '');
+
+        let status_code;
 
         // TODO: do we want no-cache, even if no refresh?
-        const response = await fetch(endpoint, {cache: "no-cache"});
-        console.log("return from fetch for endpoint: ", endpoint )
-        const data = await response.json();
+        const urlData = await fetch(endpoint, {cache: "no-cache"})
+            // THIS IS WHERE 504 is happening!
+            .then( response => {
+                status_code = response.status
+                // console.log("fetchOneUrl: fetch:then: response:", response )
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    // TODO: would be nice to use response.statusText, but
+                    // as of 2023.04.08, response.statusText is empty
+                    return Promise.resolve({
+                        url: url,
+                        status_code: 0,
+                        status_text: response.statusText,
+                        error_text: "error from archive server"
+                    })
+                }
+            })
 
-        const status_code = response.status; // Note: status_code is from the check-url call, NOT the target url
-        return { data, status_code };
+            .catch( (err) => {
+                status_code=0; // something bad happened in http request
+                console.warn(`fetchOneUrl: Erro when fetching url: ${url}, error: ${err.message}`)
+
+                // return fake url data object so URL display interface is not broken
+                Promise.resolve({
+                    url: url,
+                    status_code: 0,
+                    status_text: "unknown",
+                    error_text: "Failure during check-url",
+                    error_info: err.message
+                    })
+                }
+            );
+
+        return { data: urlData, status_code: status_code };
     }
 
     async function fetchAllUrls(urls, refresh=false) {
         if (!urls) return [];
-        const timeout=29; // # seconds, for now...
-        console.log(`fetchAllUrls: refresh = ${refresh}, timeout = ${timeout}`)
         const promises = urls.map(url => {
-            return fetchOneUrl(url, refresh, timeout)
+            return fetchOneUrl(url, refresh, timeoutCheckUrl)
         });
         const results = await Promise.all(promises);
+        // console.log("fetchAllUrls: after Promise.all, results:" , results)
         return results;
-    }
-
-    // eslint-disable-next-line
-    const cleanUrl = ( url ) => {
-        return encodeURI( url )
     }
 
     // process fetched url array by simply saving results
     useEffect( () => {
         setIsLoadingUrls(true);
+
         fetchAllUrls(pageData.urls, pageData.forceRefresh)
             .then(urlResults => {
-                console.log(`After fetchAllUrls: ${urlResults.length} results found`);
+                console.log(`useEffect[pageData] fetchAllUrls.then: ${urlResults.length} results found`);
                 setUrlBigArray( urlResults );
             })
             .catch(error => {
-                console.error("After fetchAllUrls:", error);
+                console.error("useEffect[pageData] fetchAllUrls:catch:", error);
             })
 
             .finally(() => {
@@ -117,7 +135,39 @@ export default function PageData( { pageData = {} }) {
         ? pageData.reference_details // "old" way
         : pageData.dehydrated_references
 
+    if ( !pageData ) return <>
+        <p>Nothing to display - pageData is missing.</p>
+    </>
+
     return <>
+
+        <h3>Page Analyzed: <a href={pageData.pathName} target={"_blank"} rel={"noreferrer"}>{pageData.pathName}</a
+            > <button onClick={() => setShowDetail(!showDetail)}
+                  className={"more-button"}>{showDetail ? "less" : "more"} details
+            </button>
+        </h3>
+
+        <div className={showDetail ? "detail-show" : "detail-hide"}>
+            <div className={"page-info-detail"}>
+                <p>endpoint: <a href={pageData.endpoint} target={"_blank"} rel={"noreferrer"}>{pageData.endpoint}</a></p>
+                <p>timeout for check-url: {timeoutCheckUrl}</p>
+                <div className={"page-info-grid"}>
+                    <ArrayDisplay arr={[
+                        {'WARI JSON version': pageData.version},
+                        {'lang': pageData.lang},
+                        {'site': pageData.site},
+                        {'title': pageData.title},
+                    ]}/>
+                    <ArrayDisplay arr={[
+                        {'wari_id': pageData.wari_id},
+                        {'page id': pageData.page_id},
+                        {'timestamp': pageData.timestamp ? new Date(pageData.timestamp * 1000).toString() : ""}, // times 1000 b/c of milliseconds
+                        {'timing': pageData["timing"]},
+                    ]} styleObj={{marginLeft: "1em"}}/>
+                </div>
+            </div>
+        </div>
+
 
         <PageOverview
             references={references}

@@ -11,6 +11,17 @@
 .page-overview-wrap > div {
     margin-right:1.25rem;
 }
+.page-info-detail {
+    display:block;
+    border:1px solid black;
+    padding: 0 1rem 1rem;
+    margin-bottom: 1rem;
+}
+.page-info-grid {
+    display: flex;
+    flex-direction: row;
+}
+
 
 .reference-types {
     display:flex;
