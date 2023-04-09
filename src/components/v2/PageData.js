@@ -25,7 +25,9 @@ export default function PageData( { pageData = {} }) {
 
     // calc ref overview data when pageData changes
     useEffect( () => {
-        const refStats = pageData ? (pageData.reference_statistics ? pageData.reference_statistics : {} )
+        const refStats = pageData
+            ? (pageData.reference_statistics
+                ? pageData.reference_statistics : {} )
         : {};
         setRefOverview(refStats);
     }, [pageData]) // TODO: change deps to [] ?

@@ -16,7 +16,7 @@ export default function FilterButton(props) {
         aria-pressed={props.isPressed}
         onClick={() => props.onClick(props.name)}
     >
-        <span>{props.caption}{props.count ? ` (${props.count})` : ''}</span>
+        <span>{props.caption}{(props.count || props.count === 0) ? ` (${props.count})` : ''}</span>
         {props.useDesc ? <><br/><span className={"btn-description"}>{props.desc}</span></> : null}
     </button>;
 }

@@ -23,37 +23,28 @@
 }
 
 
-.reference-types {
+.reference-filters, .filter-buttons {
     display:flex;
     flex-direction: column;
 
 }
-
-.reference-types p {
-    margin: 0 0 .5rem;
-    }
-
-.reference-filters {
-    display:flex;
-    flex-direction: column;
-
-}
-.reference-filters button {
+.reference-filters button, .filter-buttons button {
     /*width:100% !important;*/
     padding:.5rem;
     text-align:left;
     font-weight: bold;
     min-width:13.5rem;
 }
-.reference-filters button.btn-pressed {
+.reference-filters button.btn-pressed, .filter-buttons button.btn-pressed {
     background-color: #b9cbc3;
 }
-.reference-filters .btn-description {
+.reference-filters .btn-description, .filter-buttons .btn-description {
     font-style: italic;
     font-size: smaller;
     font-weight: normal;
     padding-left:1em;
 }
+
 
 .url-chart-display {
     width:317px;

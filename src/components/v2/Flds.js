@@ -5,7 +5,7 @@ export default function Flds( { flds } ) {
 
     return <>
         <div className={"flds"}>
-            <h3>First Level Domains</h3>
+            <h3>Pay Level Domains</h3>
 
             { !flds ? <><p>No flds to show!</p></> :
 

@@ -1,9 +1,4 @@
 export const REF_FILTER_MAP = {
-    All: {
-        caption: "Show All",
-        desc: "no filter",
-        filterFunction: () => () => {return true},
-    },
     // Plain: {
     //     caption: "Show Refs with Plain Text",
     //     desc: "plain_text_in_reference = true",
@@ -54,22 +49,33 @@ export const REF_FILTER_MAP = {
     },
 
     archiveBook: {
-        /*
-        ISBN or book refs with
-         */
-        caption: "Books with archive.org",
-        rule: "d.template_names.includes ['cite book','isbn'] and URLs include \"https://archive.org/details/\"",
+        caption: "Books linked to archive.org",
         desc: "['cite book'], with \"https://archive.org/details/\"",
         filterFunction: () => (d) => {
             return !!d.urls.find((url) => url.includes("https://archive.org/details/"))
         }
     },
 
-    // TODO: this algorithm is not returning the number of refs as given in agg[without_a_template]
+    googleBook: {
+        caption: "Books linked to Google Books",
+        desc: "urls[].includes \"https://archive.org/details/googlebooks\"",
+        filterFunction: () => (d) => {
+            return !!d.urls.find((url) => url.includes("https://archive.org/details/googlebooks"))
+        }
+    },
+
+    journalArchive: {
+        caption: "Journal Article linked to archive.org",
+        desc: "urls[].includes \"https://archive.org/details/googlebooks\"",
+        filterFunction: () => (d) => {
+            return d.template_names.includes("cite journal")
+                && !!d.urls.find((url) => url.includes("https://web.archive.org/"))
+        }
+    },
+
     NoTemplate: {
         caption: "No Template",
         desc: "d.template_names.length < 1",
-        // filterFunction: () => true,
         filterFunction: () => (d) => d.template_names.length < 1,
     },
 
@@ -85,3 +91,36 @@ export const REF_FILTER_MAP = {
 };
 
 export const REF_FILTER_NAMES = Object.keys(REF_FILTER_MAP);
+
+
+export const REF_TYPES_FILTER_MAP = {
+    All: {
+        caption: "All",
+        desc: "no filter",
+        filterFunction: () => () => {return true},
+    },
+    general: {
+        caption: "General",
+        desc: "",
+        filterFunction: () => (d) => {return d.type === "general"},
+    },
+
+    footnote: {
+        caption: "Footnote",
+        desc: "",
+        filterFunction: () => (d) => {return d.type === "footnote"},
+    },
+
+    content: {
+        caption: "Content",
+        desc: "",
+        filterFunction: () => (d) => {return d.footnote_subtype === "content"},
+    },
+
+    named: {
+        caption: "Named",
+        desc: "",
+        filterFunction: () => (d) => {return d.footnote_subtype === "named"},
+    },
+
+};
