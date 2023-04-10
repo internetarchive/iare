@@ -34,6 +34,7 @@
     text-align:left;
     font-weight: bold;
     min-width:13.5rem;
+    max-width:14.8rem;
 }
 .reference-filters button.btn-pressed, .filter-buttons button.btn-pressed {
     background-color: #b9cbc3;
