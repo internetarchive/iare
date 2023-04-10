@@ -78,6 +78,7 @@ export default function App() {
         }
 
         const myEndpoint = convertPathToArticleEndpoint(pathName, refresh);
+        console.log("APP::articleFetch: endpoint = ", myEndpoint)
         setEndpointPath(myEndpoint); // for display
 
         // TODO: ERR: maybe always clear pageData, so components get cleared while waiting?
@@ -104,15 +105,12 @@ export default function App() {
             })
 
             .catch((err) => {
-
+                // TODO: set false pageData for display?
                 if (err.message === "404") {
-                    setMyError("404: Error finding target page. err.toString():" + err.toString())
-                } else if (err.toString() === 'TypeError: Failed to fetch') {
-                    setMyError(err.toString() + ' (probably a CORS error)')
+                    setMyError("Error finding target page.")
                 } else {
                     setMyError(err.toString())
                 }
-                // set false pageData for display - TODO: is this correct?
                 setPageData(null);
 
             })
@@ -148,8 +146,8 @@ export default function App() {
 
     // fetch initial article if specified on address bar with url param
     useEffect(() => {
-        debugAlert(`APP:::useEffect[myUrl, myRefresh]: calling articleFetch: ${myUrl}, ${myRefresh}`)
-        console.log(`APP:::useEffect[myUrl, myRefresh]: calling articleFetch: ${myUrl}, ${myRefresh}`)
+        debugAlert(`APP:::useEffect[myUrl, myRefresh]: calling handlePathName: ${myUrl}, ${myRefresh}`)
+        console.log(`APP:::useEffect[myUrl, myRefresh]: calling handlePathName: ${myUrl}, ${myRefresh}`)
 
         // set these states only for debugging, essentially
         setTargetPath(myUrl);

@@ -6,7 +6,6 @@ import Flds from "./Flds";
 import { API_V2_URL_BASE } from '../../constants/endpoints.js';
 import { URL_FILTER_MAP } from "./filters/urlFilterMaps.js";
 import Loader from "../Loader";
-import ArrayDisplay from "../ArrayDisplay";
 
 export default function PageData( { pageData = {} }) {
 
@@ -21,7 +20,22 @@ export default function PageData( { pageData = {} }) {
     const timeoutCheckUrl = 60;
     const [isLoadingUrls, setIsLoadingUrls] = useState(false);
 
-    const [showDetail, setShowDetail] = useState(false);
+    // async function fetchOneRef(refID) {
+    //     const endpoint = `${API_V2_URL_BASE}/statistics/reference/${refID}`;
+    //     console.log("fetchOneRef: ", endpoint)
+    //     const response = await fetch(endpoint);
+    //     const data = await response.json();
+    //     const status_code = response.status;
+    //     return { data, status_code };
+    // }
+    // async function fetchAllRefs(refIDs) {
+    //     const promises = refIDs.map(refID => {
+    //         // console.log("fetchAllRefs: fetching: ", ref)
+    //         return fetchOneRef(refID) // ?? return fetchOneRef(refID).data?
+    //     });
+    //     const results = await Promise.all(promises);
+    //     return results;
+    // }
 
     // calc ref overview data when pageData changes
     useEffect( () => {
@@ -33,11 +47,6 @@ export default function PageData( { pageData = {} }) {
     }, [pageData]) // TODO: change deps to [] ?
 
 
-    // returns an object:
-    //  {
-    //      data: {...url info...},
-    //      status_code: XXX
-    //  }
     async function fetchOneUrl(url, refresh=false, timeout=0) {
 
         const endpoint = `${API_V2_URL_BASE}/check-url`
@@ -66,7 +75,6 @@ export default function PageData( { pageData = {} }) {
                         status_text: response.statusText,
                         error_text: "error from archive server"
                     })
-                    // return Promise.reject(response)
 
                 }
             })
@@ -90,6 +98,7 @@ export default function PageData( { pageData = {} }) {
 
     async function fetchAllUrls(urls, refresh=false) {
         if (!urls) return [];
+        console.log(`fetchAllUrls: refresh = ${refresh}, timeout = ${timeoutCheckUrl}`)
         const promises = urls.map(url => {
             return fetchOneUrl(url, refresh, timeoutCheckUrl)
         });
@@ -98,17 +107,21 @@ export default function PageData( { pageData = {} }) {
         return results;
     }
 
+    // eslint-disable-next-line
+    const cleanUrl = ( url ) => {
+        return encodeURI( url )
+    }
+
     // process fetched url array by simply saving results
     useEffect( () => {
         setIsLoadingUrls(true);
-
         fetchAllUrls(pageData.urls, pageData.forceRefresh)
             .then(urlResults => {
-                console.log(`useEffect[pageData] fetchAllUrls.then: ${urlResults.length} results found`);
+                console.log(`After fetchAllUrls: ${urlResults.length} results found`);
                 setUrlBigArray( urlResults );
             })
             .catch(error => {
-                console.error("useEffect[pageData] fetchAllUrls:catch:", error);
+                console.error("After fetchAllUrls:", error);
             })
 
             .finally(() => {
@@ -140,39 +153,7 @@ export default function PageData( { pageData = {} }) {
         ? pageData.reference_details // "old" way
         : pageData.dehydrated_references
 
-    if ( !pageData ) return <>
-        <p>Nothing to display - pageData is missing.</p>
-    </>
-
     return <>
-
-        <h3>Page Analyzed: <a href={pageData.pathName} target={"_blank"} rel={"noreferrer"}>{pageData.pathName}</a
-            > <button onClick={() => setShowDetail(!showDetail)}
-                  className={"more-button"}>{showDetail ? "less" : "more"} details
-            </button>
-        </h3>
-
-        <div className={showDetail ? "detail-show" : "detail-hide"}>
-            <div className={"page-info-detail"}>
-                <p>endpoint: <a href={pageData.endpoint} target={"_blank"} rel={"noreferrer"}>{pageData.endpoint}</a></p>
-                <p>timeout for check-url: {timeoutCheckUrl}</p>
-                <div className={"page-info-grid"}>
-                    <ArrayDisplay arr={[
-                        {'WARI JSON version': pageData.version},
-                        {'lang': pageData.lang},
-                        {'site': pageData.site},
-                        {'title': pageData.title},
-                    ]}/>
-                    <ArrayDisplay arr={[
-                        {'wari_id': pageData.wari_id},
-                        {'page id': pageData.page_id},
-                        {'timestamp': pageData.timestamp ? new Date(pageData.timestamp * 1000).toString() : ""}, // times 1000 b/c of milliseconds
-                        {'timing': pageData["timing"]},
-                    ]} styleObj={{marginLeft: "1em"}}/>
-                </div>
-            </div>
-        </div>
-
 
         <PageOverview
             references={references}
