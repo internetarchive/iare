@@ -16,6 +16,8 @@ export default function PageData( { pageData = {} }) {
     const [urlOverview, setUrlOverview] = useState({}); // overview statistics for Urls; set in effects, passed to PageOverview
     const [urlFilter, setUrlFilter] = useState( null ); // filter to apply to displayed refs
 
+    // const [timeoutCheckUrl, setTimeoutCheckUrl] = useState(24);
+    const timeoutCheckUrl = 60;
     const [isLoadingUrls, setIsLoadingUrls] = useState(false);
 
     // async function fetchOneRef(refID) {
@@ -48,16 +50,49 @@ export default function PageData( { pageData = {} }) {
         const endpoint = `${API_V2_URL_BASE}/check-url`
             + `?url=${encodeURIComponent(url)}`
             + (refresh ? "&refresh=true" : '')
-            + (timeout > 0 ? `&timeout=${timeout}` : '')
-        ;
+            + (timeout > 0 ? `&timeout=${timeout}` : '');
+
+        let status_code = 0;
 
         // TODO: do we want no-cache, even if no refresh?
-        const response = await fetch(endpoint, {cache: "no-cache"});
-        console.log("return from fetch for endpoint: ", endpoint )
-        const data = await response.json();
+        const urlData = await fetch(endpoint, {cache: "no-cache"})
+            // THIS IS WHERE 504 is happening!
+            .then( response => {
+                status_code = response.status
+                // console.log("fetchOneUrl: fetch:then: response:", response )
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    console.warn(`fetchOneUrl: Error fetching url: ${url}`)
 
-        const status_code = response.status; // Note: status_code is from the check-url call, NOT the target url
-        return { data, status_code };
+                    // TODO: would be nice to use response.statusText, but
+                    // as of 2023.04.08, response.statusText is empty
+                    return Promise.resolve({
+                        url: url,
+                        status_code: 0,
+                        status_text: response.statusText,
+                        error_text: "error from archive server"
+                    })
+                    // return Promise.reject(response)
+
+                }
+            })
+
+            .catch( (_) => { // if something really bad happened, still return fake synthesized url object
+
+                console.warn(`fetchOneUrl: Something went wrong when fetching url: ${url}`)
+
+                // return fake url data object so URL display interface is not broken
+                return Promise.resolve({
+                    url: url,
+                    status_code: 0,
+                    status_text: "unknown",
+                    error_text: "Failure during check-url",
+                    })
+                }
+            );
+
+        return { data: urlData, status_code: status_code };
     }
 
     async function fetchAllUrls(urls, refresh=false) {
@@ -68,6 +103,7 @@ export default function PageData( { pageData = {} }) {
             return fetchOneUrl(url, refresh, timeout)
         });
         const results = await Promise.all(promises);
+        console.log("fetchAllUrls: after Promise.all, results:" , results)
         return results;
     }
 

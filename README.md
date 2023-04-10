@@ -1,9 +1,10 @@
 # Wikipedia Article Reference Explorer (WARE) App
 
 This project uses the React.js framework.\
-Builds are accomplished with standard node/React scripts.
 
-## Available Scripts
+## Development Scripts
+
+Builds are accomplished with standard node/React scripts.
 
 From the project directory:
 
@@ -12,13 +13,22 @@ From the project directory:
 Runs the WARE app in development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+The page will reload when changes made in the source code.\
+Any lint errors found during compilation are shown in the console.
 
 ### `npm run build`
 
-Builds the WARE app for production to the `build` folder.\
-The build is minified and ready to be deployed!
+Builds a production WARE app to the project's `build` folder.\
+The build is minified and ready to be deployed for testing purposes.
+
+## Automatic deployement
+
+Whenever a new commit is uploaded to the repo, an Action is automatically performed that
+creates a production-ready version of the WARE app, and made available at the address:
+
+```
+https://internetarchive.github.io/ware/
+```
 
 
 ## Deploy in Docker
@@ -37,5 +47,6 @@ $ docker container run --rm -it -p 3000:3000 jsonview
 
 Open the application in a web browser at http://localhost:3000
 
+## Under the Hood
 
-## Organization of components
+### Organization of components
