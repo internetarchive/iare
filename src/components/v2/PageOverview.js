@@ -4,7 +4,7 @@ import PieChart from "../PieChart.js";
 // import BarChart from "../BarChart.js";
 
 import { URL_FILTER_MAP } from './filters/urlFilterMaps.js';
-import { REF_FILTER_MAP, REF_FILTER_NAMES } from './filters/refFilterMaps.js';
+import { REF_FILTER_MAP, REF_FILTER_NAMES, REF_TYPES_FILTER_MAP } from './filters/refFilterMaps.js';
 
 import {
     Chart,
@@ -17,6 +17,7 @@ import {
     SubTitle,
     Colors,
 } from 'chart.js'
+import FilterButtons from "../FilterButtons";
 // import {getRelativePosition} from "chart.js/dist/helpers/helpers.dom";
 
 Chart.register(
@@ -50,7 +51,7 @@ const colors = {
 const ReferenceFilters = ( {filterList, filterCaption}) => {
     return <div>
         {/*<h4>Reference Filters<br/><span style={{fontSize:"smaller", fontWeight:"normal"}}>Current filter: {filterCaption}</span></h4>*/}
-        <h4>References</h4>
+        <h4>Reference Filters</h4>
         <div className={"reference-filters"}>
             {filterList}
         </div>
@@ -58,21 +59,18 @@ const ReferenceFilters = ( {filterList, filterCaption}) => {
 
 }
 
-// display url info
-const RefOverview = ( { overview, onClickLink } ) => {
+// show ref overview interactions
+const RefOverview = ( { references, onClick, curFilterName },  ) => {
 
-    return <div>
-        <h4>Reference Types</h4>
-        { !overview ? <p>Missing reference overview data.</p>
-        : <div>
-            <div className={"reference-types"}>
-                {Object.keys(overview).map((key, i) => {
-                        return <p key={i}><span>{key} : {overview[key]}</span></p>
-                    }
-                )}
-            </div>
-        </div>}
-
+    return <div className={"reference-type-filters"}>
+        <FilterButtons
+            flock ={references}
+            filterMap = {REF_TYPES_FILTER_MAP}
+            filterList = {[]} // use all
+            onClick={onClick}
+            caption = "Reference Types"
+            className = ""
+            currentFilterName={curFilterName} />
     </div>
 }
 
@@ -197,13 +195,23 @@ export default function PageOverview( { references,
                                         })
 {
     const [refFilterName, setRefFilterName] = useState( null );
+    const [refTypeFilterName, setRefTypeFilterName] = useState( '' );
     const [urlFilterName, setUrlFilterName] = useState( null );
 
     function handleRefButton(name) {
         setRefFilterName(name);
+        setRefTypeFilterName("");
         const f = REF_FILTER_MAP[name];
         setRefFilter(f ? f.filterFunction : null)
     }
+
+    function handleRefTypeButton(name) {
+        setRefTypeFilterName(name);
+        setRefFilterName("");
+        const f = REF_TYPES_FILTER_MAP[name];
+        setRefFilter(f ? f.filterFunction : null)
+    }
+
 
     const refFilterList = REF_FILTER_NAMES.map((name) => {
         let f = REF_FILTER_MAP[name]; // TODO: catch null f error?
@@ -238,10 +246,10 @@ export default function PageOverview( { references,
 
             {/*<UrlFilters filterList={urlFilterList} filterCaption={URL_FILTER_MAP[urlFilterName] ? URL_FILTER_MAP[urlFilterName].caption : ""} />*/}
 
+            <RefOverview references={references} onClick={handleRefTypeButton} curFilterName={refTypeFilterName} />
+
             <ReferenceFilters filterList={refFilterList}
                               filterCaption={REF_FILTER_MAP[refFilterName] ? REF_FILTER_MAP[refFilterName].caption : ""} />
-
-            <RefOverview overview={refOverview} onClickLink={()=>{}} />
 
         </div>
     </div>

@@ -63,7 +63,9 @@ export default function App() {
     }
 
     const convertPathToArticleEndpoint = (path = '', refresh=false) => {
-        return`${API_V2_URL_BASE}/statistics/article?url=${path}${ refresh ? "&refresh=true":''}`;
+
+        const sectionRegex = "&regex=bibliography|further reading|works cited|sources|external links"; // for now... as of 2023.04.09
+        return`${API_V2_URL_BASE}/statistics/article?url=${path}${sectionRegex}${ refresh ? "&refresh=true":''}`;
     };
 
     // fetch article data
@@ -182,8 +184,8 @@ export default function App() {
                     <p>endpointPath: <MakeLink href={endpointPath}/></p>
                     <p>Force Refresh: {refreshCheck ? "TRUE" : "false"}</p>
                     <p>inline target URL: {myUrl}</p>
-                    <p>window.location:</p>
-                    <pre>{JSON.stringify(window.location,null,2)}</pre>
+                    {/*<p>window.location:</p>*/}
+                    {/*<pre>{JSON.stringify(window.location,null,2)}</pre>*/}
                 </div>
 
             </div>
