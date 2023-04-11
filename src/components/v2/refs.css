@@ -38,8 +38,8 @@
     padding:.5rem;
     text-align:left;
     font-weight: bold;
-    min-width:13.5rem;
-    max-width:14.8rem;
+    min-width:11.5rem;
+    max-width:16.8rem;
 }
 .ref-filters button.btn-pressed, .filter-buttons button.btn-pressed {
     background-color: #b9cbc3;
