@@ -63,7 +63,6 @@ function RefFlock({ refArray, refFilterDef } ) {
 
             .finally(() => {
                 // console.log("fetch finally")
-                // setIsLoading(false);
             });
 
     }
@@ -104,9 +103,9 @@ function RefFlock({ refArray, refFilterDef } ) {
         </div>
 
         <div className={"ref-details"}>
-            <h3>Reference Details</h3>
-            <p>source: <a href={referenceEndpoint} target={"_blank"} rel={"noreferrer"}>{referenceEndpoint}</a></p>
-            <RefDetails details={refDetails}/>
+            <h4>Reference Details</h4>
+            {/*<p>source: <a href={referenceEndpoint} target={"_blank"} rel={"noreferrer"}>{referenceEndpoint}</a></p>*/}
+            <RefDetails details={refDetails} source={referenceEndpoint}/>
         </div>
     </div>
 }

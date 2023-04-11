@@ -165,7 +165,7 @@ export default function App() {
         <div className="ware-view">
 
             <div className={"header"}>
-                {env === 'env-production' ? null : <div className={"environment-tag"}>{"NON-PRODUCTION\u00A0\u00A0".repeat(8)}</div> }
+                {(!env || env !== 'env-production') ? <div className={"environment-tag"}>{"NON-PRODUCTION\u00A0\u00A0".repeat(8)}</div> : null }
                 <h1>Wikipedia Article Reference Explorer <span className={"version-display"}> version {package_json.version}
                     <span className={"non-production"}
                     > STAGING SITE <
