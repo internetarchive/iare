@@ -60,7 +60,8 @@ export default function PathNameFetch({ pathInitial='', checkInitial= false, han
             <div style={{display: "block"}}>
                 <button onClick={myHandlePath.handleSubmit} style={{marginLeft: "10px"}}>
                     <span>{"Load References"}</span>
-                </button> <Checkbox label={"Force Refresh"} value={checked} onChange={handleCheckChange} />
+                </button> <Checkbox className={"chk-force-refresh"} label={"Force Refresh"} value={checked} onChange={handleCheckChange}
+            />&nbsp;
                 <ButtonFetch buttonKey={"easterIslandFilename"} onClick={setPathName} className={"path-shortcut"}/>
                 <ButtonFetch buttonKey={"internetArchiveFilename"} onClick={setPathName} className={"path-shortcut"}/>
             </div>

@@ -27,7 +27,7 @@ function getLinkText(ref) {
     return <p>{text}</p>
 }
 
-function References( { refs, filter } ) {
+function RefFlock({ refArray, refFilterDef } ) {
 
     const [refDetails, setRefDetails] = useState(null);
     // const [isLoading, setIsLoading] = useState(false);
@@ -40,6 +40,7 @@ function References( { refs, filter } ) {
             return;
         }
 
+        // TODO: use refresh here ?
         const endpoint = `${API_V2_URL_BASE}/statistics/reference/${ref.id}`;
         setReferenceEndpoint(endpoint)
 
@@ -57,47 +58,56 @@ function References( { refs, filter } ) {
             })
 
             .catch((err) => {
-                setRefDetails("Error with details");
+                setRefDetails(`Error with details (${err})`);
             })
 
             .finally(() => {
                 // console.log("fetch finally")
-                // setIsLoading(false);
             });
 
     }
 
-    if (!refs) return <><p>No references!</p></>
+    let refs;
 
-    const filteredRefs = filter ? refs.filter( filter ) : refs;
+    if (!refArray) {
+        refs = <h4>No references!</h4>
 
-    return <div className={"references"}>
+    } else {
+        // filter the refs if filter defined
+        const filteredRefs = refFilterDef
+            ? refArray.filter((refFilterDef.filterFunction)())
+            : refArray;
 
-        <div className={"refs-container"}>
-            <h3>References</h3>
+        const refList = filteredRefs.map((ref, i) => {
+            return <button key={i}
+                           className={"ref-button"}
+                           onClick={(e) => {
+                               fetchDetail(ref)
+                           }}>{getLinkText(ref)}</button>
+        });
 
-            {!filteredRefs ? <><p>No references!</p></>
-                : <><p style={{marginTop:0}}>Filtered count = {filteredRefs.length}</p>
-                {
-                filteredRefs.map((ref, i) => {
-                    return <button key={i}
-                                   className={"ref-button"}
-                                   onClick={(e) => {
-                                       fetchDetail(ref)
-                                   }}>{getLinkText(ref)}</button>
-                })}
-                </>}
+        const label = refFilterDef
+            ? `${filteredRefs.length} Filtered Refs : ${refFilterDef.caption}`
+            : `${filteredRefs.length} Refs (no filter)`
+        refs = <>
+            <h4>{label}</h4>
+            <div className={"ref-list"}>
+                {refList}
+            </div>
+        </>
+    }
+
+    return <div className={"ref-flock"}>
+        <div className={"ref-list-wrapper"}>
+            {refs}
         </div>
 
         <div className={"ref-details"}>
-            <h3>Reference Details</h3>
-            <p>source: <a href={referenceEndpoint} target={"_blank"} rel={"noreferrer"}>{referenceEndpoint}</a></p>
-            <RefDetails details={refDetails} />
+            <h4>Reference Details</h4>
+            {/*<p>source: <a href={referenceEndpoint} target={"_blank"} rel={"noreferrer"}>{referenceEndpoint}</a></p>*/}
+            <RefDetails details={refDetails} source={referenceEndpoint}/>
         </div>
-
     </div>
-
 }
 
-
-export default References;
+export default RefFlock;
