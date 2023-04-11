@@ -35,16 +35,6 @@ Chart.register(
         // Chart.register(...registerables);
 
 
-const colors = {
-    blue   : "#35a2eb",
-    red    : "#ff6384",
-    teal   : "#4bc0c0",
-    orange : "#ff9f40",
-    purple : "#9866ff",
-    yellow : "#ffcd57",
-    grey   : "#c9cbcf",
-    magenta: "#f763ff",
-}
 
 
 // display filter buttons
@@ -74,118 +64,6 @@ const RefOverview = ( { references, onClick, curFilterName },  ) => {
     </div>
 }
 
-/*
-    UrlOverview:
-    assumed structure of overview object:
-
-    { urlCounts : [
-            {
-            label:,
-            count:,
-            link:
-            }
-        ,...
-        ]
-    }
-*/
-const UrlOverview = ( { overview, onClickChart } ) => {
-
-    if (!overview) { return <div>
-            <h4>Urls</h4>
-            <p>No Url statistics to show.</p>
-        </div>}
-
-    // remove "all" entry for pie chart
-    const overviewWithoutAll = overview.urlCounts
-        ? overview.urlCounts.filter(s => s.link !== "all")
-        : [];
-
-    const onClickLegend = (event, legendItem, legend) => {
-        const index = legendItem.index;
-        const ci = legend.chart;
-        const link = ci.data.datasets[0].links[index];
-        // console.log(`legend index: ${index}, link: ${link}`);
-
-        // pass link up to passed in click routine
-        onClickChart(link)
-    }
-
-    const chartData = {
-
-        labels: overviewWithoutAll.map( d => d.label),
-        datasets: [{
-            label: "URLs",
-            data: overviewWithoutAll.map( d => d.count),
-            links: overviewWithoutAll.map( d => d.link),
-            backgroundColor: [ colors.teal, colors.yellow, colors.red, colors.magenta, colors.grey, ]
-        }],
-
-        borderColor: "black",
-        borderWidth: 2,
-    }
-
-    const options = {
-        cutout: "50%",
-        responsive: true,
-        plugins: {
-            legend: {
-                display: true,
-                position: 'top',
-                align: 'start',
-                // title: {
-                //     text: "Legend",
-                //     display: true,
-                // },
-                labels : {
-                    boxWidth : 30,
-                    boxHeight : 16,
-                    font: {
-                        size: 14
-                    },
-                },
-                onClick : onClickLegend,
-            },
-            // subtitle: {
-            //     display: true,
-            //     text: 'Custom Chart Subtitle'
-            // },
-            // title: {
-            //     display: true,
-            //     text: 'URL Return Status Code Breakdown'
-            // },
-            animation: {
-                animateScale: true,
-                    animateRotate: true
-            },
-        },
-    }
-
-    // // debug display for chartData
-    // return <div>
-    //     <h4>Urls</h4>
-    //     <RawJson obj={chartData} />
-    // </div>
-
-    const onClick = (link) => {
-        // console.log("pie chart clicked, link=", link)
-        onClickChart(link);
-    }
-
-    const total = overview.urlCounts && overview.urlCounts
-        ? overview.urlCounts.filter(s => s.link === "all")[0].count
-        : ""
-
-    return <div>
-        <h4>URLs - {total} total</h4>
-        <div className={"url-chart-display"}>
-            {/*<pre className={"raw-json"}>{JSON.stringify(overview, null, 2)}</pre>*/}
-            {chartData.datasets[0].data.length > 0 ?
-            <PieChart chartData={chartData} options={options} onClick={onClick} />
-            : <p>No Pie</p>}
-        </div>
-    </div>
-
-}
 
 export default function PageOverview( { references,
                                           refOverview,

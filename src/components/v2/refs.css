@@ -36,38 +36,6 @@
 }
 
 
-.url-chart-display {
-    width:317px;
-}
-
-.url-filters {
-    display:flex;
-    flex-d5irection: column;
-
-}
-.url-filters button {
-    /*width:100% !important;*/
-    font-size:1rem;
-    padding:.25rem .5rem;
-    text-align:left;
-    font-weight: bold;
-    /*background-color: #cee1e8;*/
-    min-width: 10rem;
-    height:2.5rem;
-}
-.url-filters button.btn-pressed {
-    /*background-color: #7fbfe3 !important;*/
-    background-color: #95c9e5 !important;
-}
-.url-filters .btn-description {
-    display:none;
-    font-style: italic;
-    font-size: smaller;
-    font-weight: normal;
-    padding-left:1em;
-}
-
-
 .page-data {
     display:flex;
     flex-direction: row;
@@ -118,67 +86,7 @@ URLs
 
  */
 
-.urls {
-    width:25%;
-    /*margin-left:1rem;*/
-    overflow: auto;
-}
-.urls a {
-    /*color:red;*/
-    /*display:block;*/
-    width:10em;
-    margin-bottom:.5rem;
-    overflow-wrap: break-word;
-}
-.url-display .url-row {
-    display: flex;
-    flex-direction: row;
-    border:1px solid black;
-    border-top:none;
-    position:relative;
-}
-.url-display .url-row:first-child {
-    border-top:1px solid black;
-}
-.url-display .url-row.url-is-unknown,
-.url-display .url-row.url-is-unknown a{
-    color:dimgrey !important;
-}
-.url-display .url-row.url-is-redirect,
-.url-display .url-row.url-is-redirect a{
-    /*color: #b700ff !important;*/
-}
-.url-display .url-row.url-is-notfound,
-.url-display .url-row.url-is-notfound a{
-    color: red !important;
-}
-.url-display .url-row.url-is-error,
-.url-display .url-row.url-is-error a{
-    color: red !important;
-}
 
-.url-display .url-name {
-    width: 80%;
-    min-width: 80%;
-    max-width: 80%;
-    padding: .5rem;
-    border-right: 1px solid black;
-}
-.url-display .url-status {
-    width: 10%;
-    padding:.25rem;
-}
-.url-display .url-header-row .url-status {
-    cursor: pointer;
-    width:100%;
-    text-align: center;
-    color:#0000EE;
-}
-.url-display a {
-    width:80%;
-    margin-bottom:.5rem;
-    overflow-wrap: break-word;
-}
 .flds {
     width:25%;
     overflow: auto;

@@ -1,6 +1,6 @@
 export const URL_FILTER_MAP = {
     all: {
-        caption: "All URLs",
+        caption: "All",
         desc: "no filter",
         filterFunction: () => () => {return true},
     },
