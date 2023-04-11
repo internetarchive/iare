@@ -1,0 +1,9 @@
+.fld-display {
+    /*width:25%;*/
+    overflow: auto;
+    margin-left:1rem;
+    flex: 0 0 300px;
+}
+.fld-display a {
+    color: #339966;
+}

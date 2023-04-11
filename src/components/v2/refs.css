@@ -1,71 +1,44 @@
-.page-overview > h3 {
-    margin-top:.3em;
+.ref-display {
+    overflow: auto;
+    /*flex-grow: 10;*/
+    /*flex-shrink: 0;*/
+    /*flex-basis: auto;*/
 }
-.page-overview-wrap {
+
+.ref-flock {
+    /*width:50%;*/
     display:flex;
     flex-direction: row;
-    padding:1rem;
-    padding-top:0;
-    border:1px solid black;
-}
-.page-overview-wrap > div {
-    margin-right:1.25rem;
-}
-
-.reference-filters, .filter-buttons {
-    display:flex;
-    flex-direction: column;
-
-}
-.reference-filters button, .filter-buttons button {
-    /*width:100% !important;*/
-    padding:.5rem;
-    text-align:left;
-    font-weight: bold;
-    min-width:13.5rem;
-    max-width:14.8rem;
-}
-.reference-filters button.btn-pressed, .filter-buttons button.btn-pressed {
-    background-color: #b9cbc3;
-}
-.reference-filters .btn-description, .filter-buttons .btn-description {
-    font-style: italic;
-    font-size: smaller;
-    font-weight: normal;
-    padding-left:1em;
-}
-
-
-.page-data {
-    display:flex;
-    flex-direction: row;
-    /*border-top:1px solid black;*/
-}
-.page-data > div {
-    margin-left: 1rem;
-}
-.page-data > div:first-child {
-    margin-left:0;
-}
-.references {
-    width:50%;
     overflow:hidden;
-    display:flex;
-    flex-direction: row;
 }
-.refs-container {
-    display:flex;
-    flex-direction: column;
-    width:50%
+.ref-list-wrapper {
+    display:block;
+}
+.ref-list {
+    max-width:29.5rem;
 }
 .ref-details {
     display:block;
-    width:50%;
+    /*width:50%;*/
     margin-left:1rem;
     word-wrap: break-word;
 }
+
 .ref-detail .raw-detail {
     color: #808080;
+}
+
+.ref-overview {
+    display:block;
+}
+
+.ref-overview-wrap {
+    display:flex;
+    flex-direction: row;
+}
+
+.ref-list-wrapper {
+    margin-top:1rem;
 }
 .ref-button {
     /*background-color: #ced9ef; !* #c1d4e0;*!*/
@@ -80,18 +53,24 @@
     /*width: 22rem;*/
 }
 
-/*
-
-URLs
-
- */
-
-
-.flds {
-    width:25%;
-    overflow: auto;
-    margin-left:1rem;
+.ref-filters, .filter-buttons {
+    display:flex;
+    flex-direction: column;
 }
-.flds a {
-    color: #339966;
+.ref-filters button, .filter-buttons button {
+    /*width:100% !important;*/
+    padding:.5rem;
+    text-align:left;
+    font-weight: bold;
+    min-width:13.5rem;
+    max-width:14.8rem;
+}
+.ref-filters button.btn-pressed, .filter-buttons button.btn-pressed {
+    background-color: #b9cbc3;
+}
+.ref-filters .btn-description, .filter-buttons .btn-description {
+    font-style: italic;
+    font-size: smaller;
+    font-weight: normal;
+    padding-left:1em;
 }

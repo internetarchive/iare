@@ -129,12 +129,12 @@ export default function UrlOverview ({ statistics, onAction } ) {
     //     <RawJson obj={chartData} />
     // </div>
 
-    const total = statistics.urlCounts && statistics.urlCounts // check validity
-        ? statistics.urlCounts.filter(s => s.link === "all")[0].count
-        : ""
+                // const total = statistics.urlCounts && statistics.urlCounts // check validity
+                //     ? statistics.urlCounts.filter(s => s.link === "all")[0].count
+                //     : ""
 
     return <div className={"url-overview"}>
-        <h4>URLs - {total} total</h4>
+        <h4>Grouped by Status Code</h4>
         <div className={"url-chart-display"}>
             {/*<pre className={"raw-json"}>{JSON.stringify(overview, null, 2)}</pre>*/}
             {chartData.datasets[0].data.length > 0 ?

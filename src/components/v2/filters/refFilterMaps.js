@@ -1,4 +1,4 @@
-export const REF_FILTER_MAP = {
+export const REF_FILTER_DEFS = {
     // Plain: {
     //     caption: "Show Refs with Plain Text",
     //     desc: "plain_text_in_reference = true",
@@ -90,11 +90,11 @@ export const REF_FILTER_MAP = {
 
 };
 
-export const REF_FILTER_NAMES = Object.keys(REF_FILTER_MAP);
+            // export const REF_FILTER_NAMES = Object.keys(REF_FILTER_MAP);
 
 
-export const REF_TYPES_FILTER_MAP = {
-    All: {
+export const REF_FILTER_TYPES = {
+    all: {
         caption: "All",
         desc: "no filter",
         filterFunction: () => () => {return true},

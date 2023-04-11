@@ -12,10 +12,14 @@ export default function FilterButtons ( {
            }) {
 
     const keyList = filterList.length === 0
-        ? Object.keys(filterMap)
+        ? Object.keys(filterMap) // use all keys of map if specified filterList is empty
         : filterList;
 
-    return <div>
+    const handleClick = (e) => {
+        onClick(e); // might want to decorate this later...
+    }
+
+    return <div className={"filter-box"}>
         <h4>{caption}</h4>
         <div className={`filter-buttons ${className}`}>
             {keyList.map((name) => {
@@ -26,7 +30,7 @@ export default function FilterButtons ( {
                     caption={f.caption}
                     count={f.count}
                     isPressed={name === currentFilterName}
-                    onClick={onClick}
+                    onClick={handleClick}
 
                     desc={f.desc}
                     useDesc={false}

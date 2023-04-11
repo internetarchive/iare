@@ -1,11 +1,13 @@
 import React from 'react';
 import TR from "../TR";
+import './flds.css';
 
-export default function Flds( { flds } ) {
+export default function FldDisplay({ flds } ) {
 
     return <>
-        <div className={"flds"}>
+        <div className={"fld-display section-box"}>
             <h3>Pay Level Domains</h3>
+            <h4>Click to visit</h4>
 
             { !flds ? <><p>No flds to show!</p></> :
 

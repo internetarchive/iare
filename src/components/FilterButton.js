@@ -8,6 +8,9 @@ import React from "react";
         setFilter
 
         useDesc     boolean; show descriptive text or not
+
+        upon click, the "name" param gets sent "up"
+
  */
 export default function FilterButton(props) {
     return <button

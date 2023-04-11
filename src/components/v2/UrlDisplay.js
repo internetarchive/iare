@@ -83,7 +83,7 @@ export default function UrlDisplay ({ pageData, options } ) {
         // TODO: error trap this promise call with a .catch
         const results = await Promise.all(promises);
 
-        console.log("fetchAllUrls: after Promise.all, results:" , results)
+        // console.log("fetchAllUrls: after Promise.all, results:" , results)
         return results;
     }, []);
 
@@ -152,6 +152,8 @@ export default function UrlDisplay ({ pageData, options } ) {
     }
 
     return <div className={"url-display section-box"}>
+
+        <h3>URLs</h3>
 
         <UrlOverview statistics={urlStatistics} onAction={handleAction} />
 

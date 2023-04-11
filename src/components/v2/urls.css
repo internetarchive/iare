@@ -1,7 +1,11 @@
 .url-display {
-    width:25%;
+    /*width:25%;*/
     /*margin-left:1rem;*/
     overflow: auto;
+    flex:0 0 317px;
+    /*flex-grow: 0;*/
+    /*flex-shrink: 0;*/
+    /*flex-basis: 317px !important;*/
 }
 .url-display a {
     /*color:red;*/
@@ -10,6 +14,14 @@
     margin-bottom:.5rem;
     overflow-wrap: break-word;
 }
+.url-overview > h4 {
+    color: grey;
+    margin-bottom: 0;
+}
+.url-chart-display {
+    width:317px;
+}
+
 .url-flock {
     margin-top: 1.2rem;
 }
@@ -63,9 +75,6 @@
     overflow-wrap: break-word;
 }
 
-.url-chart-display {
-    width:317px;
-}
 
 
 .url-filters {

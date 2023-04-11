@@ -138,6 +138,9 @@ table.single-detail tr td:not(:first-child) {
 .ware-view h3 {
     color:#666666;
 }
+.ware-view h4 {
+    color:#808080;
+}
 
 
 .ware-view .path-fetch {
@@ -162,10 +165,6 @@ table.single-detail tr td:not(:first-child) {
     margin-left:10px;
 }
 
-.section-box {
-    padding:.8rem;
-    border:1px solid black;
-}
-.section-box h3, .section-box h4 {
-    margin-top:0;
+.path-fetch-wrap .chk-force-refresh {
+    margin-left: .5rem;
 }

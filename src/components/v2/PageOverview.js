@@ -37,32 +37,6 @@ Chart.register(
 
 
 
-// display filter buttons
-const ReferenceFilters = ( {filterList, filterCaption}) => {
-    return <div>
-        {/*<h4>Reference Filters<br/><span style={{fontSize:"smaller", fontWeight:"normal"}}>Current filter: {filterCaption}</span></h4>*/}
-        <h4>Reference Filters</h4>
-        <div className={"reference-filters"}>
-            {filterList}
-        </div>
-    </div>
-
-}
-
-// show ref overview interactions
-const RefOverview = ( { references, onClick, curFilterName },  ) => {
-
-    return <div className={"reference-type-filters"}>
-        <FilterButtons
-            flock ={references}
-            filterMap = {REF_TYPES_FILTER_MAP}
-            filterList = {[]} // use all
-            onClick={onClick}
-            caption = "Reference Types"
-            className = ""
-            currentFilterName={curFilterName} />
-    </div>
-}
 
 
 export default function PageOverview( { references,
@@ -75,20 +49,6 @@ export default function PageOverview( { references,
     const [refFilterName, setRefFilterName] = useState( null );
     const [refTypeFilterName, setRefTypeFilterName] = useState( '' );
     const [urlFilterName, setUrlFilterName] = useState( null );
-
-    function handleRefButton(name) {
-        setRefFilterName(name);
-        setRefTypeFilterName("");
-        const f = REF_FILTER_MAP[name];
-        setRefFilter(f ? f.filterFunction : null)
-    }
-
-    function handleRefTypeButton(name) {
-        setRefTypeFilterName(name);
-        setRefFilterName("");
-        const f = REF_TYPES_FILTER_MAP[name];
-        setRefFilter(f ? f.filterFunction : null)
-    }
 
 
     const refFilterList = REF_FILTER_NAMES.map((name) => {
