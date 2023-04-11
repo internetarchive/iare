@@ -4,6 +4,7 @@
     /*flex-shrink: 0;*/
     /*flex-basis: auto;*/
     max-width: 44rem;
+    min-width: 30rem;
 }
 
 .ref-overview {
