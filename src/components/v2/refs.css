@@ -30,27 +30,7 @@
     /*width: 22rem;*/
 }
 
-.ref-filters, .filter-buttons {
-    display:flex;
-    flex-direction: column;
-}
-.ref-filters button, .filter-buttons button {
-    /*width:100% !important;*/
-    padding:.5rem;
-    text-align:left;
-    font-weight: bold;
-    min-width:11.5rem;
-    max-width:16.8rem;
-}
-.ref-filters button.btn-pressed, .filter-buttons button.btn-pressed {
-    background-color: #b9cbc3;
-}
-.ref-filters .btn-description, .filter-buttons .btn-description {
-    font-style: italic;
-    font-size: smaller;
-    font-weight: normal;
-    padding-left:1em;
-}
+
 
 .ref-flock {
     /*width:50%;*/
@@ -78,5 +58,54 @@
 
 .ref-detail .raw-detail {
     color: #808080;
+}
+
+/* filter buttons */
+
+.filter-box {
+    margin-left:1rem;
+}
+.filter-box.ref-filters-0 {
+    margin-left:0;
+}
+.filter-box h4 {
+    margin-bottom:.5rem;
+}
+
+.filter-buttons {
+    display:flex;
+    flex-direction: column;
+}
+.filter-buttons button {
+    cursor: pointer;
+    /*width:100% !important;*/
+    padding:.5rem;
+    text-align:left;
+    font-weight: bold;
+    min-width:11.5rem;
+    max-width:16.8rem;
+}
+.filter-buttons button.btn-pressed {
+    background-color: #b9cbc3;
+}
+.filter-buttons .btn-description {
+    font-style: italic;
+    font-size: smaller;
+    font-weight: normal;
+    padding-left:1em;
+}
+
+.ref-filters {
+    display:flex;
+    flex-direction: row;
+}
+
+.ref-filters .react-tooltip {
+    font-size:1.15em;
+    text-align: left;
+    background-color: #d3e3fd;
+    color:#001d35;
+    border:1px solid black;
+    padding:0.25em .5em .5em;
 }
 

@@ -18,8 +18,13 @@ export default function FilterButton(props) {
         className={"btn toggle-btn " + (props.isPressed ? "btn-pressed" : "")}
         aria-pressed={props.isPressed}
         onClick={() => props.onClick(props.name)}
+
+        // tooltip attributes
+        data-tooltip-id="my-filter-tooltip"
+        data-tooltip-content={props.desc}
     >
         <span>{props.caption}{(props.count || props.count === 0) ? ` (${props.count})` : ''}</span>
         {props.useDesc ? <><br/><span className={"btn-description"}>{props.desc}</span></> : null}
     </button>;
+
 }

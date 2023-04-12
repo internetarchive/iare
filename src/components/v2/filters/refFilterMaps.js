@@ -101,25 +101,25 @@ export const REF_FILTER_TYPES = {
     },
     general: {
         caption: "General",
-        desc: "",
+        desc: "General",
         filterFunction: () => (d) => {return d.type === "general"},
     },
 
     footnote: {
         caption: "Footnote",
-        desc: "",
+        desc: "Footnote",
         filterFunction: () => (d) => {return d.type === "footnote"},
     },
 
     content: {
         caption: "Content",
-        desc: "",
+        desc: "Content",
         filterFunction: () => (d) => {return d.footnote_subtype === "content"},
     },
 
     named: {
         caption: "Named",
-        desc: "",
+        desc: "Named",
         filterFunction: () => (d) => {return d.footnote_subtype === "named"},
     },
 

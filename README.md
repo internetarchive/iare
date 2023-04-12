@@ -23,7 +23,7 @@ The build is minified and ready to be deployed for testing purposes.
 
 ## Automatic deployement
 
-Whenever a new commit is uploaded to the repo, an Action is automatically performed that
+Whenever a new commit is uploaded to this repo, a github Action is automatically performed that
 creates a production-ready version of the WARE app, and made available at the address:
 
 ```
@@ -49,4 +49,13 @@ Open the application in a web browser at http://localhost:3000
 
 ## Under the Hood
 
+
 ### Organization of components
+
+
+### External components used
+
+ReactTooltip / react-tooltip
+Chart.js
+react-chartjs-2
+chart.js/helpers
