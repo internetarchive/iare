@@ -1,5 +1,9 @@
 import React, {useRef} from 'react';
-import {getElementsAtEvent, Bar} from 'react-chartjs-2';
+// import {getElementsAtEvent, Bar} from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
+import { Chart } from 'chart.js'
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+Chart.register(ChartDataLabels,)
 
 // example chartData:
 //
@@ -23,24 +27,27 @@ export default function BarChart({ chartData, options, onClick }) {
     const chartRef2 = useRef();
 
     const myClick = (event) => {
-        if (getElementsAtEvent(chartRef2.current, event).length > 0) {
-            const datasetIndexNum = getElementsAtEvent(chartRef2.current, event)[0].datasetIndex;
-            const dataPoint = getElementsAtEvent(chartRef2.current, event)[0].index;
-            //at this point, we can pass back the "link" of the dataset being clicked
-            const link = chartData.datasets[datasetIndexNum].links[dataPoint]
-            // TODO: ERROR wha to do when links is not there?
-
-            onClick(link)
-        }
+        // if (getElementsAtEvent(chartRef2.current, event).length > 0) {
+        //     const datasetIndexNum = getElementsAtEvent(chartRef2.current, event)[0].datasetIndex;
+        //     const dataPoint = getElementsAtEvent(chartRef2.current, event)[0].index;
+        //     //at this point, we can pass back the "link" of the dataset being clicked
+        //     const link = chartData.datasets[datasetIndexNum].links[dataPoint]
+        //     // TODO: ERROR wha to do when links is not there?
+        //
+        //     onClick(link)
+        // }
+        alert("BarChart myClick")
     }
 
     return (
-        <div className="chart-container">
+        <div className="chart-container bar-chart-container">
             <Bar
                 data={chartData}
                 options={options}
                 onClick={myClick}
                 ref={chartRef2}
+
+                plugins = {[ChartDataLabels]}
             />
         </div>
     );

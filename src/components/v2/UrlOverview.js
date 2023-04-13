@@ -20,7 +20,8 @@ Chart.register(
     Tooltip,
     Title,
     SubTitle,
-    Colors);
+    Colors,
+);
 
 const colors = {
     blue   : "#35a2eb",
@@ -91,6 +92,7 @@ export default function UrlOverview ({ statistics, onAction } ) {
         cutout: "50%",
         responsive: true,
         plugins: {
+            datalabels: false,
             legend: {
                 display: true,
                 position: 'top',
@@ -103,7 +105,7 @@ export default function UrlOverview ({ statistics, onAction } ) {
                     boxWidth : 30,
                     boxHeight : 16,
                     font: {
-                        size: 14
+                        size: 16
                     },
                 },
                 onClick : onClickLegend,
