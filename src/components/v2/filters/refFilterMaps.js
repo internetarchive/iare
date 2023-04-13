@@ -6,27 +6,26 @@ export const REF_FILTER_DEFS = {
     // },
     NamedTemplate: {
         caption: "Named Templates",
-        desc: 'template_names[]',
+        desc: 'Citations containing any named template',
         filterFunction: () => (d) => {return d.template_names.length > 0},
     },
     CiteWeb: {
         caption: "{{cite web}} templates",
-        desc: "template_names[] contains 'cite web'",
+        desc: "Citations containing a {{cite web}} template",
         filterFunction: () => (d) => {
             return d.template_names.includes("cite web");
         },
     },
     CiteMap: {
         caption: "{{cite map}} templates",
-        desc: "template_names[] contains 'cite map'",
+        desc: "Citations containing a {{cite map}} template",
         filterFunction: () => (d) => {
             return d.template_names.includes("cite map");
         },
     },
     CiteJournal: {
         caption: "{{cite journal}} templates",
-        desc: "template_names[] contains 'cite journal'",
-        tooltip: "there is a {{cite journal}}",
+        desc: "Journal articles linked to",
         filterFunction: () => (d) => {
             return d.template_names.includes("cite journal");
         },
@@ -42,7 +41,7 @@ export const REF_FILTER_DEFS = {
         naked isbn or references with a cite book + parameter isbn that is not none.
          */
         caption: "Has ISBN",
-        desc: "d.template_names.includes ['cite book','isbn']",
+        desc: "Citations containing an ISBN",
         filterFunction: () => (d) => {
             return d.template_names.includes("cite book") || d.template_names.includes("isbn");
         },
@@ -50,7 +49,7 @@ export const REF_FILTER_DEFS = {
 
     archiveBook: {
         caption: "Books linked to archive.org",
-        desc: "['cite book'], with \"https://archive.org/details/\"",
+        desc: "Citations containing a link to a book hosted at archive.org",
         filterFunction: () => (d) => {
             return !!d.urls.find((url) => url.includes("https://archive.org/details/"))
         }
@@ -58,7 +57,7 @@ export const REF_FILTER_DEFS = {
 
     googleBook: {
         caption: "Books linked to Google Books",
-        desc: "urls[].includes \"https://archive.org/details/googlebooks\"",
+        desc: "Citations containing a link to a book hosted at googlebooks",
         filterFunction: () => (d) => {
             return !!d.urls.find((url) => url.includes("https://archive.org/details/googlebooks"))
         }
@@ -66,7 +65,7 @@ export const REF_FILTER_DEFS = {
 
     journalArchive: {
         caption: "Journal Article linked to archive.org",
-        desc: "urls[].includes \"https://archive.org/details/googlebooks\"",
+        desc: "Citations linking to a journal article in archive.org",
         filterFunction: () => (d) => {
             return d.template_names.includes("cite journal")
                 && !!d.urls.find((url) => url.includes("https://web.archive.org/"))
@@ -75,7 +74,7 @@ export const REF_FILTER_DEFS = {
 
     NoTemplate: {
         caption: "No Template",
-        desc: "d.template_names.length < 1",
+        desc: "Citations without a CS1|2 template (free form)",
         filterFunction: () => (d) => d.template_names.length < 1,
     },
 
@@ -96,30 +95,30 @@ export const REF_FILTER_DEFS = {
 export const REF_FILTER_TYPES = {
     all: {
         caption: "All",
-        desc: "no filter",
+        desc: "All citations",
         filterFunction: () => () => {return true},
     },
     general: {
         caption: "General",
-        desc: "General",
+        desc: "General Citations",
         filterFunction: () => (d) => {return d.type === "general"},
     },
 
     footnote: {
         caption: "Footnote",
-        desc: "Footnote",
+        desc: "Footnote Citations",
         filterFunction: () => (d) => {return d.type === "footnote"},
     },
 
     content: {
         caption: "Content",
-        desc: "Content",
+        desc: "Content Citations",
         filterFunction: () => (d) => {return d.footnote_subtype === "content"},
     },
 
     named: {
         caption: "Named",
-        desc: "Named",
+        desc: "Named Citations",
         filterFunction: () => (d) => {return d.footnote_subtype === "named"},
     },
 

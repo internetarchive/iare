@@ -159,7 +159,7 @@ table.single-detail tr td:not(:first-child) {
     margin-bottom: .5rem;
 }
 .path-fetch #pathInput {
-    width:36rem;
+    width:33rem;
     font-size: 1.1rem;
 }
 .path-fetch .path-shortcut {
