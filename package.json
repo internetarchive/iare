@@ -3,9 +3,6 @@
   "version": "0.1.15",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
     "chart.js": "^4.2.1",
     "d3": "^7.8.2",
     "react": "^18.2.0",
@@ -16,10 +13,16 @@
     "react-tooltip": "^5.11.1",
     "web-vitals": "^2.1.4"
   },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "jsdom": "^21.0.0"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --env=jsdom --testPathIgnorePatterns=src/__tests__/setup.js",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
