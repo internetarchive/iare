@@ -2,7 +2,7 @@ import React from 'react';
 // import FilterButtons from "../FilterButtons";
 // import FilterButton from "../FilterButton";
 // import { Tooltip } from 'react-tooltip'
-import RawJson from "../RawJson";
+// import RawJson from "../RawJson";
 import BarChart from "../BarChart";
 
 import {
@@ -126,7 +126,7 @@ export default function RefOverview ({ refArray, summary, onAction, curFilterNam
 
             let colorIndex = barColors.length;
 
-            summary.filterSets.map( (filterSet) => {
+            summary.filterSets.forEach( (filterSet) => {
                 const names = Object.keys(filterSet);
                 filterData = filterData.concat(
                     names.map((name) => {

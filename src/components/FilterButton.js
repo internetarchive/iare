@@ -23,7 +23,7 @@ export default function FilterButton(props) {
         data-tooltip-id="my-filter-tooltip"
         data-tooltip-content={props.desc}
     >
-        <span>{props.caption}{(props.count || props.count === 0) ? ` (${props.count})` : ''}</span>
+        <span>{props.caption}{(props.count || props.count === 0) ? <span className={"lolite"}> [{props.count}]</span> : ''}</span>
         {props.useDesc ? <><br/><span className={"btn-description"}>{props.desc}</span></> : null}
     </button>;
 

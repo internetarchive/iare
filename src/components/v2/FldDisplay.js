@@ -6,7 +6,7 @@ export default function FldDisplay({ flds } ) {
 
     return <>
         <div className={"fld-display section-box"}>
-            <h3>Pay Level Domains</h3>
+            <h3>Domains</h3>
             <h4>Click to visit</h4>
 
             { !flds ? <><p>No flds to show!</p></> :

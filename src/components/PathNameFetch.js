@@ -48,7 +48,7 @@ export default function PathNameFetch({ pathInitial='', checkInitial= false, han
         <div className={"path-fetch-wrap"}>
 
             <div style={{marginBottom: ".5rem"}}><label
-                htmlFor="pathInput">Path Url: </label
+                htmlFor="pathInput">Wikipedia Url: </label
             ><input
                 id="pathInput" name="pathInput"
                 type="text"
