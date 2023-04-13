@@ -94,6 +94,9 @@
     font-weight: normal;
     padding-left:1em;
 }
+.filter-buttons .lolite {
+    color: #888888;
+}
 
 .ref-filters {
     display:flex;
