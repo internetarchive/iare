@@ -1,28 +1,28 @@
 import React from 'react';
 import FilterButtons from "../FilterButtons";
-// import BarChart from "../PieChart";
-// import RawJson from "../RawJson";
-import {
-    Chart,
-    LinearScale,
-    BarElement,
-    ArcElement,
-    Legend,
-    Tooltip,
-    Title,
-    SubTitle,
-    Colors,
-} from 'chart.js'
+import { Tooltip } from 'react-tooltip'
 
-Chart.register(
-    LinearScale,
-    BarElement,
-    ArcElement,
-    Legend,
-    Tooltip,
-    Title,
-    SubTitle,
-    Colors);
+// import {
+//     Chart,
+//     LinearScale,
+//     BarElement,
+//     ArcElement,
+//     Legend,
+//     Tooltip,
+//     Title,
+//     SubTitle,
+//     Colors,
+// } from 'chart.js'
+//
+// Chart.register(
+//     LinearScale,
+//     BarElement,
+//     ArcElement,
+//     Legend,
+//     Tooltip,
+//     Title,
+//     SubTitle,
+//     Colors);
 
 // const colors = { // TODO: put this in useContext?
 //     blue   : "#35a2eb",
@@ -54,8 +54,19 @@ export default function RefOverview ({ refArray, summary, onAction, curFilterNam
     if (!summary) {
         overview = <p>No reference summary information to show.</p>
     } else {
-        overview = <>
+        overview = <div class={"ref-filters"}>
             {/*<RawJson obj={summary} />*/}
+
+            <Tooltip id="my-filter-tooltip"
+                float={true}
+                closeOnEsc={true}
+                delayShow={420}
+                // delayHide={200}
+                variant={"info"}
+                     noArrow={true}
+                     offset={5}
+
+            />
 
             <FilterButtons
                 flock = {refArray}
@@ -65,7 +76,7 @@ export default function RefOverview ({ refArray, summary, onAction, curFilterNam
                     handleClick(e, "set-0")
                 }}
                 caption = "Reference Types"
-                className = "ref-filters"
+                className = "ref-filters-0"
                 currentFilterName = {curFilterName} />
 
             <FilterButtons
@@ -76,10 +87,10 @@ export default function RefOverview ({ refArray, summary, onAction, curFilterNam
                     handleClick(e, "set-1")
                 }}
                 caption = "Reference Filters"
-                className = "ref-filters"
+                className = "ref-filters-1"
                 currentFilterName = {curFilterName} />
 
-        </>
+        </div>
 
         // pull filterDefs from summary
         // create FilterButtons for each set

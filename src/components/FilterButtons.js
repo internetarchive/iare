@@ -1,6 +1,7 @@
 import React from "react";
 import FilterButton from "./FilterButton";
 
+
 export default function FilterButtons ( {
                 flock,
                 filterMap,
@@ -19,12 +20,14 @@ export default function FilterButtons ( {
         onClick(e); // might want to decorate this later...
     }
 
-    return <div className={"filter-box"}>
-        <h4>{caption}</h4>
+    return <div className={`filter-box ${className}`}>
+        {caption?<h4>{caption}</h4>:null}
         <div className={`filter-buttons ${className}`}>
+
             {keyList.map((name) => {
                 let f = filterMap[name];
                 f.count = flock ? flock.filter((f.filterFunction)()).length : 0;
+
                 return <FilterButton key={name}
                     name={name}
                     caption={f.caption}
@@ -36,6 +39,7 @@ export default function FilterButtons ( {
                     useDesc={false}
                     />
             })}
+
         </div>
     </div>
 
