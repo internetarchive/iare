@@ -39,16 +39,20 @@ export default function RefDisplay ({ pageData, options } ) {
         ? []
         : pageData.dehydrated_references
 
-    const refSummary = {
-        filterSets: [ REF_FILTER_TYPES, REF_FILTER_DEFS ],
-    }
 
     return <div className={"ref-display section-box"}>
 
         <h3>References</h3>
 
         <RefOverview refArray={refArray}
-                     summary={refSummary}
+                     summary={
+                        {
+                            filterSets: [
+                                { context : "set-0", filterMap : REF_FILTER_TYPES },
+                                { context : "set-1", filterMap : REF_FILTER_DEFS},
+                            ]
+                        }
+                     }
                      onAction={handleAction}
                      curFilterName={curFilterName}
         />

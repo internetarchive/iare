@@ -40,6 +40,8 @@ export default function PieChart({ chartData, options, onClick }) {
         id: 'textCenter',
         beforeDatasetsDraw(chart, args, pluginOptions) {
             const { ctx, data } = chart;
+
+            // get center of pie chart by getting x and y of first data point (could be any data point)
             const xCoor = chart.getDatasetMeta(0).data[0].x;
             const yCoor = chart.getDatasetMeta(0).data[0].y;
 

@@ -47,8 +47,16 @@ const colors = { // TODO: put this in useContext?
 const barColors = ["blue","teal","yellow","orange","red","magenta","purple",]
 
 
-// summary is assumed to have a filterSets property, an array of filterDef sets:
-//    filterSets : [ <filterSet1>, <filterSet2>, etc...]
+// summary is assumed to have a filterSets property, an array of filterMaps:
+//
+// summary : {
+//  filterSets: [
+//     { context : "set-0", filterMap : REF_FILTER_TYPES },
+//     { context : "set-1", filterMap : REF_FILTER_DEFS},
+//  ]
+// }
+
+
 export default function RefOverview ({ refArray, summary, onAction, curFilterName } ) {
 
     // const handleFilterClick = (link, context) => {
@@ -60,14 +68,21 @@ export default function RefOverview ({ refArray, summary, onAction, curFilterNam
     //         })
     //     }
 
-    const handleChartClick = (link, context) => {
+    const handleChartAction = (link, context='') => {
+
+        // TODO: where/how to pass context string
+
         // console.log (`RefOverview::handleClick: link: ${link}, context: ${context}`);
-        alert(`Chart clicked, link=${link}`);
+        //alert(`RefOverview: handleChartClick, link=${link}, context=${context}`);
+        console.log(`RefOverview: handleChartClick, link=${link}, context=${context}`);
+
         // onAction({
         //     action:"setFilter",
         //     value: link,
-        //     context: context
+        //     context: "references"
         // })
+
+        onAction( { action : "setFilter", value : link, context : context } )
     }
 
     // const tooltip = <Tooltip id="my-filter-tooltip"
@@ -127,17 +142,18 @@ export default function RefOverview ({ refArray, summary, onAction, curFilterNam
             let colorIndex = barColors.length;
 
             summary.filterSets.forEach( (filterSet) => {
-                const names = Object.keys(filterSet);
+                const names = Object.keys(filterSet.filterMap);
                 filterData = filterData.concat(
                     names.map((name) => {
-                        let f = filterSet[name];
+                        let f = filterSet.filterMap[name];
                         f.count = refArray.filter((f.filterFunction)()).length;
 
                         colorIndex = colorIndex >= (barColors.length -1)
                             ? 0 // if was on largest value, reset to 0
                             : colorIndex+1; // round-robin from colors
-console.log(`chart data: barColor[${colorIndex}]=${barColors[colorIndex]}`)
+
                         return {
+                            context: filterSet.context,
                             name: name,
                             caption: f.caption,
                             count: f.count,
@@ -154,21 +170,18 @@ console.log(`chart data: barColor[${colorIndex}]=${barColors[colorIndex]}`)
                 label: "Reference Counts",
                 data: filterData.map( d => d.count),
                 links: filterData.map( d => d.name),
-                // backgroundColor: [ colors.teal, colors.yellow, colors.red, colors.magenta, colors.grey, ]
-                backgroundColor: filterData.map( d => d.color)
+                contexts: filterData.map( d => d.context),
+                backgroundColor: filterData.map( d => d.color),
             }],
 
-            borderColor: "black",
-            borderWidth: 2,
-        }
-
-        const labelCallback = (value, index, ticks) => {
-            // return '$' + value;
-            return filterData[index].caption;
         }
 
         const chartOptions = {
             indexAxis: "y",
+
+            tooltips: {enabled: false},
+            hover: {mode: null},
+
             // elements: {
             //     bar: {
             //         borderWidth: 2,
@@ -176,12 +189,19 @@ console.log(`chart data: barColor[${colorIndex}]=${barColors[colorIndex]}`)
             // },
             responsive: true,
 
+            // // onHover: {myHover},
+            // onHover: function (event, chartElement) {
+            //     console.log("chart hover")
+            // },
+
             scales: {
                 y: {
                     ticks: {
 
                         // Include a dollar sign in the ticks
-                        callback: labelCallback,
+                        callback: function (value, index, ticks) {
+                            return "   " + filterData[index].caption;
+                        },
 
                         // // Include a dollar sign in the ticks
                         // callback: function(value, index, ticks) {
@@ -193,7 +213,7 @@ console.log(`chart data: barColor[${colorIndex}]=${barColors[colorIndex]}`)
                             family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
                             size: 15,
                             // style: "italic",
-                            weight: 400,
+                            weight: 800,
                             lineHeight: 1.2,
                         }
 
@@ -205,6 +225,7 @@ console.log(`chart data: barColor[${colorIndex}]=${barColors[colorIndex]}`)
             plugins: {
                 legend: false,
 
+                tooltip: false,
                 // title: {
                 //     display: true,
                 //     text: 'Chart.js Horizontal Bar Chart',
@@ -226,47 +247,43 @@ console.log(`chart data: barColor[${colorIndex}]=${barColors[colorIndex]}`)
                         weight: 400,
                         lineHeight: 1.2,
                     }
+                    // // other things...
+                    //     backgroundColor: null,
+                    //     borderColor: null,
+                    //     borderRadius: 4,
+                    //     borderWidth: 1,
+                    //     font: function(context) {
+                    //         let width = context.chart.width;
+                    //         let size = Math.round(width / 32);
+                    //         return {
+                    //             size: size,
+                    //             weight: 600
+                    //         };
+                    //     },
+                    //     offset: 4,
+                    //     padding: 0,
+                    //     formatter: function(value) {
+                    //         return Math.round(value * 10) / 10
+                    //     }
+
                 }
 
             },
             // hoverBackgroundColor: "red",
-            // barThickness: "flex"
+            // barThickness: "flex",
             offset: true,
 
             layout: {
                 padding: 0
             },
 
-
-            // dataLabels: {
-            //     anchor: 'end',
-            //     align: 'end',
-            //     backgroundColor: null,
-            //     borderColor: null,
-            //     borderRadius: 4,
-            //     borderWidth: 1,
-            //     color: '#223388',
-            //     font: function(context) {
-            //         let width = context.chart.width;
-            //         let size = Math.round(width / 32);
-            //         return {
-            //             size: size,
-            //             weight: 600
-            //         };
-            //     },
-            //     offset: 4,
-            //     padding: 0,
-            //     formatter: function(value) {
-            //         return Math.round(value * 10) / 10
-            //     }
-            // }
         };
 
         overviewDisplay = <div className={"ref-filter-chart"}>
             {/*<h4>chartData</h4>*/}
             {/*{tooltip}*/}
             {/*<RawJson obj={chartData} />*/}
-            <BarChart chartData={chartData} options={chartOptions} onClick={handleChartClick} />
+            <BarChart chartData={chartData} options={chartOptions} onAction={handleChartAction} />
         </div>
 
         // eventually this will be a bar chart, i imagine..., in which case we'll pull
