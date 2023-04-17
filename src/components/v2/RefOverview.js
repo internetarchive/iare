@@ -1,9 +1,8 @@
-import React from 'react';
+import React, {useState} from 'react';
+import { Tooltip as MyTooltip } from 'react-tooltip'
+import BarChart from "../BarChart";
 // import FilterButtons from "../FilterButtons";
 // import FilterButton from "../FilterButton";
-// import { Tooltip } from 'react-tooltip'
-// import RawJson from "../RawJson";
-import BarChart from "../BarChart";
 
 import {
     Chart,
@@ -17,9 +16,6 @@ import {
     Colors,
     CategoryScale,
 } from 'chart.js'
-
-// import ChartDataLabels from 'chartjs-plugin-datalabels';
-// Chart.register(ChartDataLabels,)
 
 Chart.register(
     LinearScale,
@@ -47,7 +43,7 @@ const colors = { // TODO: put this in useContext?
 const barColors = ["blue","teal","yellow","orange","red","magenta","purple",]
 
 
-// summary is assumed to have a filterSets property, an array of filterMaps:
+// summary is assumed to have a filterSets property, which is an array of {set,filterMap} objects:
 //
 // summary : {
 //  filterSets: [
@@ -55,45 +51,17 @@ const barColors = ["blue","teal","yellow","orange","red","magenta","purple",]
 //     { context : "set-1", filterMap : REF_FILTER_DEFS},
 //  ]
 // }
+export default function RefOverview ({ refArray, summary, onAction, selectedFilter } ) {
 
+    const [tooltipText, setTooltipText] = useState( '' );
 
-export default function RefOverview ({ refArray, summary, onAction, curFilterName } ) {
-
-    // const handleFilterClick = (link, context) => {
-    //     // console.log (`RefOverview::handleClick: link: ${link}, context: ${context}`);
-    //     onAction({
-    //         action:"setFilter",
-    //         value: link,
-    //         context: context
-    //         })
-    //     }
-
-    const handleChartAction = (link, context='') => {
-
-        // TODO: where/how to pass context string
-
-        // console.log (`RefOverview::handleClick: link: ${link}, context: ${context}`);
-        //alert(`RefOverview: handleChartClick, link=${link}, context=${context}`);
-        console.log(`RefOverview: handleChartClick, link=${link}, context=${context}`);
-
-        // onAction({
-        //     action:"setFilter",
-        //     value: link,
-        //     context: "references"
-        // })
-
+    const handleAction = (link, context='') => {
         onAction( { action : "setFilter", value : link, context : context } )
     }
 
-    // const tooltip = <Tooltip id="my-filter-tooltip"
-    //     float={true}
-    //     closeOnEsc={true}
-    //     delayShow={420}
-    //     // delayHide={200}
-    //     variant={"info"}
-    //     noArrow={true}
-    //     offset={5}
-    // />
+    const handleHover = (tooltipText='') => {
+        setTooltipText(tooltipText);
+    }
 
     let overviewDisplay;
 
@@ -101,6 +69,11 @@ export default function RefOverview ({ refArray, summary, onAction, curFilterNam
         overviewDisplay = <p>No reference summary information to show.</p>
     } else {
 
+                // this is for FilterButtons instead of Bar graph.
+                // might want to do both, and give a choice
+                //
+                // TODO: pass in tooltip-id in props for FilterButtons
+                //
                 // overviewDisplay = <div class={"ref-filters"}>
                 //     {/*<RawJson obj={summary} />*/}
                 //
@@ -109,7 +82,7 @@ export default function RefOverview ({ refArray, summary, onAction, curFilterNam
                 //         filterMap = {summary.filterSets[0]}
                 //         filterList ={[]}
                 //         onClick ={ (e) => {
-                //             handleFilterClick(e, "set-0")
+                //             handleAction(e, "set-0")
                 //         }}
                 //         caption = "Reference Types"
                 //         className = "ref-filters-0"
@@ -120,7 +93,7 @@ export default function RefOverview ({ refArray, summary, onAction, curFilterNam
                 //         filterMap = {summary.filterSets[1]}
                 //         filterList ={[]}
                 //         onClick ={ (e) => {
-                //             handleFilterClick(e, "set-1")
+                //             handleAction(e, "set-1")
                 //         }}
                 //         caption = "Reference Filters"
                 //         className = "ref-filters-1"
@@ -129,21 +102,20 @@ export default function RefOverview ({ refArray, summary, onAction, curFilterNam
                 // </div>
 
 
-        // turn summary.filterSets into barChartData
-
-        let filterData = [];
+        let filterList = []; // accumulate filters into one list from summary
 
         if (!refArray) {
 
-            // cant do any data cause refArray empty-ish
+            // cant do any data cause refArray is empty
 
         } else {
-
-            let colorIndex = barColors.length;
+            let colorIndex = barColors.length; // set up for color-loop
 
             summary.filterSets.forEach( (filterSet) => {
                 const names = Object.keys(filterSet.filterMap);
-                filterData = filterData.concat(
+
+                filterList = filterList.concat(
+
                     names.map((name) => {
                         let f = filterSet.filterMap[name];
                         f.count = refArray.filter((f.filterFunction)()).length;
@@ -153,8 +125,8 @@ export default function RefOverview ({ refArray, summary, onAction, curFilterNam
                             : colorIndex+1; // round-robin from colors
 
                         return {
-                            context: filterSet.context,
                             name: name,
+                            context: filterSet.context,
                             caption: f.caption,
                             count: f.count,
                             desc: f.desc,
@@ -162,52 +134,43 @@ export default function RefOverview ({ refArray, summary, onAction, curFilterNam
                         }}))})
         }
 
-
         const chartData = {
-
-            labels: filterData.map( d => d.caption),
+            labels: filterList.map( d => d.caption),
             datasets: [{
                 label: "Reference Counts",
-                data: filterData.map( d => d.count),
-                links: filterData.map( d => d.name),
-                contexts: filterData.map( d => d.context),
-                backgroundColor: filterData.map( d => d.color),
+                data: filterList.map( d => d.count),
+                links: filterList.map( d => d.name),
+                contexts: filterList.map( d => d.context),
+                tooltips: filterList.map( d => d.desc),
+                backgroundColor: filterList.map( d => d.color),
             }],
-
         }
 
         const chartOptions = {
             indexAxis: "y",
 
             tooltips: {enabled: false},
-            hover: {mode: null},
+
+            hover: {mode: null}, // turn off automatic chart hover
 
             // elements: {
             //     bar: {
             //         borderWidth: 2,
             //     },
             // },
-            responsive: true,
 
-            // // onHover: {myHover},
-            // onHover: function (event, chartElement) {
-            //     console.log("chart hover")
-            // },
+            responsive: true,
 
             scales: {
                 y: {
                     ticks: {
+                        autoSkip:false, // displays all data labels
 
-                        // Include a dollar sign in the ticks
+                        // Add some leading space to tick labels
                         callback: function (value, index, ticks) {
-                            return "   " + filterData[index].caption;
+                            return "  " + filterList[index].caption;
                         },
 
-                        // // Include a dollar sign in the ticks
-                        // callback: function(value, index, ticks) {
-                        //     console.log(ticks)
-                        //     return '$' + value;
-                        // }
                         color: "dimgrey",
                         font: {
                             family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
@@ -216,25 +179,26 @@ export default function RefOverview ({ refArray, summary, onAction, curFilterNam
                             weight: 800,
                             lineHeight: 1.2,
                         }
-
                     },
                 }
+            },
 
+            offset: true,
+
+            layout: {
+                padding: 0
             },
 
             plugins: {
                 legend: false,
 
                 tooltip: false,
+
                 // title: {
                 //     display: true,
                 //     text: 'Chart.js Horizontal Bar Chart',
                 // },
 
-                // remember we cam also do:
-                // Chart.defaults.font.size = 16;
-
-                // datalabels: false
                 datalabels: {
                     // color: '#36A2EB',
                     anchor:"end",
@@ -247,7 +211,7 @@ export default function RefOverview ({ refArray, summary, onAction, curFilterNam
                         weight: 400,
                         lineHeight: 1.2,
                     }
-                    // // other things...
+                    // // other settings for datalabels...
                     //     backgroundColor: null,
                     //     borderColor: null,
                     //     borderRadius: 4,
@@ -266,50 +230,36 @@ export default function RefOverview ({ refArray, summary, onAction, curFilterNam
                     //         return Math.round(value * 10) / 10
                     //     }
 
-                }
+                },
 
-            },
-            // hoverBackgroundColor: "red",
-            // barThickness: "flex",
-            offset: true,
-
-            layout: {
-                padding: 0
             },
 
         };
 
-        overviewDisplay = <div className={"ref-filter-chart"}>
-            {/*<h4>chartData</h4>*/}
-            {/*{tooltip}*/}
-            {/*<RawJson obj={chartData} />*/}
-            <BarChart chartData={chartData} options={chartOptions} onAction={handleChartAction} />
+        // setting selectedElement will hilite associated References Filter
+        chartOptions.plugins.showSelectedElement = {
+            selectedElement: selectedFilter
+        }
+
+        // Tooltip for Filter selections
+        const tooltip = <MyTooltip id="my-filter-tooltip"
+                                 float={true}
+                                 closeOnEsc={true}
+                                 delayShow={420}
+                                 variant={"info"}
+                                 noArrow={true}
+                                 offset={5}
+        />;
+
+        overviewDisplay = <div className={"ref-filter-chart"}
+           data-tooltip-id="my-filter-tooltip"
+           data-tooltip-content={tooltipText}
+        >
+            {tooltip}
+            <BarChart chartData={chartData} options={chartOptions} onAction={handleAction} onHover={handleHover} />
         </div>
 
-        // eventually this will be a bar chart, i imagine..., in which case we'll pull
-        // summary info from some other field of the summary info
-
     }
-
-    // function handleRefButton(name) {
-    //     setRefFilterName(name);
-    //     setRefTypeFilterName("");
-    //     const f = REF_FILTER_DEFS[name];
-    //     setRefFilter(f ? f.filterFunction : null)
-    // }
-    //
-    // function handleRefTypeButton(name) {
-    //     setRefTypeFilterName(name);
-    //     setRefFilterName("");
-    //     const f = REF_FILTER_TYPES[name];
-    //     setRefFilter(f ? f.filterFunction : null)
-    // }
-    //
-    //
-    // const myClickFilter = (link) => {
-    //     // console.log("pie chart clicked, link=", link)
-    //     onAction( {action:"setFilter", value:link})
-    // }
 
     return <div className={"ref-overview"}>
         <div className={"ref-overview-wrap"}>

@@ -3,133 +3,138 @@ import { Bar } from 'react-chartjs-2';
 import { getElementsAtEvent } from 'react-chartjs-2';
 import { Chart } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-// import { getRelativePosition } from 'chart.js/helpers';
-Chart.register(ChartDataLabels,)
+Chart.register(ChartDataLabels)
 
-// example chartData:
-//
-// const state = {
-//     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-//     datasets: [
-//         {
-//             label: 'My First dataset',
-//             backgroundColor: 'rgba(255,99,132,0.2)',
-//             borderColor: 'rgba(255,99,132,1)',
-//             borderWidth: 1,
-//             hoverBackgroundColor: 'rgba(255,99,132,0.4)',
-//             hoverBorderColor: 'rgba(255,99,132,1)',
-//             data: [65, 59, 80, 81, 56, 55, 40]
-//         }
-//     ]
-// }
 
-export default function BarChart({ chartData, options, onAction }) {
+// returns -1 if cursor not over valid index
+const getElementIndexAtCursor = (xCursor, yCursor, chart) => {
+    const { chartArea } = chart;
+
+    const elementData = chart._metasets[0].data;
+    const numElements = elementData.length;
+
+    const chartHeight = chartArea.height;
+    const elementHeight = chartHeight/numElements;
+
+    // use top and bottom boundaries of chart area and number of intervals to calculate index
+
+    let foundIndex = -1;
+
+    if (yCursor < chartArea.top || yCursor > chartArea.bottom) {
+        foundIndex = -1;
+    } else {
+        let checkLineY = chartArea.top;
+        elementData.every( (d, elementIndex) => {
+            checkLineY = chartArea.top + ((elementIndex + 1) * elementHeight); // extreme border of element
+
+            if (yCursor < checkLineY) {
+                foundIndex = elementIndex;
+                return false; // break with current value of foundIndex
+            }
+
+            return true; // continue with every
+        })
+    }
+
+    return foundIndex;
+}
+
+// returns { left: , top: , width: , height: }
+const getCursorBoxForElement = (elementIndex, chart) => {
+    const { chartArea } = chart;
+
+    const elementData = chart._metasets[0].data;
+    const numElements = elementData.length;
+
+    const chartHeight = chartArea.height;
+    const elementHeight = chartHeight/numElements;
+
+    if (elementIndex < 0) return null;
+
+    const padding = 1;
+    const left = 0 + padding; // left of entire chart area including labels
+    const width = chart.width - ( 2 * padding);
+    return {
+        left: left,
+        top: chartArea.top + (elementIndex * elementHeight) - padding,
+        width: width,
+        height: elementHeight + (2 * padding),
+    }
+}
+
+// all indexed data have a link-context value which is unique.
+// selectedElement is assumed to be: [ <link>, <context> ]
+const getIndexFromLinkContext = (selectedElement, chart) => {
+    let foundIndex = -1;
+
+    // loop thru data; return when link and context match
+    const links = chart.config._config.data.datasets[0].links;
+    const contexts = chart.config._config.data.datasets[0].contexts;
+    links.every( (link, index ) => {
+        if (link === selectedElement[0]) {
+            if (contexts[index] === selectedElement[1]) {
+                foundIndex = index;
+                return false; // break out of every loop
+            }
+        }
+        return true;
+    })
+
+    return foundIndex;
+}
+
+// const lightGreen = `rgba(128, 217, 202, .1)`;
+const lightBlue = `rgba(0,45,254,0.1)`;
+const lightGrey = `rgba(128, 128, 128, 0.15)`;
+const selectedBoxColor = lightGrey;
+const cursorBoxColor = lightBlue;
+
+
+
+export default function BarChart({ chartData, options, onAction, onHover }) {
 
     const myChartRef = useRef();
 
-    // const myHover = (event, chartElement) => {
-    //     console.log("barchart mousemove")
-    //
-    //     const myChart = myChartRef.current;
-    //
-    //     // event.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
-    //     const rect = event.target.getBoundingClientRect();
-    //     const x = event.clientX - rect.left;
-    //     const y = event.clientY - rect.top;
-    //     const ctx = event.target.getContext('2d');
-    //     // ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-    //     ctx.save();
-    //     ctx.fillStyle = 'rgba(0,0,0, 0.5)';
-    //     ctx.fillRect(x - 25, y - 25, 50, 50);
-    // }
-
-                        // const myMouseMove = (event) => {
-                        //
-                        //     const myChart = myChartRef.current;
-                        //
-                        //     const { canvas, scales: {scaleX,scaleY}} = myChart;
-                        //
-                        //     console.log("barchart mousemove")
-                        //
-                        //     // const rect1 = event.target.getBoundingClientRect();
-                        //     const rect = canvas.getBoundingClientRect();
-                        //
-                        //     const xCursor = event.clientX - rect.left;
-                        //     const yCursor = event.clientY - rect.top;
-                        //     const ctx = event.target.getContext('2d');
-                        //
-                        //     // // ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-                        //     // ctx.save();
-                        //     // ctx.fillStyle = 'rgba(0,0,0, 0.5)';
-                        //     // ctx.fillRect(x - 25, y - 25, 50, 50);
-                        //     // ctx.restore()
-                        // }
-
     const handleClick = (event) => {
-        const myChart = myChartRef.current;
+        const chart = myChartRef.current;
 
-        if (getElementsAtEvent(myChart, event).length > 0) {
-            // const datasetIndexNum = getElementsAtEvent(myChart, event)[0].datasetIndex;
-            const dataPoint = getElementsAtEvent(myChart, event)[0].index;
+        if (getElementsAtEvent(chart, event).length > 0) {
+            const dataPoint = getElementsAtEvent(chart, event)[0].index;
+            const link = chart.data.datasets[0].links[dataPoint]
+            const context = chart.data.datasets[0].contexts[dataPoint]
 
-            //alert("BarChart myClick: dataPoint = " + dataPoint)
-
-            const link = myChart.data.datasets[0].links[dataPoint]
-            const context = myChart.data.datasets[0].contexts[dataPoint]
-            // //at this point, we can pass back the "link" of the dataset being clicked
-            // const link = chartData.datasets[datasetIndexNum].links[dataPoint]
-            // // TODO: ERROR wha to do when links is not there?
-            //
+            // // TODO: ERROR what to do when link not found in links array?
+            // i think the link and context will just be undefined
 
             onAction(link, context);
 
         } else {
-            console.log(`barchart click`)
-            // no element found...
+            // no chart element clicked...try to interpret click as
+            // link and context based on row being hovered over.
 
-    // const myData = myChart.data.datasets[0];
-    // // myData:: .backgroundColor, .data, .label(only one), .links, .contexts
-    //
-    // // chart.setActiveElements([
-    // //     {datasetIndex: 0, index: 1},
-    // // ]);
-    // //
-    // const {x, y} = getRelativePosition(event, myChart);
-    // const chartMeta0 = myChart.getDatasetMeta(0).data[0]
-    // const chartMeta8 = myChart.getDatasetMeta(0).data[8]
-    // const chartMeta13 = myChart.getDatasetMeta(0).data[13]
-    //
-    // console.log(`chartMeta 0,8,13:`)
-    // console.log(chartMeta0)
-    // console.log(chartMeta8)
-    // console.log(chartMeta13)
+            const { canvas } = chart;
+            const rect = canvas.getBoundingClientRect();
+            const xCursor = event.clientX - rect.left;
+            const yCursor = event.clientY - rect.top;
 
-    // calculate dataPoint from horizontal row
+            const foundIndex = getElementIndexAtCursor(xCursor, yCursor, chart)
 
-            // console.log(`BarChart click: x,y: ${x},${y}`)
-            // console.log(`myChart.scales.y,._gridLineItems:`)
-            // console.log(myChart.scales.y)
-            // console.log(myChart.scales.y._gridLineItems)
+            const link = chart.data.datasets[0].links[foundIndex]
+            const context = chart.data.datasets[0].contexts[foundIndex]
 
-
-            // print out top and bottom of each dataset
-
-            //alert(`BarChart::handleClick: off-chart area`)
-
+            onAction(link, context)
         }
-
-        // alert("BarChart myClick")
     }
 
-    // text code thanks to patreon.com/chartjs
+    // code inspiration  thanks to patreon.com/chartjs
     const HoverDataBar = {
-            // these are the default events:
-            // events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
+        // default events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
+        // TODO: honor touch events
 
-        id: 'HoverDataBar',
+        id: 'hoverDataBar',
+
         beforeEvent(chart, args, pluginOptions) {
             const event = args.event;
-            // const { ctx, canvas, scales, height, width } = chart;
             const { ctx, canvas } = chart;
 
             if (!['mousemove', 'mouseout'].includes(event.type)) {
@@ -137,28 +142,59 @@ export default function BarChart({ chartData, options, onAction }) {
             }
 
             if (event.type === 'mouseout') {
-                // process the event
+                // process the event - essentially "erase" cursor
+                chart.draw();
             }
+
             if (event.type === 'mousemove') {
-                // process the event
 
-                // console.log(`HoverDataBar: mousemove `)
+                const rect = canvas.getBoundingClientRect();
+                const xCursor = event.native.clientX - rect.left;
+                const yCursor = event.native.clientY - rect.top;
 
-    const rect = canvas.getBoundingClientRect();
-    const xCursor = event.native.clientX - rect.left;
-    const yCursor = event.native.clientY - rect.top;
-    // // const ctx = args.event.target.getContext('2d');
-    //
-    // // console.log(`HoverDataBar: mousemove x,y ${xCursor}, ${yCursor}`)
+                const foundIndex = getElementIndexAtCursor(xCursor, yCursor, chart)
 
+                // send the tooltip text up to the caller if cursor is over label area
+                onHover( xCursor < chart.chartArea.left && foundIndex > -1
+                    ? chart.config._config.data.datasets[0].tooltips[foundIndex]
+                    : '');
+
+                // get box coords of item indicated by foundIndex
+                const cursorBox = getCursorBoxForElement(foundIndex, chart)
+                if (!cursorBox) return;
+
+                // draw our chart, essentially "erasing" previous cursor...
                 chart.draw();
 
-                ctx.fillStyle = `rgba(0,45,254,0.2)`;
-                ctx.fillRect(xCursor - 25, yCursor - 12, 150, 25);
-                ctx.strokeRect(xCursor - 25, yCursor - 12, 150, 25);
+                // ...and then draw our overlay cursor with border
+                ctx.fillStyle = cursorBoxColor;
+                ctx.fillRect(cursorBox.left, cursorBox.top, cursorBox.width, cursorBox.height);
+                ctx.strokeRect(cursorBox.left, cursorBox.top, cursorBox.width, cursorBox.height);
+
+                // TODO: redraw label text with font specs from _data[labels] info, but change color to blue
             }
-        }
+        },
+
     };
+
+    // indicates selected item with a "permanent" cursor
+    const ShowSelectedElement = {
+        id: 'showSelectedElement',
+        afterDraw(chart, args, options) {
+            const pluginOptions = chart.config.options.plugins.showSelectedElement;
+            const selectedElement = pluginOptions ? pluginOptions.selectedElement : [];
+            const myIndex = getIndexFromLinkContext(selectedElement, chart);
+
+            if (myIndex > -1) {
+                const cursorBox = getCursorBoxForElement(myIndex, chart)
+                if (!cursorBox) return;
+                const { ctx } = chart;
+                ctx.fillStyle = selectedBoxColor;
+                ctx.fillRect(cursorBox.left, cursorBox.top, cursorBox.width, cursorBox.height);
+                ctx.strokeRect(cursorBox.left, cursorBox.top, cursorBox.width, cursorBox.height);
+            }
+        },
+    }
 
     return (
         <div className="chart-container bar-chart-container">
@@ -166,15 +202,9 @@ export default function BarChart({ chartData, options, onAction }) {
                 data={chartData}
                 options={options}
                 onClick={handleClick}
-                // onMouseMove={myMouseMove}
                 ref={myChartRef}
 
-                // plugins = {[
-                //     ChartDataLabels,
-                //     HoverDataBar
-                // ]}
-                plugins = {[ChartDataLabels, HoverDataBar]}
-
+                plugins = {[ChartDataLabels, HoverDataBar, ShowSelectedElement]}
             />
         </div>
     );
