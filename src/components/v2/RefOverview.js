@@ -30,18 +30,22 @@ Chart.register(
 
 );
 
-const colors = { // TODO: put this in useContext?
-    blue   : "#35a2eb",
-    red    : "#ff6384",
-    teal   : "#4bc0c0",
-    orange : "#ff9f40",
-    purple : "#9866ff",
-    yellow : "#ffcd57",
-    grey   : "#c9cbcf",
-    magenta: "#f763ff",
-}
-const barColors = ["blue","teal","yellow","orange","red","magenta","purple",]
+const barsColorBegin = [53, 162, 235]; // blue
+const barsColorEnd = [152, 102, 255]; // purple
 
+// returns hexadecimal color interpolated between start and end colors (as [r,g,b])
+const getColorFromIndex = (index, startColor, endColor, steps) => {
+    function rgbToHex(r, g, b) {
+        const hexR = r.toString(16).padStart(2, "0"); // Convert R to hex and pad with 0 if needed
+        const hexG = g.toString(16).padStart(2, "0"); // Convert G to hex and pad with 0 if needed
+        const hexB = b.toString(16).padStart(2, "0"); // Convert B to hex and pad with 0 if needed
+        return `#${hexR}${hexG}${hexB}`; // Return the hexadecimal color string
+    }
+    const r = Math.floor(startColor[0] + (index * (endColor[0] - startColor[0]) / (steps -1)));
+    const g = Math.floor(startColor[1] + (index * (endColor[1] - startColor[1]) / (steps -1)));
+    const b = Math.floor(startColor[2] + (index * (endColor[2] - startColor[2]) / (steps -1)));
+    return rgbToHex(r,g,b);
+}
 
 // summary is assumed to have a filterSets property, which is an array of {set,filterMap} objects:
 //
@@ -109,31 +113,31 @@ export default function RefOverview ({ refArray, summary, onAction, selectedFilt
             // cant do any data cause refArray is empty
 
         } else {
-            let colorIndex = barColors.length; // set up for color-loop
+            // let colorIndex = barColors.length; // set up for color-loop
 
             summary.filterSets.forEach( (filterSet) => {
                 const names = Object.keys(filterSet.filterMap);
 
                 filterList = filterList.concat(
 
-                    names.map((name) => {
+                    names.map((name, i, arr) => {
                         let f = filterSet.filterMap[name];
                         f.count = refArray.filter((f.filterFunction)()).length;
-
-                        colorIndex = colorIndex >= (barColors.length -1)
-                            ? 0 // if was on largest value, reset to 0
-                            : colorIndex+1; // round-robin from colors
-
                         return {
                             name: name,
                             context: filterSet.context,
                             caption: f.caption,
                             count: f.count,
                             desc: f.desc,
-                            color: colors[barColors[colorIndex]]
                         }}))})
         }
 
+        // assign colors to each element of list...
+        filterList.forEach( (f, i, a) => {
+            f.color = getColorFromIndex(i, barsColorBegin, barsColorEnd, a.length);
+        })
+
+        // console.log("filterList:", filterList)
         const chartData = {
             labels: filterList.map( d => d.caption),
             datasets: [{
@@ -142,7 +146,7 @@ export default function RefOverview ({ refArray, summary, onAction, selectedFilt
                 links: filterList.map( d => d.name),
                 contexts: filterList.map( d => d.context),
                 tooltips: filterList.map( d => d.desc),
-                backgroundColor: filterList.map( d => d.color),
+                backgroundColor: filterList.map( d => d.color)
             }],
         }
 
