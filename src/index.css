@@ -14,17 +14,17 @@ div.environment-tag {
     z-index: 1;
 }
 
-.ware-view .header h1 {
+.iare-view .header h1 {
     position:relative;
     z-index: 10;
     margin-top:0;
     margin-bottom: 0.5rem;
     padding-left:.3rem;
 }
-body.env-production .ware-view .header h1 {
+body.env-production .iare-view .header h1 {
     color:#e30040;
 }
-body.env-other .ware-view .header h1 {
+body.env-other .iare-view .header h1 {
     color:red;
 }
 .version-display {
@@ -131,20 +131,20 @@ table.single-detail tr td:not(:first-child) {
     width:19rem;
 }
 
-.ware-view {
+.iare-view {
     display: flex;
     /*flex-direction: row;*/
     flex-direction: column;
 }
-.ware-view h3 {
+.iare-view h3 {
     color:#666666;
 }
-.ware-view h4 {
+.iare-view h4 {
     color:#808080;
 }
 
 
-.ware-view .path-fetch {
+.iare-view .path-fetch {
     padding:1rem;
     padding-bottom:0;
     margin-top:.5rem;

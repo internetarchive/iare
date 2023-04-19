@@ -162,7 +162,7 @@ export default function App() {
     // render component
     return <>
 
-        <div className="ware-view">
+        <div className="iare-view">
 
             <div className={"header"}>
                 {(!env || env !== 'env-production') ? <div className={"environment-tag"}>{"NON-PRODUCTION\u00A0\u00A0".repeat(8)}</div> : null }
