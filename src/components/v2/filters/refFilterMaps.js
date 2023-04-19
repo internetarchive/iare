@@ -59,7 +59,7 @@ export const REF_FILTER_DEFS = {
         caption: "Books linked to Google Books",
         desc: "Citations containing a link to a book hosted at googlebooks",
         filterFunction: () => (d) => {
-            return !!d.urls.find((url) => url.includes("https://archive.org/details/googlebooks"))
+            return !!d.urls.find((url) => url.includes("https://books.google.com/"))
         }
     },
 

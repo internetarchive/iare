@@ -59,3 +59,6 @@ ReactTooltip / react-tooltip
 Chart.js
 react-chartjs-2
 chart.js/helpers
+
+chart.js options
+npm install chartjs-plugin-datalabels --save

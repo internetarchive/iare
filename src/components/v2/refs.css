@@ -112,3 +112,8 @@
     padding:0.25em .5em .5em;
 }
 
+.ref-filter-chart {
+    width:60rem;
+    /*min-width:45rem;*/
+    /*height:30rem;*/
+}
