@@ -1,6 +1,7 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { Tooltip as MyTooltip } from 'react-tooltip'
 import BarChart from "../BarChart";
+// we may want to include filter buttons as well...
 // import FilterButtons from "../FilterButtons";
 // import FilterButton from "../FilterButton";
 
@@ -30,15 +31,16 @@ Chart.register(
 
 );
 
-const barsColorBegin = [53, 162, 235]; // blue
-const barsColorEnd = [152, 102, 255]; // purple
+const colors = { "purple" : [152, 102, 255], "blue" : [53, 162, 235], "midnite" : [90, 118, 226], "green" : [53, 235, 175] }
+const barsColorBegin = colors.blue;
+const barsColorEnd = colors.blue;
 
-// returns hexadecimal color interpolated between start and end colors (as [r,g,b])
+// returns hexadecimal color for interpolated gradient between start and end colors
 const getColorFromIndex = (index, startColor, endColor, steps) => {
     function rgbToHex(r, g, b) {
-        const hexR = r.toString(16).padStart(2, "0"); // Convert R to hex and pad with 0 if needed
-        const hexG = g.toString(16).padStart(2, "0"); // Convert G to hex and pad with 0 if needed
-        const hexB = b.toString(16).padStart(2, "0"); // Convert B to hex and pad with 0 if needed
+        const hexR = r.toString(16).padStart(2, "0"); // Convert to hex and pad with 0 if needed
+        const hexG = g.toString(16).padStart(2, "0");
+        const hexB = b.toString(16).padStart(2, "0");
         return `#${hexR}${hexG}${hexB}`; // Return the hexadecimal color string
     }
     const r = Math.floor(startColor[0] + (index * (endColor[0] - startColor[0]) / (steps -1)));
@@ -74,7 +76,7 @@ export default function RefOverview ({ refArray, summary, onAction, selectedFilt
     } else {
 
                 // this is for FilterButtons instead of Bar graph.
-                // might want to do both, and give a choice
+                // might want to do both, and give patron a choice
                 //
                 // TODO: pass in tooltip-id in props for FilterButtons
                 //
