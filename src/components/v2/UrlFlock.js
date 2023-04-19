@@ -51,12 +51,13 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading }) {
         // sort if specified
         if (sort === "status") {
             filteredUrls.sort((a,b) => {
-                // return 0 if any of the required sorting fields do not exist in this url object
-                if (!a.data || !b.data || !a.data.status_code || !b.data.status_code) return 0;
+                // use status code of -1 if there was a problem with status code
+                const statusA = a.data && a.data.status_code !== undefined ? a.data.status_code : -1;
+                const statusB = b.data && b.data.status_code !== undefined ? b.data.status_code : -1;
 
-                // respect sortDir; assumes sorting is by
-                if (a.data.status_code < b.data.status_code) return sortDir ? -1 : 1;
-                if (a.data.status_code > b.data.status_code) return sortDir ? 1 : -1;
+                // respect sortDir
+                if (statusA < statusB) return sortDir ? -1 : 1;
+                if (statusA > statusB) return sortDir ? 1 : -1;
                 return 0;
             })
         }
@@ -64,15 +65,16 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading }) {
         // iterate over array of url objects to create rendered output
         const rows = filteredUrls.map((u, i) => {
 
-            // TODO: error if fields not present
-            // TODO: we should sanitize earlier on on the process to save time here...
+            // TODO: we should sanitize earlier on in the process to save time here...
+
+            // if url object is problematic...
             if (!u.data || u.data.url === undefined || u.data.status_code === undefined)
-                return <div className={`url-row url-is-error`} key={i}>
+                return <div className={`url-row url-row-error`} key={i}>
                     <div className={"url-name"}>{u.data.url ? u.data.url : `ERROR: No url for index ${i}`}</div>
                     <div className={"url-status"}>{-1}</div>
                 </div>;
 
-            // else
+            // else show with styling for url status type
             return <div className={`url-row ${u.data.status_code === 0 
                 ? "url-is-unknown" : ""} ${u.data.status_code >= 300 && u.data.status_code < 400 
                 ? "url-is-redirect" : ""} ${u.data.status_code >= 400 && u.data.status_code < 500

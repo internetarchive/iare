@@ -35,6 +35,12 @@
 .url-list .url-row:first-child {
     border-top:1px solid black;
 }
+
+.url-list .url-row.url-row-error {
+    background-color: darkred;
+    color:white;
+}
+
 .url-list .url-row.url-is-unknown,
 .url-list .url-row.url-is-unknown a{
     color:dimgrey !important;
