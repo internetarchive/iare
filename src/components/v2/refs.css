@@ -104,12 +104,17 @@
 }
 
 .ref-filters .react-tooltip {
-    font-size:1.15em;
+    font-size:1.55rem;
     text-align: left;
     background-color: #d3e3fd;
     color:#001d35;
     border:1px solid black;
     padding:0.25em .5em .5em;
+}
+
+#my-filter-tooltip {
+    font-size:1.1em;
+    font-weight:normal;
 }
 
 .ref-filter-chart {

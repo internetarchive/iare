@@ -4,9 +4,15 @@ export const REF_FILTER_DEFS = {
     //     desc: "plain_text_in_reference = true",
     //     filterFunction: (d) => d.plain_text_in_reference,
     // },
+    NoTemplate: {
+        caption: "No Template",
+        desc: "Citations without a CS1|2 template (free form)",
+        filterFunction: () => (d) => d.template_names.length < 1,
+    },
+
     NamedTemplate: {
-        caption: "Named Templates",
-        desc: 'Citations containing any named template',
+        caption: "Has Template",
+        desc: 'Citations containing any template',
         filterFunction: () => (d) => {return d.template_names.length > 0},
     },
     CiteWeb: {
@@ -25,16 +31,18 @@ export const REF_FILTER_DEFS = {
     },
     CiteJournal: {
         caption: "{{cite journal}} templates",
-        desc: "Journal articles linked to",
+        desc: "Citations containing a {{cite journal}} template",
         filterFunction: () => (d) => {
             return d.template_names.includes("cite journal");
         },
     },
-    // Cs1: {
-    //     caption: "Show Refs using cs1 template",
-    //     desc: "what is condition?",
-    //     filterFunction: () => (d) => 0,
-    // },
+    CiteBook: {
+        caption: "{{cite book}} templates",
+        desc: "Citations containing a {{cite book}} template",
+        filterFunction: () => (d) => {
+            return d.template_names.includes("cite book");
+        },
+    },
     ISBN: {
         /*
         ISBN references I would define as: references with a template name "isbn" aka
@@ -72,11 +80,6 @@ export const REF_FILTER_DEFS = {
         }
     },
 
-    NoTemplate: {
-        caption: "No Template",
-        desc: "Citations without a CS1|2 template (free form)",
-        filterFunction: () => (d) => d.template_names.length < 1,
-    },
 
     // archiveAny: {
     //     caption: "Anything with archive.org/details",
