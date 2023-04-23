@@ -118,7 +118,8 @@ export default function UrlDisplay ({ urlFlock, options, filterMap } ) {
 // eslint-disable-next-line react-hooks/exhaustive-deps
         },
         // TODO: remove dependency (if eslint pragma removed) for fetchAllUrls bu defining with useCallback
-        [urlFlock, fetchAllUrls])
+        [urlFlock, fetchAllUrls, options.refresh]
+        )
 
 
     // calculate url stats when urlArray changed
@@ -136,7 +137,7 @@ export default function UrlDisplay ({ urlFlock, options, filterMap } ) {
 
         setUrlStatistics({urlCounts: urlCounts});
 
-    }, [urlArray])
+    }, [urlArray, filterMap])
 
 
     // result is an object: { action: <action name>, value: <param value> }
