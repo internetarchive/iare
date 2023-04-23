@@ -2,11 +2,10 @@ import React, {useCallback, useEffect, useState} from 'react';
 import UrlFlock from "./UrlFlock";
 import UrlOverview from "./UrlOverview";
 import {API_V2_URL_BASE} from "../../constants/endpoints";
-import {URL_FILTER_MAP} from "./filters/urlFilterMaps";
 import './urls.css';
 import Loader from "../Loader";
 
-export default function UrlDisplay ({ pageData, options } ) {
+export default function UrlDisplay ({ urlFlock, options, filterMap } ) {
 
     const [urlFilter, setUrlFilter] = useState( null ); // filter to pass in to UrlFlock
     const [isLoadingUrls, setIsLoadingUrls] = useState(false);
@@ -88,7 +87,7 @@ export default function UrlDisplay ({ pageData, options } ) {
     }, []);
 
 
-    // run upon new pageData
+    // run upon new urlFlock
     //      TODO: see if this works the same by giving a dependency array of []
     //
     // process url array upon iterative fetch completion
@@ -98,14 +97,15 @@ export default function UrlDisplay ({ pageData, options } ) {
     //      use d.<value> rather than d.data.<value>
     useEffect( () => {
         setIsLoadingUrls(true);
-        fetchAllUrls(pageData.urls, pageData.forceRefresh)
+
+        fetchAllUrls(urlFlock, options.refresh)
             .then(urlResults => {
-                console.log(`useEffect[pageData] fetchAllUrls.then: ${urlResults.length} results found`);
+                console.log(`useEffect[urlFlock] fetchAllUrls.then: ${urlResults.length} results found`);
                 setUrlArray( urlResults );
             })
             .catch(error => {
                 console.error("After fetchAllUrls:", error);
-                console.error(`useEffect[pageData] fetchAllUrls.catch: ${error}`);
+                console.error(`useEffect[urlFlock] fetchAllUrls.catch: ${error}`);
                 // TODO: what shall we do for error here?
                 setUrlArray([])
             })
@@ -118,14 +118,14 @@ export default function UrlDisplay ({ pageData, options } ) {
 // eslint-disable-next-line react-hooks/exhaustive-deps
         },
         // TODO: remove dependency (if eslint pragma removed) for fetchAllUrls bu defining with useCallback
-        [pageData, fetchAllUrls])
+        [urlFlock, fetchAllUrls])
 
 
     // calculate url stats when urlArray changed
     useEffect( () => {
 
-        const urlCounts = Object.keys(URL_FILTER_MAP).map( key => {
-            const f = URL_FILTER_MAP[key];
+        const urlCounts = Object.keys(filterMap).map( key => {
+            const f = filterMap[key];
             const count = urlArray.filter((f.filterFunction)()).length; // Note the self-evaluating filterFunction!
             return {
                 label: f.caption + " (" + count + ")",
@@ -146,7 +146,7 @@ export default function UrlDisplay ({ pageData, options } ) {
 
         // action is setFilter and value is filter key name
         if (action === "setFilter") {
-            const f = URL_FILTER_MAP[value];
+            const f = filterMap[value];
             setUrlFilter(f)
         }
     }

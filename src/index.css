@@ -161,7 +161,21 @@ table.single-detail tr td:not(:first-child) {
 .path-fetch #pathInput {
     width:33rem;
     font-size: 1.1rem;
+    padding: 2pt 2pt 2pt 4pt;
+    border:1px solid dimgrey;
 }
+.path-fetch #pathInput-label {
+    color:dimgrey;
+}
+
+.path-fetch-wrap button {
+    margin-top:.35em;
+}
+
+.path-fetch-wrap .chk-force-refresh {
+    margin-top:.65em;
+}
+
 .path-fetch .path-shortcut {
     margin-left:10px;
 }

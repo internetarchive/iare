@@ -39,5 +39,9 @@ const GlobalVars = {
         value : "http://18.217.22.248/v1/get-statistics?lang=en&site=wikipedia&title=Marc_Bolan"
     },
 
+    "pdfCovid"  : {
+        label : "Covid-19 PDF Shortcut",
+        value : "https://s3.documentcloud.org/documents/23782225/mwg-fdr-document-04-16-23-1.pdf"
+    },
 }
 export default GlobalVars;

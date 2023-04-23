@@ -5,6 +5,7 @@ import PathNameFetch from "./components/PathNameFetch";
 import Loader from "./components/Loader";
 import PageDisplay from "./components/PageDisplay";
 import MakeLink from "./components/MakeLink";
+import RawJson from "./components/RawJson";
 
 export default function App() {
 
@@ -45,11 +46,13 @@ export default function App() {
     }, [env])
 
 
-    function getWariVersion(pageData, endpointPath) {
+    function getIariVersion(pageData, endpointPath) {
         // eslint-disable-next-line
         const regexVersion1 = new RegExp("\/v1\/");
         // eslint-disable-next-line
         const regexVersion2 = new RegExp("\/v2\/");
+        // eslint-disable-next-line
+        const regexVersion2PDF = new RegExp("\/v2\/statistics\/pdf");
 
         if (!endpointPath) {
             return "unknown";
@@ -58,31 +61,82 @@ export default function App() {
             return "v1"
         else if (regexVersion2.test(endpointPath))
             return "v2"
+        else if (regexVersion2PDF.test(endpointPath))
+            return "v2PDF"
         else
             return "unknown";
     }
 
-    const convertPathToArticleEndpoint = (path = '', refresh=false) => {
-        const sectionRegex = "&regex=bibliography|further reading|works cited|sources|external links"; // for now... as of 2023.04.09
-        return`${API_V2_URL_BASE}/statistics/article?url=${path}${sectionRegex}${ refresh ? "&refresh=true":''}`;
+    // mediaType is "pdf", "html", "wiki", or anything else we come up with
+    const getMediaType = (path = '') => {
+        // set media type based on heuristic:
+
+        // if path ends in ".pdf", assume pdf
+        // if path contains ".wikipedia.org/wiki/, assume wiki
+        // else unknown, for now
+
+        // eslint-disable-next-line
+        const regexPdf = new RegExp("\.pdf$");
+        // eslint-disable-next-line
+        const regexWiki = new RegExp("\.wikipedia.org/wiki/");
+        // eslint-disable-next-line
+
+        if (regexPdf.test(path))
+            return 'pdf'
+        else if (regexWiki.test(path))
+            return "wiki"
+        else
+            return "unknown";
+
     };
+
+
+    // mediaType is "pdf", "html", "wiki", or anything else we come up with
+    const convertPathToEndpoint = (path = '', mediaType = 'wiki', refresh=false) => {
+
+        if (mediaType === "wiki") {
+            const sectionRegex = "&regex=bibliography|further reading|works cited|sources|external links"; // for now... as of 2023.04.09
+            return `${API_V2_URL_BASE}/statistics/article?url=${path}${sectionRegex}${refresh ? "&refresh=true" : ''}`;
+
+        } else if (mediaType === "pdf") {
+            return `${API_V2_URL_BASE}/statistics/pdf?url=${path}${refresh ? "&refresh=true" : ''}`;
+
+        } else {
+            // do general case...
+
+            return `${API_V2_URL_BASE}/statistics/analyze?url=${path}${refresh ? "&refresh=true"
+                : ''}${mediaType ? `&media_type=${mediaType}` : ''}`;
+
+            // this will produce and error right now, as IARI does not support
+            // ...i (mojomonger) think we should have the generic analyze endpoint
+        }
+    };
+
+
 
     // fetch article data
     // TODO: account for error conditions, like wrong file format, not found, etc
-    const articleFetch = useCallback((pathName, refresh=false) => {
+    const referenceFetch = useCallback((pathName, refresh=false) => {
 
         // handle null pathName
         if (!pathName) {
-            console.log ("APP::articleFetch: pathName is null-ish");
+            console.log ("APP::referenceFetch: pathName is null-ish");
             setPageData(null);
+            // TODO: use setMyError(null); // ??
             return;
         }
 
-        const myEndpoint = convertPathToArticleEndpoint(pathName, refresh);
-        console.log("APP::articleFetch: endpoint = ", myEndpoint)
+        const myMediaType = getMediaType(pathName); // TODO: respect a "forceMediaType", where it can
+        // force a media type endpoint, no matter what getMediaType thinks it is?
+        // If so, passes it in to convertPathToEndpoint, where the endpoint is determined
+        // by forced mediaType value rather than from mediaType interpolated from pathName.
+
+        const myEndpoint = convertPathToEndpoint(pathName, myMediaType, refresh);
+        console.log("APP::referenceFetch: endpoint = ", myEndpoint)
+
         setEndpointPath(myEndpoint); // for display
 
-        // TODO: ERR: maybe always clear pageData, so components get cleared while waiting?
+        // TODO: maybe always clear pageData, so components get cleared while waiting?
         setMyError(null);
         setIsLoading(true);
 
@@ -90,16 +144,24 @@ export default function App() {
         fetch(myEndpoint, {})
 
             .then((res) => {
-                if (!res.ok) throw new Error(res.status);
+                if (!res.ok) {
+                    throw new Error(res.statusText ? res.statusText : res.status);
+                    // throw new Error(res);
+                    //return res.text().then(text => { throw new Error({message: }) })
+                } // throw error that will be caught in .catch()
                 return res.json();
             })
 
             .then((data) => {
+                // decorate based on mediaType?
+
                 // upon successful return of data, decorate the data with some informative fields
                 data.pathName = pathName;
                 data.endpoint = myEndpoint;
-                data.version = getWariVersion(data, myEndpoint);
                 data.forceRefresh = refresh;
+                data.mediaType = myMediaType;
+
+                data.version = getIariVersion(data, myEndpoint);
 
                 // and set the new pageData state
                 setPageData(data);
@@ -107,10 +169,20 @@ export default function App() {
 
             .catch((err) => {
                 // TODO: set false pageData for display?
+
+                // how do we tell if error is from native network cause, or synthesized/augmented by our handling of res != OK above
+
                 if (err.message === "404") {
-                    setMyError("Error finding target page.")
+                // if (err.status_code === "404") {
+                    setMyError("404 Error finding target page.")
+                } else if (err.message === "502") {
+                    setMyError("502 Server problem (no further info available)")
                 } else {
-                    setMyError(err.toString())
+                    // setMyError(err.toString())
+                    // setMyError(RawJson(err));
+
+                    // extract HTTP status code form string (1st 3 characters, if number? without number next?
+                    setMyError(err.message + " - No further info available");
                 }
                 setPageData(null);
 
@@ -154,9 +226,9 @@ export default function App() {
         setTargetPath(myUrl);
         setRefreshCheck(myRefresh);
 
-        articleFetch(myUrl, myRefresh)
+        referenceFetch(myUrl, myRefresh)
 
-    }, [myUrl, myRefresh, debugAlert, articleFetch])
+    }, [myUrl, myRefresh, debugAlert, referenceFetch])
 
 
     // render component

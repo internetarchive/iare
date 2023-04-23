@@ -48,22 +48,27 @@ export default function PathNameFetch({ pathInitial='', checkInitial= false, han
         <div className={"path-fetch-wrap"}>
 
             <div style={{marginBottom: ".5rem"}}><label
-                htmlFor="pathInput">Wikipedia Url: </label
-            ><input
-                id="pathInput" name="pathInput"
-                type="text"
-                value={pathName}
-                onChange={myHandlePath.handleChange}
-                onKeyPress={myHandlePath.handleKeyPress} // TODO deprecated - should change to onKeyDOwn
-            /></div>
+                    htmlFor="pathInput" id={'pathInput-label'}>URL: </label
+                ><input
+                    id="pathInput" name="pathInput"
+                    type="text"
+                    value={pathName}
+                    onChange={myHandlePath.handleChange}
+                    onKeyPress={myHandlePath.handleKeyPress} // TODO deprecated - should change to onKeyDOwn
+                /></div>
 
             <div style={{display: "block"}}>
                 <button onClick={myHandlePath.handleSubmit} style={{marginLeft: "10px"}}>
                     <span>{"Load References"}</span>
-                </button> <Checkbox className={"chk-force-refresh"} label={"Force Refresh"} value={checked} onChange={handleCheckChange}
-            />&nbsp;
+                </button
+                ><Checkbox className={"chk-force-refresh"} label={"Force Refresh"} value={checked} onChange={handleCheckChange}/>
+            </div>
+
+            <div style={{display: "block"}}>
+            &nbsp;
                 <ButtonFetch buttonKey={"easterIslandFilename"} onClick={setPathName} className={"path-shortcut"}/>
                 <ButtonFetch buttonKey={"internetArchiveFilename"} onClick={setPathName} className={"path-shortcut"}/>
+                <ButtonFetch buttonKey={"pdfCovid"} onClick={setPathName} className={"path-shortcut"}/>
             </div>
 
         </div>
