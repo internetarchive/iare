@@ -14,12 +14,12 @@ export default function PageData( { pageData = {} }) {
     if (Array.isArray(pageData.links)) {
         links = pageData.links
     } else {
-        // traverse object keys
-        Object.keys(pageData.links).map( key => {
-            // assumes pageData.links[key] is an array of links, or none
+        // traverse links objects, appending urls when found
+        Object.keys(pageData.links).every( key => {
             if (pageData.links[key].length > 0) {
                 links.push.apply(links, pageData.links[key]);
             }
+            return true; // continue with every
         })
     }
 
