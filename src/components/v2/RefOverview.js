@@ -50,6 +50,7 @@ const getColorFromIndex = (index, startColor, endColor, steps) => {
 }
 
 // summary is assumed to have a filterSets property, which is an array of {set,filterMap} objects:
+// TODO: Test Harness candidate - pass good and bad summary data
 //
 // summary : {
 //  filterSets: [

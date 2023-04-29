@@ -5,6 +5,7 @@ import PathNameFetch from "./components/PathNameFetch";
 import Loader from "./components/Loader";
 import PageDisplay from "./components/PageDisplay";
 import MakeLink from "./components/MakeLink";
+import ButtonFetch from "./components/ButtonFetch";
 
 export default function App() {
 
@@ -260,7 +261,12 @@ export default function App() {
 
             </div>
 
-            <PathNameFetch pathInitial={targetPath} checkInitial={refreshCheck} handlePathResults={handlePathResults} />
+            <PathNameFetch pathInitial={targetPath} checkInitial={refreshCheck} handlePathResults={handlePathResults}
+                shortcuts={ env == 'env-production'
+                    ? ['easterIslandFilename','internetArchiveFilename','pdfCovid']
+                    : ['easterIslandFilename','internetArchiveFilename','pdfCovid', 'pdfOneLink']
+                }
+            />
 
             {myError ? <div className={myError ? "error-display" : "error-display-none"}>
                 {myError}

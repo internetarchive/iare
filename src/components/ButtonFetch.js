@@ -1,16 +1,17 @@
 import React from "react";
-import GlobalVars from "./GlobalVars";
+import ButtonDefs from "./ButtonDefs";
 
 /*
-relies on global; GlobalVars for the button for buttonKey key
+relies on global; ButtonDefs for the button for buttonKey key
 
     expected props:
         buttonKey
         onCLick         <button>.value as a parameter value
+        className
  */
 export default function ButtonFetch( {buttonKey, onClick, className=''}) {
-    const buttonObj = GlobalVars[buttonKey]
-        ? GlobalVars[buttonKey]
+    const buttonObj = ButtonDefs[buttonKey]
+        ? ButtonDefs[buttonKey]
         : {
             label : "Unknown Key '" + buttonKey + "'",
             value : ""

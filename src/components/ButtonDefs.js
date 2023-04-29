@@ -1,6 +1,4 @@
-// import React from "react";
-
-const GlobalVars = {
+const ButtonDefs = {
     "easterIslandFilename"  : {
         label : "Easter Island shortcut",
         value : "https://en.wikipedia.org/wiki/Easter_Island"
@@ -43,5 +41,9 @@ const GlobalVars = {
         label : "Covid-19 PDF Shortcut",
         value : "https://s3.documentcloud.org/documents/23782225/mwg-fdr-document-04-16-23-1.pdf"
     },
+    "pdfOneLink"  : {
+        label : "1 link PDF Shortcut",
+        value : "https://www.foundationforfreedomonline.com/wp-content/uploads/2023/03/FFO-FLASH-REPORT-REV.pdf"
+    },
 }
-export default GlobalVars;
+export default ButtonDefs;

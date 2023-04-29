@@ -7,8 +7,12 @@ expected props
     pathInitial            path string to put in input field
     checkInitial           initial checkbox state for "Force Refresh"
     handlePathResults      callback "Load" button clicked; expects 2 element array: [pathName, checked]
+    shortcuts              array of keys into global ButtonDefs, describing shortcut buttons to show
  */
-export default function PathNameFetch({ pathInitial='', checkInitial= false, handlePathResults } ) {
+export default function PathNameFetch({ pathInitial='',
+                                          checkInitial= false,
+                                          handlePathResults,
+                                          shortcuts = [] } ) {
 
     const [pathName, setPathName] = useState(pathInitial); // init with passed in name
     const [checked, setChecked] = React.useState(checkInitial);
@@ -64,13 +68,15 @@ export default function PathNameFetch({ pathInitial='', checkInitial= false, han
                 ><Checkbox className={"chk-force-refresh"} label={"Force Refresh"} value={checked} onChange={handleCheckChange}/>
             </div>
 
-            <div style={{display: "block"}}>
-            &nbsp;
-                <ButtonFetch buttonKey={"easterIslandFilename"} onClick={setPathName} className={"path-shortcut"}/>
-                <ButtonFetch buttonKey={"internetArchiveFilename"} onClick={setPathName} className={"path-shortcut"}/>
-                <ButtonFetch buttonKey={"pdfCovid"} onClick={setPathName} className={"path-shortcut"}/>
-            </div>
-
+            { shortcuts && shortcuts.length > 0 ?
+                <div style={{display: "block"}}>
+                &nbsp;
+                    { shortcuts.map ( key => {
+                        return <ButtonFetch buttonKey={key} onClick={setPathName} className={"path-shortcut"}/>
+                        })
+                    }
+                </div>
+            : null }
         </div>
 
     </div>

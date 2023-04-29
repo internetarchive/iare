@@ -15,6 +15,11 @@ export const REF_FILTER_DEFS = {
         desc: 'Citations containing any template',
         filterFunction: () => (d) => {return d.template_names.length > 0},
     },
+    ManyTemplates: {
+        caption: "More than 1 Template",
+        desc: 'Citations containing more than 1 template',
+        filterFunction: () => (d) => {return d.template_names.length > 1},
+    },
     CiteWeb: {
         caption: "{{cite web}} templates",
         desc: "Citations containing a {{cite web}} template",
