@@ -1,10 +1,10 @@
 const ButtonDefs = {
     "easterIslandFilename"  : {
-        label : "Easter Island shortcut",
+        label : "Easter Island",
         value : "https://en.wikipedia.org/wiki/Easter_Island"
     },
     "internetArchiveFilename"  : {
-        label : "Internet Archive shortcut",
+        label : "Internet Archive",
         value : "https://en.wikipedia.org/wiki/Internet_Archive"
     },
 
@@ -38,11 +38,11 @@ const ButtonDefs = {
     },
 
     "pdfCovid"  : {
-        label : "Covid-19 PDF Shortcut",
+        label : "Covid-19 PDF",
         value : "https://s3.documentcloud.org/documents/23782225/mwg-fdr-document-04-16-23-1.pdf"
     },
     "pdfOneLink"  : {
-        label : "1 link PDF Shortcut",
+        label : "1 link PDF",
         value : "https://www.foundationforfreedomonline.com/wp-content/uploads/2023/03/FFO-FLASH-REPORT-REV.pdf"
     },
 }

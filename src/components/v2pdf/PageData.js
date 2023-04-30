@@ -11,9 +11,28 @@ export default function PageData( { pageData = {} }) {
     // extract links from pageData.links { <objects with links array> }.
 
     let links=[];
+
     if (Array.isArray(pageData.links)) {
-        links = pageData.links
+
+        /* pageData.links is array of objects:
+
+        [
+            {
+                url: <abd,def>,
+                page: 23
+            }
+        ]
+
+        we parse that into a simple array of surl strings andpas that to the UrlDisplay component
+
+        */
+
+        links = pageData.links.map( l => {
+            return l.url
+        })
+
     } else {
+        // deprecated format
         // traverse links objects, appending urls when found
         Object.keys(pageData.links).every( key => {
             if (pageData.links[key].length > 0) {
