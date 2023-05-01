@@ -23,7 +23,7 @@ export default function PageData( { pageData = {} }) {
             }
         ]
 
-        we parse that into a simple array of surl strings andpas that to the UrlDisplay component
+        we parse that into a simple array of url strings and pass that to the UrlDisplay component
 
         */
 
@@ -41,6 +41,11 @@ export default function PageData( { pageData = {} }) {
             return true; // continue with every
         })
     }
+
+    // and uniquify the links array...
+    links = links.filter( (value, index, array) => {
+        return array.indexOf(value) === index;
+    });
 
     return <>
         <div className={"page-data"}>
