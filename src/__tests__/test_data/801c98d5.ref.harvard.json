@@ -1,0 +1,46 @@
+{
+  "id": "801c98d5",
+  "template_names": [
+    "harvnb",
+    "cite web"
+  ],
+  "wikitext": "<ref>{{harvnb|Heyerdahl|1961}} However, [[Alfred Metraux]] pointed out that the rubble-filled Rapanui walls were a fundamentally different design to those of the Inca, as these are trapezoidal in shape as opposed to the perfectly fitted rectangular stones of the Inca. See also {{cite web|url=http://islandheritage.org/faq.html |title=this FAQ |access-date=2007-09-06 |url-status=bot: unknown |archive-url=https://web.archive.org/web/20071011083729/http://islandheritage.org/faq.html |archive-date=11 October 2007 }}</ref>",
+  "type": "footnote",
+  "footnote_subtype": "content",
+  "flds": [
+    "islandheritage.org",
+    "archive.org"
+  ],
+  "urls": [
+    "http://islandheritage.org/faq.html",
+    "https://web.archive.org/web/20071011083729/http://islandheritage.org/faq.html"
+  ],
+  "templates": [
+    {
+      "parameters": {
+        "1": "Heyerdahl",
+        "2": "1961",
+        "template_name": "harvnb",
+        "first_parameter": "Heyerdahl"
+      },
+      "isbn": ""
+    },
+    {
+      "parameters": {
+        "url": "http://islandheritage.org/faq.html",
+        "title": "this FAQ",
+        "access_date": "2007-09-06",
+        "url_status": "bot: unknown",
+        "archive_url": "https://web.archive.org/web/20071011083729/http://islandheritage.org/faq.html",
+        "archive_date": "11 October 2007",
+        "template_name": "cite web"
+      },
+      "isbn": ""
+    }
+  ],
+  "titles": [
+    "this FAQ"
+  ],
+  "section": "Culture",
+  "served_from_cache": true
+}

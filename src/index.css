@@ -20,7 +20,10 @@ div.environment-tag {
     margin-top:0;
     margin-bottom: 0.5rem;
     padding-left:.3rem;
+    font-size:2em;
+    font-weight:bold;
 }
+
 body.env-production .iare-view .header h1 {
     color:#e30040;
 }

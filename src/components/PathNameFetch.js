@@ -64,12 +64,15 @@ export default function PathNameFetch({ pathInitial='', checkInitial= false, han
                 ><Checkbox className={"chk-force-refresh"} label={"Force Refresh"} value={checked} onChange={handleCheckChange}/>
             </div>
 
-            <div style={{display: "block"}}>
-            &nbsp;
-                <ButtonFetch buttonKey={"easterIslandFilename"} onClick={setPathName} className={"path-shortcut"}/>
-                <ButtonFetch buttonKey={"internetArchiveFilename"} onClick={setPathName} className={"path-shortcut"}/>
-                <ButtonFetch buttonKey={"pdfCovid"} onClick={setPathName} className={"path-shortcut"}/>
-            </div>
+            { shortcuts && shortcuts.length > 0 ?
+                <div style={{display: "block"}}>
+                &nbsp;
+                    { shortcuts.map ( key => {
+                        return <ButtonFetch key={key} buttonKey={key} onClick={setPathName} className={"path-shortcut"}/>
+                        })
+                    }
+                </div>
+            : null }
 
         </div>
 

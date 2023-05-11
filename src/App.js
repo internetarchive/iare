@@ -5,6 +5,7 @@ import PathNameFetch from "./components/PathNameFetch";
 import Loader from "./components/Loader";
 import PageDisplay from "./components/PageDisplay";
 import MakeLink from "./components/MakeLink";
+import TestRefModal from "./components/vTest/TestRefModal";
 
 export default function App() {
 
@@ -256,11 +257,12 @@ export default function App() {
                     <p>inline target URL: {myUrl}</p>
                     {/*<p>window.location:</p>*/}
                     {/*<pre>{JSON.stringify(window.location,null,2)}</pre>*/}
+                    <TestRefModal />
                 </div>
 
             </div>
 
-            <PathNameFetch pathInitial={targetPath} checkInitial={refreshCheck} handlePathResults={handlePathResults} />
+            <PathNameFetch pathInitial={targetPath} checkInitial={refreshCheck} shortcuts={} handlePathResults={handlePathResults} />
 
             {myError ? <div className={myError ? "error-display" : "error-display-none"}>
                 {myError}
@@ -272,5 +274,6 @@ export default function App() {
             </>
             }
         </div>
+
     </>
 }

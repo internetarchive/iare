@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import RefDetails from './RefDetails.js';
 import { API_V2_URL_BASE } from '../../constants/endpoints.js';
+import RefView from "./RefView/RefView";
 
 function getLinkText(ref) {
 
@@ -33,8 +34,9 @@ function RefFlock({ refArray, refFilterDef } ) {
     // const [isLoading, setIsLoading] = useState(false);
     const [referenceEndpoint, setReferenceEndpoint] = useState( "" );
 
+    const [openModal, setOpenModal] = useState(false)
     const fetchDetail = (ref) => {
-        // handle null pageData
+        // handle null ref
         if (!ref) {
             setRefDetails("Trying to fetch invalid reference");
             return;
@@ -66,6 +68,11 @@ function RefFlock({ refArray, refFilterDef } ) {
             });
 
     }
+
+    useEffect( () => {
+        // alert("will show new refDetails")
+        setOpenModal(true)
+    }, [refDetails])
 
     let refs;
 
@@ -102,11 +109,13 @@ function RefFlock({ refArray, refFilterDef } ) {
             {refs}
         </div>
 
-        <div className={"ref-details"}>
-            <h4>Reference Details</h4>
-            {/*<p>source: <a href={referenceEndpoint} target={"_blank"} rel={"noreferrer"}>{referenceEndpoint}</a></p>*/}
-            <RefDetails details={refDetails} source={referenceEndpoint}/>
-        </div>
+        <RefView open={openModal} onClose={() => setOpenModal(false)} details={refDetails} />
+
+        {/*<div className={"ref-details"}>*/}
+        {/*    <h4>Reference Details</h4>*/}
+        {/*    /!*<p>source: <a href={referenceEndpoint} target={"_blank"} rel={"noreferrer"}>{referenceEndpoint}</a></p>*!/*/}
+        {/*    <RefDetails details={refDetails} source={referenceEndpoint}/>*/}
+        {/*</div>*/}
     </div>
 }
 
