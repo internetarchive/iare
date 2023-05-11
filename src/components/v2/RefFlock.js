@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import RefDetails from './RefDetails.js';
 import { API_V2_URL_BASE } from '../../constants/endpoints.js';
 import RefView from "./RefView/RefView";
 
@@ -32,7 +31,6 @@ function RefFlock({ refArray, refFilterDef } ) {
 
     const [refDetails, setRefDetails] = useState(null);
     // const [isLoading, setIsLoading] = useState(false);
-    const [referenceEndpoint, setReferenceEndpoint] = useState( "" );
 
     const [openModal, setOpenModal] = useState(false)
     const fetchDetail = (ref) => {
@@ -44,7 +42,6 @@ function RefFlock({ refArray, refFilterDef } ) {
 
         // TODO: use refresh here ?
         const endpoint = `${API_V2_URL_BASE}/statistics/reference/${ref.id}`;
-        setReferenceEndpoint(endpoint)
 
         // fetch the data
         fetch(endpoint, {
@@ -105,17 +102,13 @@ function RefFlock({ refArray, refFilterDef } ) {
     }
 
     return <div className={"ref-flock"}>
+
         <div className={"ref-list-wrapper"}>
             {refs}
         </div>
 
         <RefView open={openModal} onClose={() => setOpenModal(false)} details={refDetails} />
 
-        {/*<div className={"ref-details"}>*/}
-        {/*    <h4>Reference Details</h4>*/}
-        {/*    /!*<p>source: <a href={referenceEndpoint} target={"_blank"} rel={"noreferrer"}>{referenceEndpoint}</a></p>*!/*/}
-        {/*    <RefDetails details={refDetails} source={referenceEndpoint}/>*/}
-        {/*</div>*/}
     </div>
 }
 

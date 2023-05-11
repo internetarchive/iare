@@ -231,6 +231,8 @@ export default function App() {
     }, [myUrl, myRefresh, debugAlert, referenceFetch])
 
 
+    const shortcuts = ['easterIslandFilename', 'internetArchiveFilename','pdfCovid'];
+
     // render component
     return <>
 
@@ -262,7 +264,9 @@ export default function App() {
 
             </div>
 
-            <PathNameFetch pathInitial={targetPath} checkInitial={refreshCheck} shortcuts={} handlePathResults={handlePathResults} />
+            <PathNameFetch pathInitial={targetPath} checkInitial={refreshCheck}
+                           shortcuts={shortcuts}
+                           handlePathResults={handlePathResults} />
 
             {myError ? <div className={myError ? "error-display" : "error-display-none"}>
                 {myError}

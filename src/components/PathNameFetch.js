@@ -8,7 +8,7 @@ expected props
     checkInitial           initial checkbox state for "Force Refresh"
     handlePathResults      callback "Load" button clicked; expects 2 element array: [pathName, checked]
  */
-export default function PathNameFetch({ pathInitial='', checkInitial= false, handlePathResults } ) {
+export default function PathNameFetch({ pathInitial='', checkInitial= false, handlePathResults, shortcuts=[] } ) {
 
     const [pathName, setPathName] = useState(pathInitial); // init with passed in name
     const [checked, setChecked] = React.useState(checkInitial);

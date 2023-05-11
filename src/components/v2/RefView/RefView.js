@@ -23,7 +23,7 @@ details:
  */
 export default function RefView({ open, onClose, details, source }) {
 
-    if (!open) return null;
+    if (!open || !details) return null;
 
     const rawText = details ? details.wikitext : 'No raw wikitext provided' ;
 

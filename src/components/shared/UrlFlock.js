@@ -107,7 +107,6 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading }) {
 
     return <>
         <div className={"url-flock"}>
-            {/*<h3>URLs</h3>*/}
             {urls}
         </div>
     </>
