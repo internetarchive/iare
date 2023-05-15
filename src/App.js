@@ -231,7 +231,7 @@ export default function App() {
     }, [myUrl, myRefresh, debugAlert, referenceFetch])
 
 
-    const shortcuts = ['easterIslandFilename', 'internetArchiveFilename','pdfCovid'];
+    const shortcuts = ['easterIslandFilename', 'internetArchiveFilename','pdfCovid', 'pdfOneLink'];
 
     // render component
     return <>

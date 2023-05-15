@@ -41,10 +41,10 @@ function RefFlock({ refArray, refFilterDef } ) {
         }
 
         // TODO: use refresh here ?
-        const endpoint = `${API_V2_URL_BASE}/statistics/reference/${ref.id}`;
+        const myEndpoint = `${API_V2_URL_BASE}/statistics/reference/${ref.id}`;
 
         // fetch the data
-        fetch(endpoint, {
+        fetch(myEndpoint, {
         })
 
             .then((res) => {
@@ -53,6 +53,7 @@ function RefFlock({ refArray, refFilterDef } ) {
             })
 
             .then((data) => {
+                data.endpoint = myEndpoint;
                 setRefDetails(data);
             })
 

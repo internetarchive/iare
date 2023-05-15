@@ -21,7 +21,7 @@ details:
 
 
  */
-export default function RefView({ open, onClose, details, source }) {
+export default function RefView({ open, onClose, details }) {
 
     if (!open || !details) return null;
 
@@ -35,16 +35,16 @@ export default function RefView({ open, onClose, details, source }) {
              onScrollCapture={(e) => {e.stopPropagation()}}
              className={"ref-modal-container ref-view"}>
 
-            <h4>Reference View</h4>
+            <h4 className={details.test_data ? 'test-display' :''}>Reference View{details.test_data ? " (test ref)" : ''}</h4>
 
             <div className="modalRight">
                 <p onClick={onClose} className="closeBtn">X Close</p>
             </div>
 
-            <div className="container-fluid main-content">
+            <div className="xcontainer-fluid main-content">
 
-                <div className="row header">
 
+                <div className="row header no-gutters">
 
                     <div className="col-8">
                         <Templates templates={details.templates} />
@@ -56,6 +56,21 @@ export default function RefView({ open, onClose, details, source }) {
 
                 </div>
 
+
+                <div className="row">
+
+                    <div className="col-8">
+                        <h6>wikitext:</h6>
+                        <p className={"raw-wikitext"}>{rawText}</p>
+                    </div>
+
+                    <div className="col-4">
+                        <h6>raw json:</h6>
+                        <pre className={"raw-detail"}>{JSON.stringify(details, null, 2)}</pre>
+                    </div>
+                </div>
+
+
                 <div className="row footer">
                     <button className='btnPrimary'>
                         <span>Primary</span>
@@ -65,18 +80,16 @@ export default function RefView({ open, onClose, details, source }) {
                     </button>
                 </div>
 
+
             </div>
 
             <div className="content">
 
-                <h6 style={{marginBottom:".25rem"}}>source: </h6>
-                <p style={{marginTop:0}} ><MakeLink href={source} linkText={source}/></p>
-
-                <h6>wikitext:</h6>
-                <p>{rawText}</p>
-
-                <h6>raw json:</h6>
-                <pre className={"raw-detail"}>{JSON.stringify(details, null, 2)}</pre>
+                <h6 style={{marginBottom:"0"}}>source: <span style={{fontSize:"smaller"}}>{
+                    details.endpoint
+                        ? <MakeLink href={details.endpoint} linkText={details.endpoint}/>
+                        : 'No source link provided'
+                }</span></h6>
 
             </div>
 

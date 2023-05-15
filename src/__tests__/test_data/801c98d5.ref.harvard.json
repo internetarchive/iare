@@ -1,4 +1,7 @@
 {
+  "endpoint" : "https://archive.org/services/context/wari/v2/statistics/reference/801c98d5",
+  "test_data" : "test Data for testing Reference Viewer",
+
   "id": "801c98d5",
   "template_names": [
     "harvnb",

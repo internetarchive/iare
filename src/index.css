@@ -185,4 +185,5 @@ table.single-detail tr td:not(:first-child) {
 
 .path-fetch-wrap .chk-force-refresh {
     margin-left: .5rem;
+    margin-right: .25rem;
 }
