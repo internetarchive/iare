@@ -5,6 +5,7 @@ import PathNameFetch from "./components/PathNameFetch";
 import Loader from "./components/Loader";
 import PageDisplay from "./components/PageDisplay";
 import MakeLink from "./components/MakeLink";
+import TestRefModal from "./components/vTest/TestRefModal";
 
 export default function App() {
 
@@ -230,6 +231,8 @@ export default function App() {
     }, [myUrl, myRefresh, debugAlert, referenceFetch])
 
 
+    const shortcuts = ['easterIslandFilename', 'internetArchiveFilename','pdfCovid', 'pdfOneLink'];
+
     // render component
     return <>
 
@@ -247,8 +250,8 @@ export default function App() {
 
                 <div className={ isDebug ? "debug-on" : "debug-off" }>
                     <div>
-                    <button onClick={toggleDebugAlert} className={"debug-button"}>{ isDebugAlerts ? "hide" : "show" } alerts
-                    </button>{isDebugAlerts ? <span className={"debug-info"}> user alerts will be engaged for certain tasks</span>
+                        <button onClick={toggleDebugAlert} className={"debug-button"}>{ isDebugAlerts ? "hide" : "show" } alerts
+                        </button>{isDebugAlerts ? <span className={"debug-info"}> user alerts will be engaged for certain tasks</span>
                     : ''}</div>
                     <p>pathName : <MakeLink href={targetPath}/></p>
                     <p>endpointPath: <MakeLink href={endpointPath}/></p>
@@ -256,16 +259,15 @@ export default function App() {
                     <p>inline target URL: {myUrl}</p>
                     {/*<p>window.location:</p>*/}
                     {/*<pre>{JSON.stringify(window.location,null,2)}</pre>*/}
+                    <TestRefModal />
                 </div>
 
             </div>
 
-            <PathNameFetch pathInitial={targetPath} checkInitial={refreshCheck} handlePathResults={handlePathResults}
-                shortcuts={ env === 'env-production'
-                    ? ['easterIslandFilename','internetArchiveFilename','pdfCovid']
-                    : ['easterIslandFilename','internetArchiveFilename','pdfCovid', 'pdfOneLink']
-                }
-            />
+
+            <PathNameFetch pathInitial={targetPath} checkInitial={refreshCheck}
+                           shortcuts={shortcuts}
+                           handlePathResults={handlePathResults} />
 
             {myError ? <div className={myError ? "error-display" : "error-display-none"}>
                 {myError}
@@ -277,5 +279,6 @@ export default function App() {
             </>
             }
         </div>
+
     </>
 }

@@ -1,3 +1,8 @@
+.page-info {
+    margin-top: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
 .page-data {
     display:flex;
     flex-direction: row;
@@ -12,6 +17,9 @@
     margin-left:0;
 }
 
+/* section-box is common component class for sections
+ - see UrlDisplay and RefDisplay e.g.
+ */
 .section-box {
     /*padding:1rem;*/
     /*border:1px solid black;*/
@@ -19,6 +27,5 @@
 .section-box h3, .section-box h4 {
     margin-top:0;
     margin-bottom:.5rem;
+    font-weight:bold;
 }
-
-

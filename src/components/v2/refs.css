@@ -36,28 +36,17 @@
     /*width:50%;*/
     display:flex;
     flex-direction: row;
-    overflow:hidden;
+    overflow:scroll;
     margin-top:1rem;
+    max-height:50rem;
 }
 .ref-list-wrapper {
     display:block;
-    flex: 0 0 67%;
+    flex: 0 0 100%;
 }
 
 .ref-list {
-    max-width:29.5rem;
-}
-.ref-details {
-    display:block;
-    /*width:50%;*/
-    margin-left:1rem;
-    word-wrap: break-word;
-    flex:0 0 33%;
-    overflow:auto;
-}
-
-.ref-detail .raw-detail {
-    color: #808080;
+    /*max-width:29.5rem;*/
 }
 
 /* filter buttons */

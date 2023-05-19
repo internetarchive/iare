@@ -20,7 +20,10 @@ div.environment-tag {
     margin-top:0;
     margin-bottom: 0.5rem;
     padding-left:.3rem;
+    font-size:2em;
+    font-weight:bold;
 }
+
 body.env-production .iare-view .header h1 {
     color:#e30040;
 }
@@ -52,6 +55,9 @@ body.env-other .version-display span.non-production {
 .debug-on a {
     color:lightskyblue;
 }
+.debug-on button {
+    margin-bottom:.75rem;
+}
 
 .debug-off {
     display:none;
@@ -63,10 +69,10 @@ body.env-other .version-display span.non-production {
 .debug-button, more-button {
     border-radius: 0.75rem;
     background-color: #dadffd;
-    padding:0.14em .5em;
+    padding:0em .5em 0.18em;
     color: #454545;
     border: 1px solid black;
-    font-size: .85rem;
+    font-size: .75rem;
 }
 .more-button {
     background-color: transparent;
@@ -131,6 +137,7 @@ table.single-detail tr td:not(:first-child) {
     width:19rem;
 }
 
+
 .iare-view {
     display: flex;
     /*flex-direction: row;*/
@@ -160,7 +167,7 @@ table.single-detail tr td:not(:first-child) {
 }
 .path-fetch #pathInput {
     width:33rem;
-    font-size: 1.1rem;
+    font-size: .9rem;
     padding: 2pt 2pt 2pt 4pt;
     border:1px solid dimgrey;
 }
@@ -182,4 +189,5 @@ table.single-detail tr td:not(:first-child) {
 
 .path-fetch-wrap .chk-force-refresh {
     margin-left: .5rem;
+    margin-right: .25rem;
 }
