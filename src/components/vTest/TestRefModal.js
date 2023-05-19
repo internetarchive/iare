@@ -5,7 +5,7 @@ export default function TestRefModal( props ) {
     const [openModal, setOpenModal] = useState(false)
 
     return <>
-        <button onClick={(e) => setOpenModal(true)}>test ref</button>
+        <button className={"debug-button"} onClick={(e) => setOpenModal(true)}>test ref</button>
         <div className={"iari-vTest"}>
             <RefView open={openModal} onClose={() => setOpenModal(false)} details={refDetails} />
         </div>

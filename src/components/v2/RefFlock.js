@@ -6,13 +6,15 @@ function getLinkText(ref) {
 
     let text = "";
 
-    if(ref.template_names)
-    {
+    if (ref.template_names && ref.template_names.length > 0) {
         ref.template_names.map((tn, i) => {
             // <span style={{fontWeight: "bold"}}>{tn}</span>
             text += tn + "\n";
             return null;
         })
+    } else {
+        // wikitext does not come with dehydrated_refrences
+        // text += ref.wikitext + "\n";
     }
 
     if (ref.titles) {

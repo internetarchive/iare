@@ -103,25 +103,25 @@ export const REF_FILTER_TYPES = {
     },
     general: {
         caption: "General",
-        desc: "General Citations",
+        desc: "Citations not in Footnotes section",
         filterFunction: () => (d) => {return d.type === "general"},
     },
 
     footnote: {
         caption: "Footnote",
-        desc: "Footnote Citations",
+        desc: "Citations in Footnote section",
         filterFunction: () => (d) => {return d.type === "footnote"},
     },
 
     content: {
         caption: "Content",
-        desc: "Content Citations",
+        desc: "Citations with Content",
         filterFunction: () => (d) => {return d.footnote_subtype === "content"},
     },
 
     named: {
         caption: "Named",
-        desc: "Named Citations",
+        desc: "Citations referring to already defined citation",
         filterFunction: () => (d) => {return d.footnote_subtype === "named"},
     },
 

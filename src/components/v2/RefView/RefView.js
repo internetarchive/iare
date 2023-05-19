@@ -2,7 +2,8 @@ import React from "react";
 import MakeLink from "../../MakeLink";
 import "./refView.css"
 import Templates from "./Templates";
-import Badges from "./Badges";
+import RefActions from "./RefActions";
+import RefStats from "./RefStats";
 
 /*
 details:
@@ -35,64 +36,67 @@ export default function RefView({ open, onClose, details }) {
              onScrollCapture={(e) => {e.stopPropagation()}}
              className={"ref-modal-container ref-view"}>
 
-            <h4 className={details.test_data ? 'test-display' :''}>Reference View{details.test_data ? " (test ref)" : ''}</h4>
 
-            <div className="modalRight">
-                <p onClick={onClose} className="closeBtn">X Close</p>
-            </div>
-
-            <div className="xcontainer-fluid main-content">
-
+            <div className="main-content">
 
                 <div className="row header no-gutters">
 
-                    <div className="col-8">
+                    <div className="col-9">
+                        <div className={"row"}>
+
+                            <div className="col-6">
+                                <h2 className={`text-primary ref-view-header ${details.test_data ? 'test-display' : ''}`}
+                                >Reference View{details.test_data ? " (test ref)" : ''}</h2>
+                            </div>
+
+                            <div className="col-6 text-end"><span
+                                className={"ref-origin-link"}> archive.org reference id: {
+                                details.endpoint
+                                    ? <MakeLink href={details.endpoint} linkText={details.id}/>
+                                    : ''
+                                }</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-3">
+
+                        <div className="modalRight">
+                            <p onClick={onClose} className="closeBtn">X Close</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div className="row xxxheader no-gutters">
+
+                    <div className="col-9">
                         <Templates templates={details.templates} />
+
+                        <div className="row ref-raw-data">
+                            <div className="col-8">
+                                <h4>wikitext:</h4>
+                                <p className={"raw-wikitext"}>{rawText}</p>
+                            </div>
+                            <div className="col-4">
+                                <h4>raw json:</h4>
+                                <pre className={"raw-json-detail"}>{JSON.stringify(details, null, 2)}</pre>
+                            </div>
+                        </div>
+
                     </div>
 
-                    <div className="col-4">
-                        <Badges />
+                    <div className="col-3">
+                        <RefActions />
+                        <RefStats />
                     </div>
 
                 </div>
 
-
-                <div className="row">
-
-                    <div className="col-8">
-                        <h6>wikitext:</h6>
-                        <p className={"raw-wikitext"}>{rawText}</p>
-                    </div>
-
-                    <div className="col-4">
-                        <h6>raw json:</h6>
-                        <pre className={"raw-detail"}>{JSON.stringify(details, null, 2)}</pre>
-                    </div>
-                </div>
-
-
-                <div className="row footer">
-                    <button className='btnPrimary'>
-                        <span>Primary</span>
-                    </button>
-                    <button className='btnOutline'>
-                        <span>Outline</span>
-                    </button>
-                </div>
-
+                {/*<div className="row footer"><p>footer</p>*/}
+                {/*</div>*/}
 
             </div>
-
-            <div className="content">
-
-                <h6 style={{marginBottom:"0"}}>source: <span style={{fontSize:"smaller"}}>{
-                    details.endpoint
-                        ? <MakeLink href={details.endpoint} linkText={details.endpoint}/>
-                        : 'No source link provided'
-                }</span></h6>
-
-            </div>
-
 
         </div>
     </div>

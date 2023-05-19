@@ -250,8 +250,8 @@ export default function App() {
 
                 <div className={ isDebug ? "debug-on" : "debug-off" }>
                     <div>
-                    <button onClick={toggleDebugAlert} className={"debug-button"}>{ isDebugAlerts ? "hide" : "show" } alerts
-                    </button>{isDebugAlerts ? <span className={"debug-info"}> user alerts will be engaged for certain tasks</span>
+                        <button onClick={toggleDebugAlert} className={"debug-button"}>{ isDebugAlerts ? "hide" : "show" } alerts
+                        </button>{isDebugAlerts ? <span className={"debug-info"}> user alerts will be engaged for certain tasks</span>
                     : ''}</div>
                     <p>pathName : <MakeLink href={targetPath}/></p>
                     <p>endpointPath: <MakeLink href={endpointPath}/></p>

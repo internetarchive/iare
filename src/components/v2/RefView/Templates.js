@@ -39,16 +39,24 @@ export default function Templates({ templates }) {
             return templates.map( t => {
                 n++;
                 const tabID = `template_${n}`;
-                const name = t.template_name ? t.template_name : `Template ${n}`;
-                // return <button className="nav-link active" type="button" role="tab"
-                //                id={`${tabID}-tab`} key={tabID}
-                //                data-bs-target={`#${tabID}`} data-bs-toggle="tab"
-                //                aria-controls={`${tabID}`} aria-selected={"false"}
-                //     // onClick={}
-                // >{name}</button>
+                const name = t.parameters && t.parameters.template_name ? t.parameters.template_name : `Template ${n}`;
 
-                return <Tab eventKey={tabID} title={name}>
-                    <p>content for template {name}</p>
+                const templateParams = t.parameters
+
+                    ?  Object.keys(t.parameters).map((key, i) => {
+                        // show with styling for param name and value
+                        return <div className={`param-row`} key={i}>
+                            <div className={"col-3 param-name"}>{key}</div>
+                            <div className={"col-9 param-value"}>{t.parameters[key]}</div>
+                        </div>
+                        })
+
+                    : <p>No parameters for Template!</p>
+
+                return <Tab eventKey={tabID} key={tabID} title={name}>
+                    <div className={'parameters'}>
+                        {templateParams}
+                    </div>
                 </Tab>
 
 
@@ -61,48 +69,16 @@ export default function Templates({ templates }) {
             activeKey={key}
             onSelect={(k) => setKey(k)}
             className="mb-3"
+            variant={"pills"}
         >
             {getTemplateTabs(templates)}
         </Tabs>
-
-                        // // get array of tabs, one for each template
-                        // let n = 0;
-                        // const tabButtons = templates.map( t => {
-                        //     n++;
-                        //     const tabID = `template_${n}`;
-                        //     const name = t.template_name ? t.template_name : `Template ${n}`;
-                        //     return <button className="nav-link active" type="button" role="tab"
-                        //                    id={`${tabID}-tab`} key={tabID}
-                        //                    data-bs-target={`#${tabID}`} data-bs-toggle="tab"
-                        //                    aria-controls={`${tabID}`} aria-selected={"false"}
-                        //                    // onClick={}
-                        //     >{name}</button>
-                        // })
-
-                        // n = 0;
-                        // const tabContents = templates.map( t => {
-                        //     n++;
-                        //     const tabID = `template_${n}`;
-                        //     return <div className="tab-pane fade show active" id={`${tabID}`} role="tabpanel"
-                        //                             aria-labelledby={`${tabID}-tab`}>
-                        //         <p>params for tab {tabID}</p>
-                        //     </div>
-
-                    // templatesContent = <div className={"ref-templates"}>
-                    //     <nav>
-                    //         <div className="nav nav-tabs" id="nav-tab" role="tablist">
-                    //             {tabButtons}
-                    //         </div>
-                    //     </nav>
-                    //     <div className="tab-content" id="nav-tabContent">
-                    //         {tabContents}
-                    //     </div>
-                    //     </div>
 
     }
 
 
     return <div className="ref-templates">
+        <h3 className={"templates-header"}>Templates</h3>
         {templatesContent}
         </div>
 }
