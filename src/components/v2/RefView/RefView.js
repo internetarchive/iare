@@ -1,7 +1,7 @@
 import React from "react";
 import MakeLink from "../../MakeLink";
 import "./refView.css"
-import Templates from "./Templates";
+import RefTemplates from "./RefTemplates";
 import RefActions from "./RefActions";
 import RefStats from "./RefStats";
 
@@ -71,7 +71,7 @@ export default function RefView({ open, onClose, details }) {
                 <div className="row xxxheader no-gutters">
 
                     <div className="col-9">
-                        <Templates templates={details.templates} />
+                        <RefTemplates templates={details.templates} />
 
                         <div className="row ref-raw-data">
                             <div className="col-8">
