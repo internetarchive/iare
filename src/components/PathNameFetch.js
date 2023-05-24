@@ -48,7 +48,7 @@ export default function PathNameFetch({ pathInitial='', checkInitial= false, han
 
         <div className={"path-fetch-wrap"}>
 
-            <div style={{marginBottom: ".5rem"}}><label
+            <div className={"path-input-wrapper"}><label
                     htmlFor="pathInput" id={'pathInput-label'}>URL: </label
                 ><input
                     id="pathInput" name="pathInput"

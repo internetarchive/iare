@@ -23,8 +23,16 @@
 }
 
 .url-flock {
-    margin-top: 1.2rem;
+    margin-top: 1.7rem;
+    max-width: 23rem;
 }
+
+.url-list {
+    max-height: var(--height-list);
+    height: var(--height-list);
+    overflow: scroll;
+}
+
 .url-list .url-row {
     display: flex;
     flex-direction: row;

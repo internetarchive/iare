@@ -1,3 +1,13 @@
+:root {
+    --button-color-blue: #67bfeb;
+    --color-fg-selected: #054630; /*#1c654f;*/
+    --color-bg-selected: #ceefd9; /*#c4e4c8;*/
+    --color-fg-hover: blue;
+    --color-bg-hover: #81c8e7;
+
+    --height-list: 25rem;
+}
+
 body {
     font: 14px "Century Gothic", Futura, sans-serif;
     margin: 15px 20px 20px;
@@ -171,8 +181,27 @@ table.single-detail tr td:not(:first-child) {
     padding: 2pt 2pt 2pt 4pt;
     border:1px solid dimgrey;
 }
+.path-input-wrapper {
+    marginBottom: .5rem;
+    display:contents;
+}
+
+@media screen and (max-width: 800px) {
+    /*.path-input-wrapper {*/
+    /*    marginBottom: .5rem;*/
+    /*    display:contents;*/
+    /*}*/
+
+    .path-fetch #pathInput {
+        width:100%;
+    }
+}
+
 .path-fetch #pathInput-label {
     color:dimgrey;
+    margin-right:.25em;
+    font-size:.9rem;
+    padding-top: 0.175rem;
 }
 
 .path-fetch-wrap button {

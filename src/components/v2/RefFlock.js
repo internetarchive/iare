@@ -13,8 +13,11 @@ function getLinkText(ref) {
             return null;
         })
     } else {
-        // wikitext does not come with dehydrated_refrences
+        // wikitext does not come with dehydrated_references
         // text += ref.wikitext + "\n";
+        //
+        // should have (in the future):
+        // text += ref.name
     }
 
     if (ref.titles) {
@@ -82,7 +85,7 @@ function RefFlock({ refArray, refFilterDef } ) {
     } else {
         // filter the refs if filter defined
         const filteredRefs = refFilterDef
-            ? refArray.filter((refFilterDef.filterFunction)())
+            ? refArray.filter((refFilterDef.filterFunction)()) // Note self-calling function
             : refArray;
 
         const refList = filteredRefs.map((ref, i) => {
@@ -94,8 +97,8 @@ function RefFlock({ refArray, refFilterDef } ) {
         });
 
         const label = refFilterDef
-            ? `${filteredRefs.length} Filtered Refs : ${refFilterDef.caption}`
-            : `${filteredRefs.length} Refs (no filter)`
+            ? `${filteredRefs.length} References : ${refFilterDef.caption}`
+            : `${filteredRefs.length} References : (no filter)`
         refs = <>
             <h4>{label}</h4>
             <div className={"ref-list"}>

@@ -154,6 +154,9 @@ export default function RefOverview ({ refArray, summary, onAction, selectedFilt
         }
 
         const chartOptions = {
+            // maintainAspectRatio: false,
+            // aspectRatio: .5,
+
             indexAxis: "y",
 
             tooltips: {enabled: false},
@@ -269,6 +272,7 @@ export default function RefOverview ({ refArray, summary, onAction, selectedFilt
     }
 
     return <div className={"ref-overview"}>
+        <h4>Reference Statistics</h4>
         <div className={"ref-overview-wrap"}>
             {overviewDisplay}
         </div>

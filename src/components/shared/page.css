@@ -4,28 +4,62 @@
 }
 
 .page-data {
-    display:flex;
-    flex-direction: row;
+    /*display:flex;*/
+    /*flex-direction: row;*/
     border-top:1px solid black;
-    padding-top:1rem;
+    padding-top:.5rem;
 }
-.page-data > div {
-    margin-left: 1.25rem;
-    /*flex: 0 0 auto;*/
+.page-data .display-content {
+    margin-top:.5rem;
 }
-.page-data > div:first-child {
-    margin-left:0;
-}
-
 /* section-box is common component class for sections
  - see UrlDisplay and RefDisplay e.g.
  */
 .section-box {
     /*padding:1rem;*/
     /*border:1px solid black;*/
+    margin-left: 1rem;
+}
+.section-box:first-child {
+    margin-left: 0;
 }
 .section-box h3, .section-box h4 {
     margin-top:0;
     margin-bottom:.5rem;
     font-weight:bold;
+}
+.page-data .display-content {
+    display:flex;
+    flex-direction: row;
+}
+
+/* *******************
+ for choosing Domains. urls or Reference Types
+ ********************* */
+
+.ref-filter-types {
+    display: flex;
+    flex-direction: row;
+    font-size:1rem;
+    padding-bottom:.5rem;
+    border-bottom:1px solid black;
+}
+
+.ref-filter-types input[type="radio"]{
+    -ms-transform: scale(1.5); /* IE 9 */
+    -webkit-transform: scale(1.5); /* Chrome, Safari, Opera */
+    transform: scale(1.5);
+    margin-right:.23rem;
+}
+.ref-filter-types > div {
+    margin-left: 1.25rem;
+    /*flex: 0 0 auto;*/
+}
+.ref-filter-types > div:first-child {
+    margin-left:0;
+}
+
+.ores-display {
+    /*color:red;*/
+    padding:0 .65rem;
 }
