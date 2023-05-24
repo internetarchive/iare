@@ -9,7 +9,8 @@ expected props
     handlePathResults      callback "Load" button clicked; expects 2 element array: [pathName, checked]
     shortcuts              array of keys into global ButtonDefs, describing shortcut buttons to show
  */
-export default function PathNameFetch({ pathInitial='', checkInitial= false, handlePathResults, shortcuts=[] } ) {
+export default function PathNameFetch({ pathInitial='', checkInitial= false,
+                                          handlePathResults, shortcuts=[], placeholder='' } ) {
 
     const [pathName, setPathName] = useState(pathInitial); // init with passed in name
     const [checked, setChecked] = React.useState(checkInitial);
@@ -55,7 +56,8 @@ export default function PathNameFetch({ pathInitial='', checkInitial= false, han
                     type="text"
                     value={pathName}
                     onChange={myHandlePath.handleChange}
-                    onKeyPress={myHandlePath.handleKeyPress} // TODO deprecated - should change to onKeyDOwn
+                    onKeyPress={myHandlePath.handleKeyPress} // TODO deprecated - should change to onKeyDown
+                    placeholder = {placeholder ? placeholder : ''}
                 /></div>
 
             <div style={{display: "block"}}>

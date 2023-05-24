@@ -181,6 +181,10 @@ table.single-detail tr td:not(:first-child) {
     padding: 2pt 2pt 2pt 4pt;
     border:1px solid dimgrey;
 }
+.path-fetch #pathInput::placeholder {
+    color: #a0a0a0;
+}
+
 .path-input-wrapper {
     marginBottom: .5rem;
     display:contents;

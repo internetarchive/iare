@@ -267,7 +267,9 @@ export default function App() {
 
             <PathNameFetch pathInitial={targetPath} checkInitial={refreshCheck}
                            shortcuts={shortcuts}
-                           handlePathResults={handlePathResults} />
+                           handlePathResults={handlePathResults}
+                           placeholder={"Enter a Wikipedia article or PDF url here"}
+            />
 
             {myError ? <div className={myError ? "error-display" : "error-display-none"}>
                 {myError}
