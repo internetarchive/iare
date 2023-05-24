@@ -4,6 +4,7 @@ import UrlOverview from "./UrlOverview";
 import {API_V2_URL_BASE} from "../../constants/endpoints";
 import './urls.css';
 import Loader from "../Loader";
+// import RefFlock from "../v2/RefFlock";
 
 export default function UrlDisplay ({ urlFlock, options, filterMap } ) {
 
@@ -152,15 +153,26 @@ export default function UrlDisplay ({ urlFlock, options, filterMap } ) {
         }
     }
 
-    return <div className={"url-display section-box"}>
+    return <>
+        <div className={"url-display section-box"}>
+            <h3>URLs</h3>
+            <UrlOverview statistics={urlStatistics} onAction={handleAction}/>
+        </div>
 
-        <h3>URLs</h3>
+        {isLoadingUrls
+            ? <Loader message={"retrieving URL information..."}/>
+            : <>
+                <div className={"section-box"}>
+                    <UrlFlock urlArray={urlArray} urlFilterDef={urlFilter}/>
+                </div>
 
-        <UrlOverview statistics={urlStatistics} onAction={handleAction} />
-
-        {isLoadingUrls ? <Loader message={"retrieving URL information..."}/>
-            : <UrlFlock urlArray={urlArray} urlFilterDef={urlFilter} />
+                <div className={"section-box"}>
+                    <h3>References</h3>
+                    <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Under construction</h4>
+                    {/*<RefFlock refArray={refArray} refFilterDef={refFilter} />*/}
+                    <p className={"ref-note-alert"}>Filterable Reference List goes here</p>
+                </div>
+            </>
         }
-
-    </div>
+    </>
 }
