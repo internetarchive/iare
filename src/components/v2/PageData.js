@@ -20,7 +20,7 @@ export default function PageData({pageData = {}}) {
             caption: "URLs"
         },
         "stats": {
-            caption: "Reference Type"
+            caption: "Reference Types"
         },
     }
 
