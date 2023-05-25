@@ -42,24 +42,29 @@ export default function RefDisplay ({ pageData, options } ) {
         ? []
         : pageData.dehydrated_references
 
-    return <div className={"ref-display section-box"}>
+    return <>
+        <div className={"ref-display section-box"}>
 
-        <h3>References</h3>
+            <h3>References</h3>
 
-        <RefOverview refArray={refArray}
-                     summary={
-                        {
-                            filterSets: [
-                                { context : "set-0", filterMap : REF_FILTER_TYPES },
-                                { context : "set-1", filterMap : REF_FILTER_DEFS},
-                            ]
-                        }
-                     }
-                     onAction={handleAction}
-                     selectedFilter={selectedFilter}
-        />
+            <RefOverview refArray={refArray}
+                         summary={
+                            {
+                                filterSets: [
+                                    { context : "set-0", filterMap : REF_FILTER_TYPES },
+                                    { context : "set-1", filterMap : REF_FILTER_DEFS},
+                                ]
+                            }
+                         }
+                         onAction={handleAction}
+                         selectedFilter={selectedFilter}
+            />
+        </div>
 
-        <RefFlock refArray={refArray} refFilterDef={refFilter} />
+        <div className={"section-box"}>
+            <h3>Filtered References</h3>
+            <RefFlock refArray={refArray} refFilterDef={refFilter} />
+        </div>
 
-    </div>
+    </>
 }

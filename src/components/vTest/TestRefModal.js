@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import RefView from "../v2/RefView/RefView";
-import refDetails from "../../__tests__/test_data/801c98d5.ref.harvard.json";
+import refDetails from "../v2/test_data/801c98d5.ref.harvard.json";
 export default function TestRefModal( props ) {
     const [openModal, setOpenModal] = useState(false)
 

@@ -2,7 +2,7 @@
     --button-color-blue: #67bfeb;
     --color-fg-selected: #054630; /*#1c654f;*/
     --color-bg-selected: #ceefd9; /*#c4e4c8;*/
-    --color-fg-hover: blue;
+    --color-fg-hover: #fffde5; /*blue;*/
     --color-bg-hover: #81c8e7;
 
     --height-list: 25rem;

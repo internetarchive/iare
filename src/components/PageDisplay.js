@@ -5,7 +5,9 @@ import PageDisplayV2PDF from "./v2pdf/PageDisplayV2PDF";
 
 export default function PageDisplay( { pageData }) {
 
-    if (!pageData) return <p>No page data</p>;
+    const message = 'Please enter a URL and click "Load References"';
+
+    if (!pageData) return <p className={'text-primary'}>{message}</p>;
 
     if (pageData.version === "v2") {
         if (pageData.mediaType === "wiki")

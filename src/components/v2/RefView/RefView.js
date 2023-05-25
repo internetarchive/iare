@@ -46,7 +46,7 @@ export default function RefView({ open, onClose, details }) {
 
                             <div className="col-6">
                                 <h2 className={`text-primary ref-view-header ${details.test_data ? 'test-display' : ''}`}
-                                >Reference View{details.test_data ? " (test ref)" : ''}</h2>
+                                >Reference View{details.test_data ? " (test reference viewer)" : ''}</h2>
                             </div>
 
                             <div className="col-6 text-end"><span

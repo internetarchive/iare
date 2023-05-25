@@ -126,7 +126,7 @@ export const REF_FILTER_TYPES = {
 
     named: {
         caption: "Named",
-        desc: "Citations referring to already defined citation",
+        desc: "Citations referring to an already defined citation",
         filterFunction: () => (d) => {return d.footnote_subtype === "named"},
     },
 

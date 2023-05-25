@@ -20,7 +20,7 @@ export default function PageData({pageData = {}}) {
             caption: "URLs"
         },
         "stats": {
-            caption: "Statistics"
+            caption: "Reference Type"
         },
     }
 
@@ -46,7 +46,7 @@ export default function PageData({pageData = {}}) {
                 {displayOptions}
             </div>
 
-            <div className={"display-content"}>
+            <div className={`display-content display-${selectedDisplay}`}>
                 {selectedDisplay === 'domains' &&
                     <FldDisplay pageData = {pageData} />
                 }
