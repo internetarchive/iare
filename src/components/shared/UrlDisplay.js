@@ -88,22 +88,25 @@ export default function UrlDisplay ({ urlFlock, options, filterMap } ) {
     }, []);
 
 
-    // run upon new urlFlock
-    //      TODO: see if this works the same by giving a dependency array of []
+    // when new urlFlock (which is every new render of component)
+    //     TODO: see if this works the same by giving a dependency array of []
     //
     // process url array upon iterative fetch completion
-    // currently simply saving results directly; could "process" each element to extract the
-    // data:{} object, but not doing that now.
-    // if it does change to extract the object, we would have to change the filter logic:
-    //      use d.<value> rather than d.data.<value>
+    // currently simply saves results directly;
+    //  - could "process" each element to extract the data:{} object, but not doing that now.
+    //      - if we did change to extract the object, we would have to change the filter logic
+    //        in many of the filter definitions: use d.<value> rather than d.data.<value>
+    //
     useEffect( () => {
         setIsLoadingUrls(true);
 
         fetchAllUrls(urlFlock, options.refresh)
+
             .then(urlResults => {
                 console.log(`useEffect[urlFlock] fetchAllUrls.then: ${urlResults.length} results found`);
                 setUrlArray( urlResults );
             })
+
             .catch(error => {
                 console.error("After fetchAllUrls:", error);
                 console.error(`useEffect[urlFlock] fetchAllUrls.catch: ${error}`);

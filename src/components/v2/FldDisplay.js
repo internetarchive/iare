@@ -8,6 +8,17 @@ export default function FldDisplay({ pageData } ) {
     const [refFilter, setRefFilter] = useState( null ); // filter to pass in to RefFlock
 
     const getDomainFilter = (targetDomain) => {
+
+        if (!targetDomain) {
+            return {
+                caption: `No Domain Filter`,
+                desc: `Show ALl Citations`,
+                filterFunction: () => (d) => {
+                    return true;
+                },
+            }
+        }
+
         return {
             caption: `Contains ${targetDomain} domain`,
             desc: `Citations with domain: ${targetDomain}`,

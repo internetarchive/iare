@@ -1,9 +1,13 @@
 :root {
-    --button-color-blue: #67bfeb;
-    --color-fg-selected: #054630; /*#1c654f;*/
-    --color-bg-selected: #ceefd9; /*#c4e4c8;*/
-    --color-fg-hover: #fffde5; /*blue;*/
-    --color-bg-hover: #81c8e7;
+    --color-list-fg-selected: #054630; /*#1c654f;*/
+    --color-list-bg-selected: #ceefd9; /*#c4e4c8;*/
+    --color-list-fg-hover: #fffde5; /*blue;*/
+    --color-list-bg-hover: #81c8e7;
+
+    --color-list-header-bg: #cff0ff;
+
+    --color-button-bg: #81c8e7;
+    --color-button-bg-hover: white;
 
     --height-list: 25rem;
 }
@@ -76,7 +80,7 @@ body.env-other .version-display span.non-production {
     font-style: italic;
     color:#8191a4;
 }
-.debug-button, more-button {
+.debug-button, .more-button {
     border-radius: 0.75rem;
     background-color: #dadffd;
     padding:0em .5em 0.18em;

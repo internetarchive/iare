@@ -97,8 +97,8 @@ function RefFlock({ refArray, refFilterDef } ) {
         });
 
         const label = refFilterDef
-            ? `${filteredRefs.length} References : ${refFilterDef.caption}`
-            : `${filteredRefs.length} References : (no filter)`
+            ? `${filteredRefs.length} References: ${refFilterDef.caption}`
+            : `${filteredRefs.length} References: (no filter)`
         refs = <>
             <h4>{label}</h4>
             <div className={"ref-list"}>

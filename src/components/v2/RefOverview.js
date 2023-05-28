@@ -190,7 +190,14 @@ export default function RefOverview ({ refArray, summary, onAction, selectedFilt
                             lineHeight: 1.2,
                         }
                     },
-                }
+
+                },
+
+                xAxis: [{
+                    stacked:false,
+                    display: true,
+                    type:'logarithmic',
+                }],
             },
 
             offset: true,
