@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import UrlFlock from "./UrlFlock";
 import UrlOverview from "./UrlOverview";
 import {API_V2_URL_BASE} from "../../constants/endpoints";
-import './urls.css';
+import '../shared/urls.css';
 import Loader from "../Loader";
 // import RefFlock from "../v2/RefFlock";
 
@@ -157,7 +157,8 @@ export default function UrlDisplay ({ urlFlock, options, filterMap } ) {
     }
 
     return <>
-        <div className={"url-display section-box"}>
+
+        <div className={"section-box url-overview-column"}>
             <h3>URLs</h3>
             <UrlOverview statistics={urlStatistics} onAction={handleAction}/>
         </div>

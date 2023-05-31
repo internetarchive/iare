@@ -6,6 +6,11 @@ function getLinkText(ref) {
 
     let text = "";
 
+    if (ref.name) {
+        text += '[' + ref.name + '] ';
+    }
+
+
     if (ref.template_names && ref.template_names.length > 0) {
         ref.template_names.map((tn, i) => {
             // <span style={{fontWeight: "bold"}}>{tn}</span>
