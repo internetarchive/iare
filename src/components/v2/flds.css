@@ -50,8 +50,8 @@
 .fld-list .fld-row > div:nth-child(2),
 .fld-list-header .fld-row > div:nth-child(2)
 {
-    border-left:1px solid black;
     width:2rem;
+    border-left:1px solid black;
 }
 .fld-list .fld-row:hover {
     color:var(--color-list-fg-hover);

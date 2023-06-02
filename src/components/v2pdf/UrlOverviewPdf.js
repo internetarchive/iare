@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import PieChart from "../PieChart";
 import {
     Chart,
@@ -46,12 +46,33 @@ const colors = {
         ]
     }
 */
-export default function UrlOverview ({ statistics, onAction } ) {
+export default function UrlOverviewPdf ({ statistics, onAction } ) {
+
+    const [checkboxes, setCheckboxes] = useState({
+        chkAnnotation: true,
+        chkContent: true,
+    });
+
+    // when checkboxes change, set the origin filter
+    // TODO: this is a very inelegant way of setting the origin!
+    useEffect( () => {
+        const value = (checkboxes.chkAnnotation && checkboxes.chkContent) ?
+            'AC' : checkboxes.chkAnnotation ? 'A'
+                 : checkboxes.chkContent ? 'C' : '';
+
+        // const value = 'AC';
+        //
+        onAction( { action: "setOriginFilter", value: value } )
+
+     }, [checkboxes, onAction])
+    
 
     if (!statistics) { return <div>
         <h4>Urls</h4>
         <p>No Url statistics to show.</p>
-    </div>}
+    </div>
+    }
+
 
     // remove "all" entry for pie chart
     const statsWithoutAll = statistics.urlCounts
@@ -125,23 +146,58 @@ export default function UrlOverview ({ statistics, onAction } ) {
         },
     }
 
-    // // debug display for chartData
-    // return <div>
-    //     <h4>Urls</h4>
-    //     <RawJson obj={chartData} />
-    // </div>
 
-                // const total = statistics.urlCounts && statistics.urlCounts // check validity
-                //     ? statistics.urlCounts.filter(s => s.link === "all")[0].count
-                //     : ""
+
+    const handleCheckboxChange = (event) => {
+        const { name, checked } = event.target;
+        setCheckboxes((prevCheckboxes) => ({
+            ...prevCheckboxes,
+            [name]: checked,
+        }));
+    }
+
+
+
+    const origins = {
+        "annotations": {
+            caption: "Annotated Links",
+            name: 'chkAnnotation'
+        },
+        "content": {
+            caption: "Content/Text Links",
+            name: 'chkContent'
+        },
+    }
+
+    const originChoices = Object.keys(origins).map( origin => {
+        const o = origins[origin];
+        return <div key={origin} >
+            <label>
+                <input
+                    type="checkbox"
+                    name={o.name}
+                    checked={checkboxes[o.name]}
+                    onChange={handleCheckboxChange}
+                />
+                {o.caption}
+            </label>
+            <br />
+        </div>
+    })
 
     return <div className={"url-overview"}>
-        <h4>Grouped by Status Code</h4>
+        <h4>URL Status Codes</h4>
         <div className={"url-chart-display"}>
-            {/*<pre className={"raw-json"}>{JSON.stringify(overview, null, 2)}</pre>*/}
             {chartData.datasets[0].data.length > 0 ?
                 <PieChart chartData={chartData} options={options} onClick={myClickChart} />
                 : <p>No Pie</p>}
+        </div>
+
+        <div className={'pdf-link-origin'}>
+            <h4>Origin of Links</h4>
+            <div className={'origin-choices'}>
+                {originChoices}
+            </div>
         </div>
     </div>
 

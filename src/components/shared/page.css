@@ -11,6 +11,8 @@
 }
 .page-data .display-content {
     margin-top:.5rem;
+    display:flex;
+    flex-direction: row;
 }
 /* section-box is common component class for sections
  - see UrlDisplay and RefDisplay e.g.
@@ -27,10 +29,6 @@
     margin-top:0;
     margin-bottom:.5rem;
     font-weight:bold;
-}
-.page-data .display-content {
-    display:flex;
-    flex-direction: row;
 }
 
 /* *******************

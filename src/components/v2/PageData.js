@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import UrlDisplay from "../shared/UrlDisplay";
+import UrlDisplay from "./UrlDisplay";
 import RefDisplay from "./RefDisplay";
 import FldDisplay from "./FldDisplay";
 import {URL_FILTER_MAP} from "./filters/urlFilterMaps";
@@ -46,7 +46,7 @@ export default function PageData({pageData = {}}) {
                 {displayOptions}
             </div>
 
-            <div className={`display-content display-${selectedDisplay}`}>
+            <div className={`display-content`}>
                 {selectedDisplay === 'domains' &&
                     <FldDisplay pageData = {pageData} />
                 }

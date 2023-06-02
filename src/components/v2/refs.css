@@ -50,8 +50,8 @@
 .ref-list {
     max-width:19.5rem;
 
-    max-height: var(--height-list);
-    height: var(--height-list);
+    max-height: calc(var(--height-list) + 2rem);
+    height: calc(var(--height-list)+ 2rem);
 
     overflow: scroll;
 }

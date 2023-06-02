@@ -31,17 +31,45 @@ example:
 
 useSort and sort: apply sorting if set to true, use ASC if sortDir is true, DESC otherwise
  */
-export default function UrlFlock({ urlArray, urlFilterDef, isLoading }) {
+export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction }) {
 
     // const [sort, setSort] = useState("status");
     const sort = "status";
     const [sortDir, setSortDir] = useState(true);
 
+                    // const [selectedUrl, setSelectedUrl] = useState('' ); // selected url in list
+
+                    // const onClick = (evt) => {
+                    //     const url = evt.target.parentNode.dataset["url"];
+                    //     onAction( {
+                    //         "action": "setUrlFilter",
+                    //         "value": url,
+                    //     })
+                    //     setSelectedUrl(url)
+                    // }
+                    //
+    const onClickHeader = (evt) => {
+    }
+                    //
+                    // const onHover = (evt) => {
+                    //     // console.log("FldFlock: onHover")
+                    // }
+                    //
+    const onHoverHeader = (evt) => {
+        // console.log("FldFlock: onHoverHeader")
+        // toggle show of Show All button
+    }
+                    //
+                    // const onClickShowAll = (evt) => {
+                    // }
+
+
     let urls = [];
 
     if (!urlArray || urlArray.length === 0) {
-        urls = <p>No URLs to show!</p>;
+        urls = <p>No URLs to show.</p>;
     }
+
     else {
         // filter the urls if filter defined
         const filteredUrls = urlFilterDef
@@ -86,20 +114,25 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading }) {
 
         } )
 
-        const label = `${filteredUrls.length} Filtered URLs: ${urlFilterDef ? urlFilterDef.caption : "No Filter"}`;
+        const label = `${filteredUrls.length} URLs: ${urlFilterDef ? urlFilterDef.caption : "No Filter"}`;
 
         urls = <>
             <h4 style={{color:"grey"}}>{label}</h4>
             {/* USE ONLY WHEN DEBUG <p>sort = {sort?"true":"false"}</p>*/}
-            <div className={"url-list"}>
+
+            <div className={"url-list-header"} onClick={onClickHeader} onMouseOver={onHoverHeader} >
                 <div className={"url-row url-header-row"}>
-                    <div className={"url-name"} >url</div>
+                    <div className={"url-name"}>URL</div>
                     <div className={"url-status"} onClick={() => {
                         // console.log("arf");
                         setSortDir(!sortDir);
                     }
-                    }>status</div>
+                    }>status
+                    </div>
                 </div>
+            </div>
+
+            <div className={"url-list"}>
                 {rows}
             </div>
         </>

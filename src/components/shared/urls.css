@@ -1,25 +1,13 @@
-.url-display {
-    /*width:25%;*/
-    /*margin-left:1rem;*/
+.url-overview-column {
     overflow: auto;
-    flex:0 0 317px;
-    /*flex-grow: 0;*/
-    /*flex-shrink: 0;*/
-    /*flex-basis: 317px !important;*/
-}
-.url-display a {
-    /*color:red;*/
-    /*display:block;*/
-    width:10em;
-    margin-bottom:.5rem;
-    overflow-wrap: break-word;
+    /*flex:0 0 317px;*/
 }
 .url-overview > h4 {
     color: grey;
     margin-bottom: 0;
 }
 .url-chart-display {
-    width:317px;
+    width:327px;
 }
 
 .url-flock {
@@ -27,20 +15,31 @@
     max-width: 23rem;
 }
 
+.list-header {
+    color: grey;
+}
+
 .url-list {
     max-height: var(--height-list);
     height: var(--height-list);
     overflow: scroll;
 }
+.url-list-header {
+    /*background-color: #cccccc;*/
+    background-color: var(--color-list-header-bg);
+    color:black;
+}
 
-.url-list .url-row {
+.url-list .url-row,
+.url-list-header .url-row
+{
     display: flex;
     flex-direction: row;
     border:1px solid black;
     border-top:none;
     position:relative;
 }
-.url-list .url-row:first-child {
+.url-list-header .url-row {
     border-top:1px solid black;
 }
 
@@ -66,29 +65,28 @@
     color: red !important;
 }
 
-.url-list .url-name {
+.url-row > div {
+    padding:.5rem;
+}
+.url-row .url-name {
     width: 80%;
     min-width: 80%;
     max-width: 80%;
-    padding: .5rem;
     border-right: 1px solid black;
 }
-.url-list .url-status {
+.url-row .url-status {
     width: 10%;
-    padding:.25rem;
-}
-.url-list .url-header-row .url-status {
-    cursor: pointer;
-    width:100%;
-    text-align: center;
-    color:#0000EE;
 }
 .url-list a {
-    width:80%;
-    margin-bottom:.5rem;
     overflow-wrap: break-word;
 }
 
+/*.url-list .url-header-row .url-status {*/
+/*    cursor: pointer;*/
+/*    width:100%;*/
+/*    text-align: center;*/
+/*    color:#0000EE;*/
+/*}*/
 
 
 .url-filters {

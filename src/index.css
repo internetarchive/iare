@@ -9,7 +9,11 @@
     --color-button-bg: #81c8e7;
     --color-button-bg-hover: white;
 
-    --height-list: 25rem;
+    /*--height-list: 25rem;*/
+    --height-list: 68vh;
+    --height-list-pdf: 70vh;
+    --border-list:1px solid black;
+
 }
 
 body {
