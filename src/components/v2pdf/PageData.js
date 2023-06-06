@@ -22,7 +22,21 @@ export default function PageData({pageData = {}}) {
     }
 
     const annotationLinks = getLinks(pageData, 'annotation_links');
-    const textLinks = getLinks(pageData, 'text_links');
+
+    // const textLinks = getLinks(pageData, 'text_links');
+    // const textLinksFromOriginal = getLinks(pageData, 'links_from_original_text');
+    // const textLinksFromOmitLinebreaks = getLinks(pageData, 'links_from_text_without_linebreaks');
+    // const textLinksFromOmitSpaces = getLinks(pageData, 'links_from_text_without_spaces');
+
+    const textLinks = pageData.text_links
+        ? getLinks(pageData, 'text_links')
+        : getLinks(pageData, 'links_from_text_without_linebreaks');
+
+    /*
+    "links_from_original_text": links_from_original_text,
+    "links_from_text_without_linebreaks": links_from_text_without_linebreaks,
+    "links_from_text_without_spaces": links_from_text_without_spaces,
+     */
     const flocks = [
         {
             list: annotationLinks,
@@ -34,6 +48,21 @@ export default function PageData({pageData = {}}) {
             label: 'Content Links',
             tag: 'C'
         },
+        // {
+        //     list: textLinksFromOriginal,
+        //     label: 'Links from Original Text',
+        //     tag: 'O'
+        // },
+        // {
+        //     list: textLinksFromOmitLinebreaks,
+        //     label: 'Links from Original Text without Linebreaks',
+        //     tag: 'L'
+        // },
+        // {
+        //     list: textLinksFromOmitSpaces,
+        //     label: 'Links from Original Text without Spaces',
+        //     tag: 'S'
+        // },
     ]
 
     return <>

@@ -65,7 +65,7 @@ export default function UrlDisplayPdf({caption = "URLs", flocks = [], options, f
         for (const flock of flocks) {
             for (const url of flock.list) {
                 if (mergedUrls[url]) {
-                    addUniqueElement(mergedUrls[url].tags,flock.tag)
+                    addUniqueElement(mergedUrls[url].tags, flock.tag)
                 } else {
                     // create element for url
                     mergedUrls[url] = {tags: [flock.tag]}
