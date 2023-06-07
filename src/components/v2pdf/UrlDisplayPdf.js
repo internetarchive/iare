@@ -36,7 +36,7 @@ before processing, we merge the flocks into one big array of url objects:
     }
 ], ...
  */
-export default function UrlDisplayPdf({caption = "URLs", flocks = [], options, filterMap}) {
+export default function UrlDisplayPdf({caption = "URLs", flocks = [], options={}, filterMap}) {
 
     const [urlFilter, setUrlFilter] = useState(null); // filter to pass in to UrlFlock
     const [originFilter, setOriginFilter] = useState(null); // filter to pass in to UrlFlock
@@ -45,6 +45,18 @@ export default function UrlDisplayPdf({caption = "URLs", flocks = [], options, f
 
     const [urlArray, setUrlArray] = useState([]);
     const [urlStatistics, setUrlStatistics] = useState({});
+
+
+    const origins = {
+        "annotations": {
+            caption: "Annotated Links",
+            name: 'chkAnnotation'
+        },
+        "content": {
+            caption: "Content/Text Links",
+            name: 'chkContent'
+        },
+    }
 
     // for practical purposes, we have two "flocks" of URLs: one for annotated links and one for text, or content links.
     // mergeFlocks can take any number of sets of lists, and combine them into one list, with
@@ -103,12 +115,14 @@ export default function UrlDisplayPdf({caption = "URLs", flocks = [], options, f
                         return Promise.resolve({
                             url: urlObject.url,
                             tags: urlObject.tags, // pass-thru
-                            status_code: data.status_code,
+
+                            // we fall back to status_code if testdeadlink_status_code does not exist
+                            // this is a caching bug
+                            status_code: data.testdeadlink_status_code ? data.testdeadlink_status_code : data.status_code,
+                            // status_code: data.testdeadlink_status_code
+                            // status_code: data.status_code,
                         })
-
-
                     })
-
 
                 } else {
                     // we may have a 504 or other erroneous status_code on the check-url call
@@ -233,25 +247,29 @@ export default function UrlDisplayPdf({caption = "URLs", flocks = [], options, f
                 setOriginFilter({
                     filterFunction: () => (d) => {
                         return true // all urls
-                    }
+                    },
+                    caption: "Annotations and Content"
                 })
             } else if (value === 'A') {
                 setOriginFilter({
                     filterFunction: () => (d) => {
                         return d.data.tags.includes( 'A') && d.data.tags.length === 1
-                    }
+                    },
+                    caption: "Just Annotations"
                 })
             } else if (value === 'C') {
                 setOriginFilter({
                     filterFunction: () => (d) => {
                         return d.data.tags.includes( 'C') && d.data.tags.length === 1
-                    }
+                    },
+                    caption: "Just Content"
                 })
             } else {
                 setOriginFilter({
                     filterFunction: () => (d) => {
                         return false
-                    }
+                    },
+                    caption: "No Links extracted"
                 })
             }
 
@@ -270,7 +288,7 @@ export default function UrlDisplayPdf({caption = "URLs", flocks = [], options, f
     return <>
         <div className={"section-box url-overview-column"}>
             <h3>{caption}</h3>
-            <UrlOverviewPdf statistics={urlStatistics} onAction={handleAction}/>
+            <UrlOverviewPdf statistics={urlStatistics} origins={origins} onAction={handleAction}/>
         </div>
 
         {isLoadingUrls

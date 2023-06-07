@@ -17,10 +17,11 @@ export default function UrlDisplay ({ urlFlock, options, filterMap } ) {
 
     async function fetchOneUrl(url, refresh=false, timeout=0) {
 
-        const endpoint = `${API_V2_URL_BASE}/check-url`
-            + `?url=${encodeURIComponent(url)}`
+        const params = `?url=${encodeURIComponent(url)}`
             + (refresh ? "&refresh=true" : '')
-            + (timeout > 0 ? `&timeout=${timeout}` : '');
+            + (timeout > 0 ? `&timeout=${timeout}` : '')
+
+        const endpoint = `${API_V2_URL_BASE}/check-url` + params
 
         let status_code = 0;
 
@@ -33,7 +34,20 @@ export default function UrlDisplay ({ urlFlock, options, filterMap } ) {
                 // console.log("fetchOneUrl: fetch:then: response:", response )
 
                 if (response.ok) {
-                    return response.json()
+                    // return response.json()
+                    return response.json().then(data => {
+                        //data.tags = urlObject.tags;
+                        // return data;
+                        return Promise.resolve({
+                            url: url,
+
+                            // we fall back to status_code if testdeadlink_status_code does not exist
+                            // this is a caching bug
+                            status_code: data.testdeadlink_status_code ? data.testdeadlink_status_code : data.status_code,
+                            // status_code: data.testdeadlink_status_code
+                            // status_code: data.status_code,
+                        })
+                    })
 
                 } else {
                     // we may have a 504 or other erroneous status_code on the check-url call

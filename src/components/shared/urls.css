@@ -77,7 +77,7 @@
 .url-row .url-status {
     width: 10%;
 }
-.url-list a {
+.url-list a, .url-list .url-name {
     overflow-wrap: break-word;
 }
 

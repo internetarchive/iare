@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.2.9",
-  "version_name": "0.2.9.pdf-link-updates",
+  "version": "0.2.10",
+  "version_name": "0.2.10.pdf-link-teastdeadlink",
   "private": true,
   "dependencies": {
     "bootstrap": "^5.3.0-alpha3",

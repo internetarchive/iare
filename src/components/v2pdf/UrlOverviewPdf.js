@@ -46,7 +46,7 @@ const colors = {
         ]
     }
 */
-export default function UrlOverviewPdf ({ statistics, onAction } ) {
+export default function UrlOverviewPdf ({ statistics, origins={}, onAction } ) {
 
     const [checkboxes, setCheckboxes] = useState({
         chkAnnotation: true,
@@ -57,8 +57,9 @@ export default function UrlOverviewPdf ({ statistics, onAction } ) {
     // TODO: this is a very inelegant way of setting the origin!
     useEffect( () => {
         const value = (checkboxes.chkAnnotation && checkboxes.chkContent) ?
-            'AC' : checkboxes.chkAnnotation ? 'A'
-                 : checkboxes.chkContent ? 'C' : '';
+            'AC'
+            : checkboxes.chkAnnotation ? 'A'
+            : checkboxes.chkContent ? 'C' : '';
 
         // const value = 'AC';
         //
@@ -152,22 +153,11 @@ export default function UrlOverviewPdf ({ statistics, onAction } ) {
         const { name, checked } = event.target;
         setCheckboxes((prevCheckboxes) => ({
             ...prevCheckboxes,
-            [name]: checked,
+            [name]: checked, // checked will be a true or false value
         }));
     }
 
 
-
-    const origins = {
-        "annotations": {
-            caption: "Annotated Links",
-            name: 'chkAnnotation'
-        },
-        "content": {
-            caption: "Content/Text Links",
-            name: 'chkContent'
-        },
-    }
 
     const originChoices = Object.keys(origins).map( origin => {
         const o = origins[origin];

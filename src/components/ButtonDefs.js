@@ -45,5 +45,9 @@ const ButtonDefs = {
         label : "1 link PDF",
         value : "https://www.foundationforfreedomonline.com/wp-content/uploads/2023/03/FFO-FLASH-REPORT-REV.pdf"
     },
+    "pdfDesantis"  : {
+        label : "DeSantis PDF",
+        value : "https://ia601600.us.archive.org/31/items/Book_URLs/DeSantis.pdf"
+    },
 }
 export default ButtonDefs;

@@ -98,7 +98,9 @@ export default function UrlFlockPdf({ urlArray, urlFilterDef, originFilterDef, i
 
         // iterate over array of url objects to create rendered output
 
-        const label = `${filteredUrls.length} URLs: ${urlFilterDef ? urlFilterDef.caption : "No Filter"}`;
+        const label = `${filteredUrls.length} URLs: `
+            + `${urlFilterDef ? urlFilterDef.caption : "No Filter"}`
+            + `; ${originFilterDef ? originFilterDef.caption : ''}`;
 
         urls = <>
             <h4 className={'list-header'}>{label}</h4>

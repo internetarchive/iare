@@ -231,7 +231,9 @@ export default function App() {
     }, [myUrl, myRefresh, debugAlert, referenceFetch])
 
 
-    const shortcuts = ['easterIslandFilename', 'internetArchiveFilename','pdfCovid', 'pdfOneLink'];
+    const shortcuts = env === 'env-production'
+        ? ['easterIslandFilename', 'internetArchiveFilename', 'pdfCovid', ]
+        : ['easterIslandFilename', 'internetArchiveFilename', 'pdfCovid', 'pdfDesantis', 'pdfOneLink'];
 
     // render component
     return <>
@@ -240,6 +242,7 @@ export default function App() {
 
             <div className={"header"}>
                 {(!env || env !== 'env-production') ? <div className={"environment-tag"}>{"NON-PRODUCTION\u00A0\u00A0".repeat(8)}</div> : null }
+
                 <h1>Internet Archive Reference Explorer <span className={"version-display"}> version {package_json.version}
                     <span className={"non-production"}
                     > STAGING SITE <

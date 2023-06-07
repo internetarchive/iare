@@ -68,7 +68,7 @@ export default function PageData({pageData = {}}) {
     return <>
         <div className={"page-data"}>
             <div className={"display-content"}>
-                <UrlDisplayPdf caption={'URL Links'} flocks={flocks} options={{refresh: pageData.refresh}} filterMap={URL_FILTER_MAP}/>
+                <UrlDisplayPdf caption={'URL Links'} flocks={flocks} options={{refresh: pageData.forceRefresh}} filterMap={URL_FILTER_MAP}/>
             </div>
         </div>
     </>
