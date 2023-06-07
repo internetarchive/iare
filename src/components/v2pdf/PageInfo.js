@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import ArrayDisplay from "../ArrayDisplay";
+import MakeLink from "../MakeLink";
 
 /* pageData should have:
     links []
@@ -20,7 +21,9 @@ export default function PageInfo({ pageData }) {
         {pageData
             ? <div className={ showDetail ? "detail-show" : "detail-hide" }>
 
-                <p>endpoint: <a href={pageData.endpoint} target={"_blank"} rel={"noreferrer"}>{pageData.endpoint}</a></p>
+                {/*<p>endpoint: <a href={pageData.endpoint} target={"_blank"} rel={"noreferrer"}>{pageData.endpoint}</a></p>*/}
+                <p>endpoint: <MakeLink href={pageData.endpoint} /></p>
+                <p>debug endpoint: <MakeLink href={pageData.endpoint + '&refresh=true&debug=true'}/></p>
                 <p>media type: {pageData.mediaType}</p>
 
                 <div style={{display: "flex", flexDirection: "row"}}>
