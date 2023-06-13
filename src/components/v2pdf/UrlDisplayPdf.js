@@ -1,42 +1,37 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import UrlFlockPdf from "./UrlFlockPdf";
 import UrlOverviewPdf from "./UrlOverviewPdf";
-import {API_V2_URL_BASE} from "../../constants/endpoints";
+import {IARI_V2_URL_BASE} from "../../constants/endpoints.js";
+import {UrlStatusCheckMethods} from "../../constants/endpoints.js";
+import {UrlStatusCheckContext} from "../../contexts/UrlStatusCheckContext"
 import Loader from "../Loader";
 import '../shared/urls.css';
 import './urls.pdf.css';
 
+
 /*
-assume flocks is an array of:
+UrlDisplayPdf: takes an array of URLs and fetches the status code of each url in the array and displays the results
+
+assumes flocks is an array of url lists:
 [
-{
-    flockList: <array of url strings>
-    caption: <label of flock type>
-    tag: <short label of flock type>
-}
-], ...
+    {
+        list: <array of url strings>
+        label: <label of flock type>
+        tag: <short label of flock type>
+    }, ...
+]
 
-or:
-
-{
-    <flock tag> : {
-        caption : <long name of flock type>
-        flockList: [ <array of url strings>
-    },
-    { ... }, ...
-}
-
-before processing, we merge the flocks into one big array of url objects:
+before processing, the flocks are merged into one big array of url objects:
 
 [
     {
         url: <url>,
         tags: <array of source flocks - could be 1 or more>,
         status_code: <status of check-url>
-    }
-], ...
+    }, ...
+]
  */
-export default function UrlDisplayPdf({caption = "URLs", flocks = [], options={}, filterMap}) {
+export default function UrlDisplayPdf({flocks = [], options={}, caption = "URLs", filterMap}) {
 
     const [urlFilter, setUrlFilter] = useState(null); // filter to pass in to UrlFlock
     const [originFilter, setOriginFilter] = useState(null); // filter to pass in to UrlFlock
@@ -46,22 +41,36 @@ export default function UrlDisplayPdf({caption = "URLs", flocks = [], options={}
     const [urlArray, setUrlArray] = useState([]);
     const [urlStatistics, setUrlStatistics] = useState({});
 
+    const urlStatusCheckMethod = React.useContext(UrlStatusCheckContext);
+    const myStatusMethods = UrlStatusCheckMethods;
 
     const origins = {
         "annotations": {
             caption: "Annotated Links",
-            name: 'chkAnnotation'
+            name: 'chkAnnotation',
+            tag: 'A',
         },
         "content": {
             caption: "Content/Text Links",
-            name: 'chkContent'
+            name: 'chkContent',
+            tag: 'C',
+        },
+        "block": {
+            caption: "Block Links",
+            name: 'chkBlock',
+            tag: 'B',
         },
     }
 
-    // for practical purposes, we have two "flocks" of URLs: one for annotated links and one for text, or content links.
-    // mergeFlocks can take any number of sets of lists, and combine them into one list, with
-    // an entry for each unique url, and a tags array containing the tags of all lists that
-    // the url is represented in.
+    // mergeFlocks can take any number of sets of lists, and combine them into one list,
+    // with each entry of the list containing a unique url and a tag array describing the
+    // origin flock the url came from. There can be more than one origin for each URL
+    //
+    // currently we have two "flocks" of URLs:
+    // - links extracted from the PDF Annotation layer and
+    // - links extracted from the PDF Content/Text layer.
+    //
+    // we may add soon the links from the block text layer
     const mergeFlocks = (flocks) => {
 
         function addUniqueElement(array, element) {
@@ -73,6 +82,7 @@ export default function UrlDisplayPdf({caption = "URLs", flocks = [], options={}
         // return empty array if flocks undefined or not an array with length
         if (!flocks || !flocks.length) return [];
 
+        // mergedUrls is object with url as key and tags as array property describing origin flock
         let mergedUrls = {};
         for (const flock of flocks) {
             for (const url of flock.list) {
@@ -91,9 +101,9 @@ export default function UrlDisplayPdf({caption = "URLs", flocks = [], options={}
         })
     }
 
-    async function fetchOneUrl(urlObject, refresh = false, timeout = 0) {
+    async function fetchStatusUrl(urlObject, refresh = false, timeout = 0, method='') {
 
-        const endpoint = `${API_V2_URL_BASE}/check-url`
+        const endpoint = `${IARI_V2_URL_BASE}/check-url`
             + `?url=${encodeURIComponent(urlObject.url)}`
             + (refresh ? "&refresh=true" : '')
             + (timeout > 0 ? `&timeout=${timeout}` : '');
@@ -106,7 +116,6 @@ export default function UrlDisplayPdf({caption = "URLs", flocks = [], options={}
             .then(response => {
 
                 status_code = response.status
-                // console.log("fetchOneUrl: fetch:then: response:", response )
 
                 if (response.ok) {
                     return response.json().then(data => {
@@ -116,11 +125,13 @@ export default function UrlDisplayPdf({caption = "URLs", flocks = [], options={}
                             url: urlObject.url,
                             tags: urlObject.tags, // pass-thru
 
-                            // we fall back to status_code if testdeadlink_status_code does not exist
-                            // this is a caching bug
-                            status_code: data.testdeadlink_status_code ? data.testdeadlink_status_code : data.status_code,
-                            // status_code: data.testdeadlink_status_code
-                            // status_code: data.status_code,
+                            status_code:
+                                method === myStatusMethods.IABOT.key
+                                    ? data.testdeadlink_status_code
+                                : method === myStatusMethods.IARI.key
+                                    ? data.status_code
+                                : -1,
+
                         })
                     })
 
@@ -157,45 +168,252 @@ export default function UrlDisplayPdf({caption = "URLs", flocks = [], options={}
         return {data: urlData, status_code: status_code};
     }
 
-// we use useCallback so that function can be used as dependency for useEffect
-    const fetchAllUrls = useCallback(async (urlObjectArray, refresh = false) => {
-
-        console.log(`UrlDisplayPdf::fetchAllUrls: refresh = ${refresh}, timeout = ${timeoutCheckUrl}`)
-
-        if (!urlObjectArray) return [];
-
-        const promises = urlObjectArray.map(urlObj => {
-            return fetchOneUrl(urlObj, refresh, timeoutCheckUrl)
+    const fetchUrlsIari = async (urlArray, refresh, timeout) => {
+        const promises = urlArray.map(urlObj => {
+            return fetchStatusUrl(urlObj, refresh, timeout, myStatusMethods.IARI.key)
         });
 
         // assumes all promises successful
         // TODO: error trap this promise call with a .catch
-        const results = await Promise.all(promises);
+        return await Promise.all(promises);
+    }
 
-        // console.log("fetchAllUrls: after Promise.all, results:" , results)
-        return results;
-    }, []);
+    const fetchUrlsIabot = async (urlArray, refresh, timeout) => {
+        const promises = urlArray.map(urlObj => {
+            return fetchStatusUrl(urlObj, refresh, timeout, myStatusMethods.IABOT.key)
+        });
+
+        // assumes all promises successful
+        // TODO: error trap this promise call with a .catch
+        return await Promise.all(promises);
+
+        /*
+        once CORS issue is resolved for IABot endpoint, we will fetch status codes this way:
+         */
+
+        /*
+        // this is how it works in curl:
+        // curl -XPOST https://iabot-api.archive.org/testdeadlink.php \
+        // -d $'urls=https://www.nytimes.com/2009/01/21/opinion/21wed1.html\nhttps://www.realclearpolitics.com/video/2009/02/moran_obama.html' \
+        // -d "authcode=579331d2dc3f96739b7c622ed248a7d3" \
+        // -d "returncodes=1"
+
+        const endpoint = "https://iabot-api.archive.org/testdeadlink.php"
+
+        const urls= [
+            "https://www.google.com",
+            "https://www.archive.org",
+        ]
+
+        const requestOptions = {
+            method: 'POST',
+            // headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ urls: urls, authcode: "579331d2dc3f96739b7c622ed248a7d3", returncodes: 1 })
+        };
+        const urlData = await fetch(endpoint, requestOptions)
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                // follow as in corentin
+                    // process json data here; morph into what we want
+
+                    // .then(response => response.json())
+                } else {
+                    // we may have a 504 or other erroneous status_code on the check-url call
+                    console.warn(`fetchUrlsIabot: Error fetching urls`)
+
+                    // TODO: would be nice to use response.statusText, but as of 2023.04.08, response.statusText is empty
+                    return Promise.resolve({
+                        url: "error.url",
+                        tags: ['X'],
+                        status_code: 0,
+                        error_code: 0,
+                        error_text: `Error: Server error via IABOT with ${endpoint}`,
+                    })
+                }
+            })
+
+            .catch((_) => { // if something really bad happened, return fake synthesized url object
+
+                    console.warn(`fetchUrlsIabot: Something went wrong when fetching urls with: ${endpoint}`)
+
+                    // return fake url data object so URL display interface is not broken
+                    return Promise.resolve({
+                        url: "error.url",
+                        tags: ['X'],
+                        status_code: 0,
+                        error_code: -1,
+                        error_text: `Error: System errpr via IABOT with ${endpoint}`,
+                    })
+                }
+            );
+
+        return urlData;
+        */
+
+    }
+
+    const fetchUrlsCorentin = async (urlArray, refresh, timeout) => {
+
+        const endpoint = UrlStatusCheckMethods.CORENTIN.endpoint + "check"
+
+        const urlList = urlArray.map(u => u.url)
+        let urlDict = {}
+        for (let urlObj of urlArray) {
+            urlDict[urlObj.url] = { tags: urlObj.tags }
+        }
+
+        const requestOptions = {
+            method: 'POST',
+            // headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ urls: urlList })
+        };
+        const urlData = await fetch(endpoint, requestOptions)
+            .then(response => {
+                if (response.ok) {
+                    return response.json().then(data => {
+                        // transpose corentin results into "native" url array format
+                        /* example corentin results:
+                        {url: 'https://www.archive.org', http_status_code: 200, http_status_message: '200 OK'}
+                        {url: 'https://www.gXoXoXgXlXe.com', http_status_code: -1, http_status_message: 'max retries reached'}
+                         */
+                        console.log(data)
+                        
+                        const myUrls = data.map( entry => {
+                            const results = {
+                                data: {
+                                    url: entry.url,
+                                    tags: urlDict[entry.url].tags, // pull from initial value, saved in urlDict
+                                    status_code: entry.http_status_code,
+                                }
+                            }
+                            if (entry.http_status_code === -1) {
+                                results.data.status_code = 0;
+                                results.data.error_code = -1;
+                                results.data.error_text = entry.http_status_message;
+                            }
+
+                            return results;
+
+                        })
+
+                        return Promise.resolve(myUrls)
+                    })
+
+                } else {
+                    // we may have a 504 or other erroneous status_code on the check-url call
+                    console.warn(`fetchUrlsCorentin: Error fetching urls`)
+
+                    // TODO: would be nice to use response.statusText, but as of 2023.04.08, response.statusText is empty
+                    return Promise.resolve({
+                        url: "error.url",
+                        tags: ['X'],
+                        status_code: 0,
+                        error_code: 0,
+                        error_text: `Error: Server error via CORENTIN endpoint: ${endpoint}`,
+                    })
+                }
+            })
+
+            .catch((_) => { // if something really bad happened, return fake synthesized url object
+
+                    console.warn(`fetchUrlsCorentin: Something went wrong when fetching urls with: ${endpoint}`)
+
+                    // return fake url data object so URL display interface is not broken
+                    return Promise.resolve({
+                        url: "error.url",
+                        tags: ['X'],
+                        status_code: 0,
+                        error_code: -1,
+                        error_text: `Error: Unknown error via CORENTIN endpoint: ${endpoint}`,
+                    })
+                }
+            );
+
+        return urlData;
+
+                    // return [{
+                    //
+                    //     data: {
+                    //     url: "corentin.not.yet.implemented",
+                    //     tags: ['ERR'],
+                    //     status_code: 0,
+                    //     error_code: "0",
+                    //     error_text: "CORENTIN status fetch not yet implemented",
+                    //     }
+                    //
+                    // }
+                    // ]
+
+    }
+
+    // uses useCallback so that this function can be used as a useEffect dependency, and not cause re-renders everytime
+    const fetchStatusUrls = useCallback(async (urlObjectArray, refresh = false) => {
+
+        console.log(`UrlDisplayPdf::fetchStatusUrls: refresh = ${refresh}, timeout = ${timeoutCheckUrl}`)
+
+        if (!urlObjectArray || !urlObjectArray.length) return [];
+
+        // Chrome developer tools seems to have a problem showing variables imported at the top level
+        // By assigning to a local variable, the variable value can be successfully debugged
+        const methods = UrlStatusCheckMethods
+
+        if (methods.IARI.key === urlStatusCheckMethod) {
+            return fetchUrlsIari(urlObjectArray, refresh, timeoutCheckUrl)
+
+        } else if (methods.IABOT.key === urlStatusCheckMethod) {
+            return fetchUrlsIabot(urlObjectArray, refresh, timeoutCheckUrl)
+
+        } else if (methods.CORENTIN.key === urlStatusCheckMethod) {
+            return fetchUrlsCorentin(urlObjectArray, refresh, timeoutCheckUrl)
+        }
+        return []
+// eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [UrlStatusCheckMethods, urlStatusCheckMethod]);
 
 
     // process url array upon iterative fetch completion
-    useEffect(() => {
-            // merge all flocks together into one giant flock list,
-            // with properties of each entry set for wuich flock it came from
+    useEffect( // [flocks, fetchStatusUrls, options.refresh]
+        () => {
+            // process all URLs described by merged flocks
+            // when finished, set the urlArray state,
+            // which triggers a render of UrlFlock
 
             const mergedFlock = mergeFlocks(flocks)
 
             setIsLoadingUrls(true);
+            const displayContext = `useEffect[flocks, fetchAllUrls, options.refresh]:`
 
-            fetchAllUrls(mergedFlock, options.refresh)
+            /*
+            if all goes well, urlArray will be an array of url objects, something like:
+                [
+                    {
+                        data: {
+                            url: "https://www.google.com",
+                            tags: ['X'],
+                            status_code: 200,
+                        },
+                    },
+
+                    {
+                        data: {
+                            url: "https://archive.org",
+                            tags: ['X'],
+                            status_code: 200,
+                        },
+                    },
+                    . . .
+                ]
+             */
+            fetchStatusUrls(mergedFlock, options.refresh)
 
                 .then(urlResults => {
-                    console.log(`useEffect[urlFlock] fetchAllUrls.then: ${urlResults.length} results found`);
+                    console.log(`${displayContext}] fetchStatusUrls.then: urlResults has ${urlResults.length} elements`);
                     setUrlArray(urlResults);
                 })
 
                 .catch(error => {
-                    console.error("After fetchAllUrls:", error);
-                    console.error(`useEffect[urlFlock] fetchAllUrls.catch: ${error}`);
+                    console.error(`${displayContext} fetchStatusUrls.catch: ${error}`);
                     // TODO: what shall we do for error here?
                     setUrlArray([])
                 })
@@ -203,12 +421,11 @@ export default function UrlDisplayPdf({caption = "URLs", flocks = [], options={}
                 .finally(() => {
                     // turn off "Loading" icon
                     setIsLoadingUrls(false);
-                });
-            ;
+                })
 
         },
         // []
-        [flocks, fetchAllUrls, options.refresh]
+        [flocks, fetchStatusUrls, options.refresh]
     )
 
 
@@ -230,10 +447,10 @@ export default function UrlDisplayPdf({caption = "URLs", flocks = [], options={}
     }, [urlArray, filterMap])
 
 
-// result is an object: { action: <action name>, value: <param value> }
+    // result is an object: { action: <action name>, value: <param value> }
     const handleAction = useCallback( (result) => {
         const {action, value} = result;
-        console.log(`UrlDisplay: handleAction: action=${action}, value=${value}`);
+        console.log(`UrlDisplayPdf: handleAction: action=${action}, value=`, value);
 
         // action is setFilter and value is filter key name
         if (action === "setFilter") {
@@ -242,48 +459,31 @@ export default function UrlDisplayPdf({caption = "URLs", flocks = [], options={}
         }
 
         if (action === "setOriginFilter") {
-            // value = AC, C, A or ''
-            if (value === 'AC') { // return all
-                setOriginFilter({
-                    filterFunction: () => (d) => {
-                        return true // all urls
-                    },
-                    caption: "Annotations and Content"
-                })
-            } else if (value === 'A') {
-                setOriginFilter({
-                    filterFunction: () => (d) => {
-                        return d.data.tags.includes( 'A') && d.data.tags.length === 1
-                    },
-                    caption: "Just Annotations"
-                })
-            } else if (value === 'C') {
-                setOriginFilter({
-                    filterFunction: () => (d) => {
-                        return d.data.tags.includes( 'C') && d.data.tags.length === 1
-                    },
-                    caption: "Just Content"
-                })
-            } else {
-                setOriginFilter({
-                    filterFunction: () => (d) => {
-                        return false
-                    },
-                    caption: "No Links extracted"
-                })
-            }
+            // value is array of tags: ['A','C','B', 'etc']
 
-            // const f = {
-            //     caption: `Contains ${targetDomain} domain`,
-            //     desc: `Citations with domain: ${targetDomain}`,
-            //     filterFunction: () => (d) => {
-            //         return d.tags.includes( targetDomain )
-            //     },
-            // }
+            let caption = '';
+            // build up caption with included origins
+            Object.keys(origins).forEach( key => {
+                const origin = origins[key];
+                if (value.includes(origin.tag)) {
+                    caption += (caption ? ', ' : '') + origin.caption;
+                }
+            });
+            caption = caption ? `Links from: ${caption}` : 'No origins specified'
+
+            setOriginFilter({
+                filterFunction: () => (d) => {
+                    for (let originTag of value) {
+                        if (d.data.tags.includes(originTag)) return true;
+                    }
+                },
+                caption: caption,
+            })
 
         }
-
+// eslint-disable-next-line
     }, [filterMap] )
+//     }, [filterMap, origins] )
 
     return <>
         <div className={"section-box url-overview-column"}>
@@ -295,6 +495,7 @@ export default function UrlDisplayPdf({caption = "URLs", flocks = [], options={}
             ? <Loader message={"retrieving URL information..."}/>
             : <>
                 <div className={"section-box"}>
+                    <div>Status Check Method is: {urlStatusCheckMethod}</div>
                     <UrlFlockPdf urlArray={urlArray} urlFilterDef={urlFilter} originFilterDef={originFilter}/>
                 </div>
 

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import PieChart from "../PieChart";
 import {
     Chart,
@@ -48,25 +48,74 @@ const colors = {
 */
 export default function UrlOverviewPdf ({ statistics, origins={}, onAction } ) {
 
-    const [checkboxes, setCheckboxes] = useState({
+    const [originCheckboxes, setOriginCheckboxes] = useState({
         chkAnnotation: true,
         chkContent: true,
+        chkBlock: true,
     });
 
-    // when checkboxes change, set the origin filter
-    // TODO: this is a very inelegant way of setting the origin!
-    useEffect( () => {
-        const value = (checkboxes.chkAnnotation && checkboxes.chkContent) ?
-            'AC'
-            : checkboxes.chkAnnotation ? 'A'
-            : checkboxes.chkContent ? 'C' : '';
+    const setOriginAction = (checkboxes) => {
+        // includedTags is an array of tag strings associated with origin source
+        // it is used by the filtering of the URLs when passed back with onAction
+        const includedTags = Object.keys(origins).filter( origin => {
+            console.log("inside included tags")
+            return checkboxes[origins[origin].name]
+        }).map(origin => origins[origin].tag);
 
-        // const value = 'AC';
-        //
-        onAction( { action: "setOriginFilter", value: value } )
+        onAction( { action: "setOriginFilter", value: includedTags } )
+    }
 
-     }, [checkboxes, onAction])
-    
+    const handleCheckboxChange = (event) => {
+        const { name, checked } = event.target;
+        const checkboxes = {...originCheckboxes, [name]: checked} // change targeted entry only
+        setOriginAction(checkboxes)
+        setOriginCheckboxes(checkboxes)
+    }
+
+    const originChoices = Object.keys(origins).map( origin => {
+        const o = origins[origin];
+        return <div key={origin} >
+            <label>
+                <input
+                    type="checkbox"
+                    name={o.name}
+                    checked={originCheckboxes[o.name]} // checkboxes[o.name] is true or false
+                    onChange={handleCheckboxChange}
+                />
+                {o.caption}
+            </label>
+            <br />
+        </div>
+    })
+
+
+    // when checkboxes state changes, set the origin filter with the onAction handler
+    // useEffect( () => {
+    //     // TODO: this is a very inelegant way of setting the origin!
+    //     // const value = (checkboxes.chkAnnotation && checkboxes.chkContent) ?
+    //     //     'AC'
+    //     //     : checkboxes.chkAnnotation ? 'A'
+    //     //     : checkboxes.chkContent ? 'C' : '';
+    //
+    //
+    //     // const includedTags = Object.keys(origins).filter( origin => {
+    //     //     console.log("inside included tags")
+    //     //     return originCheckboxes[origins[origin].name]
+    //     // }).map(origin => origins[origin].tag);
+    //
+    //     // const value = Object.keys(originCheckboxes) .chkAnnotation && originCheckboxes.chkContent) ?
+    //     //     'AC'
+    //     //     : originCheckboxes.chkAnnotation ? 'A'
+    //     //     : originCheckboxes.chkContent ? 'C' : '';
+    //
+    //     // const includedTags = ['A','C'];
+    //
+    //     setOriginAction(originCheckboxes)
+    //
+    //     // }, [originCheckboxes, origins, onAction])
+    //     // }, [originCheckboxes, onAction])
+    //     }, [originCheckboxes, setOriginAction])
+
 
     if (!statistics) { return <div>
         <h4>Urls</h4>
@@ -149,31 +198,7 @@ export default function UrlOverviewPdf ({ statistics, origins={}, onAction } ) {
 
 
 
-    const handleCheckboxChange = (event) => {
-        const { name, checked } = event.target;
-        setCheckboxes((prevCheckboxes) => ({
-            ...prevCheckboxes,
-            [name]: checked, // checked will be a true or false value
-        }));
-    }
 
-
-
-    const originChoices = Object.keys(origins).map( origin => {
-        const o = origins[origin];
-        return <div key={origin} >
-            <label>
-                <input
-                    type="checkbox"
-                    name={o.name}
-                    checked={checkboxes[o.name]}
-                    onChange={handleCheckboxChange}
-                />
-                {o.caption}
-            </label>
-            <br />
-        </div>
-    })
 
     return <div className={"url-overview"}>
         <h4>URL Status Codes</h4>
@@ -186,7 +211,7 @@ export default function UrlOverviewPdf ({ statistics, origins={}, onAction } ) {
         <div className={'pdf-link-origin'}>
             <h4>Origin of Links</h4>
             <div className={'origin-choices'}>
-                {originChoices}
+                 {originChoices}
             </div>
         </div>
     </div>

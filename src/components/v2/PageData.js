@@ -53,7 +53,7 @@ export default function PageData({pageData = {}}) {
 
                 {selectedDisplay === 'urls' &&
                     <UrlDisplay urlFlock={pageData.urls} options={{refresh: pageData.forceRefresh}}
-                                filterMap={URL_FILTER_MAP} />
+                                caption="URL links" filterMap={URL_FILTER_MAP} />
                 }
 
                 {selectedDisplay === 'stats' &&

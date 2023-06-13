@@ -1,3 +1,9 @@
+:root {
+    --width-url-list: 28rem;
+    --width-url-name: 22rem;
+    --width-url-status: 3rem;
+}
+
 .url-overview-column {
     overflow: auto;
     /*flex:0 0 317px;*/
@@ -12,7 +18,8 @@
 
 .url-flock {
     margin-top: 1.7rem;
-    max-width: 23rem;
+    width: var(--width-url-list);
+    max-width: var(--width-url-list);
 }
 
 .list-header {
@@ -50,7 +57,9 @@
 
 .url-list .url-row.url-is-unknown,
 .url-list .url-row.url-is-unknown a{
-    color:dimgrey !important;
+    /*color:dimgrey !important;*/
+    color: #afafaf !important;
+    /*background: #c9cbcf; !*dimgrey;*!*/
 }
 .url-list .url-row.url-is-redirect,
 .url-list .url-row.url-is-redirect a{
@@ -81,12 +90,12 @@
     overflow-wrap: break-word;
 }
 
-/*.url-list .url-header-row .url-status {*/
-/*    cursor: pointer;*/
-/*    width:100%;*/
-/*    text-align: center;*/
-/*    color:#0000EE;*/
-/*}*/
+.url-header-row .url-status {
+    cursor: pointer;
+    /*width:100%;*/
+    /*text-align: center;*/
+    /*color:#0000EE;*/
+}
 
 
 .url-filters {

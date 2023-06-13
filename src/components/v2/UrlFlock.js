@@ -127,8 +127,7 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction }
                         // console.log("arf");
                         setSortDir(!sortDir);
                     }
-                    }>status
-                    </div>
+                    }>status</div>
                 </div>
             </div>
 

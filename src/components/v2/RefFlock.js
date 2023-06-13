@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { API_V2_URL_BASE } from '../../constants/endpoints.js';
+import { IARI_V2_URL_BASE } from '../../constants/endpoints.js';
 import RefView from "./RefView/RefView";
 
 function getLinkText(ref) {
@@ -51,7 +51,7 @@ function RefFlock({ refArray, refFilterDef } ) {
         }
 
         // TODO: use refresh here ?
-        const myEndpoint = `${API_V2_URL_BASE}/statistics/reference/${ref.id}`;
+        const myEndpoint = `${IARI_V2_URL_BASE}/statistics/reference/${ref.id}`;
 
         // fetch the data
         fetch(myEndpoint, {

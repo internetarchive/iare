@@ -1,11 +1,13 @@
 import React, {useCallback, useEffect, useState} from "react";
 import package_json from "../package.json";
-import {API_V2_URL_BASE} from "./constants/endpoints";
+import {IARI_V2_URL_BASE, UrlStatusCheckMethods} from "./constants/endpoints";
 import PathNameFetch from "./components/PathNameFetch";
 import Loader from "./components/Loader";
 import PageDisplay from "./components/PageDisplay";
 import MakeLink from "./components/MakeLink";
 import TestRefModal from "./components/vTest/TestRefModal";
+import {UrlStatusCheckContext} from "./contexts/UrlStatusCheckContext"
+
 
 export default function App() {
 
@@ -19,6 +21,7 @@ export default function App() {
     const [targetPath, setTargetPath] = useState(myUrl);
     const myRefresh = queryParameters.has("refresh") ? queryParameters.get("refresh").toLowerCase() === 'true' : false;
     const [refreshCheck, setRefreshCheck] = useState(myRefresh);
+    const [statusCheckMethod, setStatusCheckMethod] = useState(UrlStatusCheckMethods.IABOT.key);
 
     const [endpointPath, setEndpointPath] = useState("");
 
@@ -96,15 +99,15 @@ export default function App() {
 
         if (mediaType === "wiki") {
             const sectionRegex = "&regex=bibliography|further reading|works cited|sources|external links"; // for now... as of 2023.04.09
-            return `${API_V2_URL_BASE}/statistics/article?url=${path}${sectionRegex}${refresh ? "&refresh=true" : ''}`;
+            return `${IARI_V2_URL_BASE}/statistics/article?url=${path}${sectionRegex}${refresh ? "&refresh=true" : ''}`;
 
         } else if (mediaType === "pdf") {
-            return `${API_V2_URL_BASE}/statistics/pdf?url=${path}${refresh ? "&refresh=true" : ''}`;
+            return `${IARI_V2_URL_BASE}/statistics/pdf?url=${path}${refresh ? "&refresh=true" : ''}`;
 
         } else {
             // do general case...
 
-            return `${API_V2_URL_BASE}/statistics/analyze?url=${path}${refresh ? "&refresh=true"
+            return `${IARI_V2_URL_BASE}/statistics/analyze?url=${path}${refresh ? "&refresh=true"
                 : ''}${mediaType ? `&media_type=${mediaType}` : ''}`;
 
             // this will produce and error right now, as IARI does not support
@@ -225,7 +228,6 @@ export default function App() {
         // set these states only for debugging, essentially
         setTargetPath(myUrl);
         setRefreshCheck(myRefresh);
-
         referenceFetch(myUrl, myRefresh)
 
     }, [myUrl, myRefresh, debugAlert, referenceFetch])
@@ -235,55 +237,90 @@ export default function App() {
         ? ['easterIslandFilename', 'internetArchiveFilename', 'pdfCovid', ]
         : ['easterIslandFilename', 'internetArchiveFilename', 'pdfCovid', 'pdfDesantis', 'pdfOneLink'];
 
+    // onChange={e => setStatusCheckMethod(e.target.value)}
+    const handleStatusMethodChange = (event) => {
+        setStatusCheckMethod(event.target.value);
+    };
+
+    const statusMethodOptions = <>
+        <div className={"status-check-methods-wrapper"}>
+            <div className={"status-check-methods"}>
+                <div>Status Check Method:</div>
+                {Object.keys(UrlStatusCheckMethods).map(method => {
+                    return <div key={method}>
+                        <label>
+                            <input
+                                type="radio"
+                                value={method}
+                                checked={statusCheckMethod === method}
+                                // onChange={e => setStatusCheckMethod(e.target.value)}
+                                onChange={handleStatusMethodChange}
+                            /> {UrlStatusCheckMethods[method].caption}
+                        </label>
+                    </div>
+                })}
+            </div>
+        </div>
+    </>
+
+    console.log(`rendering App component`)
     // render component
     return <>
 
-        <div className="iare-view">
+        <UrlStatusCheckContext.Provider value={statusCheckMethod}>
 
-            <div className={"header"}>
-                {(!env || env !== 'env-production') ? <div className={"environment-tag"}>{"NON-PRODUCTION\u00A0\u00A0".repeat(8)}</div> : null }
+            <div className="iare-view">
 
-                <h1>Internet Archive Reference Explorer <span className={"version-display"}> version {package_json.version}
-                    <span className={"non-production"}
-                    > STAGING SITE <
-                        button onClick={toggleDebug} className={"debug-button"}
-                        >{ isDebug ? "hide" : "show" } debug</button
-                        ></span></span></h1>
-                {/*<Clock />*/}
+                <div className={"header"}>
+                    {(!env || env !== 'env-production') ? <div className={"environment-tag"}>{"NON-PRODUCTION\u00A0\u00A0".repeat(8)}</div> : null }
 
-                <div className={ isDebug ? "debug-on" : "debug-off" }>
-                    <div>
-                        <button onClick={toggleDebugAlert} className={"debug-button"}>{ isDebugAlerts ? "hide" : "show" } alerts
-                        </button>{isDebugAlerts ? <span className={"debug-info"}> user alerts will be engaged for certain tasks</span>
-                    : ''}</div>
-                    <p>pathName : <MakeLink href={targetPath}/></p>
-                    <p>endpointPath: <MakeLink href={endpointPath}/></p>
-                    <p>Force Refresh: {refreshCheck ? "TRUE" : "false"}</p>
-                    <p>inline target URL: {myUrl}</p>
-                    {/*<p>window.location:</p>*/}
-                    {/*<pre>{JSON.stringify(window.location,null,2)}</pre>*/}
-                    <TestRefModal />
+                    <div className={"header-contents"}>
+                        <h1>Internet Archive Reference Explorer <span
+                            className={"version-display"}> version {package_json.version}
+                            <span className={"non-production"}
+                            > STAGING SITE <
+                                button onClick={toggleDebug} className={"debug-button"}
+                            >{isDebug ? "hide" : "show"} debug</button
+                            ></span></span></h1>
+                        {/*<Clock />*/}
+
+                        {statusMethodOptions}
+                    </div>
+
+                    <div className={ isDebug ? "debug-on" : "debug-off" }>
+                        <div>
+                            <button onClick={toggleDebugAlert} className={"debug-button"}>{ isDebugAlerts ? "hide" : "show" } alerts
+                            </button>{isDebugAlerts ? <span className={"debug-info"}> user alerts will be engaged for certain tasks</span>
+                        : ''}</div>
+                        <p>pathName : <MakeLink href={targetPath}/></p>
+                        <p>endpointPath: <MakeLink href={endpointPath}/></p>
+                        <p>Force Refresh: {refreshCheck ? "TRUE" : "false"}</p>
+                        <p>inline target URL: {myUrl}</p>
+                        {/*<p>window.location:</p>*/}
+                        {/*<pre>{JSON.stringify(window.location,null,2)}</pre>*/}
+                        <TestRefModal />
+                    </div>
+
                 </div>
 
+
+                <PathNameFetch pathInitial={targetPath} checkInitial={refreshCheck}
+                               shortcuts={shortcuts}
+                               handlePathResults={handlePathResults}
+                               placeholder={"Enter a Wikipedia article or PDF url here"}
+                />
+
+                {myError ? <div className={myError ? "error-display" : "error-display-none"}>
+                    {myError}
+                </div> : ""}
+
+                {isLoading ? <Loader message={"Analyzing Page References..."}/> : <>
+                    <PageDisplay pageData={pageData}/>
+                    { /* TODO: pass in an error callback here? */}
+                </>
+                }
             </div>
 
-
-            <PathNameFetch pathInitial={targetPath} checkInitial={refreshCheck}
-                           shortcuts={shortcuts}
-                           handlePathResults={handlePathResults}
-                           placeholder={"Enter a Wikipedia article or PDF url here"}
-            />
-
-            {myError ? <div className={myError ? "error-display" : "error-display-none"}>
-                {myError}
-            </div> : ""}
-
-            {isLoading ? <Loader message={"Analyzing Page References..."}/> : <>
-                <PageDisplay pageData={pageData}/>
-                { /* TODO: pass in an error callback here? */}
-            </>
-            }
-        </div>
-
+        </UrlStatusCheckContext.Provider>
     </>
 }
