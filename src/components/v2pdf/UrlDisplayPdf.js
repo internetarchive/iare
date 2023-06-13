@@ -350,7 +350,7 @@ export default function UrlDisplayPdf({flocks = [], options={}, caption = "URLs"
     // uses useCallback so that this function can be used as a useEffect dependency, and not cause re-renders everytime
     const fetchStatusUrls = useCallback(async (urlObjectArray, refresh = false) => {
 
-        console.log(`UrlDisplayPdf::fetchStatusUrls: refresh = ${refresh}, timeout = ${timeoutCheckUrl}`)
+        console.log(`UrlDisplayPdf::fetchStatusUrls (${urlStatusCheckMethod}): refresh = ${refresh}, timeout = ${timeoutCheckUrl}`)
 
         if (!urlObjectArray || !urlObjectArray.length) return [];
 
@@ -382,7 +382,7 @@ export default function UrlDisplayPdf({flocks = [], options={}, caption = "URLs"
             const mergedFlock = mergeFlocks(flocks)
 
             setIsLoadingUrls(true);
-            const displayContext = `useEffect[flocks, fetchAllUrls, options.refresh]:`
+            const context = `UrlDisplayPdf::useEffect[flocks, fetchStatusUrls, options.refresh]:`
 
             /*
             if all goes well, urlArray will be an array of url objects, something like:
@@ -408,12 +408,12 @@ export default function UrlDisplayPdf({flocks = [], options={}, caption = "URLs"
             fetchStatusUrls(mergedFlock, options.refresh)
 
                 .then(urlResults => {
-                    console.log(`${displayContext}] fetchStatusUrls.then: urlResults has ${urlResults.length} elements`);
+                    // console.log(`${context} fetchStatusUrls.then: urlResults has ${urlResults.length} elements`);
                     setUrlArray(urlResults);
                 })
 
                 .catch(error => {
-                    console.error(`${displayContext} fetchStatusUrls.catch: ${error}`);
+                    // console.error(`${context} fetchStatusUrls.catch: ${error}`);
                     // TODO: what shall we do for error here?
                     setUrlArray([])
                 })

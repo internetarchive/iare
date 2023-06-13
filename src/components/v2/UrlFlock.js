@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import {Tooltip as MyTooltip} from "react-tooltip";
 
 /*
 assumes urlArray is an array of url objects wrapped in a data object:
@@ -33,6 +34,8 @@ useSort and sort: apply sorting if set to true, use ASC if sortDir is true, DESC
  */
 export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction }) {
 
+    const [urlTooltipText, setUrlTooltipText] = useState( '' );
+
     // const [sort, setSort] = useState("status");
     const sort = "status";
     const [sortDir, setSortDir] = useState(true);
@@ -58,10 +61,17 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction }
     const onHoverHeader = (evt) => {
         // console.log("FldFlock: onHoverHeader")
         // toggle show of Show All button
+        setUrlTooltipText('');
     }
                     //
                     // const onClickShowAll = (evt) => {
                     // }
+
+    const handleRowHover = e => {
+        const text = e.currentTarget.getAttribute('data-err-text');
+        // console.log("handleRowHover", text)
+        setUrlTooltipText(text);
+    }
 
 
     let urls = [];
@@ -96,18 +106,24 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction }
             // TODO: we should sanitize earlier on in the process to save time here...
 
             // if url object is problematic...
-            if (!u.data || u.data.url === undefined || u.data.status_code === undefined)
-                return <div className={`url-row url-row-error`} key={i}>
+            if (!u.data || u.data.url === undefined || u.data.status_code === undefined) {
+                const errText = !u.data ? `Url data not defined for index ${i}`
+                    : !u.data.url ? `Url missing for index ${i}`
+                        : u.data.status_code === undefined ? `Url status code undefined (try Force Refresh)`
+                            : 'Unknown error'; // this last case should not happen
+                return <div className={`url-row url-row-error`} key={i}
+                            data-err-text={errText}
+                            onMouseOverCapture={handleRowHover}>
                     <div className={"url-name"}>{u.data.url ? u.data.url : `ERROR: No url for index ${i}`}</div>
                     <div className={"url-status"}>{-1}</div>
                 </div>;
-
+            }
             // else show with styling for url status type
             return <div className={`url-row ${u.data.status_code === 0 
                 ? "url-is-unknown" : ""} ${u.data.status_code >= 300 && u.data.status_code < 400 
                 ? "url-is-redirect" : ""} ${u.data.status_code >= 400 && u.data.status_code < 500
                 ? "url-is-notfound" : ""} ${u.data.status_code >= 500 && u.data.status_code < 600
-                ? "url-is-error" : ""}`} key={i}>
+                ? "url-is-error" : ""}`} key={i} >
                 <div className={"url-name"}><a href={u.data.url} target={"_blank"} rel={"noreferrer"} key={i}>{u.data.url}</a></div>
                 <div className={"url-status"}>{u.data.status_code}</div>
             </div>
@@ -137,9 +153,21 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction }
         </>
     }
 
+    const tooltip = <MyTooltip id="my-url-tooltip"
+                               float={true}
+                               closeOnEsc={true}
+                               delayShow={420}
+                               variant={"info"}
+                               noArrow={true}
+                               offset={5}
+    />;
     return <>
-        <div className={"url-flock"}>
+        <div className={"url-flock"}
+             data-tooltip-id="my-url-tooltip"
+             data-tooltip-content={urlTooltipText}
+            >
             {urls}
+            {tooltip}
         </div>
     </>
 }

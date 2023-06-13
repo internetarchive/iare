@@ -136,7 +136,7 @@ export default function UrlDisplay ({ urlFlock, options, caption = "URLs", filte
     // we use useCallback so that function can be used as dependency for useEffect
     const fetchStatusUrls = useCallback( async (urlArray=[], refresh=false) => {
 
-        console.log(`fetchStatusUrls: refresh = ${refresh}, timeout = ${timeoutCheckUrl}`)
+        console.log(`UrlDisplay::fetchStatusUrls (${urlStatusCheckMethod}): refresh = ${refresh}, timeout = ${timeoutCheckUrl}`)
 
         if (!urlArray || !urlArray.length) return [];
 
@@ -178,17 +178,19 @@ export default function UrlDisplay ({ urlFlock, options, caption = "URLs", filte
     //        in many of the filter definitions: use d.<value> rather than d.data.<value>
     //
     useEffect( () => {
+        const context = 'UrlDisplay::useEffect [urlFlock, fetchStatusUrls, options.refresh]'
+
         setIsLoadingUrls(true);
 
         fetchStatusUrls(urlFlock, options.refresh)
 
             .then(urlResults => {
-                console.log(`useEffect[urlFlock, fetchStatusUrls, options.refresh] fetchStatusUrls.then: urlResults has ${urlResults.length} elements`);
+                console.log(`${context} fetchStatusUrls.then: urlResults has ${urlResults.length} elements`);
                 setUrlArray( urlResults );
             })
 
             .catch(error => {
-                console.error(`useEffect[urlFlock, fetchStatusUrls, options.refresh] fetchStatusUrls.catch: ${error}`);
+                console.error(`${context} fetchStatusUrls.catch: ${error}`);
                 // TODO: what shall we do for error here?
                 setUrlArray([])
             })

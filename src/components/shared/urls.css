@@ -4,6 +4,11 @@
     --width-url-status: 3rem;
 }
 
+#my-url-tooltip {
+    font-size:1.5em;
+    font-weight:normal;
+}
+
 .url-overview-column {
     overflow: auto;
     /*flex:0 0 317px;*/
@@ -53,6 +58,7 @@
 .url-list .url-row.url-row-error {
     background-color: darkred;
     color:white;
+    cursor: pointer;
 }
 
 .url-list .url-row.url-is-unknown,
