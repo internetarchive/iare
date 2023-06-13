@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import PieChart from "../PieChart";
 import {
     Chart,
@@ -88,33 +88,6 @@ export default function UrlOverviewPdf ({ statistics, origins={}, onAction } ) {
         </div>
     })
 
-
-    // when checkboxes state changes, set the origin filter with the onAction handler
-    // useEffect( () => {
-    //     // TODO: this is a very inelegant way of setting the origin!
-    //     // const value = (checkboxes.chkAnnotation && checkboxes.chkContent) ?
-    //     //     'AC'
-    //     //     : checkboxes.chkAnnotation ? 'A'
-    //     //     : checkboxes.chkContent ? 'C' : '';
-    //
-    //
-    //     // const includedTags = Object.keys(origins).filter( origin => {
-    //     //     console.log("inside included tags")
-    //     //     return originCheckboxes[origins[origin].name]
-    //     // }).map(origin => origins[origin].tag);
-    //
-    //     // const value = Object.keys(originCheckboxes) .chkAnnotation && originCheckboxes.chkContent) ?
-    //     //     'AC'
-    //     //     : originCheckboxes.chkAnnotation ? 'A'
-    //     //     : originCheckboxes.chkContent ? 'C' : '';
-    //
-    //     // const includedTags = ['A','C'];
-    //
-    //     setOriginAction(originCheckboxes)
-    //
-    //     // }, [originCheckboxes, origins, onAction])
-    //     // }, [originCheckboxes, onAction])
-    //     }, [originCheckboxes, setOriginAction])
 
 
     if (!statistics) { return <div>
