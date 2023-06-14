@@ -22,7 +22,7 @@
 }
 
 .url-flock {
-    margin-top: 1.7rem;
+    margin-top: 1.0rem;
     width: var(--width-url-list);
     max-width: var(--width-url-list);
 }
@@ -131,3 +131,9 @@
     padding-left:1em;
 }
 
+.status-method-display {
+    color:#808080 !important;
+}
+.status-method-display .embiggen{
+    font-size:120%;
+}

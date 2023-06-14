@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.2.11",
-  "version_name": "0.2.11.corentin-integration",
+  "version": "0.2.12",
+  "version_name": "0.2.12.method-types",
   "private": true,
   "dependencies": {
     "bootstrap": "^5.3.0-alpha3",

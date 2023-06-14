@@ -9,21 +9,17 @@ import TestRefModal from "./components/vTest/TestRefModal";
 import {UrlStatusCheckContext} from "./contexts/UrlStatusCheckContext"
 
 
-export default function App() {
+export default function App( {env, myPath, myRefresh, myMethod} ) {
 
-    const env = window.location.host === "archive.org" ? 'env-production' : 'env-other';
     const [isDebug, setDebug] = useState(false);
     const [isDebugAlerts, setDebugAlerts] = useState(false);
 
-    // transfer url and refresh params from address line, if there
-    const queryParameters = new URLSearchParams(window.location.search)
-    const myUrl = queryParameters.has("url") ? queryParameters.get("url") : '';
-    const [targetPath, setTargetPath] = useState(myUrl);
-    const myRefresh = queryParameters.has("refresh") ? queryParameters.get("refresh").toLowerCase() === 'true' : false;
+    // transfer params from address line
+    const [targetPath, setTargetPath] = useState(myPath);
     const [refreshCheck, setRefreshCheck] = useState(myRefresh);
-    const [statusCheckMethod, setStatusCheckMethod] = useState(UrlStatusCheckMethods.IABOT.key);
+    const [statusMethod, setStatusMethod] = useState(myMethod);
 
-    const [endpointPath, setEndpointPath] = useState("");
+    const [endpointPath, setEndpointPath] = useState('');
 
     const [pageData, setPageData] = useState(null);
     const [myError, setMyError] = useState(null);
@@ -117,7 +113,7 @@ export default function App() {
 
 
 
-    // fetch article data
+    // fetch article reference data
     // TODO: account for error conditions, like wrong file format, not found, etc
     const referenceFetch = useCallback((pathName, refresh=false) => {
 
@@ -129,10 +125,10 @@ export default function App() {
             return;
         }
 
-        const myMediaType = getMediaType(pathName); // TODO: respect a "forceMediaType", where it can
-        // force a media type endpoint, no matter what getMediaType thinks it is?
+        const myMediaType = getMediaType(pathName); // TODO: idea: respect a "forceMediaType",
+        // where it can force a media type endpoint, no matter what getMediaType thinks it is.
         // If so, passes it in to convertPathToEndpoint, where the endpoint is determined
-        // by forced mediaType value rather than from mediaType interpolated from pathName.
+        // by passed in mediaType rather than mediaType interpolated from pathName.
 
         const myEndpoint = convertPathToEndpoint(pathName, myMediaType, refresh);
         console.log("APP::referenceFetch: endpoint = ", myEndpoint)
@@ -156,13 +152,12 @@ export default function App() {
             })
 
             .then((data) => {
-                // decorate based on mediaType?
 
                 // upon successful return of data, decorate the data with some informative fields
                 data.pathName = pathName;
                 data.endpoint = myEndpoint;
                 data.forceRefresh = refresh;
-                data.mediaType = myMediaType;
+                data.mediaType = myMediaType; // decorate based on mediaType?
 
                 data.version = getIariVersion(data, myEndpoint);
 
@@ -198,39 +193,62 @@ export default function App() {
 
     }, []);
 
+                // // callback for PathNameFetch component
+                // // pathResults[0] = pathName (string)
+                // // pathResults[1] = refreshCheck (boolean)
+                // const handlePathResults = useCallback( (pathResults) => {
+                //
+                //     const newUrl = window.location.protocol + "//"
+                //         + window.location.host
+                //         + window.location.pathname
+                //         + "?url=" + pathResults[0]
+                //         + (pathResults[1] ? "&refresh=true" : '')
+                //         + (statusMethod ? `&method=${statusMethod}` : '')
+                //
+                //     // window.location.href = newUrl;
+                //     console.log("handlePathResults: new url path = ", newUrl)
+                //
+                //     debugAlert(`APP::handlePathResults: newUrl=${newUrl}`)
+                //     console.log(`---------\nAPP::handlePathResults: newUrl=${newUrl}`)
+                //
+                //     window.location.href = newUrl;
+                //     // console.log("REFRESH URL WITH: ", newUrl);
+                //
+                // }, [debugAlert] );
     // callback for PathNameFetch component
     // pathResults[0] = pathName (string)
     // pathResults[1] = refreshCheck (boolean)
-    const handlePathResults = useCallback( (pathResults) => {
+    const handlePathResults = (pathResults) => {
 
         const newUrl = window.location.protocol + "//"
             + window.location.host
             + window.location.pathname
             + "?url=" + pathResults[0]
-            + (pathResults[1] ? "&refresh=true" : '');
+            + (pathResults[1] ? "&refresh=true" : '')
+            + (statusMethod ? `&method=${statusMethod}` : '')
 
         // window.location.href = newUrl;
-        console.log("new url path = ", newUrl)
+        console.log("handlePathResults: new url path = ", newUrl)
 
-        debugAlert(`APP::handlePathResults: newUrl=${newUrl}`)
+        // debugAlert(`APP::handlePathResults: newUrl=${newUrl}`)
         console.log(`---------\nAPP::handlePathResults: newUrl=${newUrl}`)
 
         window.location.href = newUrl;
+        // console.log("REFRESH URL WITH: ", newUrl);
 
-    }, [debugAlert] );
-
+    }
 
     // fetch initial article if specified on address bar with url param
     useEffect(() => {
-        debugAlert(`APP:::useEffect[myUrl, myRefresh]: calling handlePathName: ${myUrl}, ${myRefresh}`)
-        console.log(`APP:::useEffect[myUrl, myRefresh]: calling handlePathName: ${myUrl}, ${myRefresh}`)
+        debugAlert(`APP:::useEffect[myPath, myRefresh]: calling handlePathName: ${myPath}, ${myRefresh}`)
+        console.log(`APP:::useEffect[myPath, myRefresh]: calling handlePathName: ${myPath}, ${myRefresh}`)
 
         // set these states only for debugging, essentially
-        setTargetPath(myUrl);
+        setTargetPath(myPath);
         setRefreshCheck(myRefresh);
-        referenceFetch(myUrl, myRefresh)
+        referenceFetch(myPath, myRefresh)
 
-    }, [myUrl, myRefresh, debugAlert, referenceFetch])
+    }, [myPath, myRefresh, debugAlert, referenceFetch])
 
 
     const shortcuts = env === 'env-production'
@@ -239,20 +257,23 @@ export default function App() {
 
     // onChange={e => setStatusCheckMethod(e.target.value)}
     const handleStatusMethodChange = (event) => {
-        setStatusCheckMethod(event.target.value);
+        const myMethod2 = event.target.value
+        // setStatusCheckMethod(event.target.value);
+        console.log(`handleStatusMethodChange:new method is: ${myMethod2}`)
+        setStatusMethod(myMethod2);
     };
 
     const statusMethodOptions = <>
         <div className={"status-check-methods-wrapper"}>
             <div className={"status-check-methods"}>
-                <div>Status Check Method:</div>
+                <div>URL Status Check Method:</div>
                 {Object.keys(UrlStatusCheckMethods).map(method => {
                     return <div key={method}>
                         <label>
                             <input
                                 type="radio"
                                 value={method}
-                                checked={statusCheckMethod === method}
+                                checked={statusMethod === method}
                                 // onChange={e => setStatusCheckMethod(e.target.value)}
                                 onChange={handleStatusMethodChange}
                             /> {UrlStatusCheckMethods[method].caption}
@@ -263,11 +284,11 @@ export default function App() {
         </div>
     </>
 
-    console.log(`rendering App component`)
+    console.log(`rendering App component ${targetPath} ${refreshCheck} ${statusMethod}`)
     // render component
     return <>
 
-        <UrlStatusCheckContext.Provider value={statusCheckMethod}>
+        <UrlStatusCheckContext.Provider value={statusMethod}>
 
             <div className="iare-view">
 
@@ -294,8 +315,9 @@ export default function App() {
                         : ''}</div>
                         <p>pathName : <MakeLink href={targetPath}/></p>
                         <p>endpointPath: <MakeLink href={endpointPath}/></p>
+                        <p>inline target URL: {myPath}</p>
                         <p>Force Refresh: {refreshCheck ? "TRUE" : "false"}</p>
-                        <p>inline target URL: {myUrl}</p>
+                        <p>Check Method: {statusMethod}</p>
                         {/*<p>window.location:</p>*/}
                         {/*<pre>{JSON.stringify(window.location,null,2)}</pre>*/}
                         <TestRefModal />
@@ -305,9 +327,9 @@ export default function App() {
 
 
                 <PathNameFetch pathInitial={targetPath} checkInitial={refreshCheck}
+                               placeholder={"Enter a Wikipedia article or PDF url here"}
                                shortcuts={shortcuts}
                                handlePathResults={handlePathResults}
-                               placeholder={"Enter a Wikipedia article or PDF url here"}
                 />
 
                 {myError ? <div className={myError ? "error-display" : "error-display-none"}>

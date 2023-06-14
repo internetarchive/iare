@@ -9,6 +9,7 @@ import Loader from "../Loader";
 import '../shared/urls.css';
 // import RefFlock from "../v2/RefFlock";
 
+
 export default function UrlDisplay ({ urlFlock, options, caption = "URLs", filterMap } ) {
 
     const [urlFilter, setUrlFilter] = useState( null ); // filter to pass in to UrlFlock
@@ -110,16 +111,87 @@ export default function UrlDisplay ({ urlFlock, options, caption = "URLs", filte
     }
 
     const fetchUrlsCorentin = async (urlArray, refresh, timeout) => {
-        // const promises = urlArray.map(urlObj => {
-        //     return fetchStatusUrl(urlObj, refresh, timeout)
-        // });
-        //
-        // // assumes all promises successful
-        // // TODO: error trap this promise call with a .catch
-        // return await Promise.all(promises);
 
-        // return [];
+        const endpoint = UrlStatusCheckMethods.CORENTIN.endpoint + "check"
 
+        const urlList = urlArray
+            // // no need to create urlDict for Wiki URLs
+            // const urlList = urlArray.map(u => u.url)
+            // let urlDict = {}
+            // for (let urlObj of urlArray) {
+            //     urlDict[urlObj.url] = { tags: urlObj.tags }
+            // }
+
+        const requestOptions = {
+            method: 'POST',
+            body: JSON.stringify({ urls: urlList })
+        };
+
+        const urlData = await fetch(endpoint, requestOptions)
+            .then(response => {
+                if (response.ok) {
+                    return response.json().then(data => {
+                        // transpose corentin results into "native" url array format
+                        /* example corentin results:
+                        {url: 'https://www.archive.org', http_status_code: 200, http_status_message: '200 OK'}
+                        {url: 'https://www.gXoXoXgXlXe.com', http_status_code: -1, http_status_message: 'max retries reached'}
+                         */
+                        console.log(data)
+
+                        const myUrls = data.map( entry => {
+                            const results = {
+                                data: {
+                                    url: entry.url,
+                                    /* no tags, as in PDF links */
+                                    // tags: urlDict[entry.url].tags, // pull from initial value, saved in urlDict
+                                    status_code: entry.http_status_code,
+                                }
+                            }
+                            if (entry.http_status_code === -1) {
+                                results.data.status_code = 0;
+                                results.data.error_code = -1;
+                                results.data.error_text = entry.http_status_message;
+                            }
+
+                            return results;
+
+                        })
+
+                        return Promise.resolve(myUrls)
+                    })
+
+                } else {
+                    // we may have a 504 or other erroneous status_code on the check-url call
+                    console.warn(`fetchUrlsCorentin: Error fetching urls`)
+
+                    // TODO: would be nice to use response.statusText, but as of 2023.04.08, response.statusText is empty
+                    return Promise.resolve({
+                        url: "error.url",
+                        ///tags: ['X'],
+                        status_code: 0,
+                        error_code: 0,
+                        error_text: `Error: Server error via CORENTIN endpoint: ${endpoint}`,
+                    })
+                }
+            })
+
+            .catch((_) => { // if something really bad happened, return fake synthesized url object
+
+                    console.warn(`fetchUrlsCorentin: Something went wrong when fetching urls with: ${endpoint}`)
+
+                    // return fake url data object so URL display interface is not broken
+                    return Promise.resolve({
+                        url: "error.url",
+                        ///tags: ['X'],
+                        status_code: 0,
+                        error_code: -1,
+                        error_text: `Error: Unknown error via CORENTIN endpoint: ${endpoint}`,
+                    })
+                }
+            );
+
+        return urlData;
+        /*
         return [{
 
             data: {
@@ -132,6 +204,7 @@ export default function UrlDisplay ({ urlFlock, options, caption = "URLs", filte
 
         }
         ]
+        */
     }
     // we use useCallback so that function can be used as dependency for useEffect
     const fetchStatusUrls = useCallback( async (urlArray=[], refresh=false) => {
@@ -252,8 +325,8 @@ export default function UrlDisplay ({ urlFlock, options, caption = "URLs", filte
             ? <Loader message={"retrieving URL information..."}/>
             : <>
                 <div className={"section-box"}>
-                    <div>Status Check Method is: {urlStatusCheckMethod}</div>
-                    <p className={"ref-note-alert"}>Status Method for Wiki links is still under construction...</p>
+                    <h3 className={'status-method-display'} >Status Check Method: <span
+                        className={'embiggen'}>{urlStatusCheckMethod}</span></h3>
                     <UrlFlock urlArray={urlArray} urlFilterDef={urlFilter} onAction={handleAction}/>
                 </div>
 

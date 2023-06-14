@@ -188,10 +188,8 @@ export default function UrlDisplayPdf({flocks = [], options={}, caption = "URLs"
         return await Promise.all(promises);
 
         /*
-        once CORS issue is resolved for IABot endpoint, we will fetch status codes this way:
-         */
+        // once CORS issue is resolved for IABot endpoint, we will fetch status codes this way:
 
-        /*
         // this is how it works in curl:
         // curl -XPOST https://iabot-api.archive.org/testdeadlink.php \
         // -d $'urls=https://www.nytimes.com/2009/01/21/opinion/21wed1.html\nhttps://www.realclearpolitics.com/video/2009/02/moran_obama.html' \
@@ -210,45 +208,9 @@ export default function UrlDisplayPdf({flocks = [], options={}, caption = "URLs"
             // headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ urls: urls, authcode: "579331d2dc3f96739b7c622ed248a7d3", returncodes: 1 })
         };
-        const urlData = await fetch(endpoint, requestOptions)
-            .then(response => {
-                if (response.ok) {
-                    return response.json()
-                // follow as in corentin
-                    // process json data here; morph into what we want
 
-                    // .then(response => response.json())
-                } else {
-                    // we may have a 504 or other erroneous status_code on the check-url call
-                    console.warn(`fetchUrlsIabot: Error fetching urls`)
+        // do the rest like corentin...
 
-                    // TODO: would be nice to use response.statusText, but as of 2023.04.08, response.statusText is empty
-                    return Promise.resolve({
-                        url: "error.url",
-                        tags: ['X'],
-                        status_code: 0,
-                        error_code: 0,
-                        error_text: `Error: Server error via IABOT with ${endpoint}`,
-                    })
-                }
-            })
-
-            .catch((_) => { // if something really bad happened, return fake synthesized url object
-
-                    console.warn(`fetchUrlsIabot: Something went wrong when fetching urls with: ${endpoint}`)
-
-                    // return fake url data object so URL display interface is not broken
-                    return Promise.resolve({
-                        url: "error.url",
-                        tags: ['X'],
-                        status_code: 0,
-                        error_code: -1,
-                        error_text: `Error: System errpr via IABOT with ${endpoint}`,
-                    })
-                }
-            );
-
-        return urlData;
         */
 
     }
@@ -382,38 +344,37 @@ export default function UrlDisplayPdf({flocks = [], options={}, caption = "URLs"
             const mergedFlock = mergeFlocks(flocks)
 
             setIsLoadingUrls(true);
-            const context = `UrlDisplayPdf::useEffect[flocks, fetchStatusUrls, options.refresh]:`
 
-            /*
-            if all goes well, urlArray will be an array of url objects, something like:
-                [
-                    {
-                        data: {
-                            url: "https://www.google.com",
-                            tags: ['X'],
-                            status_code: 200,
-                        },
-                    },
-
-                    {
-                        data: {
-                            url: "https://archive.org",
-                            tags: ['X'],
-                            status_code: 200,
-                        },
-                    },
-                    . . .
-                ]
-             */
             fetchStatusUrls(mergedFlock, options.refresh)
 
+                    /*
+                    if all went well, urlArray is an array of url objects, something like:
+                    [
+                        {
+                            data: {
+                                url: "https://www.google.com",
+                                tags: ['X'],
+                                status_code: 200,
+                            },
+                        },
+
+                        {
+                            data: {
+                                url: "https://archive.org",
+                                tags: ['X'],
+                                status_code: 200,
+                            },
+                        },
+                        . . .
+                    ]
+                 */
                 .then(urlResults => {
-                    // console.log(`${context} fetchStatusUrls.then: urlResults has ${urlResults.length} elements`);
+                    // console.log(`fetchStatusUrls.then: urlResults has ${urlResults.length} elements`);
                     setUrlArray(urlResults);
                 })
 
                 .catch(error => {
-                    // console.error(`${context} fetchStatusUrls.catch: ${error}`);
+                    // console.error(`fetchStatusUrls.catch: ${error}`);
                     // TODO: what shall we do for error here?
                     setUrlArray([])
                 })
@@ -495,7 +456,8 @@ export default function UrlDisplayPdf({flocks = [], options={}, caption = "URLs"
             ? <Loader message={"retrieving URL information..."}/>
             : <>
                 <div className={"section-box"}>
-                    <div>Status Check Method is: {urlStatusCheckMethod}</div>
+                    <h3 className={'status-method-display'} >Status Check Method: <span
+                        className={'embiggen'}>{urlStatusCheckMethod}</span></h3>
                     <UrlFlockPdf urlArray={urlArray} urlFilterDef={urlFilter} originFilterDef={originFilter}/>
                 </div>
 
