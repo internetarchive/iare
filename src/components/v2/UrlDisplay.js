@@ -23,7 +23,7 @@ export default function UrlDisplay ({ urlFlock, options, caption = "URLs", filte
     const urlStatusCheckMethod = React.useContext(UrlStatusCheckContext);
     const myStatusMethods = UrlStatusCheckMethods;
 
-    async function fetchStatusUrl(url, refresh=false, timeout=0, method='') {
+    const fetchStatusUrl = useCallback(async (url, refresh=false, timeout=0, method='') => {
 
         const endpoint = `${IARI_V2_URL_BASE}/check-url`
             + `?url=${encodeURIComponent(url)}`
@@ -87,20 +87,39 @@ export default function UrlDisplay ({ urlFlock, options, caption = "URLs", filte
             );
 
         return { data: urlData, status_code: status_code };
-    }
+    }, [myStatusMethods])
 
 
-    const fetchUrlsIari = async (urlArray, refresh, timeout) => {
+                // const fetchUrlsIari = async (urlArray, refresh, timeout) => {
+                //     const promises = urlArray.map(url => {
+                //         return fetchStatusUrl(url, refresh, timeout, myStatusMethods.IARI.key)
+                //     });
+                //
+                //     // assumes all promises successful
+                //     // TODO: error trap this promise call with a .catch
+                //     return await Promise.all(promises);
+                // }
+                //
+                // const fetchUrlsIabot = async (urlArray, refresh, timeout) => {
+                //     const promises = urlArray.map(urlObj => {
+                //         return fetchStatusUrl(urlObj, refresh, timeout, myStatusMethods.IABOT.key)
+                //     });
+                //
+                //     // assumes all promises successful
+                //     // TODO: error trap this promise call with a .catch
+                //     return await Promise.all(promises);
+                // }
+    const fetchUrlsIari = useCallback( async (urlArray, refresh, timeout) => {
         const promises = urlArray.map(url => {
             return fetchStatusUrl(url, refresh, timeout, myStatusMethods.IARI.key)
-        });
-
+        })
         // assumes all promises successful
         // TODO: error trap this promise call with a .catch
         return await Promise.all(promises);
-    }
+    }, [fetchStatusUrl, myStatusMethods]);
 
-    const fetchUrlsIabot = async (urlArray, refresh, timeout) => {
+
+    const fetchUrlsIabot = useCallback( async (urlArray, refresh, timeout) => {
         const promises = urlArray.map(urlObj => {
             return fetchStatusUrl(urlObj, refresh, timeout, myStatusMethods.IABOT.key)
         });
@@ -108,9 +127,9 @@ export default function UrlDisplay ({ urlFlock, options, caption = "URLs", filte
         // assumes all promises successful
         // TODO: error trap this promise call with a .catch
         return await Promise.all(promises);
-    }
+    }, [fetchStatusUrl, myStatusMethods]);
 
-    const fetchUrlsCorentin = async (urlArray, refresh, timeout) => {
+    const fetchUrlsCorentin = useCallback( async (urlArray, refresh, timeout) => {
 
         const endpoint = UrlStatusCheckMethods.CORENTIN.endpoint + "check"
 
@@ -205,7 +224,9 @@ export default function UrlDisplay ({ urlFlock, options, caption = "URLs", filte
         }
         ]
         */
-    }
+    }, []);
+
+
     // we use useCallback so that function can be used as dependency for useEffect
     const fetchStatusUrls = useCallback( async (urlArray=[], refresh=false) => {
 
@@ -239,8 +260,8 @@ export default function UrlDisplay ({ urlFlock, options, caption = "URLs", filte
                     //
                     // // console.log("fetchAllUrls: after Promise.all, results:" , results)
                     // return results;
-// eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+// xxeslint-disable-next-line react-hooks/exhaustive-deps
+    }, [urlStatusCheckMethod, fetchUrlsIabot, fetchUrlsIari, fetchUrlsCorentin]);
 
 
     // when new urlFlock (which is every new render of component),
@@ -273,7 +294,7 @@ export default function UrlDisplay ({ urlFlock, options, caption = "URLs", filte
                 setIsLoadingUrls(false);
             })
 
-// eslint-disable-next-line react-hooks/exhaustive-deps
+// xxeslint-disable-next-line react-hooks/exhaustive-deps
         },
         // TODO: see if this works the same by giving a dependency array of []
         [urlFlock, fetchStatusUrls, options.refresh]
@@ -312,6 +333,51 @@ export default function UrlDisplay ({ urlFlock, options, caption = "URLs", filte
         // TODO: Action for setReferenceFilter/ShowReference for filtered URLS
     }
 
+    const handleCopyClick = () => {
+        const convertToCSV = (json) => {
+            const rows = json.map((row) => {
+
+                const myRowItems = row.map( (item) => {
+                    // from: https://stackoverflow.com/questions/46637955/write-a-string-containing-commas-and-double-quotes-to-csv
+                    // We remove blanks and check if the item contains
+                    // other whitespace,`,` or `"`.
+                    // In that case, we need to quote the item.
+
+
+                    if (typeof item === 'string') {
+                        if (item.replace(/ /g, '').match(/[\s,"]/)) {
+                            return '"' + item.replace(/"/g, '""') + '"';
+                        }
+                        return item
+                    } else {
+                        return item
+                    }
+                })
+                return myRowItems.join(',');
+            });
+            return rows.join('\n');
+        };
+
+        // get one row per line:
+        const jsonData = urlArray.sort(
+            (a, b) => (a.data.url > b.data.url) ? 1 : (a.data.url < b.data.url) ? -1 : 0
+        ).map( u => {
+            return [ u.data.url, u.data.status_code ]
+        })
+        // convert to CSV and send to clipboard
+        const csvString = convertToCSV(jsonData);
+
+        navigator.clipboard.writeText(csvString)
+            .then(() => {
+                console.log('CSV data copied to clipboard');
+                alert(`CSV data copied to clipboard.`);
+            })
+            .catch((error) => {
+                console.error('Failed to copy CSV data to clipboard:', error);
+                alert(`Failed to copy CSV data to clipboard: ${error}`);
+            });
+    }
+
     // todo:
     // grab statusCheckMethod from context
     return <>
@@ -326,7 +392,8 @@ export default function UrlDisplay ({ urlFlock, options, caption = "URLs", filte
             : <>
                 <div className={"section-box"}>
                     <h3 className={'status-method-display'} >Status Check Method: <span
-                        className={'embiggen'}>{urlStatusCheckMethod}</span></h3>
+                        className={'embiggen'}>{urlStatusCheckMethod}</span
+                    ><button onClick={handleCopyClick} className={'utility-button'} ><span>Copy to Clipboard</span></button></h3>
                     <UrlFlock urlArray={urlArray} urlFilterDef={urlFilter} onAction={handleAction}/>
                 </div>
 

@@ -272,3 +272,14 @@ table.single-detail tr td:not(:first-child) {
 .status-check-methods > div:first-child {
     margin-left:0;
 }
+
+
+button.utility-button {
+    border-radius: 0.75rem;
+    background-color: #dadffd;
+    margin-left:.75rem;
+    padding:0em .5em 0.18em;
+    color: #454545;
+    border: 1px solid black;
+    font-size: .75rem;
+}
