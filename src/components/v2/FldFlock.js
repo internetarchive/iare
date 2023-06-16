@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-export default function FldFlock({ fldArray, onAction }) {
-
-    const [selectedDomain, setSelectedDomain] = useState('' ); // selected domain in list
+export default function FldFlock({ fldArray, onAction, selectedDomain = '' }) {
 
     const onClick = (evt) => {
         const domain = evt.target.parentNode.dataset["domain"];
+        // send action back up the component tree
         onAction( {
             "action": "setDomainFilter",
             "value": domain,
         })
-        setSelectedDomain(domain)
     }
 
     const onClickHeader = (evt) => {
@@ -23,15 +21,6 @@ export default function FldFlock({ fldArray, onAction }) {
     const onHoverHeader = (evt) => {
         // console.log("FldFlock: onHoverHeader")
         // toggle show of Show All button
-    }
-
-    const onClickShowAll = (evt) => {
-        console.log("FldFlock: onClickShowAll")
-        onAction( {
-            "action": "setDomainFilter",
-            "value": null,
-        })
-        setSelectedDomain(null)
     }
 
     const columnLabels = {
@@ -47,13 +36,7 @@ export default function FldFlock({ fldArray, onAction }) {
 
             <div className={"fld-list-header"} onClick={onClickHeader} onMouseOver={onHoverHeader} >
                 <div className={"fld-row"} >
-                    <div>{columnLabels.domain}
-                        <button
-                            className={'display-button-showall'}
-                            onClick={onClickShowAll}>
-                            <span>Show All</span>
-                        </button>
-                    </div>
+                    <div>{columnLabels.domain}</div>
                     <div>{columnLabels.count}</div>
                 </div>
             </div>

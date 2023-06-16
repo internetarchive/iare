@@ -37,12 +37,13 @@ function getLinkText(ref) {
     return <p>{text}</p>
 }
 
-function RefFlock({ refArray, refFilterDef } ) {
+function RefFlock({ refArray, refFilterDef, onAction } ) {
 
     const [refDetails, setRefDetails] = useState(null);
     // const [isLoading, setIsLoading] = useState(false);
 
     const [openModal, setOpenModal] = useState(false)
+
     const fetchDetail = (ref) => {
         // handle null ref
         if (!ref) {
@@ -82,10 +83,21 @@ function RefFlock({ refArray, refFilterDef } ) {
         setOpenModal(true)
     }, [refDetails])
 
-    let refs;
+    const handleRemoveFilter = (e) => {
+
+        // send action back up the component tree
+        onAction( {
+            "action": "removeReferenceFilter",
+            "value": '',
+        })
+        // do we need to do anything local?
+    }
+
+    let refs, caption;
 
     if (!refArray) {
-        refs = <h4>No references!</h4>
+        caption = <h4>No references!</h4>
+        refs = null
 
     } else {
         // filter the refs if filter defined
@@ -93,21 +105,28 @@ function RefFlock({ refArray, refFilterDef } ) {
             ? refArray.filter((refFilterDef.filterFunction)()) // Note self-calling function
             : refArray;
 
-        const refList = filteredRefs.map((ref, i) => {
-            return <button key={i}
-                           className={"ref-button"}
-                           onClick={(e) => {
-                               fetchDetail(ref)
-                           }}>{getLinkText(ref)}</button>
-        });
+        const buttonRemove = refFilterDef
+            ? <button onClick={handleRemoveFilter}
+                 className={'utility-button'}
+                 style={{position: "relative", top: "-0.1rem"}}
+                ><span>Remove Filter</span></button>
+            : null
 
-        const label = refFilterDef
-            ? `${filteredRefs.length} References: ${refFilterDef.caption}`
-            : `${filteredRefs.length} References: (no filter)`
+        caption = <>
+            <h4>Filter: {refFilterDef ? refFilterDef.caption : 'Show All'}</h4>
+            <h4>{filteredRefs.length} {filteredRefs.length === 1
+                ? 'Reference' : 'References'}{buttonRemove}</h4>
+        </>
+
         refs = <>
-            <h4>{label}</h4>
             <div className={"ref-list"}>
-                {refList}
+                {filteredRefs.map((ref, i) => {
+                    return <button key={i}
+                       className={"ref-button"}
+                       onClick={(e) => {
+                           fetchDetail(ref)
+                       }}>{getLinkText(ref)}</button>
+                })}
             </div>
         </>
     }
@@ -115,10 +134,11 @@ function RefFlock({ refArray, refFilterDef } ) {
     return <div className={"ref-flock"}>
 
         <div className={"ref-list-wrapper"}>
+            {caption}
             {refs}
         </div>
 
-        <RefView open={openModal} onClose={() => setOpenModal(false)} details={refDetails} />
+        <RefView details={refDetails} open={openModal} onClose={() => setOpenModal(false)} />
 
     </div>
 }

@@ -6,18 +6,18 @@ import {URL_FILTER_MAP} from "./filters/urlFilterMaps";
 
 export default function PageData({pageData = {}}) {
 
-    const [selectedDisplay, setSelectedDisplay] = useState('domains');
+    const [selectedDisplay, setSelectedDisplay] = useState('urls');
 
     const handleDisplayChange = (event) => {
         setSelectedDisplay(event.target.value);
     };
 
     const displays = {
-        "domains": {
-            caption: "Domains"
-        },
         "urls": {
             caption: "URLs"
+        },
+        "domains": {
+            caption: "Domains"
         },
         "stats": {
             caption: "Reference Types"
@@ -52,7 +52,7 @@ export default function PageData({pageData = {}}) {
                 }
 
                 {selectedDisplay === 'urls' &&
-                    <UrlDisplay urlFlock={pageData.urls} options={{refresh: pageData.forceRefresh}}
+                    <UrlDisplay pageData={pageData} options={{refresh: pageData.forceRefresh}}
                                 caption="URL links" filterMap={URL_FILTER_MAP} />
                 }
 

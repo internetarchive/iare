@@ -102,7 +102,7 @@ export const REF_FILTER_DEFS = {
 
 export const REF_FILTER_TYPES = {
     all: {
-        caption: "All",
+        caption: "Show All",
         desc: "All citations",
         filterFunction: () => () => {return true},
     },

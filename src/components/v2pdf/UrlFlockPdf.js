@@ -52,18 +52,10 @@ export default function UrlFlockPdf({ urlArray, urlFilterDef, originFilterDef, i
     const onClickHeader = (evt) => {
     }
 
-    // const onHover = (evt) => {
-    //     // console.log("FldFlock: onHover")
-    // }
-
     const onHoverHeader = (evt) => {
         // console.log("FldFlock: onHoverHeader")
         // toggle show of Show All button
     }
-
-    // const onClickShowAll = (evt) => {
-    // }
-
 
     let urls = [];
 

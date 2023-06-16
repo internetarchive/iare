@@ -61,10 +61,19 @@
     cursor: pointer;
 }
 
+.url-list .url-row:hover {
+    color:var(--color-list-fg-hover);
+    background-color: var(--color-list-bg-hover);
+}
+.url-list .url-selected {
+    color:var(--color-list-fg-selected);
+    background-color: var(--color-list-bg-selected);
+}
+
 .url-list .url-row.url-is-unknown,
 .url-list .url-row.url-is-unknown a{
     /*color:dimgrey !important;*/
-    color: #afafaf !important;
+    color: #a5a5a5 !important;
     /*background: #c9cbcf; !*dimgrey;*!*/
 }
 .url-list .url-row.url-is-redirect,
@@ -80,6 +89,9 @@
     color: red !important;
 }
 
+.url-list .url-row {
+    cursor: pointer;
+}
 .url-row > div {
     padding:.5rem;
 }

@@ -6,6 +6,7 @@ import FldFlock from "./FldFlock";
 export default function FldDisplay({ pageData } ) {
 
     const [refFilter, setRefFilter] = useState( null ); // filter to pass in to RefFlock
+    const [selectedDomain, setSelectedDomain] = useState('' ); // selected domain in list
 
     const getDomainFilter = (targetDomain) => {
 
@@ -37,6 +38,14 @@ export default function FldDisplay({ pageData } ) {
         if (action === "setDomainFilter") {
             // value is domain to search
             setRefFilter(getDomainFilter(value));
+            setSelectedDomain(value)
+        }
+
+        // clear references filter list
+        if (action === "removeReferenceFilter") {
+            // value is url to filter references by
+            setRefFilter(null)
+            setSelectedDomain(null)
         }
     }
 
@@ -60,12 +69,12 @@ export default function FldDisplay({ pageData } ) {
     return <>
         <div className={"fld-display section-box"}>
             <h3>Domains</h3>
-            <FldFlock fldArray={fldArray} onAction={handleAction} />
+            <FldFlock fldArray={fldArray} onAction={handleAction} selectedDomain={selectedDomain} />
         </div>
 
         <div className={"section-box"}>
             <h3>References</h3>
-            <RefFlock refArray={refArray} refFilterDef={refFilter} />
+            <RefFlock refArray={refArray} refFilterDef={refFilter} onAction={handleAction} />
         </div>
     </>
 }

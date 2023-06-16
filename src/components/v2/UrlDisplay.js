@@ -7,10 +7,13 @@ import {UrlStatusCheckMethods} from "../../constants/endpoints.js";
 import {UrlStatusCheckContext} from "../../contexts/UrlStatusCheckContext"
 import Loader from "../Loader";
 import '../shared/urls.css';
+import RefFlock from "./RefFlock";
 // import RefFlock from "../v2/RefFlock";
 
 
-export default function UrlDisplay ({ urlFlock, options, caption = "URLs", filterMap } ) {
+export default function UrlDisplay ({ pageData, options, caption = "URLs", filterMap } ) {
+
+    console.log("UrlDisplay: render");
 
     const [urlFilter, setUrlFilter] = useState( null ); // filter to pass in to UrlFlock
     const [isLoadingUrls, setIsLoadingUrls] = useState(false);
@@ -18,6 +21,9 @@ export default function UrlDisplay ({ urlFlock, options, caption = "URLs", filte
 
     const [urlArray, setUrlArray] = useState([]);
     const [urlStatistics, setUrlStatistics] = useState({});
+
+    const [refFilter, setRefFilter] = useState( null ); // filter to pass in to RefFlock
+    const [selectedUrl, setSelectedUrl] = useState('');
 
     // pull in the Status Check Method
     const urlStatusCheckMethod = React.useContext(UrlStatusCheckContext);
@@ -90,25 +96,6 @@ export default function UrlDisplay ({ urlFlock, options, caption = "URLs", filte
     }, [myStatusMethods])
 
 
-                // const fetchUrlsIari = async (urlArray, refresh, timeout) => {
-                //     const promises = urlArray.map(url => {
-                //         return fetchStatusUrl(url, refresh, timeout, myStatusMethods.IARI.key)
-                //     });
-                //
-                //     // assumes all promises successful
-                //     // TODO: error trap this promise call with a .catch
-                //     return await Promise.all(promises);
-                // }
-                //
-                // const fetchUrlsIabot = async (urlArray, refresh, timeout) => {
-                //     const promises = urlArray.map(urlObj => {
-                //         return fetchStatusUrl(urlObj, refresh, timeout, myStatusMethods.IABOT.key)
-                //     });
-                //
-                //     // assumes all promises successful
-                //     // TODO: error trap this promise call with a .catch
-                //     return await Promise.all(promises);
-                // }
     const fetchUrlsIari = useCallback( async (urlArray, refresh, timeout) => {
         const promises = urlArray.map(url => {
             return fetchStatusUrl(url, refresh, timeout, myStatusMethods.IARI.key)
@@ -183,7 +170,7 @@ export default function UrlDisplay ({ urlFlock, options, caption = "URLs", filte
                     // we may have a 504 or other erroneous status_code on the check-url call
                     console.warn(`fetchUrlsCorentin: Error fetching urls`)
 
-                    // TODO: would be nice to use response.statusText, but as of 2023.04.08, response.statusText is empty
+                    // todo Does this need to pass back an array? test debug
                     return Promise.resolve({
                         url: "error.url",
                         ///tags: ['X'],
@@ -264,8 +251,8 @@ export default function UrlDisplay ({ urlFlock, options, caption = "URLs", filte
     }, [urlStatusCheckMethod, fetchUrlsIabot, fetchUrlsIari, fetchUrlsCorentin]);
 
 
-    // when new urlFlock (which is every new render of component),
-    // process url array upon iterative fetch completion
+    // upon new urlFlock (which is every new render of component as pageData.urls),
+    // process url array upon using iterative url fetch
     // currently simply saves results directly;
     //  - could "process" each element to extract the data:{} object, but not doing that now.
     //      - if we did change to extract the object, we would have to change the filter logic
@@ -276,10 +263,11 @@ export default function UrlDisplay ({ urlFlock, options, caption = "URLs", filte
 
         setIsLoadingUrls(true);
 
-        fetchStatusUrls(urlFlock, options.refresh)
+        fetchStatusUrls(pageData.urls, options.refresh)
 
             .then(urlResults => {
                 console.log(`${context} fetchStatusUrls.then: urlResults has ${urlResults.length} elements`);
+                // TODO check erroneous resulst here -
                 setUrlArray( urlResults );
             })
 
@@ -294,10 +282,8 @@ export default function UrlDisplay ({ urlFlock, options, caption = "URLs", filte
                 setIsLoadingUrls(false);
             })
 
-// xxeslint-disable-next-line react-hooks/exhaustive-deps
         },
-        // TODO: see if this works the same by giving a dependency array of []
-        [urlFlock, fetchStatusUrls, options.refresh]
+        [pageData, fetchStatusUrls, options.refresh]
         )
 
 
@@ -319,19 +305,66 @@ export default function UrlDisplay ({ urlFlock, options, caption = "URLs", filte
     }, [urlArray, filterMap])
 
 
+    // TODO candidate for external shared function
+    // TODO allow array of Urls in targetUrl(s)
+    const getUrlRefFilter = (targetUrl) => {
+
+        if (!targetUrl || targetUrl === '') {
+            // return {
+            //     caption: `Show All`,
+            //     desc: `Show ALl Citations`,
+            //     filterFunction: () => (d) => {
+            //         return true;
+            //     },
+            // }
+            return null; // no filter means all filter
+        }
+
+        return {
+            caption: <span>Contains URL: <br/><span className={'target-url'}
+                ><a href={targetUrl} target={"_blank"} rel={"noreferrer"}>{targetUrl}</a
+                ></span></span>,
+            desc: `Citations with URL: ${targetUrl}`,
+            filterFunction: () => (d) => {
+                return d.urls.includes( targetUrl )
+            },
+        }
+    }
+
     // result is an object: { action: <action name>, value: <param value> }
-    const handleAction = (result) => {
+    const handleAction = useCallback( result => {
         const {action, value} = result;
         console.log (`UrlDisplay: handleAction: action=${action}, value=${value}`);
 
         // action is setFilter and value is filter key name
         if (action === "setFilter") {
-            const f = filterMap[value];
+            const f = value ? filterMap[value] : null
             setUrlFilter(f)
         }
 
+        // use selected url to filter references list
+        if (action === "setUrlReferenceFilter") {
+            // value is url to filter references by
+            setRefFilter(getUrlRefFilter(value))
+            setSelectedUrl(value)
+        }
+
+        // clear filter for references list
+        if (action === "removeReferenceFilter") {
+            // value is url to filter references by
+            setRefFilter(getUrlRefFilter(''))
+            setSelectedUrl(null)
+        }
+
+        // clear filter for URL list
+        if (action === "removeUrlFilter") {
+            setUrlFilter(null)
+            setSelectedUrl(null)
+        }
+
+
         // TODO: Action for setReferenceFilter/ShowReference for filtered URLS
-    }
+    }, [filterMap])
 
     const handleCopyClick = () => {
         const convertToCSV = (json) => {
@@ -378,8 +411,10 @@ export default function UrlDisplay ({ urlFlock, options, caption = "URLs", filte
             });
     }
 
-    // todo:
-    // grab statusCheckMethod from context
+    const refArray = (!pageData || !pageData.dehydrated_references)
+        ? []
+        : pageData.dehydrated_references
+
     return <>
 
         <div className={"section-box url-overview-column"}>
@@ -393,15 +428,15 @@ export default function UrlDisplay ({ urlFlock, options, caption = "URLs", filte
                 <div className={"section-box"}>
                     <h3 className={'status-method-display'} >Status Check Method: <span
                         className={'embiggen'}>{urlStatusCheckMethod}</span
-                    ><button onClick={handleCopyClick} className={'utility-button'} ><span>Copy to Clipboard</span></button></h3>
-                    <UrlFlock urlArray={urlArray} urlFilterDef={urlFilter} onAction={handleAction}/>
+                    ><button onClick={handleCopyClick} className={'utility-button'}
+                             style={{position: "relative", top: "-0.25rem"}}
+                        ><span>Copy URL data to Clipboard</span></button></h3>
+                    <UrlFlock urlArray={urlArray} urlFilterDef={urlFilter} onAction={handleAction} selectedUrl={selectedUrl}/>
                 </div>
 
                 <div className={"section-box"}>
                     <h3>References</h3>
-                    <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Under construction</h4>
-                    {/*<RefFlock refArray={refArray} refFilterDef={refFilter} />*/}
-                    <p className={"ref-note-alert"}>Filterable Reference List goes here</p>
+                    <RefFlock refArray={refArray} refFilterDef={refFilter} onAction={handleAction}/>
                 </div>
             </>
         }
