@@ -30,7 +30,7 @@ export default function PieChart({ chartData, options, onClick }) {
             if (
                 Math.abs(x - arc.x ) < arc.innerRadius
                 && Math.abs(y - arc.y ) < arc.innerRadius
-            ) onClick("all") ;
+            ) onClick(null); // null means remove filter
 
         }
     }

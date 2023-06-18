@@ -1,6 +1,6 @@
 export const URL_FILTER_MAP = {
     all: {
-        caption: "All",
+        caption: "Show All",
         desc: "no filter",
         filterFunction: () => () => {return true},
     },
@@ -33,7 +33,7 @@ export const URL_FILTER_MAP = {
         },
     },
     statusUnknown: {
-        caption: "Unknown",
+        caption: "Unknown Status (timeout)",
         desc: "'",
         filterFunction: () => (d) => {
             return !d.data.status_code;

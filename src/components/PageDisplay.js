@@ -2,9 +2,15 @@ import React from "react";
 import PageDisplayV2 from "./v2/PageDisplayV2";
 import PageDisplayV2PDF from "./v2pdf/PageDisplayV2PDF";
 
+        // /* from chatGPT */
+        // const MyComponent = React.memo(({ debug }) => {
+        //     // Your component code here
+        // });
+        // export default MyComponent;
 
-export default function PageDisplay( { pageData }) {
 
+const PageDisplay = React.memo( ({ pageData }) => {
+    console.log(`PageDisplay (${pageData ? pageData.version + ' ' + pageData.mediaType : 'null'})`)
     const message = 'Please enter a URL and click "Load References"';
 
     if (!pageData) return <p className={'text-primary'}>{message}</p>;
@@ -18,5 +24,6 @@ export default function PageDisplay( { pageData }) {
 
     return <h3>Unsupported version/media type {pageData.version}/{pageData.mediaType}.</h3>
 
-}
+})
 
+export default PageDisplay;

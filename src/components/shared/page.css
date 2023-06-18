@@ -44,9 +44,9 @@
 }
 
 .ref-filter-types input[type="radio"]{
-    -ms-transform: scale(1.5); /* IE 9 */
-    -webkit-transform: scale(1.5); /* Chrome, Safari, Opera */
-    transform: scale(1.5);
+    -ms-transform: scale(var(--radio-button-magnify)); /* IE 9 */
+    -webkit-transform: scale(var(--radio-button-magnify)); /* Chrome, Safari, Opera */
+    transform: scale(var(--radio-button-magnify));
     margin-right:.23rem;
 }
 .ref-filter-types > div {

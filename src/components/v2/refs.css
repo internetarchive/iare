@@ -1,3 +1,7 @@
+:root {
+    --width-ref-list: 22rem;
+}
+
 .ref-display {
     overflow: auto;
     /*flex-grow: 10;*/
@@ -39,12 +43,20 @@
     /*overflow:scroll;*/
     /*!*margin-top:1rem;*!*/
     /*max-height:50rem;*/
+    width: var(--width-ref-list);
+    max-width: var(--width-ref-list);
 }
 .ref-list-wrapper {
     display:block;
     flex: 0 0 100%;
     /*max-height:50rem;*/
     /*height:50rem;*/
+}
+.ref-list-wrapper h4 {
+    overflow-wrap: break-word;
+}
+.ref-list-wrapper .target-url {
+    font-weight: normal; color:red;
 }
 
 .ref-list {

@@ -1,12 +1,19 @@
+// import React, {useCallback, useEffect, useState, useContext} from 'react';
 import React, {useCallback, useEffect, useState} from 'react';
 import UrlFlock from "./UrlFlock";
 import UrlOverview from "./UrlOverview";
-import {API_V2_URL_BASE} from "../../constants/endpoints";
-import '../shared/urls.css';
+import {IARI_V2_URL_BASE} from "../../constants/endpoints";
+import {UrlStatusCheckMethods} from "../../constants/endpoints.js";
+import {UrlStatusCheckContext} from "../../contexts/UrlStatusCheckContext"
 import Loader from "../Loader";
+import '../shared/urls.css';
+import RefFlock from "./RefFlock";
 // import RefFlock from "../v2/RefFlock";
 
-export default function UrlDisplay ({ urlFlock, options, filterMap } ) {
+
+export default function UrlDisplay ({ pageData, options, caption = "URLs", filterMap } ) {
+
+    console.log("UrlDisplay: render");
 
     const [urlFilter, setUrlFilter] = useState( null ); // filter to pass in to UrlFlock
     const [isLoadingUrls, setIsLoadingUrls] = useState(false);
@@ -15,13 +22,19 @@ export default function UrlDisplay ({ urlFlock, options, filterMap } ) {
     const [urlArray, setUrlArray] = useState([]);
     const [urlStatistics, setUrlStatistics] = useState({});
 
-    async function fetchOneUrl(url, refresh=false, timeout=0) {
+    const [refFilter, setRefFilter] = useState( null ); // filter to pass in to RefFlock
+    const [selectedUrl, setSelectedUrl] = useState('');
 
-        const params = `?url=${encodeURIComponent(url)}`
+    // pull in the Status Check Method
+    const urlStatusCheckMethod = React.useContext(UrlStatusCheckContext);
+    const myStatusMethods = UrlStatusCheckMethods;
+
+    const fetchStatusUrl = useCallback(async (url, refresh=false, timeout=0, method='') => {
+
+        const endpoint = `${IARI_V2_URL_BASE}/check-url`
+            + `?url=${encodeURIComponent(url)}`
             + (refresh ? "&refresh=true" : '')
             + (timeout > 0 ? `&timeout=${timeout}` : '')
-
-        const endpoint = `${API_V2_URL_BASE}/check-url` + params
 
         let status_code = 0;
 
@@ -31,7 +44,6 @@ export default function UrlDisplay ({ urlFlock, options, filterMap } ) {
             .then( response => {
 
                 status_code = response.status
-                // console.log("fetchOneUrl: fetch:then: response:", response )
 
                 if (response.ok) {
                     // return response.json()
@@ -41,11 +53,12 @@ export default function UrlDisplay ({ urlFlock, options, filterMap } ) {
                         return Promise.resolve({
                             url: url,
 
-                            // we fall back to status_code if testdeadlink_status_code does not exist
-                            // this is a caching bug
-                            status_code: data.testdeadlink_status_code ? data.testdeadlink_status_code : data.status_code,
-                            // status_code: data.testdeadlink_status_code
-                            // status_code: data.status_code,
+                            status_code:
+                                method === myStatusMethods.IABOT.key
+                                    ? data.testdeadlink_status_code
+                                : method === myStatusMethods.IARI.key
+                                    ? data.status_code
+                                : -1,
                         })
                     })
 
@@ -80,50 +93,186 @@ export default function UrlDisplay ({ urlFlock, options, filterMap } ) {
             );
 
         return { data: urlData, status_code: status_code };
-    }
+    }, [myStatusMethods])
 
-    // we use useCallback so that function can be used as dependency for useEffect
-    const fetchAllUrls = useCallback( async (urls, refresh=false) => {
 
-        console.log(`fetchAllUrls: refresh = ${refresh}, timeout = ${timeoutCheckUrl}`)
+    const fetchUrlsIari = useCallback( async (urlArray, refresh, timeout) => {
+        const promises = urlArray.map(url => {
+            return fetchStatusUrl(url, refresh, timeout, myStatusMethods.IARI.key)
+        })
+        // assumes all promises successful
+        // TODO: error trap this promise call with a .catch
+        return await Promise.all(promises);
+    }, [fetchStatusUrl, myStatusMethods]);
 
-        if (!urls) return [];
 
-        const promises = urls.map(url => {
-            return fetchOneUrl(url, refresh, timeoutCheckUrl)
+    const fetchUrlsIabot = useCallback( async (urlArray, refresh, timeout) => {
+        const promises = urlArray.map(urlObj => {
+            return fetchStatusUrl(urlObj, refresh, timeout, myStatusMethods.IABOT.key)
         });
 
         // assumes all promises successful
         // TODO: error trap this promise call with a .catch
-        const results = await Promise.all(promises);
+        return await Promise.all(promises);
+    }, [fetchStatusUrl, myStatusMethods]);
 
-        // console.log("fetchAllUrls: after Promise.all, results:" , results)
-        return results;
+    const fetchUrlsCorentin = useCallback( async (urlArray, refresh, timeout) => {
+
+        const endpoint = UrlStatusCheckMethods.CORENTIN.endpoint + "check"
+
+        const urlList = urlArray
+            // // no need to create urlDict for Wiki URLs
+            // const urlList = urlArray.map(u => u.url)
+            // let urlDict = {}
+            // for (let urlObj of urlArray) {
+            //     urlDict[urlObj.url] = { tags: urlObj.tags }
+            // }
+
+        const requestOptions = {
+            method: 'POST',
+            body: JSON.stringify({ urls: urlList })
+        };
+
+        const urlData = await fetch(endpoint, requestOptions)
+            .then(response => {
+                if (response.ok) {
+                    return response.json().then(data => {
+                        // transpose corentin results into "native" url array format
+                        /* example corentin results:
+                        {url: 'https://www.archive.org', http_status_code: 200, http_status_message: '200 OK'}
+                        {url: 'https://www.gXoXoXgXlXe.com', http_status_code: -1, http_status_message: 'max retries reached'}
+                         */
+                        console.log(data)
+
+                        const myUrls = data.map( entry => {
+                            const results = {
+                                data: {
+                                    url: entry.url,
+                                    /* no tags, as in PDF links */
+                                    // tags: urlDict[entry.url].tags, // pull from initial value, saved in urlDict
+                                    status_code: entry.http_status_code,
+                                }
+                            }
+                            if (entry.http_status_code === -1) {
+                                results.data.status_code = 0;
+                                results.data.error_code = -1;
+                                results.data.error_text = entry.http_status_message;
+                            }
+
+                            return results;
+
+                        })
+
+                        return Promise.resolve(myUrls)
+                    })
+
+                } else {
+                    // we may have a 504 or other erroneous status_code on the check-url call
+                    console.warn(`fetchUrlsCorentin: Error fetching urls`)
+
+                    // todo Does this need to pass back an array? test debug
+                    return Promise.resolve({
+                        url: "error.url",
+                        ///tags: ['X'],
+                        status_code: 0,
+                        error_code: 0,
+                        error_text: `Error: Server error via CORENTIN endpoint: ${endpoint}`,
+                    })
+                }
+            })
+
+            .catch((_) => { // if something really bad happened, return fake synthesized url object
+
+                    console.warn(`fetchUrlsCorentin: Something went wrong when fetching urls with: ${endpoint}`)
+
+                    // return fake url data object so URL display interface is not broken
+                    return Promise.resolve({
+                        url: "error.url",
+                        ///tags: ['X'],
+                        status_code: 0,
+                        error_code: -1,
+                        error_text: `Error: Unknown error via CORENTIN endpoint: ${endpoint}`,
+                    })
+                }
+            );
+
+        return urlData;
+        /*
+        return [{
+
+            data: {
+                url: "corentin.not.yet.implemented",
+                tags: ['ERR'],
+                status_code: 0,
+                error_code: "0",
+                error_text: "CORENTIN status fetch not yet implemented",
+            }
+
+        }
+        ]
+        */
     }, []);
 
 
-    // when new urlFlock (which is every new render of component)
-    //     TODO: see if this works the same by giving a dependency array of []
-    //
-    // process url array upon iterative fetch completion
+    // we use useCallback so that function can be used as dependency for useEffect
+    const fetchStatusUrls = useCallback( async (urlArray=[], refresh=false) => {
+
+        console.log(`UrlDisplay::fetchStatusUrls (${urlStatusCheckMethod}): refresh = ${refresh}, timeout = ${timeoutCheckUrl}`)
+
+        if (!urlArray || !urlArray.length) return [];
+
+        // Chrome developer tools seems to have a problem showing variables imported at the top level
+        // By assigning to a local variable, the variable value can be successfully debugged
+        const methods = UrlStatusCheckMethods
+
+        if (methods.IARI.key === urlStatusCheckMethod) {
+            return fetchUrlsIari(urlArray, refresh, timeoutCheckUrl)
+
+        } else if (methods.IABOT.key === urlStatusCheckMethod) {
+            return fetchUrlsIabot(urlArray, refresh, timeoutCheckUrl)
+
+        } else if (methods.CORENTIN.key === urlStatusCheckMethod) {
+            return fetchUrlsCorentin(urlArray, refresh, timeoutCheckUrl)
+        }
+        return [] // TODO: what to do if error or not one of handled methods?
+
+
+                    // const promises = urlArray.map(url => {
+                    //     return fetchStatusUrl(url, refresh, timeoutCheckUrl)
+                    // });
+                    //
+                    // // assumes all promises successful
+                    // // TODO: error trap this promise call with a .catch
+                    // const results = await Promise.all(promises);
+                    //
+                    // // console.log("fetchAllUrls: after Promise.all, results:" , results)
+                    // return results;
+// xxeslint-disable-next-line react-hooks/exhaustive-deps
+    }, [urlStatusCheckMethod, fetchUrlsIabot, fetchUrlsIari, fetchUrlsCorentin]);
+
+
+    // upon new urlFlock (which is every new render of component as pageData.urls),
+    // process url array upon using iterative url fetch
     // currently simply saves results directly;
     //  - could "process" each element to extract the data:{} object, but not doing that now.
     //      - if we did change to extract the object, we would have to change the filter logic
     //        in many of the filter definitions: use d.<value> rather than d.data.<value>
     //
     useEffect( () => {
+        const context = 'UrlDisplay::useEffect [urlFlock, fetchStatusUrls, options.refresh]'
+
         setIsLoadingUrls(true);
 
-        fetchAllUrls(urlFlock, options.refresh)
+        fetchStatusUrls(pageData.urls, options.refresh)
 
             .then(urlResults => {
-                console.log(`useEffect[urlFlock] fetchAllUrls.then: ${urlResults.length} results found`);
+                console.log(`${context} fetchStatusUrls.then: urlResults has ${urlResults.length} elements`);
+                // TODO check erroneous resulst here -
                 setUrlArray( urlResults );
             })
 
             .catch(error => {
-                console.error("After fetchAllUrls:", error);
-                console.error(`useEffect[urlFlock] fetchAllUrls.catch: ${error}`);
+                console.error(`${context} fetchStatusUrls.catch: ${error}`);
                 // TODO: what shall we do for error here?
                 setUrlArray([])
             })
@@ -131,12 +280,10 @@ export default function UrlDisplay ({ urlFlock, options, filterMap } ) {
             .finally(() => {
                 // turn off "Loading" icon
                 setIsLoadingUrls(false);
-            });;
+            })
 
-// eslint-disable-next-line react-hooks/exhaustive-deps
         },
-        // TODO: remove dependency (if eslint pragma removed) for fetchAllUrls bu defining with useCallback
-        [urlFlock, fetchAllUrls, options.refresh]
+        [pageData, fetchStatusUrls, options.refresh]
         )
 
 
@@ -158,22 +305,120 @@ export default function UrlDisplay ({ urlFlock, options, filterMap } ) {
     }, [urlArray, filterMap])
 
 
+    // TODO candidate for external shared function
+    // TODO allow array of Urls in targetUrl(s)
+    const getUrlRefFilter = (targetUrl) => {
+
+        if (!targetUrl || targetUrl === '') {
+            // return {
+            //     caption: `Show All`,
+            //     desc: `Show ALl Citations`,
+            //     filterFunction: () => (d) => {
+            //         return true;
+            //     },
+            // }
+            return null; // no filter means all filter
+        }
+
+        return {
+            caption: <span>Contains URL: <br/><span className={'target-url'}
+                ><a href={targetUrl} target={"_blank"} rel={"noreferrer"}>{targetUrl}</a
+                ></span></span>,
+            desc: `Citations with URL: ${targetUrl}`,
+            filterFunction: () => (d) => {
+                return d.urls.includes( targetUrl )
+            },
+        }
+    }
+
     // result is an object: { action: <action name>, value: <param value> }
-    const handleAction = (result) => {
+    const handleAction = useCallback( result => {
         const {action, value} = result;
         console.log (`UrlDisplay: handleAction: action=${action}, value=${value}`);
 
         // action is setFilter and value is filter key name
         if (action === "setFilter") {
-            const f = filterMap[value];
+            const f = value ? filterMap[value] : null
             setUrlFilter(f)
         }
+
+        // use selected url to filter references list
+        if (action === "setUrlReferenceFilter") {
+            // value is url to filter references by
+            setRefFilter(getUrlRefFilter(value))
+            setSelectedUrl(value)
+        }
+
+        // clear filter for references list
+        if (action === "removeReferenceFilter") {
+            // value is url to filter references by
+            setRefFilter(getUrlRefFilter(''))
+            setSelectedUrl(null)
+        }
+
+        // clear filter for URL list
+        if (action === "removeUrlFilter") {
+            setUrlFilter(null)
+            setSelectedUrl(null)
+        }
+
+
+        // TODO: Action for setReferenceFilter/ShowReference for filtered URLS
+    }, [filterMap])
+
+    const handleCopyClick = () => {
+        const convertToCSV = (json) => {
+            const rows = json.map((row) => {
+
+                const myRowItems = row.map( (item) => {
+                    // from: https://stackoverflow.com/questions/46637955/write-a-string-containing-commas-and-double-quotes-to-csv
+                    // We remove blanks and check if the item contains
+                    // other whitespace,`,` or `"`.
+                    // In that case, we need to quote the item.
+
+
+                    if (typeof item === 'string') {
+                        if (item.replace(/ /g, '').match(/[\s,"]/)) {
+                            return '"' + item.replace(/"/g, '""') + '"';
+                        }
+                        return item
+                    } else {
+                        return item
+                    }
+                })
+                return myRowItems.join(',');
+            });
+            return rows.join('\n');
+        };
+
+        // get one row per line:
+        const jsonData = urlArray.sort(
+            (a, b) => (a.data.url > b.data.url) ? 1 : (a.data.url < b.data.url) ? -1 : 0
+        ).map( u => {
+            return [ u.data.url, u.data.status_code ]
+        })
+        // convert to CSV and send to clipboard
+        const csvString = convertToCSV(jsonData);
+
+        navigator.clipboard.writeText(csvString)
+            .then(() => {
+                console.log('CSV data copied to clipboard');
+                alert(`CSV data copied to clipboard.`);
+            })
+            .catch((error) => {
+                console.error('Failed to copy CSV data to clipboard:', error);
+                alert(`Failed to copy CSV data to clipboard: ${error}`);
+            });
     }
+
+    const refArray = (!pageData || !pageData.dehydrated_references)
+        ? []
+        : pageData.dehydrated_references
 
     return <>
 
         <div className={"section-box url-overview-column"}>
-            <h3>URLs</h3>
+            <h3>{caption}</h3>
             <UrlOverview statistics={urlStatistics} onAction={handleAction}/>
         </div>
 
@@ -181,14 +426,17 @@ export default function UrlDisplay ({ urlFlock, options, filterMap } ) {
             ? <Loader message={"retrieving URL information..."}/>
             : <>
                 <div className={"section-box"}>
-                    <UrlFlock urlArray={urlArray} urlFilterDef={urlFilter}/>
+                    <h3 className={'status-method-display'} >Status Check Method: <span
+                        className={'embiggen'}>{urlStatusCheckMethod}</span
+                    ><button onClick={handleCopyClick} className={'utility-button'}
+                             style={{position: "relative", top: "-0.25rem"}}
+                        ><span>Copy URL data to Clipboard</span></button></h3>
+                    <UrlFlock urlArray={urlArray} urlFilterDef={urlFilter} onAction={handleAction} selectedUrl={selectedUrl}/>
                 </div>
 
                 <div className={"section-box"}>
                     <h3>References</h3>
-                    <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Under construction</h4>
-                    {/*<RefFlock refArray={refArray} refFilterDef={refFilter} />*/}
-                    <p className={"ref-note-alert"}>Filterable Reference List goes here</p>
+                    <RefFlock refArray={refArray} refFilterDef={refFilter} onAction={handleAction}/>
                 </div>
             </>
         }

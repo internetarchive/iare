@@ -46,7 +46,7 @@ const colors = {
         ]
     }
 */
-export default function UrlOverview ({ statistics, onAction } ) {
+const UrlOverview = React.memo( ({ statistics, onAction } ) => {
 
     if (!statistics) { return <div>
         <h4>Urls</h4>
@@ -147,4 +147,6 @@ export default function UrlOverview ({ statistics, onAction } ) {
         {/*        : <p>No Pie</p>}*/}
     </div>
 
-}
+})
+
+export default UrlOverview;

@@ -1,3 +1,14 @@
+:root {
+    --width-url-list: 28rem;
+    --width-url-name: 22rem;
+    --width-url-status: 3rem;
+}
+
+#my-url-tooltip {
+    font-size:1.5em;
+    font-weight:normal;
+}
+
 .url-overview-column {
     overflow: auto;
     /*flex:0 0 317px;*/
@@ -11,8 +22,9 @@
 }
 
 .url-flock {
-    margin-top: 1.7rem;
-    max-width: 23rem;
+    margin-top: 1.0rem;
+    width: var(--width-url-list);
+    max-width: var(--width-url-list);
 }
 
 .list-header {
@@ -46,11 +58,23 @@
 .url-list .url-row.url-row-error {
     background-color: darkred;
     color:white;
+    cursor: pointer;
+}
+
+.url-list .url-row:hover {
+    color:var(--color-list-fg-hover);
+    background-color: var(--color-list-bg-hover);
+}
+.url-list .url-selected {
+    color:var(--color-list-fg-selected);
+    background-color: var(--color-list-bg-selected);
 }
 
 .url-list .url-row.url-is-unknown,
 .url-list .url-row.url-is-unknown a{
-    color:dimgrey !important;
+    /*color:dimgrey !important;*/
+    color: #a5a5a5 !important;
+    /*background: #c9cbcf; !*dimgrey;*!*/
 }
 .url-list .url-row.url-is-redirect,
 .url-list .url-row.url-is-redirect a{
@@ -65,6 +89,9 @@
     color: red !important;
 }
 
+.url-list .url-row {
+    cursor: pointer;
+}
 .url-row > div {
     padding:.5rem;
 }
@@ -81,12 +108,12 @@
     overflow-wrap: break-word;
 }
 
-/*.url-list .url-header-row .url-status {*/
-/*    cursor: pointer;*/
-/*    width:100%;*/
-/*    text-align: center;*/
-/*    color:#0000EE;*/
-/*}*/
+.url-header-row .url-status {
+    cursor: pointer;
+    /*width:100%;*/
+    /*text-align: center;*/
+    /*color:#0000EE;*/
+}
 
 
 .url-filters {
@@ -116,3 +143,9 @@
     padding-left:1em;
 }
 
+.status-method-display {
+    color:#808080 !important;
+}
+.status-method-display .embiggen{
+    font-size:120%;
+}

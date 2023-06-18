@@ -52,22 +52,14 @@ export default function UrlFlockPdf({ urlArray, urlFilterDef, originFilterDef, i
     const onClickHeader = (evt) => {
     }
 
-    // const onHover = (evt) => {
-    //     // console.log("FldFlock: onHover")
-    // }
-
     const onHoverHeader = (evt) => {
         // console.log("FldFlock: onHoverHeader")
         // toggle show of Show All button
     }
 
-    // const onClickShowAll = (evt) => {
-    // }
-
-
     let urls = [];
 
-    if (!urlArray) {
+    if (!urlArray || !urlArray.length) { // urlArray is not a valid array
         urls = <p>URL array is invalid.</p>;
     }
 
@@ -98,9 +90,16 @@ export default function UrlFlockPdf({ urlArray, urlFilterDef, originFilterDef, i
 
         // iterate over array of url objects to create rendered output
 
-        const label = `${filteredUrls.length} URLs: `
-            + `${urlFilterDef ? urlFilterDef.caption : "No Filter"}`
-            + `; ${originFilterDef ? originFilterDef.caption : ''}`;
+        const label = <div>{filteredUrls.length} URLs: {urlFilterDef ? urlFilterDef.caption : "No Status Filter"}
+            <br />{originFilterDef ? originFilterDef.caption : ''}
+        </div>
+
+        function displayUrl(url, errorCode, errorText) {
+            if (errorCode === -1) {
+                return <div className={"url-name"}>{url}<br />Error: {errorText}</div>
+            }
+            return <div className={"url-name"}><a href={url} target={"_blank"} rel={"noreferrer"} >{url}</a></div>
+        }
 
         urls = <>
             <h4 className={'list-header'}>{label}</h4>
@@ -109,7 +108,7 @@ export default function UrlFlockPdf({ urlArray, urlFilterDef, originFilterDef, i
                 <div className={"url-row url-header-row"}>
                     <div className={"url-name"}>URL</div>
                     <div className={"url-source"} onClick={() => { setSortOriginDir(!sortOriginDir);}
-                    }>source</div>
+                    }>origin</div>
                     <div className={"url-status"} onClick={() => { setSortDir(!sortDir);}
                     }>status</div>
                 </div>
@@ -126,18 +125,21 @@ export default function UrlFlockPdf({ urlArray, urlFilterDef, originFilterDef, i
                         return <div className={`url-row url-row-error`} key={i}>
                             <div className={"url-name"}>{u.data.url ? u.data.url : `ERROR: No url for index ${i}`}</div>
                             <div className={"url-source"}>{'error'}</div>
-                            <div className={"url-status"}>{-1}</div>
+                            <div className={"url-status"}>{-111}</div>
                         </div>;
 
                     // else show with styling for url status type
-                    const rowClass = `url-row ${u.data.status_code === 0
+                    const rowClass = `url-row ${u.data.status_code <= 0 
                         ? "url-is-unknown" : ""} ${u.data.status_code >= 300 && u.data.status_code < 400
                         ? "url-is-redirect" : ""} ${u.data.status_code >= 400 && u.data.status_code < 500
                         ? "url-is-notfound" : ""} ${u.data.status_code >= 500 && u.data.status_code < 600
                         ? "url-is-error" : ""}`
 
+                    const url = u.data.url
                     return <div className={rowClass} key={i}>
-                        <div className={"url-name"}><a href={u.data.url} target={"_blank"} rel={"noreferrer"} key={i}>{u.data.url}</a></div>
+                        {displayUrl(url, u.data.error_code, u.data.error_text)}
+                        {/*<div className={"url-name"}><a href={url} target={"_blank"} rel={"noreferrer"} >{url}</a></div>*/}
+                        {/*<div className={"url-name"}><a href={u.data.url} target={"_blank"} rel={"noreferrer"} key={i}>{u.data.url}</a></div>*/}
                         <div className={"url-source"}>{u.data.tags.join(', ')}</div>
                         <div className={"url-status"}>{u.data.status_code}</div>
                     </div>
