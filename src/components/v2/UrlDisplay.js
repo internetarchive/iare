@@ -363,6 +363,7 @@ export default function UrlDisplay ({ pageData, options, caption = "URLs", filte
         // TODO: Action for setReferenceFilter/ShowReference for filtered URLS
     }, [filterMap])
 
+    // eslint-disable-next-line no-unused-vars
     const handleCopyClick = () => {
         const convertToCSV = (json) => {
             const rows = json.map((row) => {
@@ -412,6 +413,15 @@ export default function UrlDisplay ({ pageData, options, caption = "URLs", filte
         ? []
         : pageData.dehydrated_references
 
+    // const urlListCaption = <h3 className={'status-method-display'} >Status Check Method: <span
+    //     className={'embiggen'}>{urlStatusCheckMethod}</span
+    // ><button onClick={handleCopyClick} className={'utility-button'}
+    //          style={{position: "relative", top: "-0.25rem"}}
+    // ><span>Copy URL data to Clipboard</span></button></h3>
+
+    const urlListCaption = <h3>URL List</h3>
+    const extraCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click URL below to filter References List</h4>
+
     return <>
 
         <div className={"section-box url-overview-column"}>
@@ -423,16 +433,13 @@ export default function UrlDisplay ({ pageData, options, caption = "URLs", filte
             ? <Loader message={"Retrieving URL status codes..."}/>
             : <>
                 <div className={"section-box"}>
-                    <h3 className={'status-method-display'} >Status Check Method: <span
-                        className={'embiggen'}>{urlStatusCheckMethod}</span
-                    ><button onClick={handleCopyClick} className={'utility-button'}
-                             style={{position: "relative", top: "-0.25rem"}}
-                        ><span>Copy URL data to Clipboard</span></button></h3>
-                    <UrlFlock urlArray={urlArray} urlFilterDef={urlFilter} onAction={handleAction} selectedUrl={selectedUrl}/>
+                    {urlListCaption}
+                    <UrlFlock urlArray={urlArray} urlFilterDef={urlFilter}
+                              onAction={handleAction} selectedUrl={selectedUrl} extraCaption={extraCaption}/>
                 </div>
 
                 <div className={"section-box"}>
-                    <h3>References</h3>
+                    <h3>References List</h3>
                     <RefFlock refArray={refArray} refFilterDef={refFilter} onAction={handleAction}/>
                 </div>
             </>

@@ -33,7 +33,7 @@ example:
 useSort and sort: apply sorting if set to true, use ASC if sortDir is true, DESC otherwise
 
 */
-export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, selectedUrl = '' }) {
+export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, selectedUrl = '', extraCaption = null }) {
 
     const [urlTooltipText, setUrlTooltipText] = useState( '' );
 
@@ -117,10 +117,10 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
             : null
 
         caption = <>
-            <h4>Filter: {urlFilterDef ? urlFilterDef.caption : 'Show All'}</h4>
+            <h4>Applied Filter: {urlFilterDef ? urlFilterDef.caption : 'Show All'}</h4>
             <h4 style={{marginTop:".5rem"}}>{filteredUrls.length} {filteredUrls.length === 1
                 ? 'URL' : 'URLs'}{buttonRemove}</h4>
-            <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click URL to see associated references</h4>
+            {extraCaption}
         </>
 
         // iterate over array of url objects to create rendered output

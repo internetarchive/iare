@@ -113,7 +113,7 @@ function RefFlock({ refArray, refFilterDef, onAction } ) {
             : null
 
         caption = <>
-            <h4>Filter: {refFilterDef ? refFilterDef.caption : 'Show All'}</h4>
+            <h4>Applied Filter: {refFilterDef ? refFilterDef.caption : 'Show All'}</h4>
             <h4>{filteredRefs.length} {filteredRefs.length === 1
                 ? 'Reference' : 'References'}{buttonRemove}</h4>
         </>

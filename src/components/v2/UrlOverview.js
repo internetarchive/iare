@@ -134,9 +134,11 @@ const UrlOverview = React.memo( ({ statistics, onAction } ) => {
                 // const total = statistics.urlCounts && statistics.urlCounts // check validity
                 //     ? statistics.urlCounts.filter(s => s.link === "all")[0].count
                 //     : ""
+    const extraCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click to filter URL List</h4>
 
     return <div className={"url-overview"}>
-        <h4>Grouped by Status Code</h4>
+        {/*<h4>Filter by Status Code</h4>*/}
+        {extraCaption}
         <div className={"url-chart-display"}>
             {chartData.datasets[0].data.length > 0 ?
                 <PieChart chartData={chartData} options={options} onClick={myClickChart} />

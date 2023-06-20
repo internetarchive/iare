@@ -33,7 +33,7 @@ export const URL_FILTER_MAP = {
         },
     },
     statusUnknown: {
-        caption: "Unknown Status (timeout)",
+        caption: "Unknown Status",
         desc: "'",
         filterFunction: () => (d) => {
             return !d.data.status_code;
