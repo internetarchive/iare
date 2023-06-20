@@ -200,3 +200,17 @@ export const convertToBareUrls = (urlArray=[], sourceMethod = UrlStatusCheckMeth
     return urlArray.map( uData => uData.data )
 
 }
+
+
+export const copyToClipboard = (copyText, label="Data") => {
+
+    navigator.clipboard.writeText(copyText)
+        .then(() => {
+            console.log(`${label} copied to clipboard.`);
+            alert(`${label} copied to clipboard.`);
+        })
+        .catch((error) => {
+            console.error(`Failed to copy ${label} to clipboard.`, error);
+            alert(`Failed to copy ${label} to clipboard: ${error}`);
+        });
+}

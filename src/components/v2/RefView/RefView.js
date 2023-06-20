@@ -5,6 +5,7 @@ import RefTemplates from "./RefTemplates";
 import RefActions from "./RefActions";
 import RefStats from "./RefStats";
 import RefUrls from "./RefUrls";
+import {copyToClipboard} from "../../../utils/utils";
 
 /*
 idea details:
@@ -60,7 +61,9 @@ function RefViewFooter({ details }) {
 
     return <div className="row ref-view-footer">
         <div className="col-8">
-            <h4>wikitext:</h4>
+            <h4>wikitext:<span><button onClick={() => {copyToClipboard(rawText, 'wikitext')} } className={'utility-button'}
+                     style={{position: "relative", top: "0"}}
+        ><span>Copy to clipboard</span></button></span></h4>
             <p className={"raw-wikitext"}>{rawText}</p>
         </div>
         <div className="col-4">
