@@ -9,7 +9,22 @@
     --color-button-bg: #81c8e7;
     --color-button-bg-hover: white;
 
-    /*--height-list: 25rem;*/
+    --color-h3: #666666;
+    --color-h4: #808080;
+
+    /* status codes colors */
+    --color-http-unknown: #000000;
+    --color-http-unknown-bg: #c9cbcf;
+    --color-http-success: #ffffff;
+    --color-http-success-bg: #20cc1e; /*#4bc0c0; teal*/
+    --color-http-redirect: #000000;
+    --color-http-redirect-bg: #ffcd57;
+    --color-http-notfound: #ffffff;
+    --color-http-notfound-bg: #ff6384;
+    --color-http-error: #FFFFFF;
+    --color-http-error-bg: #f763ff;
+
+    /* heights of lists - NB: should be dynamic */
     --height-list: 68vh;
     --height-list-pdf: 70vh;
     --border-list:1px solid black;
@@ -162,10 +177,10 @@ table.single-detail tr td:not(:first-child) {
     flex-direction: column;
 }
 .iare-view h3 {
-    color:#666666;
+    color:var(--color-h3);
 }
 .iare-view h4 {
-    color:#808080;
+    color:var(--color-h4);
 }
 
 

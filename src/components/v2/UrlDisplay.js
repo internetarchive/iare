@@ -1,4 +1,3 @@
-// import React, {useCallback, useEffect, useState, useContext} from 'react';
 import React, {useCallback, useEffect, useState} from 'react';
 import UrlFlock from "./UrlFlock";
 import UrlOverview from "./UrlOverview";
@@ -8,7 +7,6 @@ import {UrlStatusCheckContext} from "../../contexts/UrlStatusCheckContext"
 import Loader from "../Loader";
 import '../shared/urls.css';
 import RefFlock from "./RefFlock";
-// import RefFlock from "../v2/RefFlock";
 
 
 export default function UrlDisplay ({ pageData, options, caption = "URLs", filterMap } ) {
@@ -142,7 +140,6 @@ export default function UrlDisplay ({ pageData, options, caption = "URLs", filte
                         {url: 'https://www.archive.org', http_status_code: 200, http_status_message: '200 OK'}
                         {url: 'https://www.gXoXoXgXlXe.com', http_status_code: -1, http_status_message: 'max retries reached'}
                          */
-                        console.log(data)
 
                         const myUrls = data.map( entry => {
                             const results = {
@@ -267,7 +264,7 @@ export default function UrlDisplay ({ pageData, options, caption = "URLs", filte
 
             .then(urlResults => {
                 console.log(`${context} fetchStatusUrls.then: urlResults has ${urlResults.length} elements`);
-                // TODO check erroneous resulst here -
+                // TODO check erroneous results here -
                 setUrlArray( urlResults );
             })
 
@@ -423,7 +420,7 @@ export default function UrlDisplay ({ pageData, options, caption = "URLs", filte
         </div>
 
         {isLoadingUrls
-            ? <Loader message={"retrieving URL information..."}/>
+            ? <Loader message={"Retrieving URL status codes..."}/>
             : <>
                 <div className={"section-box"}>
                     <h3 className={'status-method-display'} >Status Check Method: <span

@@ -453,7 +453,7 @@ export default function UrlDisplayPdf({flocks = [], options={}, caption = "URLs"
         </div>
 
         {isLoadingUrls
-            ? <Loader message={"retrieving URL information..."}/>
+            ? <Loader message={"Retrieving URL status codes..."}/>
             : <>
                 <div className={"section-box"}>
                     <h3 className={'status-method-display'} >Status Check Method: <span
