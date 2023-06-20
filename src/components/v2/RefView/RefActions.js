@@ -1,7 +1,7 @@
 import React from "react";
 // import ai_img from '../../../images/ai_this.v2r1.redblack.png';
 
-export default function RefActions(props) {
+export default function RefActions( {onAction}) {
     return <div className="row ref-view-actions">
         <div className={"col-12"}><h3>Actions</h3>
 
