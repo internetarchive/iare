@@ -22,7 +22,7 @@ export default function RefDisplay ({ pageData, options } ) {
 
         const {action, value, context} = result;
 
-        if (action === "setFilter") {
+        if (action === "setRefFilter") {
             // value is filter key name, and context is which filter set to engage
             const f = context === "set-0" // TODO: this is stupidly hard coded for now
                 ? REF_FILTER_TYPES[value]
@@ -34,6 +34,12 @@ export default function RefDisplay ({ pageData, options } ) {
 
             // refFilter activates filter in References flock
             setRefFilter(f)
+        }
+
+        // clear filter for references list
+        if (action === "removeReferenceFilter") {
+            setRefFilter(null)
+            setSelectedFilter(null)
         }
     }
 
@@ -63,7 +69,7 @@ export default function RefDisplay ({ pageData, options } ) {
 
         <div className={"section-box"}>
             <h3>Filtered References</h3>
-            <RefFlock refArray={refArray} refFilterDef={refFilter} />
+            <RefFlock refArray={refArray} refFilterDef={refFilter} onAction={handleAction} />
         </div>
 
     </>

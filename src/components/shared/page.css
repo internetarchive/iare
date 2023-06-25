@@ -18,8 +18,6 @@
  - see UrlDisplay and RefDisplay e.g.
  */
 .section-box {
-    /*padding:1rem;*/
-    /*border:1px solid black;*/
     margin-left: 1rem;
 }
 .section-box:first-child {

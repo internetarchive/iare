@@ -67,6 +67,8 @@ const getCursorBoxForElement = (elementIndex, chart) => {
 const getIndexFromLinkContext = (selectedElement, chart) => {
     let foundIndex = -1;
 
+    if (!selectedElement || !selectedElement.length) return foundIndex;
+
     // loop thru data; return when link and context match
     const links = chart.config._config.data.datasets[0].links;
     const contexts = chart.config._config.data.datasets[0].contexts;

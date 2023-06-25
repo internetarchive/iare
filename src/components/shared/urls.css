@@ -2,6 +2,8 @@
     --width-url-list: 28rem;
     --width-url-name: 22rem;
     --width-url-status: 3rem;
+
+    --width-col-url-overview: 327px;
 }
 
 #my-url-tooltip {
@@ -11,6 +13,8 @@
 
 .url-overview-column {
     overflow: auto;
+    width: 327px;
+    min-width: 327px;
     /*flex:0 0 317px;*/
 }
 .url-overview > h4 {
