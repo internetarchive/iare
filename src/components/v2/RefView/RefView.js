@@ -1,4 +1,4 @@
-import React, {useCallback} from "react";
+import React, {useCallback, useEffect} from "react";
 import MakeLink from "../../MakeLink";
 import "./refView.css"
 import RefTemplates from "./RefTemplates";
@@ -75,6 +75,19 @@ function RefViewFooter({ details }) {
 
 export default function RefView({ open, onClose, details }) {
 
+    // add "Escape Key closes modal" feature
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.key === 'Escape') {
+                onClose()
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [onClose]);
+
     const handleRefViewAction = useCallback( (result={}) => {
             const {action, value} = result;
 
@@ -87,18 +100,20 @@ export default function RefView({ open, onClose, details }) {
             }
         }, [])
 
-
     // close modal if not in open state
     if (!open || !details) return null;
 
 
-    return <div className='ref-modal-overlay' onClick={onClose}>
+    return <div className='ref-modal-overlay'
+                onClick={onClose}
+    >
 
-        <div onClick={(e) => {e.stopPropagation()}}
+    <div className={"ref-modal-container ref-view"}
+             onClick={(e) => {e.stopPropagation()}}
              onMouseMove={(e) => {e.stopPropagation()}}
              onScroll={(e) => {e.stopPropagation()}}
              onScrollCapture={(e) => {e.stopPropagation()}}
-             className={"ref-modal-container ref-view"}>
+        >
 
             <div>
 

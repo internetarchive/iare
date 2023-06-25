@@ -22,7 +22,6 @@
 }
 
 .url-flock {
-    margin-top: 1.0rem;
     width: var(--width-url-list);
     max-width: var(--width-url-list);
 }
