@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Tooltip as MyTooltip } from 'react-tooltip'
 import BarChart from "../BarChart";
+import {getColorFromIndex} from "../../utils/utils.js"
 // we may want to include filter buttons as well...
 // import FilterButtons from "../FilterButtons";
 // import FilterButton from "../FilterButton";
@@ -34,24 +35,7 @@ const colors = { "purple" : [152, 102, 255], "blue" : [53, 162, 235], "midnite" 
 const barsColorBegin = colors.blue;
 const barsColorEnd = colors.blue;
 
-// returns hexadecimal color for interpolated gradient between start and end colors
-//
-// startColor and endColor are rgb triplet integer arrays: [ <r>, <g>, <b> ]
-const getColorFromIndex = (index, startColor, endColor, steps) => {
-    function rgbToHex(r, g, b) {
-        const hexR = r.toString(16).padStart(2, "0"); // Convert to hex and pad with 0 if needed
-        const hexG = g.toString(16).padStart(2, "0");
-        const hexB = b.toString(16).padStart(2, "0");
-        return `#${hexR}${hexG}${hexB}`; // Return the hexadecimal color string
-    }
-    if (steps < 1) {
-        return rgbToHex(endColor[0],endColor[1],endColor[2]);
-    }
-    const r = Math.floor(startColor[0] + (index * (endColor[0] - startColor[0]) / (steps -1)));
-    const g = Math.floor(startColor[1] + (index * (endColor[1] - startColor[1]) / (steps -1)));
-    const b = Math.floor(startColor[2] + (index * (endColor[2] - startColor[2]) / (steps -1)));
-    return rgbToHex(r,g,b);
-}
+
 
 // summary is assumed to have a filterSets property, which is an array of {set,filterMap} objects:
 //
@@ -263,7 +247,8 @@ export default function RefOverview ({ refArray, summary, onAction, selectedFilt
 
         };
 
-        // setting selectedElement will hilite associated References Filter
+        // set selectedElement property of showSelectedElement plugin
+        // to force hilite of selected References filter
         chartOptions.plugins.showSelectedElement = {
             selectedElement: selectedFilter
         }
