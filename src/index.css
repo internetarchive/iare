@@ -37,17 +37,6 @@ body {
     margin: 15px 20px 20px;
 }
 
-/* environment-tag is for non-production indication */
-div.environment-tag {
-    display:none;
-    position:absolute;
-    font-size:1.1rem;
-    top:6px; /*8px;*/
-    color: #b2b2b2;
-    white-space: nowrap;
-    z-index: 1;
-}
-
 .iare-view .header h1 {
     position:relative;
     z-index: 10;

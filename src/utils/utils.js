@@ -159,8 +159,6 @@ const fetchUrlsCorentin = async (urlArray, refresh, timeout) => {
 }
 
 
-// we use useCallback so that function can be used as dependency for useEffect
-// export const fetchStatusUrls = useCallback( async (urlArray=[], refresh=false) => {
 export const fetchStatusUrls = async (urlArray=[], refresh=false, timeout=10, method = UrlStatusCheckMethods.IABOT.key) => {
 
     console.log(`utils::fetchStatusUrls (${method}): refresh = ${refresh}, timeout = ${timeout}`)
