@@ -159,7 +159,12 @@ const fetchUrlsCorentin = async (urlArray, refresh, timeout) => {
 }
 
 
-export const fetchStatusUrls = async (urlArray=[], refresh=false, timeout=10, method = UrlStatusCheckMethods.IABOT.key) => {
+export const fetchStatusUrls = async ({
+            urlArray=[],
+            refresh=false,
+            timeout=10,
+            method = UrlStatusCheckMethods.IABOT.key
+        } = {}) => {
 
     console.log(`utils::fetchStatusUrls (${method}): refresh = ${refresh}, timeout = ${timeout}`)
 

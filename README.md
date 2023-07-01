@@ -62,13 +62,56 @@ Open the application in a web browser at http://localhost:3000
 
 ### React Component Architecture
 
-TBD
+When page data is received from the fetch, it is rendered with the src/PageDisplay component, eventually resolving to the src/v2/PageDisplayV2 component for typical wiki pages.
 
+The PageDisplayV2 contains the PageInfo component, to display some top-level information about the page retrieval, and the PageData component, which does the actual work of displaying the retrieved page data.
+
+```
+<PageDisplayV2>
+    <PageInfo pageData={pageData} />
+    <PageData pageData={pageData} />
+```
+Within the PageData component, the data is massaged and decorated with anything that is needed for further rendering. Actions include:
+- fetching the status code of all the URLs
+- transforming the references so that they can be filtered and displayed in a more comfortable manner.
+
+The PageData component:
+```
+<Loader/> // displays while data is being fetched
+
+One of the following views is displayed, showing the information in different ways:
+
+    <FldDisplay pageData={pageData} />
+    <UrlDisplay pageData={pageData} <options> />
+    <RefDisplay pageData={pageData} <options> />
+```
+
+For UrlDisplay:
+```
+<UrlDisplay>
+    <UrlOverview>
+    <UrlFlock>
+    <RefFlock>
+```
+For FldDisplay
+_(Fld is the legacy moniker for "First Level Domain". It just means the Domains view)_:
+```
+<FldDisplay>
+    <FldFlock>
+    <RefFlock>
+```
+For RefDisplay:
+```
+<RefDisplay>
+    <RefOverview>
+    <RefFlock>
+```
+You will notice that each display type includes the RefFlock component. This is because each view is essentially a grandiose filter for the list of references. The RefFlock component can display a list of references, and receive a filter definition "from the outside".
 ### Filter / Flock Architecture
 
 TBD
 
-## BUgs and Features
+## Bugs and Features
 
 
 ### GitHub Issues

@@ -4,37 +4,21 @@ import RefView from "./RefView/RefView";
 
 function getLinkText(ref) {
 
-    let text = "";
+    return <>
+        {ref.reference_count && ref.reference_count > 1 ?
+            <span className={'ref-line multi-ref'}>reference count: {ref.reference_count}</span> : null}
+        {ref.name ? <span className={'ref-line'}>Reference Name: <span style={{fontWeight: "bold"}}>{ref.name}</span></span> : null }
+        {ref.template_names && ref.template_names.length
+            ? ref.template_names.map( tn => {
+                return <span className={'ref-line'}>Template: <span style={{fontWeight: "bold"}}>{tn}</span></span>
+            }) : null}
+        {ref.titles
+            ? ref.titles.map( t => {
+                return <span className={'ref-line'} style={{fontWeight: "bold"}}>{t}</span>
+            }) : null }
+        <span className={'ref-line'}>ref id: {ref.id}</span>
+    </>
 
-    if (ref.name) {
-        text += '[' + ref.name + '] ';
-    }
-
-
-    if (ref.template_names && ref.template_names.length > 0) {
-        ref.template_names.map((tn, i) => {
-            // <span style={{fontWeight: "bold"}}>{tn}</span>
-            text += tn + "\n";
-            return null;
-        })
-    } else {
-        // wikitext does not come with dehydrated_references
-        // text += ref.wikitext + "\n";
-        //
-        // should have (in the future):
-        // text += ref.name
-    }
-
-    if (ref.titles) {
-        ref.titles.map((t,i) => {
-            text += t + "\n";
-            return null;
-        })
-    }
-
-    if (!text) text += "ref id: " + ref.id;
-
-    return <p>{text}</p>
 }
 
 function RefFlock({ refArray, refFilterDef, onAction } ) {

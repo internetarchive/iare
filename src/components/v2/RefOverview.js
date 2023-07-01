@@ -187,11 +187,11 @@ export default function RefOverview ({ refArray, summary, onAction, selectedFilt
 
                 },
 
-                xAxis: [{
-                    stacked:false,
-                    display: true,
-                    type:'logarithmic',
-                }],
+                // xAxis: [{
+                //     stacked:false,
+                //     display: true,
+                //     type:'logarithmic',
+                // }],
             },
 
             offset: true,

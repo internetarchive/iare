@@ -34,6 +34,9 @@
     /*width: 22rem;*/
 }
 
+.ref-button > .multi-ref {
+    background-color: #0b5ed7;
+}
 
 
 .ref-flock {

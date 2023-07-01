@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import package_json from "../package.json";
 import {IARI_V2_URL_BASE, UrlStatusCheckMethods} from "./constants/endpoints";
 import PathNameFetch from "./components/PathNameFetch";
@@ -295,7 +295,7 @@ export default function App( {env, myPath, myRefresh, myMethod} ) {
 
 
     console.log(`rendering App component ${targetPath} ${refreshCheck} ${statusMethod}`)
-    // render component
+
     return <>
 
         <UrlStatusCheckContext.Provider value={statusMethod}>

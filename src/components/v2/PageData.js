@@ -1,10 +1,12 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import UrlDisplay from "./UrlDisplay";
 import RefDisplay from "./RefDisplay";
 import FldDisplay from "./FldDisplay";
 import {URL_FILTER_MAP} from "./filters/urlFilterMaps";
 import Loader from "../Loader";
 import {fetchStatusUrls} from "../../utils/utils.js"
+// import {UrlStatusCheckMethods} from "../../constants/endpoints.js";
+import {UrlStatusCheckContext} from "../../contexts/UrlStatusCheckContext"
 
 /*
 When this component is rendered, it must "process" the pageData. This involves:
@@ -48,50 +50,89 @@ export default function PageData({pageData = {}}) {
     const [selectedViewType, setSelectedViewType] = useState('urls');
     const [isLoadingUrls, setIsLoadingUrls] = useState(false);
 
-    const [urlArray, setUrlArray] = useState([]);
+    const [dataReady, setDataReady] = useState(false);
+    // const [urlArray, setUrlArray] = useState([]);
+
+
+    const urlStatusCheckMethod = React.useContext(UrlStatusCheckContext);
+
+
+    const processReferences = useCallback( (pageData) => {
+        const namedRefs = {}
+
+        // loop thru refs
+        // if named, make an entry in named_refs or increment already entry
+        // if named with no content, pull that reference info, and add it to named_ref entry
+        //      - its like an array of linky dinks to where ref is in article
+
+        const newRefs = []
+        const refs = (!pageData || !pageData.dehydrated_references) ? [] : pageData.dehydrated_references
+        refs.forEach(ref => {
+            // if ref is named ref
+            if (ref.name) {
+                if (!namedRefs[ref.name]) namedRefs[ref.name] = { count : 0 }
+                namedRefs[ref.name].count++
+                // if ref is origin (footnote subtype - content), save it
+                if (ref.type ==='footnote' && ref.footnote_subtype === 'content') {
+                    namedRefs[ref.name].origin = ref
+                }
+            }
+
+            // only carry over refs trhat are real content refs and not "reference references", i.e. named
+            // references that point to an anchoir ref
+            if (!(ref.type === 'footnote' && ref.footnote_subtype === 'named')) {
+                // init refcount to 1 for all refs; will replace ref counts in next loop
+                ref.reference_count = 1
+                newRefs.push( ref )
+            }
+        })
+
+        // resolve named refs to their anchor refs
+        Object.keys(namedRefs).forEach( refName => {
+            const nr = namedRefs[refName]
+            nr.origin.reference_count = nr.count
+            // lets see if that works!
+        })
+
+        // and append to pageData
+        pageData.references = newRefs
+
+    }, [])
 
     useEffect( () => {
-            const context = 'PageData::useEffect [pageData]'
+        const context = 'PageData::useEffect [pageData]'
 
-            setIsLoadingUrls(true);
+        setIsLoadingUrls(true);
 
-            fetchStatusUrls(pageData.urls)
+        fetchStatusUrls( {
+                urlArray: pageData.urls,
+                refresh: pageData.forceRefresh,
+                timeout: 60,
+                method: urlStatusCheckMethod
+            })
 
-                .then(urlResults => {
-                    console.log(`${context} fetchStatusUrls.then: urlResults has ${urlResults.length} elements`);
-                    // TODO check erroneous results here -
-                    setUrlArray( urlResults );
-                })
+            .then(urlResults => {
+                console.log(`${context} fetchStatusUrls.then: urlResults has ${urlResults.length} elements`);
+                // TODO check erroneous results here -
+                pageData.urlArray = urlResults
+                processReferences(pageData)
+                setDataReady(true);
+            })
 
-                .catch(error => {
-                    console.error(`${context} fetchStatusUrls.catch: ${error}`);
-                    // TODO: what shall we do for error here?
-                    setUrlArray([])
-                })
+            .catch(error => {
+                console.error(`${context} fetchStatusUrls.catch: ${error}`);
+                // TODO: what shall we do for error here?
+                //setUrlArray([])
+            })
 
-                .finally(() => {
-                    // turn off "Loading" icon
-                    setIsLoadingUrls(false);
-                })
+            .finally(() => {
+                // turn off "Loading" icon
+                setIsLoadingUrls(false);
+            })
 
-        },
-        [pageData, fetchStatusUrls]
+        }, [pageData, processReferences, urlStatusCheckMethod]
+
     )
-
-
-    // when urlArray is modified, use it to process references
-    useEffect( () => {
-
-        console.log("PageData: useEffect[urlArray]: process refs based on url statuses")
-
-        // set pageData.urlArray
-        pageData.urlArray = urlArray
-
-        // process references into unique entries array
-        pageData.references = []
-
-    }, [urlArray])
-
 
     const handleViewTypeChange = (event) => {
         setSelectedViewType(event.target.value);
@@ -129,29 +170,31 @@ export default function PageData({pageData = {}}) {
     return <>
 
         {isLoadingUrls ? <Loader message={"Retrieving URL status codes..."}/>
-            : <div className={"page-data"}>
+            : (dataReady ? <div className={"page-data"}>
 
-                <div className={"ref-filter-types"}>
-                    <div>View References by</div>
-                    {viewOptions}
-                </div>
+                        <div className={"ref-filter-types"}>
+                            <div>View References by</div>
+                            {viewOptions}
+                        </div>
 
-                <div className={`display-content`}>
-                    {selectedViewType === 'domains' &&
-                        <FldDisplay pageData = {pageData} />
-                    }
+                        <div className={`display-content`}>
+                            {selectedViewType === 'domains' &&
+                                <FldDisplay pageData={pageData}/>
+                            }
 
-                    {selectedViewType === 'urls' &&
-                        <UrlDisplay pageData={pageData} options={{refresh: pageData.forceRefresh}}
-                                    caption="URL Filters" filterMap={URL_FILTER_MAP} />
-                    }
+                            {selectedViewType === 'urls' &&
+                                <UrlDisplay pageData={pageData} options={{refresh: pageData.forceRefresh}}
+                                            caption="URL Filters" filterMap={URL_FILTER_MAP}/>
+                            }
 
-                    {selectedViewType === 'stats' &&
-                        <RefDisplay pageData={pageData} options={{}} />
-                    }
-                </div>
+                            {selectedViewType === 'stats' &&
+                                <RefDisplay pageData={pageData} options={{}}/>
+                            }
+                        </div>
 
-            </div>
+                    </div>
+                    : <p>Data Not Ready</p>
+            )
         }
     </>
 }

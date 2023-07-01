@@ -71,7 +71,12 @@ export default function RefUrls({ urls }) {
         // const method = UrlStatusCheckMethods.CORENTIN.key;
         // const method = UrlStatusCheckMethods.IARI.key;
 
-        return await fetchStatusUrls(myUrls, refresh, timeout, method)
+        return await fetchStatusUrls({
+            urlArray: myUrls,
+            refresh: refresh,
+            timeout: timeout,
+            method: method
+        })
 
     }
 
