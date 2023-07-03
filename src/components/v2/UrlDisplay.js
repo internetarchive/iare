@@ -158,7 +158,8 @@ export default function UrlDisplay ({ pageData, options, caption = "URLs", filte
     const refArray = (pageData.references)
 
     const urlListCaption = <h3>URL List</h3>
-    const extraCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click URL below to filter References List</h4>
+    const extraUrlCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click a URL to show References using that URL</h4>
+    const extraRefCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click a Reference to view reference details</h4>
 
     return <>
 
@@ -170,12 +171,12 @@ export default function UrlDisplay ({ pageData, options, caption = "URLs", filte
         <div className={"section-box"}>
             {urlListCaption}
             <UrlFlock urlArray={pageData.urlArray} urlFilterDef={urlFilter}
-                      onAction={handleAction} selectedUrl={selectedUrl} extraCaption={extraCaption}/>
+                      onAction={handleAction} selectedUrl={selectedUrl} extraCaption={extraUrlCaption}/>
         </div>
 
         <div className={"section-box"}>
             <h3>References List</h3>
-            <RefFlock refArray={refArray} refFilterDef={refFilter} onAction={handleAction}/>
+            <RefFlock refArray={refArray} refFilterDef={refFilter} onAction={handleAction} extraCaption={extraRefCaption} />
         </div>
 
       </>

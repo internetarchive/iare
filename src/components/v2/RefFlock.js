@@ -4,24 +4,46 @@ import RefView from "./RefView/RefView";
 
 function getLinkText(ref) {
 
-    return <>
-        {ref.reference_count && ref.reference_count > 1 ?
-            <span className={'ref-line multi-ref'}>reference count: {ref.reference_count}</span> : null}
-        {ref.name ? <span className={'ref-line'}>Reference Name: <span style={{fontWeight: "bold"}}>{ref.name}</span></span> : null }
-        {ref.template_names && ref.template_names.length
-            ? ref.template_names.map( tn => {
-                return <span className={'ref-line'}>Template: <span style={{fontWeight: "bold"}}>{tn}</span></span>
-            }) : null}
+    let hasContent = false;
+
+    const text = <>
         {ref.titles
             ? ref.titles.map( t => {
-                return <span className={'ref-line'} style={{fontWeight: "bold"}}>{t}</span>
+                hasContent = true
+                return <span className={'ref-line ref-title'} style={{fontWeight: "bold"}}>{t}{hasContent = true}</span>
             }) : null }
-        <span className={'ref-line'}>ref id: {ref.id}</span>
+
+        {ref.name
+            ? <>
+                {hasContent = true}
+                <span className={'ref-line ref-name'}>Reference Name: <span style={{fontWeight: "bold"}}>{ref.name}</span></span>
+              </>
+            : null }
+
+        {ref.template_names && ref.template_names.length
+            ? <>
+                {hasContent = true}
+                {ref.template_names.map( tn => {
+                return <span className={'ref-line ref-template'}>Template: <span style={{fontWeight: "bold"}}>{tn}</span></span>
+            })}
+                </>
+            : null}
+
+        {ref.reference_count && ref.reference_count > 1
+            ? <>
+                {hasContent = true}
+                <span className={'ref-line ref-count'}>Reference used {ref.reference_count} times</span>
+            </>
+            : null}
+    </>
+
+    return <>
+        {hasContent ? text : <span>ref id: {ref.id}</span>}
     </>
 
 }
 
-function RefFlock({ refArray, refFilterDef, onAction } ) {
+function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
 
     const [refDetails, setRefDetails] = useState(null);
     // const [isLoading, setIsLoading] = useState(false);
@@ -100,9 +122,17 @@ function RefFlock({ refArray, refFilterDef, onAction } ) {
             <h4>Applied Filter: {refFilterDef ? refFilterDef.caption : 'Show All'}</h4>
             <h4>{filteredRefs.length} {filteredRefs.length === 1
                 ? 'Reference' : 'References'}{buttonRemove}</h4>
+            {extraCaption}
         </>
 
+        const listHeader = <div className={"ref-list-header"} >
+            <div className={"list-header-row"}>
+                <div className={"list-name"}>Reference</div>
+            </div>
+        </div>
+
         refs = <>
+            {listHeader}
             <div className={"ref-list"}>
                 {filteredRefs.map((ref, i) => {
                     return <button key={i}
@@ -113,6 +143,7 @@ function RefFlock({ refArray, refFilterDef, onAction } ) {
                 })}
             </div>
         </>
+
     }
 
     return <div className={"ref-flock"}>

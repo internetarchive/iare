@@ -1,5 +1,11 @@
 :root {
     --width-ref-list: 22rem;
+    --width-ref-list: 22rem;
+    --color-ref-bg: #d5e5f6; /* d5f6d5 */ /* d5e5f6 */ /* d5e2f6 */
+    --color-ref-bg-header: var(--color-list-header-bg);
+    --color-ref-hilite: #0f0fe6;
+
+
 }
 
 .ref-display {
@@ -22,20 +28,35 @@
 }
 
 .ref-button {
+    cursor: pointer; /* Pointer/hand icon */
     /*background-color: #ced9ef; !* #c1d4e0;*!*/
-    background-color: #ceefd9; /* #c1d4e0;*/
-
+    /*background-color: #ceefd9; !* #c1d4e0;*!*/
+    background-color: var(--color-ref-bg);
     width: 100%;
     text-align: left;
-    cursor: pointer; /* Pointer/hand icon */
+    padding:.3rem .4rem;
+    margin-bottom:2pt;
 }
 .ref-button.is-pressed {
     background-color: #7690c4; /* #c1d4e0;*/
     /*width: 22rem;*/
 }
 
-.ref-button > .multi-ref {
-    background-color: #0b5ed7;
+.ref-button > span {
+    display:block;
+}
+.ref-button > .ref-count {
+    /*background-color: #0b5ed7;*/
+    color: var(--color-ref-hilite);
+    font-weight: bold;
+    /*font-style: italic;*/
+}
+.ref-button > .ref-name {
+    /*background-color: #f0ecf1;*/
+    /*padding:.3rem;*/
+    /*border:1px solid blue;*/
+    /*border-radius:.3rem;*/
+    font-style:italic;
 }
 
 
@@ -55,12 +76,20 @@
 }
 
 .ref-list {
-    max-width:19.5rem;
+    /*max-width:19.5rem;*/
 
     max-height: calc(var(--height-list) + 2rem);
     height: calc(var(--height-list)+ 2rem);
 
     overflow: scroll;
+}
+
+.ref-list-header {
+    width: var(--width-ref-list);
+    max-width: var(--width-ref-list);
+    padding: 0.5rem 0.5rem;
+    border: 1px solid black;
+    background-color: var(--color-ref-bg-header);
 }
 
 /* filter buttons */
