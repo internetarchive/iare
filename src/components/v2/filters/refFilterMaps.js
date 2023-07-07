@@ -85,6 +85,11 @@ export const REF_FILTER_DEFS = {
         }
     },
 
+    ManyUrls: {
+        caption: "More than 2 URLs",
+        desc: 'Citations containing more than 2 URLs',
+        filterFunction: () => (d) => {return d.urls.length > 2},
+    },
 
     // archiveAny: {
     //     caption: "Anything with archive.org/details",
@@ -128,6 +133,68 @@ export const REF_FILTER_TYPES = {
         caption: "Named",
         desc: "Citations referring to an already defined citation",
         filterFunction: () => (d) => {return d.footnote_subtype === "named"},
+    },
+
+};
+
+
+export const REF_LINK_STATUS_FILTERS = {
+    good_good: {
+        caption: "Link Status: Good, Good",
+        desc: "Citation link is OK, and archived link is OK.",
+        lines: ['Original link is OK', 'Archive link is OK'],
+        filterFunction: () => (d) => {
+            return d.link_status && d.link_status.includes('good_good')
+        },
+    },
+    good_bad: {
+        caption: "Link Status: Good, Bad",
+        desc: "Citation link is OK, and archived link is NOT OK.",
+        lines: ['Original link is OK', 'Archive link is NOT OK'],
+        filterFunction: () => (d) => {
+            return d.link_status && d.link_status.includes('good_bad')
+        },
+    },
+    good_none: {
+        caption: "Link Status: Good, None",
+        desc: "Citation link is OK, and no archive link is supplied.",
+        lines: ['Original link is OK', 'Archive link is missing'],
+        filterFunction: () => (d) => {
+            return d.link_status && d.link_status.includes('good_none')
+        },
+    },
+    bad_good: {
+        caption: "Link Status: Bad, Good",
+        desc: "Citation link is NOT OK, and archived link is OK.",
+        lines: ['Original link is NOT OK', 'Archive link is OK'],
+        filterFunction: () => (d) => {
+            return d.link_status && d.link_status.includes('bad_good')
+        },
+    },
+    bad_bad: {
+        caption: "Link Status: Bad, Bad",
+        desc: "Citation link is NOT OK, and archived link is NOT OK.",
+        lines: ['Original link is NOT OK', 'Archive link is NOT OK'],
+        filterFunction: () => (d) => {
+            return d.link_status && d.link_status.includes('bad_bad')
+        },
+    },
+    bad_none: {
+        caption: "Link Status: Bad, None",
+        desc: "Citation link is NOT OK, and no archive link is supplied.",
+        lines: ['Original link is NOT OK', 'Archive link is missing'],
+        filterFunction: () => (d) => {
+            return d.link_status && d.link_status.includes('bad_none')
+        },
+    },
+
+    missing: {
+        caption: "Link Status: Missing",
+        desc: "Citation does NOT have a link and no archive link is supplied.",
+        lines: ['Citation has no link', 'No Archive link is present'],
+        filterFunction: () => (d) => {
+            return d.link_status && d.link_status.length === 0
+        },
     },
 
 };

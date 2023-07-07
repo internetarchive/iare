@@ -6,6 +6,7 @@ import RefActions from "./RefActions";
 import RefStats from "./RefStats";
 import RefUrls from "./RefUrls";
 import {copyToClipboard} from "../../../utils/utils";
+// import RefLinkStatus from "./RefLinkStatus";
 
 /*
 idea details:
@@ -26,14 +27,14 @@ idea details:
  */
 
 function RefViewHeader({ details, onClose }) {
-    return  <div className="row header no-gutters">
+    return  <div className="row header no-gutters ref-view-header">
 
         <div className="col-9">
             <div className={"row"}>
 
                 <div className="col-6">
-                    <h2 className={`text-primary ref-view-header ${details.test_data ? 'test-display' : ''}`}
-                    >Reference View{details.test_data ? " (test reference viewer)" : ''}</h2>
+                    <h2 className={`text-primary ${details?.test_data ? 'test-display' : ''}`}
+                    >Reference View{details?.test_data ? " (test reference viewer)" : ''}</h2>
                 </div>
 
                 <div className="col-6 text-end"><span
@@ -125,6 +126,7 @@ export default function RefView({ open, onClose, details }) {
                         <div className={'ref-view-content'}>
                             <RefTemplates templates={details.templates} />
                             <RefUrls urls={details.urls} />
+                            {/*<RefLinkStatus linkStatus={details.link_status} />*/}
                         </div>
                         <RefViewFooter details={details} />
                     </div>

@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.2.16",
-  "version_name": "0.2.16.reference-pre-parsing",
+  "version": "0.2.17",
+  "version_name": "0.2.17.link-status-filtering",
   "private": true,
   "dependencies": {
     "bootstrap": "^5.3.0-alpha3",

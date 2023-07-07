@@ -1,30 +1,30 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import UrlFlock from "./UrlFlock";
+import RefFlock from "./RefFlock";
 import UrlOverview from "./UrlOverview";
 import '../shared/urls.css';
-import RefFlock from "./RefFlock";
+import {convertToCSV} from "../../utils/utils";
+import {REF_LINK_STATUS_FILTERS} from "./filters/refFilterMaps";
 
 
-export default function UrlDisplay ({ pageData, options, caption = "URLs", filterMap } ) {
+export default function UrlDisplay ({ pageData, options, urlFilterMap = {} } ) {
 
     console.log("UrlDisplay: render");
 
-    const [urlFilter, setUrlFilter] = useState( null ); // filter to pass in to UrlFlock
-
-    // const [urlArray, setUrlArray] = useState([]);
     const [urlStatistics, setUrlStatistics] = useState({});
-
+    const [urlFilter, setUrlFilter] = useState( null ); // filter to pass in to UrlFlock
     const [refFilter, setRefFilter] = useState( null ); // filter to pass in to RefFlock
-    const [selectedUrl, setSelectedUrl] = useState('');
+    const [selectedUrl, setSelectedUrl] = useState(''); // currently selected url in url list
 
 
     // calculate url stats
     useEffect( () => {
 
+        // calc counts for each filter of urlFilterMaps
         const urlCounts = (!pageData || !pageData.urlArray)
             ? []
-            : Object.keys(filterMap).map( key => {
-                const f = filterMap[key];
+            : Object.keys(urlFilterMap).map( key => {
+                const f = urlFilterMap[key];
                 const count = pageData.urlArray.filter((f.filterFunction)()).length; // Note the self-evaluating filterFunction!
                 return {
                     label: f.caption + " (" + count + ")",
@@ -35,43 +35,68 @@ export default function UrlDisplay ({ pageData, options, caption = "URLs", filte
 
         setUrlStatistics({urlCounts: urlCounts});
 
-    }, [pageData, filterMap])
+    }, [pageData, urlFilterMap])
 
 
-    // result is an object: { action: <action name>, value: <param value> }
+    // callback from sub-components.
+    // result is an object like:
+    //  {
+    //      action: <action name>,
+    //      value: <param value>
+    //  }
     const handleAction = useCallback( result => {
         const {action, value} = result;
         console.log (`UrlDisplay: handleAction: action=${action}, value=${value}`);
 
-        // action is setFilter and value is filter key name
         if (action === "setFilter") {
-            const f = value ? filterMap[value] : null
+            // value is filter key name
+            const f = value ? urlFilterMap[value] : null
             setUrlFilter(f)
         }
 
-        // use selected url to filter references list
-        if (action === "setUrlReferenceFilter") {
-            // value is url to filter references by
-            setRefFilter(getUrlRefFilter(value))
-            setSelectedUrl(value)
-        }
-
-        // clear filter for references list
-        if (action === "removeReferenceFilter") {
-            // value is url to filter references by
-            setRefFilter(getUrlRefFilter(''))
-            setSelectedUrl(null)
-        }
-
-        // clear filter for URL list
         if (action === "removeUrlFilter") {
+            // clear filter (show all) for URL list
             setUrlFilter(null)
             setSelectedUrl(null)
         }
 
+        if (action === "setUrlReferenceFilter") {
+            // filter references list to those that contain a specific.
+            // The url is specified by the value parameter
+            setRefFilter(getUrlRefFilter(value))
+            setSelectedUrl(value)
+        }
+
+        if (action === "removeReferenceFilter") {
+            // clear filter (show all) for references list
+            setRefFilter(null)
+            setSelectedUrl(null)
+        }
+
+        if (action === "setLinkStatusFilter") {
+            // use value as link status to filter references with
+
+            const f = value ? REF_LINK_STATUS_FILTERS[value] : null
+            setRefFilter(f)
+
+            // setRefFilter({
+            //     desc: `Citations with Link Status: ${value}`,
+            //
+            //     caption: <span>Link Status is {value}</span>,
+            //
+            //     filterFunction: () => (d) => {
+            //         return d.link_status.includes(value)
+            //     }
+            // })
+
+            // TODO: some sort of feedback? selected filter?
+        }
+
 
         // TODO: Action for setReferenceFilter/ShowReference for filtered URLS
-    }, [filterMap])
+        // i.e. show all refs that contain ANY of the URLS in the filtered URL list
+
+    }, [urlFilterMap])
 
 
     if (!pageData) return null;
@@ -83,21 +108,16 @@ export default function UrlDisplay ({ pageData, options, caption = "URLs", filte
     const getUrlRefFilter = (targetUrl) => {
 
         if (!targetUrl || targetUrl === '') {
-            // return {
-            //     caption: `Show All`,
-            //     desc: `Show ALl Citations`,
-            //     filterFunction: () => (d) => {
-            //         return true;
-            //     },
-            // }
             return null; // no filter means all filter
         }
 
         return {
+            desc: `Citations with URL: ${targetUrl}`,
+
             caption: <span>Contains URL: <br/><span className={'target-url'}
                 ><a href={targetUrl} target={"_blank"} rel={"noreferrer"}>{targetUrl}</a
                 ></span></span>,
-            desc: `Citations with URL: ${targetUrl}`,
+
             filterFunction: () => (d) => {
                 return d.urls.includes( targetUrl )
             },
@@ -106,30 +126,7 @@ export default function UrlDisplay ({ pageData, options, caption = "URLs", filte
 
 
     // eslint-disable-next-line no-unused-vars
-    const handleCopyClick = () => {
-        const convertToCSV = (json) => {
-            const rows = json.map((row) => {
-
-                const myRowItems = row.map( (item) => {
-                    // from: https://stackoverflow.com/questions/46637955/write-a-string-containing-commas-and-double-quotes-to-csv
-                    // We remove blanks and check if the item contains
-                    // other whitespace,`,` or `"`.
-                    // In that case, we need to quote the item.
-
-
-                    if (typeof item === 'string') {
-                        if (item.replace(/ /g, '').match(/[\s,"]/)) {
-                            return '"' + item.replace(/"/g, '""') + '"';
-                        }
-                        return item
-                    } else {
-                        return item
-                    }
-                })
-                return myRowItems.join(',');
-            });
-            return rows.join('\n');
-        };
+    const handleCopyClick = () => { // used to copy url list and status
 
         // get one row per line:
         const jsonData = pageData.urlArray.sort(
@@ -137,6 +134,7 @@ export default function UrlDisplay ({ pageData, options, caption = "URLs", filte
         ).map( u => {
             return [ u.data.url, u.data.status_code ]
         })
+
         // convert to CSV and send to clipboard
         const csvString = convertToCSV(jsonData);
 
@@ -151,10 +149,6 @@ export default function UrlDisplay ({ pageData, options, caption = "URLs", filte
             });
     }
 
-                        // const refArray = (!pageData || !pageData.dehydrated_references)
-                        //     ? []
-                        //     : pageData.dehydrated_references
-                        // // TODO: change this to references
     const refArray = (pageData.references)
 
     const urlListCaption = <h3>URL List</h3>
@@ -164,8 +158,8 @@ export default function UrlDisplay ({ pageData, options, caption = "URLs", filte
     return <>
 
         <div className={"section-box url-overview-column"}>
-            <h3>{caption}</h3>
-            <UrlOverview statistics={urlStatistics} onAction={handleAction}/>
+            <h3>Filters</h3>
+            <UrlOverview pageData={pageData} statistics={urlStatistics} onAction={handleAction}/>
         </div>
 
         <div className={"section-box"}>

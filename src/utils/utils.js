@@ -74,7 +74,6 @@ const fetchUrlsIari = async (urlArray, refresh, timeout) => {
     return await Promise.all(promises);
 }
 
-
 const fetchUrlsIabot = async (urlArray, refresh, timeout) => {
     const promises = urlArray.map(urlObj => {
         return fetchStatusUrl(urlObj, refresh, timeout, UrlStatusCheckMethods.IABOT.key)
@@ -104,7 +103,7 @@ const fetchUrlsCorentin = async (urlArray, refresh, timeout) => {
                     // transform results wrapped in { data: <results> } format so that it matches
                     // what is returned from other IABOT and IARI fetch methods
                     const myUrls = data.map( entry => {
-                        const results = {
+                        const results = { // NB: url object "wrapped" in data
                             data: {
                                 url: entry.url,
                                 status_code: entry.http_status_code,
@@ -158,7 +157,6 @@ const fetchUrlsCorentin = async (urlArray, refresh, timeout) => {
     return urlData;
 }
 
-
 export const fetchStatusUrls = async ({
             urlArray=[],
             refresh=false,
@@ -194,7 +192,64 @@ export const fetchStatusUrls = async ({
 
 }
 
-export const convertToBareUrls = (urlArray=[], sourceMethod = UrlStatusCheckMethods.IARI.key) => {
+// example:
+// https://archive.org/services/context/iari/v2/statistics/reference/b64ae445
+const fetchReferenceDetail = async (refId) => {
+    // handle null ref
+    if (!refId) {
+        return {};
+    }
+    // TODO: sanitize inout value to be an integer
+
+    // TODO: use refresh here ?
+    const myEndpoint = `${IARI_V2_URL_BASE}/statistics/reference/${refId}`;
+
+    // fetch the data
+    fetch(myEndpoint, {
+    })
+
+        .then((response) => {
+            if(!response.ok) throw new Error(response.status);
+            return response.json();
+        })
+
+        .then((data) => {
+
+        })
+
+        .catch((err) => {
+            // ?? what do we do here?
+        })
+
+        .finally(() => {
+            // ?? anything to do here?
+        });
+
+}
+
+
+
+// fetch reference details for all references in refArray
+export const fetchAllReferenceDetails = async ({ refArray=[], } = {}) => {
+
+    console.log(`utils::fetchAllReferenceDetails`)
+
+    if (!refArray || !refArray.length) //return [];
+    {
+        return Promise.resolve([])
+    }
+
+    const promises = refArray.map(ref => {
+        return fetchReferenceDetail(ref.id)
+    })
+
+    // assume all promises successful
+    return await Promise.all(promises);
+
+}
+
+
+export const convertUrlArray = (urlArray=[]) => {
 
     if (!urlArray || !urlArray.length) return [];
 
@@ -237,4 +292,27 @@ export const getColorFromIndex = (index, startColor, endColor, steps) => {
     const g = Math.floor(startColor[1] + (index / (steps -1) * (endColor[1] - startColor[1]) ));
     const b = Math.floor(startColor[2] + (index / (steps -1) * (endColor[2] - startColor[2]) ));
     return rgbToHex(r,g,b);
+}
+
+
+export const convertToCSV = (json) => {
+    const rows = json.map((row) => {
+
+        const myRowItems = row.map( (item) => {
+            // from: https://stackoverflow.com/questions/46637955/write-a-string-containing-commas-and-double-quotes-to-csv
+            // We remove blanks and check if the item contains other whitespace,`,` or `"`.
+            // In that case, we need to quote the item.
+
+            if (typeof item === 'string') {
+                if (item.replace(/ /g, '').match(/[\s,"]/)) {
+                    return '"' + item.replace(/"/g, '""') + '"';
+                }
+                return item
+            } else {
+                return item
+            }
+        })
+        return myRowItems.join(',');
+    });
+    return rows.join('\n');
 }

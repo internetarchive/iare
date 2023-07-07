@@ -99,13 +99,17 @@
     padding:.5rem;
 }
 .url-row .url-name {
-    width: 80%;
-    min-width: 80%;
-    max-width: 80%;
+    /*width: 80%;*/
+    /*min-width: 80%;*/
+    /*max-width: 80%;*/
+    width: var(--width-url-name);
+    min-width: var(--width-url-name);
+    max-width: var(--width-url-name);
     border-right: 1px solid black;
 }
 .url-row .url-status {
-    width: 10%;
+    /*width: 10%;*/
+    width: var(--width-url-status);
 }
 .url-list a, .url-list .url-name {
     overflow-wrap: break-word;
@@ -146,6 +150,8 @@
     padding-left:1em;
 }
 
+
+.
 .status-method-display {
     color:#808080 !important;
 }

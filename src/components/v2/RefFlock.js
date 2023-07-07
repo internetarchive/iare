@@ -2,11 +2,12 @@ import React, {useEffect, useState} from 'react';
 import { IARI_V2_URL_BASE } from '../../constants/endpoints.js';
 import RefView from "./RefView/RefView";
 
-function getLinkText(ref) {
+function getReferenceCaption(ref) {
 
     let hasContent = false;
 
-    const text = <>
+    const markup = <>
+
         {ref.titles
             ? ref.titles.map( t => {
                 hasContent = true
@@ -35,12 +36,28 @@ function getLinkText(ref) {
                 <span className={'ref-line ref-count'}>Reference used {ref.reference_count} times</span>
             </>
             : null}
+
+        {/*{ !hasContent ? <span>ref id: {ref.id}</span> : null }*/}
+        { !hasContent ? <span>{ref.wikitext}</span> : null }
+
+        {ref.link_status
+            // display link_status array values
+            ? <div className={`ref-link-status-wrapper`}>
+
+                {ref.link_status.length > 0
+                    ? ref.link_status.map( linkStat => {
+                        // return <span className={'ref-line ref-status'}>Link Status: {linkStat}</span>
+                        return <span className={`ref-link-status link-status-${linkStat}`} />
+                        })
+                    : <span className={`ref-link-status link-status-missing`} /> }
+
+                </div>
+            : null}
+
     </>
 
-    return <>
-        {hasContent ? text : <span>ref id: {ref.id}</span>}
-    </>
 
+    return markup
 }
 
 function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
@@ -139,7 +156,7 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
                        className={"ref-button"}
                        onClick={(e) => {
                            fetchDetail(ref)
-                       }}>{getLinkText(ref)}</button>
+                       }}>{getReferenceCaption(ref)}</button>
                 })}
             </div>
         </>
