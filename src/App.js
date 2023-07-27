@@ -94,8 +94,9 @@ export default function App( {env, myPath, myRefresh, myMethod} ) {
     const convertPathToEndpoint = (path = '', mediaType = 'wiki', refresh=false) => {
 
         if (mediaType === "wiki") {
-            const sectionRegex = "&regex=bibliography|further reading|works cited|sources|external links"; // for now... as of 2023.04.09
-            return `${IARI_V2_URL_BASE}/statistics/article?url=${path}${sectionRegex}${refresh ? "&refresh=true" : ''}`;
+            const sectionRegex = '&regex=bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
+            const options = '&dehydrate=false'
+            return `${IARI_V2_URL_BASE}/statistics/article?url=${path}${sectionRegex}${options}${refresh ? "&refresh=true" : ''}`;
 
         } else if (mediaType === "pdf") {
             return `${IARI_V2_URL_BASE}/statistics/pdf?url=${path}${refresh ? "&refresh=true" : ''}`;

@@ -188,12 +188,39 @@ export const REF_LINK_STATUS_FILTERS = {
         },
     },
 
-    missing: {
-        caption: "Link Status: Missing",
-        desc: "Citation does NOT have a link and no archive link is supplied.",
+    none_none: {
+        caption: "Link Status: None, None",
+        desc: "Citation uses a template, but no links are present.",
         lines: ['Citation has no link', 'No Archive link is present'],
         filterFunction: () => (d) => {
-            return d.link_status && d.link_status.length === 0
+            return d.link_status && d.link_status.includes('none_none')
+        },
+    },
+
+    no_links: {
+        caption: "Link Status: Missing",
+        desc: "Citation does NOT have a link and no archive link is supplied.",
+        lines: ['No templates; No links', 'No Archive links'],
+        filterFunction: () => (d) => {
+            return d.link_status && d.link_status.includes('no_links')
+        },
+    },
+
+    no_template_bad: {
+        caption: "Link Status: No Template, Bad link",
+        desc: "Link found outside of template, and it is bad.",
+        lines: ['Link outside of template', 'Link is bad'],
+        filterFunction: () => (d) => {
+            return d.link_status && d.link_status.includes('no_template_bad')
+        },
+    },
+
+    no_template_good: {
+        caption: "Link Status: No Template, Good link",
+        desc: "Link found outside of template, and it is good.",
+        lines: ['Link outside of template', 'Link is good'],
+        filterFunction: () => (d) => {
+            return d.link_status && d.link_status.includes('no_template_good')
         },
     },
 

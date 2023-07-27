@@ -75,9 +75,7 @@ export default function RefUrls({ urls }) {
     }, [urls, urlStatusCheckMethod])
 
 
-
     const urlsDisplay =
-
         <table className={'ref-view-urls'}>
             <thead>
             <tr>

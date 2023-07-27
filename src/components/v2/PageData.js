@@ -11,10 +11,10 @@ import {UrlStatusCheckContext} from "../../contexts/UrlStatusCheckContext"
 /*
 When this component is rendered, it must "process" the pageData. This involves:
 - fetching the URL status codes of all the URLS
-- process the references so that they have internal properties indicating their
-  health and status so that they can be filtered upon those traits
-
- */
+- process the references
+  - reduce reference array by coalescing all named refs together
+  - calculate link status of all urls within reference to allow filtering
+*/
 
 /*
 when we get to this component, we have raw pageData from the
@@ -30,7 +30,7 @@ we then flatten the Reference list, making only one entry for each multiply-
 referenced URL with the number of times reference added as a reference property.
 
 using UrlDict we can check the status of the urls in each reference, appending
-each reference array object in pageData.dehydrated_references.
+each reference array object in pageData.references.
     NB: we should use only "references" property, not "dehydrated_references"
 
 steps to do this:
@@ -41,21 +41,16 @@ steps to do this:
 3. set the link_status for each reference based on status of urls for each link
     (determined by url-keying into urlDict)
 
-  Temporary note: the URL updating functionality is take out of the UrlDisplay component logic
-
 */
 export default function PageData({pageData = {}}) {
 
     const [selectedViewType, setSelectedViewType] = useState('urls');
     const [isLoadingUrls, setIsLoadingUrls] = useState(false);
-
     const [dataReady, setDataReady] = useState(false);
-    // const [urlArray, setUrlArray] = useState([]);
-
 
     const urlStatusCheckMethod = React.useContext(UrlStatusCheckContext);
 
-    // function to process url results and create a urlDict from it
+    // process url results and create a urlDict from it
     //
     // called upon useEffect of new url status data
     const processUrls = useCallback( (pageData, urlResults) => {
@@ -64,7 +59,7 @@ export default function PageData({pageData = {}}) {
 
         // turn url array into object dict
         // keyed by url; contains: { status_code: XXX, ref_count: 1 or more }
-        // makeing room for { hasArchive: true/false, isArchive: true/false }
+        // making room for { hasArchive: true/false, isArchive: true/false }
         urlResults.forEach(d => {
             // console.log (d)
             // initialize entry with count 0 if not there
@@ -85,54 +80,62 @@ export default function PageData({pageData = {}}) {
     }, [])
 
 
-
-    const isArchiveLink = (url) => {
-        return url.includes("archive.org")
-        || url.includes("archive.today")
-    }
-
-    // returns an array of link status for each link of the reference that is
-    // not an archive link.
-    // link status depends on status of origin link and status of archive link
+    // returns a linkStatus array indicating the status of all the links in the reference.
+    //
+    // there are two "kinds" of link we currently deal with:
+    // - those indicated in the template parameters "url" and "archive_url"
+    // - all others
+    //
+    // for those links found in template parameters, the status of the url indicated by the "url" parameter
+    // is checked, along with the status of the url indicated by the "archive_url" parameter.
+    //
+    // All other urls are just checked for good or bad, regardless of whether it is an archive link or not.
+    //
     const calcLinkStatus = useCallback( (ref, urlDict) => {
-
-        if (!ref.urls || ref.urls.length < 1) return [];
-
-        const archiveLinks = []
-        const pureLinks = []
-
-        // divide into pure and archive link sets
-        ref.urls.forEach( url => {
-            if (isArchiveLink(url)) {
-                archiveLinks.push(url)
-            } else {
-                pureLinks.push(url)
-            }
-        })
 
         const linkStatus = []
 
-        pureLinks.forEach( pureLink => {
-            // loop thru archive links.
-            // if url is "inside" one of the archive links, then add linkStatus
-            const foundArchiveUrl = archiveLinks.find( archiveLink => archiveLink.includes(pureLink))
+        // create linkStatus for every url/archive_url pair in templates
+        // as each url is processed, save in "used_urls" array
+        const templates = ref?.templates ? ref.templates : []
+        const usedUrls = {}
+        templates.forEach( template => {
 
-            const archiveStatusCode = urlDict[foundArchiveUrl]?.status_code // foundArchiveUrl may be undefined
-            const archiveLinkStatus = (archiveStatusCode === undefined) ? 'none'
-                : (archiveStatusCode >= 200 && archiveStatusCode < 400) ? 'good'
+            const pureUrl = template.parameters.url
+            const archiveUrl = template.parameters.archive_url
+            usedUrls[pureUrl] = true
+            usedUrls[archiveUrl] = true
+
+            const pureLinkStatusCode = urlDict[pureUrl]?.status_code // need to handle undefined if url not a key in urlDict
+            const archiveLinkStatusCode = urlDict[archiveUrl]?.status_code // need to handle undefined if archive url not a key in urlDict
+
+            const pureLinkStatus = (pureLinkStatusCode === undefined) ? 'none'
+                : (pureLinkStatusCode >= 200 && pureLinkStatusCode < 400) ? 'good'
                     : 'bad'
 
-            const pureStatusCode = urlDict[pureLink]?.status_code // may be undefined
-            const pureLinkStatus = (pureStatusCode === undefined) ? 'none'
-                : (pureStatusCode >= 200 && pureStatusCode < 400) ? 'good'
+            const archiveLinkStatus = (archiveLinkStatusCode === undefined) ? 'none'
+                : (archiveLinkStatusCode >= 200 && archiveLinkStatusCode < 400) ? 'good'
                     : 'bad'
+
             linkStatus.push( pureLinkStatus + '_' + archiveLinkStatus)
-
         })
 
-        // if there are no pure links in ref...
+        // now go thru the ref.urls, and if there are any that are not in the
+        // usedUrls list, process that url
+
+        ref.urls.forEach(url => {
+            if (!usedUrls[url]) {
+                const urlStatusCode = urlDict[url]?.status_code
+                const urlLinkStatus = (urlStatusCode === undefined) ? 'no_template_bad'
+                    : (urlStatusCode >= 200 && urlStatusCode < 400) ? 'no_template_good'
+                        : 'no_template_bad'
+                linkStatus.push(urlLinkStatus)
+            }
+        })
+
+        // if link_status still empty, then we have no links at all
         if (linkStatus.length < 1) {
-            linkStatus.push('missing')
+           linkStatus.push('no_links')
         }
 
         return linkStatus
@@ -140,37 +143,34 @@ export default function PageData({pageData = {}}) {
     }, [])
 
 
-
+    // reduce any repeated references into one reference with multiple page referrals, and
+    // calculate the status of the links in the references by examining the pure and archived
+    // urls in the templates in each reference
     const processReferences = useCallback( (pageData, refResults) => {
-        const namedRefs = {}
-
-        // pull in the templates property from the new refResults and append them to the
-        // reference elements in the references array
-
-
 
         // Process the "named" refs by looping thru each reference
         // if named, make an entry in named_refs or increment already entry
         // if named with no content, pull that reference info, and add it to named_ref entry
-        //      - its like an array of linky dinks to where ref is in article
-
+        //      - its like an array of links to where in article a reference is referred to
+        const namedRefs = {} // collect 'em as we find 'em
         const newRefs = []
-        const refs = (!pageData || !pageData.dehydrated_references) ? [] : pageData.dehydrated_references
 
+        // for refs, if dehydrated=true, use pageData.dehydrated_references, else use pageData.references
+        const refs = (pageData?.dehydrated_references?.length)
+            ? pageData.dehydrated_references
+            : (pageData?.references?.length) ? pageData.references
+            : []
 
-
-        // reduce references by eliminating
+        // reduce references by eliminating repeats and collecting page referrals
         refs.forEach(ref => {
-
             // "named" references point to another "anchor" reference
-
             // handle named ref by making entry into namedRef dict
             if (ref.name) {
                 // initialize if first time
                 if (!namedRefs[ref.name]) namedRefs[ref.name] = { count : 0 }
                 // increment count
                 namedRefs[ref.name].count++
-                // if named ref is anchor (footnote subtype === content), save it
+                // if named ref is anchor (footnote subtype === content), save it in our namedRefs dict
                 if (ref.type ==='footnote' && ref.footnote_subtype === 'content') {
                     namedRefs[ref.name].origin = ref
                 }
@@ -184,6 +184,7 @@ export default function PageData({pageData = {}}) {
         })
 
         // For all references that were saved in named references, set reference count of "anchor" refs
+        // TODO when we get the page_refs in the reference data, we can save those, too for each named reference
         Object.keys(namedRefs).forEach( refName => {
             const nr = namedRefs[refName]
             nr.origin.reference_count = nr.count
@@ -198,6 +199,7 @@ export default function PageData({pageData = {}}) {
         pageData.references = newRefs
 
     }, [calcLinkStatus])
+
 
     useEffect( () => {
         const context = 'PageData::useEffect [pageData]'
@@ -227,31 +229,11 @@ export default function PageData({pageData = {}}) {
                 // let the system know all is ready
                 setDataReady(true);
 
-                                // // once all url results are in, pull in the ref results
-                                // fetchAllReferenceDetails(pageData.references)
-                                //     .then(refResults => {
-                                //
-                                //         postProcessData(); // creates urlDict
-                                //         setDataReady(true);
-                                //
-                                //     })
-                                //
-                                //     .catch(error => {
-                                //
-                                //         // TODO: what shall we do for error here?
-                                //
-                                //     })
-                                //
-                                //     .finally( () => {
-                                //
-                                //     })
-
             })
 
             .catch(error => {
                 console.error(`${context} fetchStatusUrls.catch: ${error}`);
                 // TODO: what shall we do for error here?
-                //setUrlArray([])
             })
 
             .finally(() => {
@@ -327,4 +309,3 @@ export default function PageData({pageData = {}}) {
         }
     </>
 }
-

@@ -50,16 +50,10 @@
     display:block;
 }
 .ref-button > .ref-count {
-    /*background-color: #0b5ed7;*/
     color: var(--color-ref-hilite);
     font-weight: bold;
-    /*font-style: italic;*/
 }
 .ref-button > .ref-name {
-    /*background-color: #f0ecf1;*/
-    /*padding:.3rem;*/
-    /*border:1px solid blue;*/
-    /*border-radius:.3rem;*/
     font-style:italic;
 }
 
@@ -72,7 +66,7 @@
 .ref-button .ref-link-status {
     width:1.25rem;
     height:1.25rem;
-    display:block;
+    display:inline;
 }
 .link-status-good_good {
     content: url('../../images/good_good.png');
@@ -92,8 +86,17 @@
 .link-status-bad_none {
     content: url('../../images/bad_none.png');
 }
-.link-status-missing {
-    content: url('../../images/missing.png');
+.link-status-none_none {
+    content: url('../../images/none_none.png');
+}
+.link-status-no_template_bad {
+    content: url('../../images/no_template_bad.png');
+}
+.link-status-no_template_good {
+    content: url('../../images/no_template_good.png');
+}
+.link-status-no_links {
+    content: url('../../images/no_links.png');
 }
 
 /***********************

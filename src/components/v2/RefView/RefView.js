@@ -133,7 +133,7 @@ export default function RefView({ open, onClose, details }) {
 
                     <div className="col-3">
                         <RefActions onAction={handleRefViewAction} />
-                        <RefStats />
+                        <RefStats details={details} />
                     </div>
 
                 </div>

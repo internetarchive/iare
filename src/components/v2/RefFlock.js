@@ -88,6 +88,7 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
 
             .then((data) => {
                 data.endpoint = myEndpoint;
+                data.link_status = ref.link_status
                 setRefDetails(data);
             })
 
