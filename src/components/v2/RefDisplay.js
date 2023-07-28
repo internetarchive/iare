@@ -43,10 +43,13 @@ export default function RefDisplay ({ pageData, options } ) {
         }
     }
 
-    // TODO: may want to set this in useEffect[pageData]
-    const refArray = !pageData || !pageData.dehydrated_references
-        ? []
-        : pageData.dehydrated_references
+                // // TODO: may want to set this in useEffect[pageData]
+                // const refArray = !pageData || !pageData.dehydrated_references
+                //     ? []
+                //     : pageData.dehydrated_references
+    if (!pageData) return null;
+
+    const refArray = (pageData.references)
 
     return <>
         <div className={"ref-display section-box"}>

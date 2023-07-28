@@ -37,17 +37,6 @@ body {
     margin: 15px 20px 20px;
 }
 
-/* environment-tag is for non-production indication */
-div.environment-tag {
-    display:none;
-    position:absolute;
-    font-size:1.1rem;
-    top:6px; /*8px;*/
-    color: #b2b2b2;
-    white-space: nowrap;
-    z-index: 1;
-}
-
 .iare-view .header h1 {
     position:relative;
     z-index: 10;
@@ -290,11 +279,33 @@ table.single-detail tr td:not(:first-child) {
 
 
 button.utility-button {
-    border-radius: 0.75rem;
-    background-color: #dadffd;
-    margin-left:.75rem;
-    padding:0em .5em 0.18em;
-    color: #454545;
-    border: 1px solid black;
-    font-size: .75rem;
+    /*border-radius: 0.75rem;*/
+    /*background-color: #dadffd;*/
+    /*margin-left:.75rem;*/
+    /*padding:0em .5em 0.18em;*/
+    /*color: #454545;*/
+    /*border: 1px solid black;*/
+    /*font-size: .75rem;*/
+
+    display: inline-block;
+    text-align: center;
+    line-height: 1;
+    cursor: pointer;
+    -webkit-appearance: none;
+    transition: background-color .25s ease-out, color .25s ease-out;
+    vertical-align: middle;
+    border: 1px solid transparent;
+    border-radius: .3rem;
+    padding: .28rem .42rem;
+    margin: 0 .5rem 0rem;
+    font-size: .69rem;
+    background-color: #2199e8;
+    color: #fefefe
+
+
+}
+
+.utility-button:focus, .utility-button:hover {
+    background-color: #1583cc;
+    color: #fefefe
 }

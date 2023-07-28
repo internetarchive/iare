@@ -64,7 +64,9 @@ export default function UrlDisplayPdf({flocks = [], options={}, caption = "URLs"
 
     // mergeFlocks can take any number of sets of lists, and combine them into one list,
     // with each entry of the list containing a unique url and a tag array describing the
-    // origin flock the url came from. There can be more than one origin for each URL
+    // origin flock the url came from.
+    //
+    // There can be more than one origin for each URL
     //
     // currently we have two "flocks" of URLs:
     // - links extracted from the PDF Annotation layer and
@@ -345,7 +347,9 @@ export default function UrlDisplayPdf({flocks = [], options={}, caption = "URLs"
 
             setIsLoadingUrls(true);
 
-            fetchStatusUrls(mergedFlock, options.refresh)
+            fetchStatusUrls( {
+                mergedFlock
+            }, options.refresh)
 
                     /*
                     if all went well, urlArray is an array of url objects, something like:

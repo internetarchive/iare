@@ -10,8 +10,11 @@ export default function FilterButtons ( {
                 caption = "Filters",
                 className = "",
                 currentFilterName = "",
+                onRender = null
            }) {
 
+    // if filterList is empty, use all keys for filterMap
+    // otherwise, just show the keys as described in filterList array
     const keyList = filterList.length === 0
         ? Object.keys(filterMap) // use all keys of map if specified filterList is empty
         : filterList;
@@ -24,9 +27,13 @@ export default function FilterButtons ( {
         {caption?<h4>{caption}</h4>:null}
         <div className={`filter-buttons ${className}`}>
 
-            {keyList.map((name) => {
+            {keyList.map( name => {
+
                 let f = filterMap[name];
+
+                // calc count of filter results as applied to flock
                 f.count = flock ? flock.filter((f.filterFunction)()).length : 0;
+                f.name = name // for render function
 
                 return <FilterButton key={name}
                     name={name}
@@ -37,6 +44,9 @@ export default function FilterButtons ( {
 
                     desc={f.desc}
                     useDesc={false}
+                    onRender={onRender}
+
+                    filter={f}
                     />
             })}
 

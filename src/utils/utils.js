@@ -74,7 +74,6 @@ const fetchUrlsIari = async (urlArray, refresh, timeout) => {
     return await Promise.all(promises);
 }
 
-
 const fetchUrlsIabot = async (urlArray, refresh, timeout) => {
     const promises = urlArray.map(urlObj => {
         return fetchStatusUrl(urlObj, refresh, timeout, UrlStatusCheckMethods.IABOT.key)
@@ -104,7 +103,7 @@ const fetchUrlsCorentin = async (urlArray, refresh, timeout) => {
                     // transform results wrapped in { data: <results> } format so that it matches
                     // what is returned from other IABOT and IARI fetch methods
                     const myUrls = data.map( entry => {
-                        const results = {
+                        const results = { // NB: url object "wrapped" in data
                             data: {
                                 url: entry.url,
                                 status_code: entry.http_status_code,
@@ -158,10 +157,12 @@ const fetchUrlsCorentin = async (urlArray, refresh, timeout) => {
     return urlData;
 }
 
-
-// we use useCallback so that function can be used as dependency for useEffect
-// export const fetchStatusUrls = useCallback( async (urlArray=[], refresh=false) => {
-export const fetchStatusUrls = async (urlArray=[], refresh=false, timeout=10, method = UrlStatusCheckMethods.IABOT.key) => {
+export const fetchStatusUrls = async ({
+            urlArray=[],
+            refresh=false,
+            timeout=10,
+            method = UrlStatusCheckMethods.IABOT.key
+        } = {}) => {
 
     console.log(`utils::fetchStatusUrls (${method}): refresh = ${refresh}, timeout = ${timeout}`)
 
@@ -191,7 +192,64 @@ export const fetchStatusUrls = async (urlArray=[], refresh=false, timeout=10, me
 
 }
 
-export const convertToBareUrls = (urlArray=[], sourceMethod = UrlStatusCheckMethods.IARI.key) => {
+// example:
+// https://archive.org/services/context/iari/v2/statistics/reference/b64ae445
+const fetchReferenceDetail = async (refId) => {
+    // handle null ref
+    if (!refId) {
+        return {};
+    }
+    // TODO: sanitize inout value to be an integer
+
+    // TODO: use refresh here ?
+    const myEndpoint = `${IARI_V2_URL_BASE}/statistics/reference/${refId}`;
+
+    // fetch the data
+    fetch(myEndpoint, {
+    })
+
+        .then((response) => {
+            if(!response.ok) throw new Error(response.status);
+            return response.json();
+        })
+
+        .then((data) => {
+
+        })
+
+        .catch((err) => {
+            // ?? what do we do here?
+        })
+
+        .finally(() => {
+            // ?? anything to do here?
+        });
+
+}
+
+
+
+// fetch reference details for all references in refArray
+export const fetchAllReferenceDetails = async ({ refArray=[], } = {}) => {
+
+    console.log(`utils::fetchAllReferenceDetails`)
+
+    if (!refArray || !refArray.length) //return [];
+    {
+        return Promise.resolve([])
+    }
+
+    const promises = refArray.map(ref => {
+        return fetchReferenceDetail(ref.id)
+    })
+
+    // assume all promises successful
+    return await Promise.all(promises);
+
+}
+
+
+export const convertUrlArray = (urlArray=[]) => {
 
     if (!urlArray || !urlArray.length) return [];
 
@@ -213,4 +271,48 @@ export const copyToClipboard = (copyText, label="Data") => {
             console.error(`Failed to copy ${label} to clipboard.`, error);
             alert(`Failed to copy ${label} to clipboard: ${error}`);
         });
+}
+
+// returns hexadecimal color for interpolated gradient between start and end colors
+//
+// startColor and endColor are rgb triplet integer arrays: [ <r>, <g>, <b> ]
+// steps is how many steps in between first and last color
+// index is which of those step colors to return, 0 based
+export const getColorFromIndex = (index, startColor, endColor, steps) => {
+    function rgbToHex(r, g, b) {
+        const hexR = r.toString(16).padStart(2, "0"); // Convert to hex and pad with 0 if needed
+        const hexG = g.toString(16).padStart(2, "0");
+        const hexB = b.toString(16).padStart(2, "0");
+        return `#${hexR}${hexG}${hexB}`; // Return the hexadecimal color string
+    }
+    if (steps <= 1) {
+        return rgbToHex(endColor[0],endColor[1],endColor[2]);
+    }
+    const r = Math.floor(startColor[0] + (index / (steps -1) * (endColor[0] - startColor[0]) ));
+    const g = Math.floor(startColor[1] + (index / (steps -1) * (endColor[1] - startColor[1]) ));
+    const b = Math.floor(startColor[2] + (index / (steps -1) * (endColor[2] - startColor[2]) ));
+    return rgbToHex(r,g,b);
+}
+
+
+export const convertToCSV = (json) => {
+    const rows = json.map((row) => {
+
+        const myRowItems = row.map( (item) => {
+            // from: https://stackoverflow.com/questions/46637955/write-a-string-containing-commas-and-double-quotes-to-csv
+            // We remove blanks and check if the item contains other whitespace,`,` or `"`.
+            // In that case, we need to quote the item.
+
+            if (typeof item === 'string') {
+                if (item.replace(/ /g, '').match(/[\s,"]/)) {
+                    return '"' + item.replace(/"/g, '""') + '"';
+                }
+                return item
+            } else {
+                return item
+            }
+        })
+        return myRowItems.join(',');
+    });
+    return rows.join('\n');
 }

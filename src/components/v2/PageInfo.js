@@ -3,6 +3,7 @@ import ArrayDisplay from "../ArrayDisplay";
 import PureJson from "../utils/PureJson";
 
 
+/* displays basic info from the original returned json for the page fetch */
 export default function PageInfo({ pageData }) {
 
     const [showDetail, setShowDetail] = useState(false);

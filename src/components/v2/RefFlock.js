@@ -2,42 +2,65 @@ import React, {useEffect, useState} from 'react';
 import { IARI_V2_URL_BASE } from '../../constants/endpoints.js';
 import RefView from "./RefView/RefView";
 
-function getLinkText(ref) {
+function getReferenceCaption(ref) {
 
-    let text = "";
+    let hasContent = false;
 
-    if (ref.name) {
-        text += '[' + ref.name + '] ';
-    }
+    const markup = <>
+
+        {ref.titles
+            ? ref.titles.map( t => {
+                hasContent = true
+                return <span className={'ref-line ref-title'} style={{fontWeight: "bold"}}>{t}{hasContent = true}</span>
+            }) : null }
+
+        {ref.name
+            ? <>
+                {hasContent = true}
+                <span className={'ref-line ref-name'}>Reference Name: <span style={{fontWeight: "bold"}}>{ref.name}</span></span>
+              </>
+            : null }
+
+        {ref.template_names && ref.template_names.length
+            ? <>
+                {hasContent = true}
+                {ref.template_names.map( tn => {
+                return <span className={'ref-line ref-template'}>Template: <span style={{fontWeight: "bold"}}>{tn}</span></span>
+            })}
+                </>
+            : null}
+
+        {ref.reference_count && ref.reference_count > 1
+            ? <>
+                {hasContent = true}
+                <span className={'ref-line ref-count'}>Reference used {ref.reference_count} times</span>
+            </>
+            : null}
+
+        {/*{ !hasContent ? <span>ref id: {ref.id}</span> : null }*/}
+        { !hasContent ? <span>{ref.wikitext}</span> : null }
+
+        {ref.link_status
+            // display link_status array values
+            ? <div className={`ref-link-status-wrapper`}>
+
+                {ref.link_status.length > 0
+                    ? ref.link_status.map( linkStat => {
+                        // return <span className={'ref-line ref-status'}>Link Status: {linkStat}</span>
+                        return <span className={`ref-link-status link-status-${linkStat}`} />
+                        })
+                    : <span className={`ref-link-status link-status-missing`} /> }
+
+                </div>
+            : null}
+
+    </>
 
 
-    if (ref.template_names && ref.template_names.length > 0) {
-        ref.template_names.map((tn, i) => {
-            // <span style={{fontWeight: "bold"}}>{tn}</span>
-            text += tn + "\n";
-            return null;
-        })
-    } else {
-        // wikitext does not come with dehydrated_references
-        // text += ref.wikitext + "\n";
-        //
-        // should have (in the future):
-        // text += ref.name
-    }
-
-    if (ref.titles) {
-        ref.titles.map((t,i) => {
-            text += t + "\n";
-            return null;
-        })
-    }
-
-    if (!text) text += "ref id: " + ref.id;
-
-    return <p>{text}</p>
+    return markup
 }
 
-function RefFlock({ refArray, refFilterDef, onAction } ) {
+function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
 
     const [refDetails, setRefDetails] = useState(null);
     // const [isLoading, setIsLoading] = useState(false);
@@ -65,6 +88,7 @@ function RefFlock({ refArray, refFilterDef, onAction } ) {
 
             .then((data) => {
                 data.endpoint = myEndpoint;
+                data.link_status = ref.link_status
                 setRefDetails(data);
             })
 
@@ -116,19 +140,28 @@ function RefFlock({ refArray, refFilterDef, onAction } ) {
             <h4>Applied Filter: {refFilterDef ? refFilterDef.caption : 'Show All'}</h4>
             <h4>{filteredRefs.length} {filteredRefs.length === 1
                 ? 'Reference' : 'References'}{buttonRemove}</h4>
+            {extraCaption}
         </>
 
+        const listHeader = <div className={"ref-list-header"} >
+            <div className={"list-header-row"}>
+                <div className={"list-name"}>Reference</div>
+            </div>
+        </div>
+
         refs = <>
+            {listHeader}
             <div className={"ref-list"}>
                 {filteredRefs.map((ref, i) => {
                     return <button key={i}
                        className={"ref-button"}
                        onClick={(e) => {
                            fetchDetail(ref)
-                       }}>{getLinkText(ref)}</button>
+                       }}>{getReferenceCaption(ref)}</button>
                 })}
             </div>
         </>
+
     }
 
     return <div className={"ref-flock"}>

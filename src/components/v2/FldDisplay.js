@@ -50,9 +50,9 @@ export default function FldDisplay({ pageData } ) {
     }
 
 
-    const refArray = (!pageData || !pageData.dehydrated_references)
-        ? []
-        : pageData.dehydrated_references
+    if (!pageData) return null;
+
+    const refArray = (pageData.references)
 
     // convert fld objects into fld array of { fld: xxx, count: y }
     const flds = (pageData && pageData.fld_counts)

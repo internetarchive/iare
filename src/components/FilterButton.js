@@ -12,10 +12,21 @@ import React from "react";
         upon click, the "name" param gets sent "up"
 
  */
+
+// default function to render button, if not passed FilterFunction props.onRender
+const renderFunc = (props) => {
+    return <>
+        <span>{props.caption}{
+            (props.count || props.count === 0)
+                ? <span className={"lolite"}> [{props.count}]</span> : ''}
+        </span>
+        {props.useDesc ? <><br/><span className={"btn-description"}>{props.desc}</span></> : null}
+    </>
+}
 export default function FilterButton(props) {
     return <button
         type="button"
-        className={"btn toggle-btn " + (props.isPressed ? "btn-pressed" : "")}
+        className={`btn toggle-btn${props.isPressed ? " btn-pressed" : ""}`}
         aria-pressed={props.isPressed}
         onClick={() => props.onClick(props.name)}
 
@@ -23,8 +34,8 @@ export default function FilterButton(props) {
         data-tooltip-id="my-filter-tooltip"
         data-tooltip-content={props.desc}
     >
-        <span>{props.caption}{(props.count || props.count === 0) ? <span className={"lolite"}> [{props.count}]</span> : ''}</span>
-        {props.useDesc ? <><br/><span className={"btn-description"}>{props.desc}</span></> : null}
+        {props.onRender ? props.onRender(props) : renderFunc(props)}
+
     </button>;
 
 }

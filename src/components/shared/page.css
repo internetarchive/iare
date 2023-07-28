@@ -14,9 +14,12 @@
     display:flex;
     flex-direction: row;
 }
-/* section-box is common component class for sections
+
+/* *******************
+ section-box is common component class for sections
  - see UrlDisplay and RefDisplay e.g.
- */
+ ********************* */
+
 .section-box {
     margin-left: 1rem;
 }
@@ -29,9 +32,12 @@
     font-weight:bold;
 }
 
-/* *******************
+.section-sub {
+    margin-bottom: 1.5rem;
+}
+/********************
  for choosing Domains. urls or Reference Types
- ********************* */
+ ******************* */
 
 .ref-filter-types {
     display: flex;
@@ -54,6 +60,11 @@
 .ref-filter-types > div:first-child {
     margin-left:0;
 }
+
+/* *******************
+ ORES display
+ ********************* */
+
 
 .ores-display {
     /*color:red;*/

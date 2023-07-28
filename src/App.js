@@ -94,8 +94,9 @@ export default function App( {env, myPath, myRefresh, myMethod} ) {
     const convertPathToEndpoint = (path = '', mediaType = 'wiki', refresh=false) => {
 
         if (mediaType === "wiki") {
-            const sectionRegex = "&regex=bibliography|further reading|works cited|sources|external links"; // for now... as of 2023.04.09
-            return `${IARI_V2_URL_BASE}/statistics/article?url=${path}${sectionRegex}${refresh ? "&refresh=true" : ''}`;
+            const sectionRegex = '&regex=bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
+            const options = '&dehydrate=false'
+            return `${IARI_V2_URL_BASE}/statistics/article?url=${path}${sectionRegex}${options}${refresh ? "&refresh=true" : ''}`;
 
         } else if (mediaType === "pdf") {
             return `${IARI_V2_URL_BASE}/statistics/pdf?url=${path}${refresh ? "&refresh=true" : ''}`;
@@ -114,6 +115,7 @@ export default function App( {env, myPath, myRefresh, myMethod} ) {
 
 
     // fetch article reference data
+    //
     // TODO: account for error conditions, like wrong file format, not found, etc
     const referenceFetch = useCallback((pathName, refresh=false) => {
 
@@ -153,7 +155,7 @@ export default function App( {env, myPath, myRefresh, myMethod} ) {
 
             .then((data) => {
 
-                // upon successful return of data, decorate the data with some informative fields
+                // decorate the data with some informative fields upon successful data response
                 data.pathName = pathName;
                 data.endpoint = myEndpoint;
                 data.forceRefresh = refresh;
@@ -193,28 +195,7 @@ export default function App( {env, myPath, myRefresh, myMethod} ) {
 
     }, []);
 
-                // // callback for PathNameFetch component
-                // // pathResults[0] = pathName (string)
-                // // pathResults[1] = refreshCheck (boolean)
-                // const handlePathResults = useCallback( (pathResults) => {
-                //
-                //     const newUrl = window.location.protocol + "//"
-                //         + window.location.host
-                //         + window.location.pathname
-                //         + "?url=" + pathResults[0]
-                //         + (pathResults[1] ? "&refresh=true" : '')
-                //         + (statusMethod ? `&method=${statusMethod}` : '')
-                //
-                //     // window.location.href = newUrl;
-                //     console.log("handlePathResults: new url path = ", newUrl)
-                //
-                //     debugAlert(`APP::handlePathResults: newUrl=${newUrl}`)
-                //     console.log(`---------\nAPP::handlePathResults: newUrl=${newUrl}`)
-                //
-                //     window.location.href = newUrl;
-                //     // console.log("REFRESH URL WITH: ", newUrl);
-                //
-                // }, [debugAlert] );
+
     // callback for PathNameFetch component
     // pathResults[0] = pathName (string)
     // pathResults[1] = refreshCheck (boolean)
@@ -233,6 +214,8 @@ export default function App( {env, myPath, myRefresh, myMethod} ) {
         // debugAlert(`APP::handlePathResults: newUrl=${newUrl}`)
         console.log(`---------\nAPP::handlePathResults: newUrl=${newUrl}`)
 
+        // setting the page url forces page to refresh, thus a "new  component render",
+        // kicking off the following useEffect
         window.location.href = newUrl;
         // console.log("REFRESH URL WITH: ", newUrl);
 
@@ -246,6 +229,8 @@ export default function App( {env, myPath, myRefresh, myMethod} ) {
         // set these states only for debugging, essentially
         setTargetPath(myPath);
         setRefreshCheck(myRefresh);
+
+        // and do the fetching for the path specified (pulled from URL address)
         referenceFetch(myPath, myRefresh)
 
     }, [myPath, myRefresh, debugAlert, referenceFetch])
@@ -255,11 +240,9 @@ export default function App( {env, myPath, myRefresh, myMethod} ) {
         ? ['easterIslandFilename', 'internetArchiveFilename', 'pdfCovid', ]
         : ['easterIslandFilename', 'internetArchiveFilename', 'pdfCovid', 'pdfDesantis', 'pdfOneLink'];
 
-    // onChange={e => setStatusCheckMethod(e.target.value)}
     const handleStatusMethodChange = (event) => {
-        const myMethod2 = event.target.value
-        // setStatusCheckMethod(event.target.value);
-        console.log(`handleStatusMethodChange:new method is: ${myMethod2}`)
+        const myMethod2 = event.target.value // NB: had trouble with name being method...
+        // console.log(`handleStatusMethodChange: new method is: ${myMethod2}`)
         setStatusMethod(myMethod2);
     };
 
@@ -274,7 +257,6 @@ export default function App( {env, myPath, myRefresh, myMethod} ) {
                                 type="radio"
                                 value={method}
                                 checked={statusMethod === method}
-                                // onChange={e => setStatusCheckMethod(e.target.value)}
                                 onChange={handleStatusMethodChange}
                             /> {UrlStatusCheckMethods[method].caption}
                         </label>
@@ -284,8 +266,37 @@ export default function App( {env, myPath, myRefresh, myMethod} ) {
         </div>
     </>
 
+    const heading = <div className={"header-contents"}>
+        <h1>Internet Archive Reference Explorer <span
+            className={"version-display"}> version {package_json.version}
+            <span className={"non-production"}
+            > STAGING SITE <
+                button onClick={toggleDebug} className={"debug-button"}
+            >{isDebug ? "hide" : "show"} debug</button
+            ></span></span></h1>
+        {/*<Clock />*/}
+
+        {statusMethodOptions}
+    </div>
+
+    const debug = <div className={ isDebug ? "debug-on" : "debug-off" }>
+        <div>
+            <button onClick={toggleDebugAlert} className={"debug-button"}>{ isDebugAlerts ? "hide" : "show" } alerts
+            </button>{isDebugAlerts ? <span className={"debug-info"}> user alerts will be engaged for certain tasks</span>
+            : ''}</div>
+        <p>pathName : <MakeLink href={targetPath}/></p>
+        <p>endpointPath: <MakeLink href={endpointPath}/></p>
+        <p>inline target URL: {myPath}</p>
+        <p>Force Refresh: {refreshCheck ? "TRUE" : "false"}</p>
+        <p>Check Method: {statusMethod}</p>
+        {/*<p>window.location:</p>*/}
+        {/*<pre>{JSON.stringify(window.location,null,2)}</pre>*/}
+        <TestRefModal />
+    </div>
+
+
     console.log(`rendering App component ${targetPath} ${refreshCheck} ${statusMethod}`)
-    // render component
+
     return <>
 
         <UrlStatusCheckContext.Provider value={statusMethod}>
@@ -293,36 +304,8 @@ export default function App( {env, myPath, myRefresh, myMethod} ) {
             <div className="iare-view">
 
                 <div className={"header"}>
-                    {(!env || env !== 'env-production') ? <div className={"environment-tag"}>{"NON-PRODUCTION\u00A0\u00A0".repeat(8)}</div> : null }
-
-                    <div className={"header-contents"}>
-                        <h1>Internet Archive Reference Explorer <span
-                            className={"version-display"}> version {package_json.version}
-                            <span className={"non-production"}
-                            > STAGING SITE <
-                                button onClick={toggleDebug} className={"debug-button"}
-                            >{isDebug ? "hide" : "show"} debug</button
-                            ></span></span></h1>
-                        {/*<Clock />*/}
-
-                        {statusMethodOptions}
-                    </div>
-
-                    <div className={ isDebug ? "debug-on" : "debug-off" }>
-                        <div>
-                            <button onClick={toggleDebugAlert} className={"debug-button"}>{ isDebugAlerts ? "hide" : "show" } alerts
-                            </button>{isDebugAlerts ? <span className={"debug-info"}> user alerts will be engaged for certain tasks</span>
-                        : ''}</div>
-                        <p>pathName : <MakeLink href={targetPath}/></p>
-                        <p>endpointPath: <MakeLink href={endpointPath}/></p>
-                        <p>inline target URL: {myPath}</p>
-                        <p>Force Refresh: {refreshCheck ? "TRUE" : "false"}</p>
-                        <p>Check Method: {statusMethod}</p>
-                        {/*<p>window.location:</p>*/}
-                        {/*<pre>{JSON.stringify(window.location,null,2)}</pre>*/}
-                        <TestRefModal />
-                    </div>
-
+                    {heading}
+                    {debug}
                 </div>
 
 
@@ -337,6 +320,8 @@ export default function App( {env, myPath, myRefresh, myMethod} ) {
                 </div> : ""}
 
                 {isLoading ? <Loader message={"Analyzing Page References..."}/> : <>
+                    { /* component is re-rendered when pageData changes, which is
+                     only once per URL invocation, really */}
                     <PageDisplay pageData={pageData}/>
                     { /* TODO: pass in an error callback here? */}
                 </>

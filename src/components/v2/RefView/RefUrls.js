@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useCallback} from "react";
 import MakeLink from "../../MakeLink";
-import {UrlStatusCheckMethods} from "../../../constants/endpoints";
-import {fetchStatusUrls, convertToBareUrls} from "../../../utils/utils";
+import {fetchStatusUrls, convertUrlArray} from "../../../utils/utils";
+import {UrlStatusCheckContext} from "../../../contexts/UrlStatusCheckContext"
 
 /*
 shows template urls and their status codes in a tabular form
@@ -10,6 +10,9 @@ export default function RefUrls({ urls }) {
     const [urlArray, setUrlArray] = useState( [] )
     const [urlRows, setUrlRows] = useState( [] )
 
+    const urlStatusCheckMethod = React.useContext(UrlStatusCheckContext);
+
+    // create display components (table, tr, and td) for array of url objects
     const urlsToRows = useCallback( (urlObjects=[]) => {
         return urlObjects
             ? urlObjects.map( u => {
@@ -39,14 +42,23 @@ export default function RefUrls({ urls }) {
         setUrlRows(urlsToRows(urlArray))
     }, [urlArray, urlsToRows] )
 
+    // fetch status codes for all URLs in urls array
     useEffect( () => {
         if (!urls) {
             setUrlArray( [] )
             return
         }
-        fetchData(urls)
+
+        // fetchData(urls)
+        fetchStatusUrls({
+            urlArray: urls,
+            refresh: false,
+            timeout: 10,
+            method: urlStatusCheckMethod
+            })
+
             .then( results => {
-                const bareUrls = convertToBareUrls(results) // currently results come "decorated" with surrounding "data : {...}"
+                const bareUrls = convertUrlArray(results) // currently results come "decorated" with surrounding "data : {...}"
                 setUrlArray(bareUrls)
                 }
             )
@@ -60,39 +72,24 @@ export default function RefUrls({ urls }) {
                 }
             )
 
-    }, [urls])
+    }, [urls, urlStatusCheckMethod])
 
 
-    const fetchData = async (myUrls) => {
-
-        const refresh = false;
-        const timeout = 10;
-        const method = UrlStatusCheckMethods.IABOT.key;
-        // const method = UrlStatusCheckMethods.CORENTIN.key;
-        // const method = UrlStatusCheckMethods.IARI.key;
-
-        return await fetchStatusUrls(myUrls, refresh, timeout, method)
-
-    }
-
-    const urlHeaderRow = <>
-        <tr>
-            <th className={'ref-view-url-name'}><h3 className={"urls-header"}>Urls</h3></th>
-            <th className={'ref-view-url-status'}>Status</th>
-        </tr>
-    </>
-
-    return <div className="ref-view-urls-wrapper">
+    const urlsDisplay =
         <table className={'ref-view-urls'}>
             <thead>
-            {urlHeaderRow}
+            <tr>
+                <th className={'ref-view-url-name'}><h3 className={"urls-header"}>Urls</h3></th>
+                <th className={'ref-view-url-status'}>Status</th>
+            </tr>
             </thead>
             <tbody>
             {urlRows}
             </tbody>
         </table>
 
-
+    return <div className="ref-view-urls-wrapper">
+        {urlsDisplay}
     </div>
 }
 
