@@ -78,7 +78,7 @@ export default function RefUrls({ urls }) {
                 }
             )
 
-    }, [urls, myStatusMethod])
+    }, [myIariBase, urls, myStatusMethod])
 
 
     const urlsDisplay =

@@ -248,7 +248,7 @@ export default function PageData({pageData = {}}) {
                 setIsLoadingUrls(false);
             })
 
-        }, [pageData, processReferences, processUrls, myStatusCheckMethod]
+        }, [myIariBase, pageData, processReferences, processUrls, myStatusCheckMethod]
 
     )
 

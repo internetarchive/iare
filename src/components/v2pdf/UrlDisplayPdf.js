@@ -1,7 +1,6 @@
-import React, {useCallback, useContext, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import UrlFlockPdf from "./UrlFlockPdf";
 import UrlOverviewPdf from "./UrlOverviewPdf";
-// import {UrlStatusCheckContext} from "../../contexts/UrlStatusCheckContext"
 import Loader from "../Loader";
 import '../shared/urls.css';
 import './urls.pdf.css';
@@ -450,7 +449,7 @@ export default function UrlDisplayPdf({flocks = [], options={}, caption = "URLs"
         }
 // eslint-disable-next-line
     }, [filterMap] )
-//     }, [filterMap, origins] )
+    // }, [filterMap, origins] )
 
     return <>
         <div className={"section-box url-overview-column"}>

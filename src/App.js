@@ -18,7 +18,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
     const [targetPath, setTargetPath] = useState(myPath);
     const [refreshCheck, setRefreshCheck] = useState(myRefresh);
     const [statusMethod, setStatusMethod] = useState(myMethod);
-    const [iariSourceId, setIariSourceId] = useState(myIariSourceId);
+    //const [xxiariSourceId, setIariSourceId] = useState(myIariSourceId);
 
     const [endpointPath, setEndpointPath] = useState('');
 
@@ -88,36 +88,37 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
     };
 
 
-    // mediaType is "pdf", "html", "wiki", or anything else we come up with
-    const convertPathToEndpoint = (path = '', mediaType = 'wiki', refresh = false) => {
-
-        const iariBase = IariSources[iariSourceId]?.proxy
-        // TODO: error if iariBase is undefined or otherwise falsey
-console.log(`convertPathToEndpoint: iariSourceId = ${iariSourceId}, iariBase = ${iariBase}`)
-        if (mediaType === "wiki") {
-            const sectionRegex = '&regex=bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
-            const options = '&dehydrate=false'
-            return `${iariBase}/statistics/article?url=${path}${sectionRegex}${options}${refresh ? "&refresh=true" : ''}`;
-
-        } else if (mediaType === "pdf") {
-            return `${iariBase}/statistics/pdf?url=${path}${refresh ? "&refresh=true" : ''}`;
-
-        } else {
-            // do general case...
-
-            return `${iariBase}/statistics/analyze?url=${path}${refresh ? "&refresh=true"
-                : ''}${mediaType ? `&media_type=${mediaType}` : ''}`;
-
-            // this will produce and error right now, as IARI does not support
-            // ...i (mojomonger) think we should have the generic analyze endpoint
-        }
-    };
-
-
     // fetch article reference data
     //
     // TODO: account for error conditions, like wrong file format, not found, etc
     const fetchArticleData = useCallback((pathName, refresh = false) => {
+
+        // mediaType is "pdf", "html", "wiki", or anything else we come up with
+        const convertPathToEndpoint = (path = '', mediaType = 'wiki', refresh = false) => {
+
+            const iariBase = IariSources[myIariSourceId]?.proxy
+            // TODO: error if iariBase is undefined or otherwise falsey
+            console.log(`convertPathToEndpoint: myIariSourceId = ${myIariSourceId}, iariBase = ${iariBase}`)
+            if (mediaType === "wiki") {
+                const sectionRegex = '&regex=bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
+                const options = '&dehydrate=false'
+                return `${iariBase}/statistics/article?url=${path}${sectionRegex}${options}${refresh ? "&refresh=true" : ''}`;
+
+            } else if (mediaType === "pdf") {
+                return `${iariBase}/statistics/pdf?url=${path}${refresh ? "&refresh=true" : ''}`;
+
+            } else {
+                // do general case...
+
+                return `${iariBase}/statistics/analyze?url=${path}${refresh ? "&refresh=true"
+                    : ''}${mediaType ? `&media_type=${mediaType}` : ''}`;
+
+                // this will produce and error right now, as IARI does not support
+                // ...i (mojomonger) think we should have the generic analyze endpoint
+            }
+        };
+
+
 
         // handle null pathName
         if (!pathName) {
@@ -159,7 +160,7 @@ console.log(`convertPathToEndpoint: iariSourceId = ${iariSourceId}, iariBase = $
                 // decorate the data with some informative fields upon successful data response
                 data.pathName = pathName;
                 data.endpoint = myEndpoint;
-                data.iariSource = IariSources[iariSourceId]?.proxy;
+                data.iariSource = IariSources[myIariSourceId]?.proxy;
                 data.forceRefresh = refresh;
                 data.mediaType = myMediaType; // decorate based on mediaType?
 
@@ -195,7 +196,7 @@ console.log(`convertPathToEndpoint: iariSourceId = ${iariSourceId}, iariBase = $
                 setIsLoading(false);
             });
 
-    }, []);
+    }, [myIariSourceId]);
 
 
     // callback for PathNameFetch component
@@ -208,7 +209,7 @@ console.log(`convertPathToEndpoint: iariSourceId = ${iariSourceId}, iariBase = $
                 url: pathResults[0],
                 refresh: pathResults[1],
 
-                iari_source: iariSourceId,
+                iari_source: myIariSourceId,
             }
         )
 
@@ -228,7 +229,7 @@ console.log(`convertPathToEndpoint: iariSourceId = ${iariSourceId}, iariBase = $
             + `?url=${url}`
             + (refresh ? '&refresh=true' : '')
             + (statusMethod ? `&method=${statusMethod}` : '')
-            + (iariSourceId ? `&iari-source=${iari_source}` : '')
+            + (myIariSourceId ? `&iari-source=${iari_source}` : '')
             + (isDebug ? '&debug=true' : '')
 
         // window.location.href = newUrl;
@@ -253,7 +254,7 @@ console.log(`convertPathToEndpoint: iariSourceId = ${iariSourceId}, iariBase = $
         // and do the fetching for the path specified (pulled from URL address)
         fetchArticleData(myPath, myRefresh)
 
-    }, [iariSourceId, myPath, myRefresh, fetchArticleData])
+    }, [myIariSourceId, myPath, myRefresh, fetchArticleData])
 
 
     const handleCheckMethodChange = (methodId) => {
@@ -281,7 +282,7 @@ console.log(`convertPathToEndpoint: iariSourceId = ${iariSourceId}, iariBase = $
         return { caption: IariSources[key].caption, value: IariSources[key].key }
     })
     const iariChoiceSelect = <div className={"iari-source-wrapper"}>
-        <Dropdown choices={iariChoices} label={'Iari Source:'} onSelect={handleIariSourceIdChange} defaultChoice={iariSourceId}/>
+        <Dropdown choices={iariChoices} label={'Iari Source:'} onSelect={handleIariSourceIdChange} defaultChoice={myIariSourceId}/>
     </div>
 
 
@@ -296,7 +297,7 @@ console.log(`convertPathToEndpoint: iariSourceId = ${iariSourceId}, iariBase = $
     </div>
 
     const debug = <div className={isDebug ? "debug-on" : "debug-off"}>
-        <p><span className={'label'}>IARI Source:</span> {iariSourceId} ({IariSources[iariSourceId]?.proxy})</p>
+        <p><span className={'label'}>IARI Source:</span> {myIariSourceId} ({IariSources[myIariSourceId]?.proxy})</p>
         <p><span className={'label'}>Check Method:</span> {statusMethod}</p>
         <p><span className={'label'}>pathName:</span> <MakeLink href={targetPath}/></p>
         <p><span className={'label'}>endpointPath:</span> <MakeLink href={endpointPath}/></p>
@@ -306,7 +307,7 @@ console.log(`convertPathToEndpoint: iariSourceId = ${iariSourceId}, iariBase = $
 
     // set config for config context
     const config = {
-        iariSource: IariSources[iariSourceId]?.proxy,
+        iariSource: IariSources[myIariSourceId]?.proxy,
         urlStatusMethod: statusMethod,
     }
 
@@ -314,7 +315,7 @@ console.log(`convertPathToEndpoint: iariSourceId = ${iariSourceId}, iariBase = $
         path: targetPath,
         refreshCheck: refreshCheck,
         statusMethod: statusMethod,
-        iari_source: iariSourceId,
+        iari_source: myIariSourceId,
         config: config
     })
 
