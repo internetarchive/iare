@@ -1,23 +1,24 @@
 import React, {useCallback, useEffect, useState} from "react";
 import package_json from "../package.json";
-import {IARI_V2_URL_BASE, UrlStatusCheckMethods} from "./constants/endpoints";
 import PathNameFetch from "./components/PathNameFetch";
 import Loader from "./components/Loader";
 import PageDisplay from "./components/PageDisplay";
 import MakeLink from "./components/MakeLink";
-import TestRefModal from "./components/vTest/TestRefModal";
-import {UrlStatusCheckContext} from "./contexts/UrlStatusCheckContext"
+//// import TestRefModal from "./components/vTest/TestRefModal";
+import Dropdown from "./components/Dropdown";
+import {IariSources, UrlStatusCheckMethods} from "./constants/endpoints";
+import {ConfigContext} from "./contexts/ConfigContext"
 
 
-export default function App( {env, myPath, myRefresh, myMethod} ) {
+export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, myDebug}) {
 
-    const [isDebug, setDebug] = useState(false);
-    const [isDebugAlerts, setDebugAlerts] = useState(false);
+    const [isDebug, setDebug] = useState(myDebug);
 
-    // transfer params from address line
+    // params settable from from address url
     const [targetPath, setTargetPath] = useState(myPath);
     const [refreshCheck, setRefreshCheck] = useState(myRefresh);
     const [statusMethod, setStatusMethod] = useState(myMethod);
+    const [iariSourceId, setIariSourceId] = useState(myIariSourceId);
 
     const [endpointPath, setEndpointPath] = useState('');
 
@@ -25,18 +26,15 @@ export default function App( {env, myPath, myRefresh, myMethod} ) {
     const [myError, setMyError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
-
     const toggleDebug = () => {
         setDebug(!isDebug);
     }
 
-    const toggleDebugAlert = () => {
-        setDebugAlerts(!isDebugAlerts);
-    }
+    // production mode shows limited shortcuts, vs. staging which allows for more testing
+    const shortcuts = env === 'env-production'
+        ? ['easterIslandFilename', 'internetArchiveFilename', 'pdfCovid',]
+        : ['easterIslandFilename', 'internetArchiveFilename', 'pdfCovid', 'pdfDesantis', 'pdfOneLink'];
 
-    const debugAlert = useCallback((msg) => {
-        if (isDebug && isDebugAlerts) alert(msg)
-    }, [isDebug, isDebugAlerts]);
 
     // add class to body to indicate environment
     useEffect(() => {
@@ -91,20 +89,23 @@ export default function App( {env, myPath, myRefresh, myMethod} ) {
 
 
     // mediaType is "pdf", "html", "wiki", or anything else we come up with
-    const convertPathToEndpoint = (path = '', mediaType = 'wiki', refresh=false) => {
+    const convertPathToEndpoint = (path = '', mediaType = 'wiki', refresh = false) => {
 
+        const iariBase = IariSources[iariSourceId]?.proxy
+        // TODO: error if iariBase is undefined or otherwise falsey
+console.log(`convertPathToEndpoint: iariSourceId = ${iariSourceId}, iariBase = ${iariBase}`)
         if (mediaType === "wiki") {
             const sectionRegex = '&regex=bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
             const options = '&dehydrate=false'
-            return `${IARI_V2_URL_BASE}/statistics/article?url=${path}${sectionRegex}${options}${refresh ? "&refresh=true" : ''}`;
+            return `${iariBase}/statistics/article?url=${path}${sectionRegex}${options}${refresh ? "&refresh=true" : ''}`;
 
         } else if (mediaType === "pdf") {
-            return `${IARI_V2_URL_BASE}/statistics/pdf?url=${path}${refresh ? "&refresh=true" : ''}`;
+            return `${iariBase}/statistics/pdf?url=${path}${refresh ? "&refresh=true" : ''}`;
 
         } else {
             // do general case...
 
-            return `${IARI_V2_URL_BASE}/statistics/analyze?url=${path}${refresh ? "&refresh=true"
+            return `${iariBase}/statistics/analyze?url=${path}${refresh ? "&refresh=true"
                 : ''}${mediaType ? `&media_type=${mediaType}` : ''}`;
 
             // this will produce and error right now, as IARI does not support
@@ -113,27 +114,27 @@ export default function App( {env, myPath, myRefresh, myMethod} ) {
     };
 
 
-
     // fetch article reference data
     //
     // TODO: account for error conditions, like wrong file format, not found, etc
-    const referenceFetch = useCallback((pathName, refresh=false) => {
+    const fetchArticleData = useCallback((pathName, refresh = false) => {
 
         // handle null pathName
         if (!pathName) {
-            console.log ("APP::referenceFetch: pathName is null-ish");
+            console.log("APP::referenceFetch: pathName is null-ish");
             setPageData(null);
             // TODO: use setMyError(null); // ??
             return;
         }
 
-        const myMediaType = getMediaType(pathName); // TODO: idea: respect a "forceMediaType",
-        // where it can force a media type endpoint, no matter what getMediaType thinks it is.
-        // If so, passes it in to convertPathToEndpoint, where the endpoint is determined
-        // by passed in mediaType rather than mediaType interpolated from pathName.
+        const myMediaType = getMediaType(pathName);
+            // TODO: idea: respect a "forceMediaType",
+            // where it can force a media type endpoint, no matter what getMediaType thinks it is.
+            // If so, passes it in to convertPathToEndpoint, where the endpoint is determined
+            // by passed in mediaType rather than mediaType interpolated from pathName.
 
         const myEndpoint = convertPathToEndpoint(pathName, myMediaType, refresh);
-        console.log("APP::referenceFetch: endpoint = ", myEndpoint)
+        console.log("APP::fetchArticleData: endpoint = ", myEndpoint)
 
         setEndpointPath(myEndpoint); // for display
 
@@ -158,6 +159,7 @@ export default function App( {env, myPath, myRefresh, myMethod} ) {
                 // decorate the data with some informative fields upon successful data response
                 data.pathName = pathName;
                 data.endpoint = myEndpoint;
+                data.iariSource = IariSources[iariSourceId]?.proxy;
                 data.forceRefresh = refresh;
                 data.mediaType = myMediaType; // decorate based on mediaType?
 
@@ -173,7 +175,7 @@ export default function App( {env, myPath, myRefresh, myMethod} ) {
                 // how do we tell if error is from native network cause, or synthesized/augmented by our handling of res != OK above
 
                 if (err.message === "404") {
-                // if (err.status_code === "404") {
+                    // if (err.status_code === "404") {
                     setMyError("404 Error finding target page.")
                 } else if (err.message === "502") {
                     setMyError("502 Server problem (no further info available)")
@@ -201,29 +203,47 @@ export default function App( {env, myPath, myRefresh, myMethod} ) {
     // pathResults[1] = refreshCheck (boolean)
     const handlePathResults = (pathResults) => {
 
+        refreshPageResults(
+            {
+                url: pathResults[0],
+                refresh: pathResults[1],
+
+                iari_source: iariSourceId,
+            }
+        )
+
+    }
+
+    // set up new url with appropriate "command line args", and refresh page
+    const refreshPageResults = (
+        {
+            url = '',
+            refresh=false,
+            iari_source = IariSources.iari_prod.key
+        } ) => {
+
         const newUrl = window.location.protocol + "//"
             + window.location.host
             + window.location.pathname
-            + "?url=" + pathResults[0]
-            + (pathResults[1] ? "&refresh=true" : '')
+            + `?url=${url}`
+            + (refresh ? '&refresh=true' : '')
             + (statusMethod ? `&method=${statusMethod}` : '')
+            + (iariSourceId ? `&iari-source=${iari_source}` : '')
+            + (isDebug ? '&debug=true' : '')
 
         // window.location.href = newUrl;
-        console.log("handlePathResults: new url path = ", newUrl)
-
-        // debugAlert(`APP::handlePathResults: newUrl=${newUrl}`)
-        console.log(`---------\nAPP::handlePathResults: newUrl=${newUrl}`)
+        console.log("refreshPageResults: new url path = ", newUrl)
 
         // setting the page url forces page to refresh, thus a "new  component render",
         // kicking off the following useEffect
         window.location.href = newUrl;
-        // console.log("REFRESH URL WITH: ", newUrl);
 
     }
 
-    // fetch initial article if specified on address bar with url param
+
+    // fetch initial article specified on address bar with url param
     useEffect(() => {
-        debugAlert(`APP:::useEffect[myPath, myRefresh]: calling handlePathName: ${myPath}, ${myRefresh}`)
+
         console.log(`APP:::useEffect[myPath, myRefresh]: calling handlePathName: ${myPath}, ${myRefresh}`)
 
         // set these states only for debugging, essentially
@@ -231,75 +251,77 @@ export default function App( {env, myPath, myRefresh, myMethod} ) {
         setRefreshCheck(myRefresh);
 
         // and do the fetching for the path specified (pulled from URL address)
-        referenceFetch(myPath, myRefresh)
+        fetchArticleData(myPath, myRefresh)
 
-    }, [myPath, myRefresh, debugAlert, referenceFetch])
+    }, [iariSourceId, myPath, myRefresh, fetchArticleData])
 
 
-    const shortcuts = env === 'env-production'
-        ? ['easterIslandFilename', 'internetArchiveFilename', 'pdfCovid', ]
-        : ['easterIslandFilename', 'internetArchiveFilename', 'pdfCovid', 'pdfDesantis', 'pdfOneLink'];
-
-    const handleStatusMethodChange = (event) => {
-        const myMethod2 = event.target.value // NB: had trouble with name being method...
-        // console.log(`handleStatusMethodChange: new method is: ${myMethod2}`)
-        setStatusMethod(myMethod2);
+    const handleCheckMethodChange = (methodId) => {
+        // console.log(`handleStatusMethodChange: new method is: ${methodId}`)
+        setStatusMethod(methodId);
     };
+    const methodChoices = Object.keys(UrlStatusCheckMethods).map( key => {
+        return { caption: UrlStatusCheckMethods[key].caption, value: UrlStatusCheckMethods[key].key }
+    })
+    const methodChoiceSelect = <div className={"check-method-wrapper"}>
+        <Dropdown choices={methodChoices} label={'Check Method:'} onSelect={handleCheckMethodChange} defaultChoice={statusMethod}/>
+    </div>
 
-    const statusMethodOptions = <>
-        <div className={"status-check-methods-wrapper"}>
-            <div className={"status-check-methods"}>
-                <div>URL Status Check Method:</div>
-                {Object.keys(UrlStatusCheckMethods).map(method => {
-                    return <div key={method}>
-                        <label>
-                            <input
-                                type="radio"
-                                value={method}
-                                checked={statusMethod === method}
-                                onChange={handleStatusMethodChange}
-                            /> {UrlStatusCheckMethods[method].caption}
-                        </label>
-                    </div>
-                })}
-            </div>
-        </div>
-    </>
+
+    const handleIariSourceIdChange = (sourceId) => {
+        // console.log(`handleIariSourceChange: new iari source is: ${sourceId}`)
+        refreshPageResults( {
+            url : targetPath,
+            refresh : refreshCheck,
+            iari_source: sourceId,
+        })
+        // setIariSourceId(sourceId);
+    };
+    const iariChoices = Object.keys(IariSources).map( key => {
+        return { caption: IariSources[key].caption, value: IariSources[key].key }
+    })
+    const iariChoiceSelect = <div className={"iari-source-wrapper"}>
+        <Dropdown choices={iariChoices} label={'Iari Source:'} onSelect={handleIariSourceIdChange} defaultChoice={iariSourceId}/>
+    </div>
+
 
     const heading = <div className={"header-contents"}>
         <h1>Internet Archive Reference Explorer <span
             className={"version-display"}> version {package_json.version}
             <span className={"non-production"}
             > STAGING SITE <
-                button onClick={toggleDebug} className={"debug-button"}
+                button onClick={toggleDebug} className={"utility-button debug-button"}
             >{isDebug ? "hide" : "show"} debug</button
-            ></span></span></h1>
-        {/*<Clock />*/}
-
-        {statusMethodOptions}
+            ></span></span>{iariChoiceSelect}{methodChoiceSelect}</h1>
     </div>
 
-    const debug = <div className={ isDebug ? "debug-on" : "debug-off" }>
-        <div>
-            <button onClick={toggleDebugAlert} className={"debug-button"}>{ isDebugAlerts ? "hide" : "show" } alerts
-            </button>{isDebugAlerts ? <span className={"debug-info"}> user alerts will be engaged for certain tasks</span>
-            : ''}</div>
-        <p>pathName : <MakeLink href={targetPath}/></p>
-        <p>endpointPath: <MakeLink href={endpointPath}/></p>
-        <p>inline target URL: {myPath}</p>
-        <p>Force Refresh: {refreshCheck ? "TRUE" : "false"}</p>
-        <p>Check Method: {statusMethod}</p>
-        {/*<p>window.location:</p>*/}
-        {/*<pre>{JSON.stringify(window.location,null,2)}</pre>*/}
-        <TestRefModal />
+    const debug = <div className={isDebug ? "debug-on" : "debug-off"}>
+        <p><span className={'label'}>IARI Source:</span> {iariSourceId} ({IariSources[iariSourceId]?.proxy})</p>
+        <p><span className={'label'}>Check Method:</span> {statusMethod}</p>
+        <p><span className={'label'}>pathName:</span> <MakeLink href={targetPath}/></p>
+        <p><span className={'label'}>endpointPath:</span> <MakeLink href={endpointPath}/></p>
+        <p><span className={'label'}>inline target URL:</span> {myPath}</p>
+        <p><span className={'label'}>Force Refresh:</span> {refreshCheck ? "TRUE" : "false"}</p>
     </div>
 
+    // set config for config context
+    const config = {
+        iariSource: IariSources[iariSourceId]?.proxy,
+        urlStatusMethod: statusMethod,
+    }
 
-    console.log(`rendering App component ${targetPath} ${refreshCheck} ${statusMethod}`)
+    console.log(`rendering App component:`, {
+        path: targetPath,
+        refreshCheck: refreshCheck,
+        statusMethod: statusMethod,
+        iari_source: iariSourceId,
+        config: config
+    })
+
 
     return <>
 
-        <UrlStatusCheckContext.Provider value={statusMethod}>
+        <ConfigContext.Provider value={config}>
 
             <div className="iare-view">
 
@@ -319,15 +341,18 @@ export default function App( {env, myPath, myRefresh, myMethod} ) {
                     {myError}
                 </div> : ""}
 
-                {isLoading ? <Loader message={"Analyzing Page References..."}/> : <>
-                    { /* component is re-rendered when pageData changes, which is
-                     only once per URL invocation, really */}
-                    <PageDisplay pageData={pageData}/>
-                    { /* TODO: pass in an error callback here? */}
-                </>
+                {isLoading
+                    ? <Loader message={"Analyzing Page References..."}/>
+                    : <>
+                        { /* component is re-rendered when pageData changes, which is
+                         only once per URL invocation, really */}
+                        <PageDisplay pageData={pageData}/>
+                        { /* TODO: pass in an error callback here? */}
+                    </>
                 }
             </div>
 
-        </UrlStatusCheckContext.Provider>
+        </ConfigContext.Provider>
+
     </>
 }

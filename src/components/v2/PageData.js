@@ -2,11 +2,10 @@ import React, {useCallback, useEffect, useState} from "react";
 import UrlDisplay from "./UrlDisplay";
 import RefDisplay from "./RefDisplay";
 import FldDisplay from "./FldDisplay";
-import {URL_FILTER_MAP} from "./filters/urlFilterMaps";
 import Loader from "../Loader";
-import {fetchStatusUrls} from "../../utils/utils.js"
-// import {UrlStatusCheckMethods} from "../../constants/endpoints.js";
-import {UrlStatusCheckContext} from "../../contexts/UrlStatusCheckContext"
+import {fetchStatusUrls} from "../../utils/iariUtils.js"
+import {ConfigContext} from "../../contexts/ConfigContext";
+import {URL_FILTER_MAP} from "./filters/urlFilterMaps";
 
 /*
 When this component is rendered, it must "process" the pageData. This involves:
@@ -48,7 +47,11 @@ export default function PageData({pageData = {}}) {
     const [isLoadingUrls, setIsLoadingUrls] = useState(false);
     const [dataReady, setDataReady] = useState(false);
 
-    const urlStatusCheckMethod = React.useContext(UrlStatusCheckContext);
+    // set up iariBase and statusMethod from global config
+    const myConfig = React.useContext(ConfigContext);
+    const myIariBase = myConfig?.iariSource;
+    const myStatusCheckMethod = myConfig?.urlStatusMethod;
+
 
     // process url results and create a urlDict from it
     //
@@ -80,7 +83,7 @@ export default function PageData({pageData = {}}) {
     }, [])
 
 
-    // returns a linkStatus array indicating the status of all the links in the reference.
+    // returns a linkStatus array indicating the status of all the links in a reference.
     //
     // there are two "kinds" of link we currently deal with:
     // - those indicated in the template parameters "url" and "archive_url"
@@ -88,6 +91,7 @@ export default function PageData({pageData = {}}) {
     //
     // for those links found in template parameters, the status of the url indicated by the "url" parameter
     // is checked, along with the status of the url indicated by the "archive_url" parameter.
+    // TODO: for other templates, the "pure" url is indicated by alternate parameter names
     //
     // All other urls are just checked for good or bad, regardless of whether it is an archive link or not.
     //
@@ -146,6 +150,8 @@ export default function PageData({pageData = {}}) {
     // reduce any repeated references into one reference with multiple page referrals, and
     // calculate the status of the links in the references by examining the pure and archived
     // urls in the templates in each reference
+    // TODO: this should be done with the IARI API, not here at front-end retrieval
+    //
     const processReferences = useCallback( (pageData, refResults) => {
 
         // Process the "named" refs by looping thru each reference
@@ -212,10 +218,11 @@ export default function PageData({pageData = {}}) {
         setIsLoadingUrls(true);
 
         fetchStatusUrls( {
-                urlArray: pageData.urls,
-                refresh: pageData.forceRefresh,
-                timeout: 60,
-                method: urlStatusCheckMethod
+            iariBase: myIariBase,
+            urlArray: pageData.urls,
+            refresh: pageData.forceRefresh,
+            timeout: 60,
+            method: myStatusCheckMethod
             })
 
             .then(urlResults => {
@@ -241,7 +248,7 @@ export default function PageData({pageData = {}}) {
                 setIsLoadingUrls(false);
             })
 
-        }, [pageData, processReferences, processUrls, urlStatusCheckMethod]
+        }, [pageData, processReferences, processUrls, myStatusCheckMethod]
 
     )
 

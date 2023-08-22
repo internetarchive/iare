@@ -1,12 +1,12 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import UrlFlockPdf from "./UrlFlockPdf";
 import UrlOverviewPdf from "./UrlOverviewPdf";
-import {IARI_V2_URL_BASE} from "../../constants/endpoints.js";
-import {UrlStatusCheckMethods} from "../../constants/endpoints.js";
-import {UrlStatusCheckContext} from "../../contexts/UrlStatusCheckContext"
+// import {UrlStatusCheckContext} from "../../contexts/UrlStatusCheckContext"
 import Loader from "../Loader";
 import '../shared/urls.css';
 import './urls.pdf.css';
+import {ConfigContext} from "../../contexts/ConfigContext";
+import {UrlStatusCheckMethods} from "../../constants/endpoints";
 
 
 /*
@@ -41,8 +41,10 @@ export default function UrlDisplayPdf({flocks = [], options={}, caption = "URLs"
     const [urlArray, setUrlArray] = useState([]);
     const [urlStatistics, setUrlStatistics] = useState({});
 
-    const urlStatusCheckMethod = React.useContext(UrlStatusCheckContext);
     const myStatusMethods = UrlStatusCheckMethods;
+    const myConfig = React.useContext(ConfigContext);
+    const myIariBase = myConfig?.iariSource;
+    const myStatusMethod = myConfig?.urlStatusMethod;
 
     const origins = {
         "annotations": {
@@ -105,7 +107,7 @@ export default function UrlDisplayPdf({flocks = [], options={}, caption = "URLs"
 
     async function fetchStatusUrl(urlObject, refresh = false, timeout = 0, method='') {
 
-        const endpoint = `${IARI_V2_URL_BASE}/check-url`
+        const endpoint = `${myIariBase}/check-url`
             + `?url=${encodeURIComponent(urlObject.url)}`
             + (refresh ? "&refresh=true" : '')
             + (timeout > 0 ? `&timeout=${timeout}` : '');
@@ -314,7 +316,7 @@ export default function UrlDisplayPdf({flocks = [], options={}, caption = "URLs"
     // uses useCallback so that this function can be used as a useEffect dependency, and not cause re-renders everytime
     const fetchStatusUrls = useCallback(async (urlObjectArray, refresh = false) => {
 
-        console.log(`UrlDisplayPdf::fetchStatusUrls (${urlStatusCheckMethod}): refresh = ${refresh}, timeout = ${timeoutCheckUrl}`)
+        console.log(`UrlDisplayPdf::fetchStatusUrls (${myStatusMethod}): refresh = ${refresh}, timeout = ${timeoutCheckUrl}`)
 
         if (!urlObjectArray || !urlObjectArray.length) return [];
 
@@ -322,18 +324,18 @@ export default function UrlDisplayPdf({flocks = [], options={}, caption = "URLs"
         // By assigning to a local variable, the variable value can be successfully debugged
         const methods = UrlStatusCheckMethods
 
-        if (methods.IARI.key === urlStatusCheckMethod) {
+        if (methods.IARI.key === myStatusMethod) {
             return fetchUrlsIari(urlObjectArray, refresh, timeoutCheckUrl)
 
-        } else if (methods.IABOT.key === urlStatusCheckMethod) {
+        } else if (methods.IABOT.key === myStatusMethod) {
             return fetchUrlsIabot(urlObjectArray, refresh, timeoutCheckUrl)
 
-        } else if (methods.CORENTIN.key === urlStatusCheckMethod) {
+        } else if (methods.CORENTIN.key === myStatusMethod) {
             return fetchUrlsCorentin(urlObjectArray, refresh, timeoutCheckUrl)
         }
         return []
 // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [UrlStatusCheckMethods, urlStatusCheckMethod]);
+    }, [UrlStatusCheckMethods, myStatusMethod]);
 
 
     // process url array upon iterative fetch completion
@@ -461,7 +463,7 @@ export default function UrlDisplayPdf({flocks = [], options={}, caption = "URLs"
             : <>
                 <div className={"section-box"}>
                     <h3 className={'status-method-display'} >Status Check Method: <span
-                        className={'embiggen'}>{urlStatusCheckMethod}</span></h3>
+                        className={'embiggen'}>{myStatusMethod}</span></h3>
                     <UrlFlockPdf urlArray={urlArray} urlFilterDef={urlFilter} originFilterDef={originFilter}/>
                 </div>
 

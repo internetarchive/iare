@@ -1,7 +1,9 @@
 import React, {useState, useEffect, useCallback} from "react";
 import MakeLink from "../../MakeLink";
-import {fetchStatusUrls, convertUrlArray} from "../../../utils/utils";
-import {UrlStatusCheckContext} from "../../../contexts/UrlStatusCheckContext"
+import {convertUrlArray} from "../../../utils/utils";
+import {fetchStatusUrls} from "../../../utils/iariUtils";
+// import {UrlStatusCheckContext} from "../../../contexts/UrlStatusCheckContext"
+import {ConfigContext} from "../../../contexts/ConfigContext";
 
 /*
 shows template urls and their status codes in a tabular form
@@ -10,7 +12,10 @@ export default function RefUrls({ urls }) {
     const [urlArray, setUrlArray] = useState( [] )
     const [urlRows, setUrlRows] = useState( [] )
 
-    const urlStatusCheckMethod = React.useContext(UrlStatusCheckContext);
+    const myConfig = React.useContext(ConfigContext);
+    const myIariBase = myConfig?.iariSource;
+    const myStatusMethod = myConfig?.urlStatusMethod;
+
 
     // create display components (table, tr, and td) for array of url objects
     const urlsToRows = useCallback( (urlObjects=[]) => {
@@ -51,10 +56,11 @@ export default function RefUrls({ urls }) {
 
         // fetchData(urls)
         fetchStatusUrls({
+            iariBase: myIariBase,
             urlArray: urls,
             refresh: false,
             timeout: 10,
-            method: urlStatusCheckMethod
+            method: myStatusMethod
             })
 
             .then( results => {
@@ -72,7 +78,7 @@ export default function RefUrls({ urls }) {
                 }
             )
 
-    }, [urls, urlStatusCheckMethod])
+    }, [urls, myStatusMethod])
 
 
     const urlsDisplay =

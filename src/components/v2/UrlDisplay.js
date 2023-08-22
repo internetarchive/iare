@@ -9,8 +9,6 @@ import {REF_LINK_STATUS_FILTERS} from "./filters/refFilterMaps";
 
 export default function UrlDisplay ({ pageData, options, urlFilterMap = {} } ) {
 
-    console.log("UrlDisplay: render");
-
     const [urlStatistics, setUrlStatistics] = useState({});
     const [urlFilter, setUrlFilter] = useState( null ); // filter to pass in to UrlFlock
     const [refFilter, setRefFilter] = useState( null ); // filter to pass in to RefFlock
@@ -154,6 +152,8 @@ export default function UrlDisplay ({ pageData, options, urlFilterMap = {} } ) {
     const urlListCaption = <h3>URL List</h3>
     const extraUrlCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click a URL to show References using that URL</h4>
     const extraRefCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click a Reference to view reference details</h4>
+
+    console.log("UrlDisplay: render");
 
     return <>
 
