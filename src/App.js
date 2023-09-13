@@ -179,7 +179,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
                     setMyError("404 Error finding target page.")
                 } else if (err.message === "502") {
                     setMyError("502 Server problem (no further info available)")
-                } else if (err.name== "TypeError" && err.message == "Failed to fetch") {
+                } else if (err.name === "TypeError" && err.message === "Failed to fetch") {
                     setMyError(err.message + " - Possible IARI service failure.");
                 } else {
                     // ?? should we extract HTTP status code from string? (1st 3 characters, if number? without number, next?)
