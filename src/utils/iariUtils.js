@@ -41,7 +41,7 @@ const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method=''
                         error_details:
                             method === UrlStatusCheckMethods.IABOT.key
                                 ? data.testdeadlink_error_details
-                                : '', //no error details if not IABot, for now (1023.08.22)
+                                : '', //no error details if not IABot, for now (2023.08.22)
 
                     })
                 })
@@ -90,15 +90,105 @@ const fetchUrlsIari = async (iariBase, urlArray, refresh, timeout) => {
 
 const fetchUrlsIabot = async (iariBase, urlArray, refresh, timeout) => {
 
-    // TODO: change this to use plural check-urls iari endpoint
+    // // TODO: change this to use plural check-urls iari endpoint
+    //
+    // const promises = urlArray.map(urlObj => {
+    //     return fetchStatusUrl(iariBase, urlObj, refresh, timeout, UrlStatusCheckMethods.IABOT.key)
+    // });
+    //
+    // // assumes all promises successful
+    // // TODO: error trap this promise call with a .catch
+    // return await Promise.all(promises);
 
-    const promises = urlArray.map(urlObj => {
-        return fetchStatusUrl(iariBase, urlObj, refresh, timeout, UrlStatusCheckMethods.IABOT.key)
-    });
 
-    // assumes all promises successful
-    // TODO: error trap this promise call with a .catch
-    return await Promise.all(promises);
+    // `url=${encodeURIComponent(url)}`
+    const urlsParam = "?url=" + urlArray.map( url => encodeURIComponent(url) ).join("&url=")
+    const endpoint = `${iariBase}/check-urls`
+        + urlsParam
+        + (refresh ? "&refresh=true" : '')
+        // + (timeout > 0 ? `&timeout=${timeout}` : '')  // no timeout parameter yet respected
+
+    const urlData = await fetch(endpoint, {cache: "no-cache"})
+        .then(response => {
+            if (response.ok) {
+                return response.json().then(data => {
+
+                    // response has object with url as keys
+                    // transform results wrapped in { data: <results> } format so that it matches
+                    // what is returned from other IABOT and IARI fetch methods
+
+                    // convert entries in return data to return format of url entries
+
+                    const myUrls = []
+                    for (const [urlKey, entry] of Object.entries(data.urls)) {
+                        console.log(urlKey, entry);
+
+                        // add entry to return url array
+                        myUrls.push( {
+                            data: {
+                                url: urlKey,
+                                status_code: entry.status_code,
+                                // TODO: there might ne error, error_details (or other props) in entry...pass them on?
+                            }
+                        })
+
+                    }
+
+
+                                        // const myUrls = data.urls.map( entry => {
+                                        //
+                                        //     const results = { // NB: url object "wrapped" in data
+                                        //         data: {
+                                        //             url: entry.url,
+                                        //             status_code: entry.http_status_code,
+                                        //         }
+                                        //     }
+                                        //
+                                        //     // handle errors
+                                        //     if (entry.http_status_code === -1) {
+                                        //         results.data.status_code = 0;
+                                        //         results.data.error_code = -1;
+                                        //         results.data.error_text = entry.http_status_message;
+                                        //     }
+                                        //
+                                        //     return results; // for each data.map entry
+                                        //
+                                        // })
+
+                    return Promise.resolve(myUrls) // remember, we're in a Promise
+                })
+
+            } else {
+                // we may have a 504 or other erroneous status_code on the check-url call
+                console.warn(`fetchUrlsIabot: Error fetching urls`)
+
+                // todo Does this need to pass back an array? test debug
+                return Promise.resolve({
+                    url: "error.url",
+                    ///tags: ['X'],
+                    status_code: 0,
+                    error_code: 0,
+                    error_text: `Error: Server error via check-urls endpoint: ${endpoint}`,
+                })
+            }
+        })
+
+        .catch((_) => { // if something really bad happened, return fake synthesized url object
+
+                console.warn(`fetchUrlsIabot: Something went wrong when fetching urls with: ${endpoint}`)
+
+                // return fake url data object so URL display interface is not broken
+                return Promise.resolve({
+                    url: "error.url",
+                    ///tags: ['X'],
+                    status_code: 0,
+                    error_code: -1,
+                    error_text: `Error: Unknown error via check-urls endpoint: ${endpoint}`,
+                })
+            }
+        );
+
+    return urlData;
 }
 
 const fetchUrlsCorentin = async (urlArray, refresh, timeout) => {
