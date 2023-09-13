@@ -5,6 +5,7 @@ import UrlOverview from "./UrlOverview";
 import '../shared/urls.css';
 import {convertToCSV} from "../../utils/utils";
 import {REF_LINK_STATUS_FILTERS} from "./filters/refFilterMaps";
+import {ConfigContext} from "../../contexts/ConfigContext";
 
 
 export default function UrlDisplay ({ pageData, options, urlFilterMap = {} } ) {
@@ -14,6 +15,8 @@ export default function UrlDisplay ({ pageData, options, urlFilterMap = {} } ) {
     const [refFilter, setRefFilter] = useState( null ); // filter to pass in to RefFlock
     const [selectedUrl, setSelectedUrl] = useState(''); // currently selected url in url list
 
+    let myConfig = React.useContext(ConfigContext);
+    myConfig = myConfig ? myConfig : {} // prevents undefined.<param> errors
 
     // calculate url stats
     useEffect( () => {
@@ -127,14 +130,15 @@ export default function UrlDisplay ({ pageData, options, urlFilterMap = {} } ) {
     const handleCopyClick = () => { // used to copy url list and status
 
         // get one row per line:
-        const jsonData = pageData.urlArray.sort(
+        const urlArrayData = pageData.urlArray.sort(
             (a, b) => (a.data.url > b.data.url) ? 1 : (a.data.url < b.data.url) ? -1 : 0
         ).map( u => {
-            return [ u.data.url, u.data.status_code ]
+            return [ u.data.url, u.data.status_code, u.data.error_details ]
         })
+        urlArrayData.unshift( [ 'URL', `${myConfig.urlStatusMethod} status`, `error details` ] )
 
         // convert to CSV and send to clipboard
-        const csvString = convertToCSV(jsonData);
+        const csvString = convertToCSV(urlArrayData);
 
         navigator.clipboard.writeText(csvString)
             .then(() => {
@@ -149,7 +153,9 @@ export default function UrlDisplay ({ pageData, options, urlFilterMap = {} } ) {
 
     const refArray = (pageData.references)
 
-    const urlListCaption = <h3>URL List</h3>
+    const copyButton = <button onClick={handleCopyClick} className={'utility-button'} ><span>Copy to Clipboard</span></button>
+
+    const urlListCaption = <h3>URL List{myConfig.isDebug ? copyButton : null }</h3>
     const extraUrlCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click a URL to show References using that URL</h4>
     const extraRefCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click a Reference to view reference details</h4>
 

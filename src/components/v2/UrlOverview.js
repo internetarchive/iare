@@ -144,8 +144,8 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {
     // callback for button render function of <FilterButton>
     const renderLinkStatusButton = (props) => {
         return <>
-            {props.filter.lines.map( line => {
-                return <div>{line}</div>
+            {props.filter.lines.map( (line, i) => {
+                return <div key={i}>{line}</div>
             })}
             <div className={`filter-link-status-wrapper`}>
                 <span className={`link-status link-status-${props.filter.name}`} />

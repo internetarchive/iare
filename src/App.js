@@ -163,7 +163,6 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
                 data.iariSource = IariSources[myIariSourceId]?.proxy;
                 data.forceRefresh = refresh;
                 data.mediaType = myMediaType; // decorate based on mediaType?
-
                 data.version = getIariVersion(data, myEndpoint);
 
                 // and set the new pageData state
@@ -180,11 +179,10 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
                     setMyError("404 Error finding target page.")
                 } else if (err.message === "502") {
                     setMyError("502 Server problem (no further info available)")
+                } else if (err.name== "TypeError" && err.message == "Failed to fetch") {
+                    setMyError(err.message + " - Possible IARI service failure.");
                 } else {
-                    // setMyError(err.toString())
-                    // setMyError(RawJson(err));
-
-                    // extract HTTP status code form string (1st 3 characters, if number? without number next?
+                    // ?? should we extract HTTP status code from string? (1st 3 characters, if number? without number, next?)
                     setMyError(err.message + " - No further info available");
                 }
                 setPageData(null);
@@ -309,6 +307,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
     const config = {
         iariSource: IariSources[myIariSourceId]?.proxy,
         urlStatusMethod: statusMethod,
+        isDebug: !!isDebug,
     }
 
     console.log(`rendering App component:`, {

@@ -37,6 +37,12 @@ const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method=''
                                 : method === UrlStatusCheckMethods.IARI.key
                                     ? data.status_code
                                     : -1,
+
+                        error_details:
+                            method === UrlStatusCheckMethods.IABOT.key
+                                ? data.testdeadlink_error_details
+                                : '', //no error details if not IABot, for now (1023.08.22)
+
                     })
                 })
 
@@ -49,8 +55,7 @@ const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method=''
                     status_code: 0,
                     error_code: response.status,
                     error_text: response.statusText ? response.statusText : "error from server",
-                    // TODO: would be nice to use response.statusText, but
-                    // as of 2023.04.08, response.statusText is empty
+                    // TODO: would be nice to use response.statusText, but as of 2023.04.08, response.statusText is empty
                 })
 
             }

@@ -48,9 +48,10 @@ export default function PageData({pageData = {}}) {
     const [dataReady, setDataReady] = useState(false);
 
     // set up iariBase and statusMethod from global config
-    const myConfig = React.useContext(ConfigContext);
-    const myIariBase = myConfig?.iariSource;
-    const myStatusCheckMethod = myConfig?.urlStatusMethod;
+    let myConfig = React.useContext(ConfigContext);
+    myConfig = myConfig ? myConfig : {} // prevents undefined.<param> errors
+    const myIariBase = myConfig.iariSource;
+    const myStatusCheckMethod = myConfig.urlStatusMethod;
 
 
     // process url results and create a urlDict from it
@@ -213,6 +214,7 @@ export default function PageData({pageData = {}}) {
         const postProcessData = (urlResults, refResults) => {
             processUrls(pageData, urlResults); // creates urlDict
             processReferences(pageData, refResults)
+            pageData.statusCheckMethod = myStatusCheckMethod;
         }
 
         setIsLoadingUrls(true);
