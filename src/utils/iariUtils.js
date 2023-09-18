@@ -90,23 +90,24 @@ const fetchUrlsIari = async (iariBase, urlArray, refresh, timeout) => {
 
 const fetchUrlsIabot = async (iariBase, urlArray, refresh, timeout) => {
 
-    // // TODO: change this to use plural check-urls iari endpoint
-    //
-    // const promises = urlArray.map(urlObj => {
-    //     return fetchStatusUrl(iariBase, urlObj, refresh, timeout, UrlStatusCheckMethods.IABOT.key)
-    // });
-    //
-    // // assumes all promises successful
-    // // TODO: error trap this promise call with a .catch
-    // return await Promise.all(promises);
+    const promises = urlArray.map(urlObj => {
+        return fetchStatusUrl(iariBase, urlObj, refresh, timeout, UrlStatusCheckMethods.IABOT.key)
+    });
 
+    // assumes all promises successful
+    // TODO: error trap this promise call with a .catch
+    return await Promise.all(promises);
 
-    // `url=${encodeURIComponent(url)}`
+}
+
+// eslint-disable-next-line no-unused-vars
+const fetchUrlsIabotBulk = async (iariBase, urlArray, refresh, timeout) => {
+
     const urlsParam = "?url=" + urlArray.map( url => encodeURIComponent(url) ).join("&url=")
     const endpoint = `${iariBase}/check-urls`
         + urlsParam
         + (refresh ? "&refresh=true" : '')
-        // + (timeout > 0 ? `&timeout=${timeout}` : '')  // no timeout parameter yet respected
+    // + (timeout > 0 ? `&timeout=${timeout}` : '')  // no timeout parameter yet respected
 
     const urlData = await fetch(endpoint, {cache: "no-cache"})
         .then(response => {
@@ -135,25 +136,25 @@ const fetchUrlsIabot = async (iariBase, urlArray, refresh, timeout) => {
                     }
 
 
-                                        // const myUrls = data.urls.map( entry => {
-                                        //
-                                        //     const results = { // NB: url object "wrapped" in data
-                                        //         data: {
-                                        //             url: entry.url,
-                                        //             status_code: entry.http_status_code,
-                                        //         }
-                                        //     }
-                                        //
-                                        //     // handle errors
-                                        //     if (entry.http_status_code === -1) {
-                                        //         results.data.status_code = 0;
-                                        //         results.data.error_code = -1;
-                                        //         results.data.error_text = entry.http_status_message;
-                                        //     }
-                                        //
-                                        //     return results; // for each data.map entry
-                                        //
-                                        // })
+                    // const myUrls = data.urls.map( entry => {
+                    //
+                    //     const results = { // NB: url object "wrapped" in data
+                    //         data: {
+                    //             url: entry.url,
+                    //             status_code: entry.http_status_code,
+                    //         }
+                    //     }
+                    //
+                    //     // handle errors
+                    //     if (entry.http_status_code === -1) {
+                    //         results.data.status_code = 0;
+                    //         results.data.error_code = -1;
+                    //         results.data.error_text = entry.http_status_message;
+                    //     }
+                    //
+                    //     return results; // for each data.map entry
+                    //
+                    // })
 
                     return Promise.resolve(myUrls) // remember, we're in a Promise
                 })

@@ -208,7 +208,7 @@ export default function PageData({pageData = {}}) {
     }, [calcLinkStatus])
 
 
-    useEffect( () => {
+    useEffect( () => { // [myIariBase, pageData, processReferences, processUrls, myStatusCheckMethod]
         const context = 'PageData::useEffect [pageData]'
 
         const postProcessData = (urlResults, refResults) => {
@@ -229,6 +229,7 @@ export default function PageData({pageData = {}}) {
 
             .then(urlResults => {
                 console.log(`${context} fetchStatusUrls.then: urlResults has ${urlResults.length} elements`);
+
                 // TODO check erroneous results here -
                 pageData.urlArray = urlResults
                 console.log(`${context} fetchStatusUrls.then: after pageData.urlArray set to urlResults`);
