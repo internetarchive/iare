@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.2.20.0",
-  "version_name": "0.2.20.0.searchurldata",
+  "version": "0.2.20.1",
+  "version_name": "0.2.20.0.searchurldata; iari-stage default source",
   "private": true,
   "dependencies": {
     "bootstrap": "^5.3.0-alpha3",
