@@ -1,13 +1,4 @@
 import {UrlStatusCheckMethods} from "../constants/endpoints";
-// import {IARI_V2_URL_BASE, UrlStatusCheckMethods} from "../constants/endpoints";
-// import {useContext} from "react";
-//
-// let iariBase = '';
-//
-// export const setIariBase = (newIariBase) => {
-//     iariBase = newIariBase;
-//     console.log(`iariUtils: iariBase set to: ${iariBase}`)
-// }
 
 const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method='') => {
 
@@ -15,8 +6,43 @@ const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method=''
         + `?url=${encodeURIComponent(url)}`
         + (refresh ? "&refresh=true" : '')
         + (timeout > 0 ? `&timeout=${timeout}` : '')
+        + `&method=${method}`
 
     let status_code = 0;
+
+    const resolveResults = (data, method) => {
+        const results = { url: url }
+
+        if (method === UrlStatusCheckMethods.IABOT.key) {
+            // return IABOT testdeadlink results
+            results.status_code = data.testdeadlink_status_code
+            results.status_code_error_details = data.testdeadlink_error_details
+            // and return IABOT searchurldata results as well
+            if (data.searchurldata_results?.hasOwnProperty("requesterror")) {
+                results.status_searchurldata = data.searchurldata_results.requesterror  // return value of request error
+            } else if (data.searchurldata_results?.hasOwnProperty("urls")) {
+                const myKeys = Object.keys(data.searchurldata_results.urls)
+                if (myKeys.length > 0) {
+                    const myUrl = data.searchurldata_results.urls[myKeys[0]]  // first url in list
+                    results.status_searchurldata = myUrl.live_state + (myUrl.archived ? ", A" : '') + (!myUrl.hasarchive ? "-" : '')
+                    results.status_searchurldata_archived = myUrl.archived
+                    results.status_searchurldata_archive = myUrl.archive
+                } else {
+                    results.status_searchurldata = "NO URL"
+                }
+            } else {
+                results.status_searchurldata = "UNKNOWN"
+            }
+
+        } else if (method === UrlStatusCheckMethods.IARI.key) {
+            results.status_code = data.status_code
+
+        } else {
+            results.status_code = -1
+            results.status_code_error_details = "Error Fetching status_code"
+        }
+        return results
+    }
 
     // TODO: do we want no-cache, even if no refresh?
     const urlData = await fetch(endpoint, {cache: "no-cache"})
@@ -27,28 +53,12 @@ const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method=''
 
             if (response.ok) {
                 return response.json().then(data => {
-
-                    return Promise.resolve({
-                        url: url,
-
-                        status_code:
-                            method === UrlStatusCheckMethods.IABOT.key
-                                ? data.testdeadlink_status_code
-                                : method === UrlStatusCheckMethods.IARI.key
-                                    ? data.status_code
-                                    : -1,
-
-                        error_details:
-                            method === UrlStatusCheckMethods.IABOT.key
-                                ? data.testdeadlink_error_details
-                                : '', //no error details if not IABot, for now (2023.08.22)
-
-                    })
+                    return Promise.resolve(resolveResults(data, method))
                 })
 
             } else {
                 // we may have a 504 or other erroneous status_code on the check-url call
-                console.warn(`fetchOneUrl: Error fetching url: ${url}`)
+                console.warn(`fetchStatusUrl: Error fetching url: ${url}`)
 
                 return Promise.resolve({
                     url: url,
@@ -63,7 +73,7 @@ const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method=''
 
         .catch( (_) => { // if something really bad happened, still return fake synthesized url object
 
-                console.warn(`utils::fetchOneUrl: Something went wrong when fetching url: ${url}`)
+                console.warn(`utils::fetchStatusUrl: Something went wrong when fetching url: ${url}`)
 
                 // return fake url data object so URL display interface is not broken
                 return Promise.resolve({
@@ -90,6 +100,7 @@ const fetchUrlsIari = async (iariBase, urlArray, refresh, timeout) => {
 
 const fetchUrlsIabot = async (iariBase, urlArray, refresh, timeout) => {
 
+    console.log(`fetchUrlsIabot: ${iariBase} urlArray:(not shown) refresh:${refresh} timeout:${timeout}`)
     const promises = urlArray.map(urlObj => {
         return fetchStatusUrl(iariBase, urlObj, refresh, timeout, UrlStatusCheckMethods.IABOT.key)
     });
@@ -161,7 +172,7 @@ const fetchUrlsIabotBulk = async (iariBase, urlArray, refresh, timeout) => {
 
             } else {
                 // we may have a 504 or other erroneous status_code on the check-url call
-                console.warn(`fetchUrlsIabot: Error fetching urls`)
+                console.warn(`fetchUrlsIabotBulk: Error fetching urls`)
 
                 // todo Does this need to pass back an array? test debug
                 return Promise.resolve({

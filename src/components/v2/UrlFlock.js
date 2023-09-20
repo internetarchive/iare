@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {Tooltip as MyTooltip} from "react-tooltip";
+import {UrlStatusCheckMethods} from "../../constants/endpoints";
 
 /*
 assumes urlArray is an array of url objects wrapped in a data object:
@@ -33,7 +34,7 @@ example:
 useSort and sort: apply sorting if set to true, use ASC if sortDir is true, DESC otherwise
 
 */
-export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, selectedUrl = '', extraCaption = null }) {
+export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, selectedUrl = '', extraCaption = null, fetchMethod="" }) {
 
     const [urlTooltipText, setUrlTooltipText] = useState( '' );
 
@@ -123,6 +124,54 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
             {extraCaption}
         </>
 
+        const getRowsHeader = () => {
+            return <div className={"url-list-header"}
+                        onClick={onClickHeader}
+                        onMouseOver={onHoverHeader} >
+                <div className={"url-row url-header-row"}>
+                    <div className={"url-name"}>URL</div>
+                    <div className={"url-status"} onClick={() => {
+                        // console.log("arf");
+                        setSortDir(!sortDir);
+                    }
+                    }>status</div>
+                    {fetchMethod === UrlStatusCheckMethods.IABOT.key
+                        ? <div className={"url-botstat"}>IABOT</div>
+                        : null }
+                </div>
+            </div>
+
+        }
+
+        const getRowData = (u, i, classes) => {
+            return <div className={classes} key={i} data-url={u.data.url} >
+                {/*<div className={"url-name"}><a href={u.data.url} target={"_blank"} rel={"noreferrer"} key={i}>{u.data.url}</a></div>*/}
+                <div className={"url-name"}>{u.data.url}</div>
+                <div className={"url-status"}>{u.data.status_code}</div>
+                {fetchMethod === UrlStatusCheckMethods.IABOT.key
+                    ? <div className={"url-botstat"}>{u.data.status_searchurldata}</div>
+                    : null }
+
+            </div>
+
+        }
+
+        const getRowError = (u, i, errText) => {
+            return <div className={`url-row url-row-error`} key={i}
+                        data-url={u.data.url}
+                        data-err-text={errText}
+                // onMouseOverCapture={handleRowHover}>
+                        onMouseOver={handleRowHover}
+                        onMouseLeave={() => setUrlTooltipText('')}
+            >
+                <div className={"url-name"}>{u.data.url ? u.data.url : `ERROR: No url for index ${i}`}</div>
+                <div className={"url-status"}>{-1}</div>
+                {fetchMethod === UrlStatusCheckMethods.IABOT.key
+                    ? <div className={"url-botstat"}>---</div>
+                    : null }
+            </div>
+        }
+
         // iterate over array of url objects to create rendered output
         const rows = filteredUrls.map((u, i) => {
 
@@ -136,16 +185,7 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
                     : u.data.status_code === undefined ? `URL status code undefined (try Force Refresh)`
                     : 'Unknown error'; // this last case should not happen
 
-                return <div className={`url-row url-row-error`} key={i}
-                            data-url={u.data.url}
-                            data-err-text={errText}
-                            // onMouseOverCapture={handleRowHover}>
-                            onMouseOver={handleRowHover}
-                            onMouseLeave={() => setUrlTooltipText('')}
-                >
-                    <div className={"url-name"}>{u.data.url ? u.data.url : `ERROR: No url for index ${i}`}</div>
-                    <div className={"url-status"}>{-1}</div>
-                </div>;
+                return getRowError(u, i, errText)
             }
 
             // otherwise show "normally"
@@ -157,28 +197,12 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
                     : '')
                 + (u.data.url === selectedUrl ? ' url-selected' : '')
 
-            return <div className={classes} key={i} data-url={u.data.url} >
-                {/*<div className={"url-name"}><a href={u.data.url} target={"_blank"} rel={"noreferrer"} key={i}>{u.data.url}</a></div>*/}
-                <div className={"url-name"}>{u.data.url}</div>
-                <div className={"url-status"}>{u.data.status_code}</div>
-            </div>
+            return getRowData(u, i, classes)
 
         } )
 
         urls = <>
-            <div className={"url-list-header"}
-                 onClick={onClickHeader}
-                 onMouseOver={onHoverHeader} >
-                <div className={"url-row url-header-row"}>
-                    <div className={"url-name"}>URL</div>
-                    <div className={"url-status"} onClick={() => {
-                        // console.log("arf");
-                        setSortDir(!sortDir);
-                    }
-                    }>status</div>
-                </div>
-            </div>
-
+            {getRowsHeader()}
             <div className={"url-list"} onClick={handleRowClick} >
                 {rows}
             </div>

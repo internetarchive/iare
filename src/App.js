@@ -259,7 +259,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         // console.log(`handleStatusMethodChange: new method is: ${methodId}`)
         setStatusMethod(methodId);
     };
-    const methodChoices = Object.keys(UrlStatusCheckMethods).map( key => {
+    const methodChoices = Object.keys(UrlStatusCheckMethods).filter(f => !["IARI", "IABOT_SEARCHURL"].includes(f)).map( key => {
         return { caption: UrlStatusCheckMethods[key].caption, value: UrlStatusCheckMethods[key].key }
     })
     const methodChoiceSelect = <div className={"check-method-wrapper"}>

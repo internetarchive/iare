@@ -1,7 +1,8 @@
 :root {
-    --width-url-list: 28rem;
+    --width-url-list: 30rem;
     --width-url-name: 22rem;
-    --width-url-status: 3rem;
+    --width-url-status: 4rem;
+    --width-url-botstat: 6rem;
 
     --width-col-url-overview: 327px;
 }
@@ -108,8 +109,11 @@
     border-right: 1px solid black;
 }
 .url-row .url-status {
-    /*width: 10%;*/
     width: var(--width-url-status);
+}
+.url-row .url-botstat {
+    border-left: 1px solid black;
+    width: var(--width-url-botstat);
 }
 .url-list a, .url-list .url-name {
     overflow-wrap: break-word;

@@ -6,6 +6,7 @@ import '../shared/urls.css';
 import {convertToCSV} from "../../utils/utils";
 import {REF_LINK_STATUS_FILTERS} from "./filters/refFilterMaps";
 import {ConfigContext} from "../../contexts/ConfigContext";
+import {UrlStatusCheckMethods} from "../../constants/endpoints";
 
 
 export default function UrlDisplay ({ pageData, options, urlFilterMap = {} } ) {
@@ -133,9 +134,18 @@ export default function UrlDisplay ({ pageData, options, urlFilterMap = {} } ) {
         const urlArrayData = pageData.urlArray.sort(
             (a, b) => (a.data.url > b.data.url) ? 1 : (a.data.url < b.data.url) ? -1 : 0
         ).map( u => {
-            return [ u.data.url, u.data.status_code, u.data.error_details ]
+            if (myConfig.urlStatusMethod === UrlStatusCheckMethods.IABOT.key) {
+                return [ u.data.url, u.data.status_code, u.data.status_code_error_details, u.data.status_searchurldata ]
+            } else {
+                return [ u.data.url, u.data.status_code, u.data.status_code_error_details ]
+            }
+
         })
-        urlArrayData.unshift( [ 'URL', `${myConfig.urlStatusMethod} status`, `error details` ] )
+        if (myConfig.urlStatusMethod === UrlStatusCheckMethods.IABOT.key) {
+            urlArrayData.unshift( [ 'URL', `${myConfig.urlStatusMethod} status`, `error details`, "IABOT searchurlstatus" ] )
+        } else {
+            urlArrayData.unshift( [ 'URL', `${myConfig.urlStatusMethod} status`, `error details` ] )
+        }
 
         // convert to CSV and send to clipboard
         const csvString = convertToCSV(urlArrayData);
@@ -171,7 +181,8 @@ export default function UrlDisplay ({ pageData, options, urlFilterMap = {} } ) {
         <div className={"section-box"}>
             {urlListCaption}
             <UrlFlock urlArray={pageData.urlArray} urlFilterDef={urlFilter}
-                      onAction={handleAction} selectedUrl={selectedUrl} extraCaption={extraUrlCaption}/>
+                      onAction={handleAction} selectedUrl={selectedUrl} extraCaption={extraUrlCaption}
+                      fetchMethod={myConfig.urlStatusMethod} />
         </div>
 
         <div className={"section-box"}>
