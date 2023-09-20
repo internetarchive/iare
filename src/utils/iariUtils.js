@@ -24,7 +24,7 @@ const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method=''
                 const myKeys = Object.keys(data.searchurldata_results.urls)
                 if (myKeys.length > 0) {
                     const myUrl = data.searchurldata_results.urls[myKeys[0]]  // first url in list
-                    results.status_searchurldata = myUrl.live_state + (myUrl.archived ? ", A" : '') + (!myUrl.hasarchive ? "-" : '')
+                    results.status_searchurldata = myUrl.live_state + (myUrl.archived ? ", A" : ', X') + (!myUrl.hasarchive ? "-" : '')
                     results.status_searchurldata_archived = myUrl.archived
                     results.status_searchurldata_archive = myUrl.archive
                 } else {

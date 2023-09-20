@@ -1,4 +1,8 @@
 const ButtonDefs = {
+    "karen_bakker"  : {
+        label : "Karen Bakker",
+        value : "https://en.wikipedia.org/wiki/Karen_Bakker"
+    },
     "easterIslandFilename"  : {
         label : "Easter Island",
         value : "https://en.wikipedia.org/wiki/Easter_Island"
