@@ -8,7 +8,18 @@ const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method=''
         + (timeout > 0 ? `&timeout=${timeout}` : '')
         + `&method=${method}`
 
-    let status_code = 0;
+    let endpoint_status_code = 0;
+
+
+    const iabot_livestatus_convert = (s => {
+        return s === "404"
+            ? ''
+            : s === "whitelisted"
+                ? 'permalive'
+                : s === "blacklisted"
+                    ? "permadead"
+                    : s
+    })
 
     const resolveResults = (data, method) => {
         const results = { url: url }
@@ -23,10 +34,18 @@ const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method=''
             } else if (data.searchurldata_results?.hasOwnProperty("urls")) {
                 const myKeys = Object.keys(data.searchurldata_results.urls)
                 if (myKeys.length > 0) {
-                    const myUrl = data.searchurldata_results.urls[myKeys[0]]  // first url in list
-                    results.status_searchurldata = myUrl.live_state + (myUrl.archived ? ", A" : ', X') + (!myUrl.hasarchive ? "-" : '')
-                    results.status_searchurldata_archived = myUrl.archived
-                    results.status_searchurldata_archive = myUrl.archive
+                    const myUrlData = data.searchurldata_results.urls[myKeys[0]]  // first url in list
+                    results.status_searchurldata = myUrlData.live_state
+
+                    if (myUrlData.archived === "true" || !!myUrlData.archived) {
+                        results.status_searchurldata_archived = true
+                    } else {
+                        results.status_searchurldata_archived = false
+                    }
+                    // results.status_searchurldata_archived = myUrlData.archived ? myUrlData.archived : false
+
+                    results.status_searchurldata_archive = myUrlData.archive
+                    results.status_searchurldata_hasarchive = myUrlData.hasarchive
                 } else {
                     results.status_searchurldata = "NO URL"
                 }
@@ -41,6 +60,8 @@ const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method=''
             results.status_code = -1
             results.status_code_error_details = "Error Fetching status_code"
         }
+
+        results.status_searchurldata = iabot_livestatus_convert(results.status_searchurldata)
         return results
     }
 
@@ -49,7 +70,7 @@ const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method=''
 
         .then( response => {
 
-            status_code = response.status
+            endpoint_status_code = response.status
 
             if (response.ok) {
                 return response.json().then(data => {
@@ -85,7 +106,7 @@ const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method=''
             }
         );
 
-    return { data: urlData, status_code: status_code };
+    return { data: urlData, status_code: endpoint_status_code };
 }
 
 

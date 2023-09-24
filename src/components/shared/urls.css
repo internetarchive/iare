@@ -8,8 +8,9 @@
 }
 
 #my-url-tooltip {
-    font-size:1.5em;
+    font-size:1.25em;
     font-weight:normal;
+    z-index: 999;
 }
 
 .url-overview-column {

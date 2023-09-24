@@ -2,8 +2,11 @@
     --color-list-fg-selected: #054630; /*#1c654f;*/
     --color-list-bg-selected: #ceefd9; /*#c4e4c8;*/
     --color-list-fg-hover: #fffde5; /*blue;*/
-    /*--color-list-bg-hover: #81c8e7;*/
+
     --color-list-bg-hover: #9ccfe5;
+    /*--color-list-bg-hover: #81c8e7;*/
+    /*--color-list-bg-hover: #CFF0FF;*/
+    /*--color-list-bg-hover: #cfdeff;*/
 
     --color-list-header-bg: #cff0ff;
 

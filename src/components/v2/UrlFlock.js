@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {Tooltip as MyTooltip} from "react-tooltip";
 import {UrlStatusCheckMethods} from "../../constants/endpoints";
+import {httpStatusCodes, iabotLiveStatusCodes} from "../../constants/httpStatusCodes"
 
 /*
 assumes urlArray is an array of url objects wrapped in a data object:
@@ -37,6 +38,7 @@ useSort and sort: apply sorting if set to true, use ASC if sortDir is true, DESC
 export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, selectedUrl = '', extraCaption = null, fetchMethod="" }) {
 
     const [urlTooltipText, setUrlTooltipText] = useState( '' );
+    const [urlTooltipHtml, setUrlTooltipHtml] = useState( '<div>ToolTip<br />second line' );
 
     // const [sort, setSort] = useState("status");
     const sort = "status";
@@ -76,10 +78,30 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
                     // const onClickShowAll = (evt) => {
                     // }
 
-    const handleRowHover = e => {
+    const handleErrorRowHover = e => {
         const text = e.currentTarget.getAttribute('data-err-text');
         // console.log("handleRowHover", text)
         setUrlTooltipText(text);
+    }
+
+    const handleRowMouseOver = e => {
+        const row = e.target.closest('.url-row')
+
+        console.log(`handleRowMouseOver: ${e.target.className} ${row.dataset.statusCode} ${row.dataset.liveState} ${row.dataset.url} ${row.dataset.archived === "true" ? "archived" : "not archived"}`)
+
+        let html = ''
+        if (e.target.className === "url-status") {
+            const statusDescription = httpStatusCodes[row.dataset.statusCode]
+            html = `<div>${row.dataset.statusCode} : ${statusDescription}</div>`
+
+        } else if (e.target.className === "url-botstat") {
+            html = row.dataset.liveState
+                ? `<div>${row.dataset.liveState}: ${iabotLiveStatusCodes[row.dataset.liveState]}` +
+                    `<br/>${row.dataset.archived === "true" ? 'Archived' : 'Not archived'}</div>`
+                : ''
+        }
+
+        setUrlTooltipHtml(html)
     }
 
 
@@ -131,7 +153,6 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
                 <div className={"url-row url-header-row"}>
                     <div className={"url-name"}>URL</div>
                     <div className={"url-status"} onClick={() => {
-                        // console.log("arf");
                         setSortDir(!sortDir);
                     }
                     }>status</div>
@@ -143,13 +164,23 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
 
         }
 
+        const displayRowIabotStatus = (r => {
+            if (!r.status_searchurldata) {
+                return ''
+            }
+            // return r.status_searchurldata + (r.status_searchurldata_archived ? ", A" : ', X') + (!r.status_searchurldata_hasarchive ? "-" : '')
+            return r.status_searchurldata + (r.status_searchurldata_archived ? ", A" : ', X')
+        })
+
         const getRowData = (u, i, classes) => {
-            return <div className={classes} key={i} data-url={u.data.url} >
-                {/*<div className={"url-name"}><a href={u.data.url} target={"_blank"} rel={"noreferrer"} key={i}>{u.data.url}</a></div>*/}
+            return <div className={classes} key={i} data-url={u.data.url}
+                        data-status-code={u.data.status_code}
+                        data-live-state={u.data.status_searchurldata}
+                        data-archived={u.data.status_searchurldata_archived} >
                 <div className={"url-name"}>{u.data.url}</div>
                 <div className={"url-status"}>{u.data.status_code}</div>
                 {fetchMethod === UrlStatusCheckMethods.IABOT.key
-                    ? <div className={"url-botstat"}>{u.data.status_searchurldata}</div>
+                    ? <div className={"url-botstat"}>{displayRowIabotStatus(u.data)}</div>
                     : null }
 
             </div>
@@ -161,7 +192,7 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
                         data-url={u.data.url}
                         data-err-text={errText}
                 // onMouseOverCapture={handleRowHover}>
-                        onMouseOver={handleRowHover}
+                        onMouseOver={handleErrorRowHover}
                         onMouseLeave={() => setUrlTooltipText('')}
             >
                 <div className={"url-name"}>{u.data.url ? u.data.url : `ERROR: No url for index ${i}`}</div>
@@ -203,7 +234,7 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
 
         urls = <>
             {getRowsHeader()}
-            <div className={"url-list"} onClick={handleRowClick} >
+            <div className={"url-list"} onClick={handleRowClick} onMouseOver={handleRowMouseOver} >
                 {rows}
             </div>
         </>
@@ -216,11 +247,14 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
                                variant={"info"}
                                noArrow={true}
                                offset={5}
-    />;
+                               className={"url-flock-tooltip"}
+    />
+
     return <>
         <div className={"url-flock"}
              data-tooltip-id="my-url-tooltip"
              data-tooltip-content={urlTooltipText}
+             data-tooltip-html={urlTooltipHtml}
             >
             {caption}
             {urls}
