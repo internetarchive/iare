@@ -25,16 +25,21 @@ const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method=''
         const results = { url: url }
 
         if (method === UrlStatusCheckMethods.IABOT.key) {
+
             // return IABOT testdeadlink results
             results.status_code = data.testdeadlink_status_code
             results.status_code_error_details = data.testdeadlink_error_details
-            // and return IABOT searchurldata results as well
+
+            // return IABOT searchurldata results - error if so
+
             if (data.searchurldata_results?.hasOwnProperty("requesterror")) {
                 results.status_searchurldata = data.searchurldata_results.requesterror  // return value of request error
+
             } else if (data.searchurldata_results?.hasOwnProperty("urls")) {
                 const myKeys = Object.keys(data.searchurldata_results.urls)
                 if (myKeys.length > 0) {
-                    const myUrlData = data.searchurldata_results.urls[myKeys[0]]  // first url in list
+                    // use data from first url in list (assumes only one)
+                    const myUrlData = data.searchurldata_results.urls[myKeys[0]]
                     results.status_searchurldata = myUrlData.live_state
 
                     if (myUrlData.archived === "true" || !!myUrlData.archived) {
@@ -47,18 +52,22 @@ const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method=''
                     results.status_searchurldata_archive = myUrlData.archive
                     results.status_searchurldata_hasarchive = myUrlData.hasarchive
                 } else {
-                    results.status_searchurldata = "NO URL"
+                    results.status_searchurldata = "missing url"
                 }
+
             } else {
-                results.status_searchurldata = "UNKNOWN"
+                results.status_searchurldata = "unknown"
             }
 
         } else if (method === UrlStatusCheckMethods.IARI.key) {
+            // TODO Deprecate? its nice to have a default status_code value...
+            // TODO maybe have status_code and another status_code_origin, or status_details, etc
             results.status_code = data.status_code
 
         } else {
+            // the method is unhandled
             results.status_code = -1
-            results.status_code_error_details = "Error Fetching status_code"
+            results.status_code_error_details = `Error Fetching status_code (method "${method}" unknown)`
         }
 
         results.status_searchurldata = iabot_livestatus_convert(results.status_searchurldata)
