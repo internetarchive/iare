@@ -33,31 +33,33 @@ const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method=''
             // return IABOT searchurldata results - error if so
 
             if (data.searchurldata_results?.hasOwnProperty("requesterror")) {
-                results.status_searchurldata = data.searchurldata_results.requesterror  // return value of request error
+                results.searchurldata_status = data.searchurldata_results.requesterror  // return value of request error
 
             } else if (data.searchurldata_results?.hasOwnProperty("urls")) {
                 const myKeys = Object.keys(data.searchurldata_results.urls)
                 if (myKeys.length > 0) {
                     // use data from first url in list (assumes only one)
                     const myUrlData = data.searchurldata_results.urls[myKeys[0]]
-                    results.status_searchurldata = myUrlData.live_state
+                    results.searchurldata_status = myUrlData.live_state
 
-                    if (myUrlData.archived === "true" || !!myUrlData.archived) {
-                        results.status_searchurldata_archived = true
+                    if (myUrlData.archived === "true" || !!myUrlData.archived) { // NB: make sure not null
+                        results.searchurldata_archived = true
                     } else {
-                        results.status_searchurldata_archived = false
+                        results.searchurldata_archived = false
                     }
-                    // results.status_searchurldata_archived = myUrlData.archived ? myUrlData.archived : false
+                    // results.searchurldata_archived = myUrlData.archived ? myUrlData.archived : false
 
-                    results.status_searchurldata_archive = myUrlData.archive
-                    results.status_searchurldata_hasarchive = myUrlData.hasarchive
+                    results.searchurldata_archive = myUrlData.archive
+                    results.searchurldata_hasarchive = myUrlData.hasarchive
                 } else {
-                    results.status_searchurldata = "missing url"
+                    results.searchurldata_status = "missing url"
                 }
 
             } else {
-                results.status_searchurldata = "unknown"
+                results.searchurldata_status = "unknown"
             }
+
+            results.searchurldata_status = iabot_livestatus_convert(results.searchurldata_status)
 
         } else if (method === UrlStatusCheckMethods.IARI.key) {
             // TODO Deprecate? its nice to have a default status_code value...
@@ -70,7 +72,6 @@ const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method=''
             results.status_code_error_details = `Error Fetching status_code (method "${method}" unknown)`
         }
 
-        results.status_searchurldata = iabot_livestatus_convert(results.status_searchurldata)
         return results
     }
 

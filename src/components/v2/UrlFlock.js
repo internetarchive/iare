@@ -64,19 +64,12 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
 
     const onClickHeader = (evt) => {
     }
-                    //
-                    // const onHover = (evt) => {
-                    //     // console.log("FldFlock: onHover")
-                    // }
-                    //
+
     const onHoverHeader = (evt) => {
         // console.log("FldFlock: onHoverHeader")
         // toggle show of Show All button
         setUrlTooltipText('');
     }
-                    //
-                    // const onClickShowAll = (evt) => {
-                    // }
 
     const handleErrorRowHover = e => {
         const text = e.currentTarget.getAttribute('data-err-text');
@@ -85,9 +78,11 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
     }
 
     const handleRowMouseOver = e => {
+        // show tool tip for appropriate column
+
         const row = e.target.closest('.url-row')
 
-        console.log(`handleRowMouseOver: ${e.target.className} ${row.dataset.statusCode} ${row.dataset.liveState} ${row.dataset.url} ${row.dataset.archived === "true" ? "archived" : "not archived"}`)
+        // console.log(`handleRowMouseOver: ${e.target.className} ${row.dataset.statusCode} ${row.dataset.liveState} ${row.dataset.url} ${row.dataset.archived === "true" ? "archived" : "not archived"}`)
 
         let html = ''
         if (e.target.className === "url-status") {
@@ -104,6 +99,14 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
         setUrlTooltipHtml(html)
     }
 
+    const handleSort = (sortType) => {
+        if (sortType === "archived") {
+            // add "archive" to sort snake - if archive existed already, remove it and make it the head
+            // toggle the sort dir itself
+            // modify sort object - make a new object and save it
+            console.log("will set head sort to archived")
+        }
+    }
 
     let urls, caption;
 
@@ -122,8 +125,8 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
         if (sort === "status") {
             filteredUrls.sort((a,b) => {
                 // use status code of -1 if there was a problem with status code
-                const statusA = a.data && a.data.status_code !== undefined ? a.data.status_code : -1;
-                const statusB = b.data && b.data.status_code !== undefined ? b.data.status_code : -1;
+                const statusA = a && a.status_code !== undefined ? a.status_code : -1;
+                const statusB = b && b.status_code !== undefined ? b.status_code : -1;
 
                 // respect sortDir
                 if (statusA < statusB) return sortDir ? -1 : 1;
@@ -157,30 +160,45 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
                     }
                     }>status</div>
                     {fetchMethod === UrlStatusCheckMethods.IABOT.key
-                        ? <div className={"url-botstat"}>IABOT</div>
+                        ? <>
+                            <div className={"url-archived"} onClick={() => {
+                                handleSort("archived");
+                            }
+                            }>Archive</div>
+                            <div className={"url-botstat"}>IABOT</div>
+                            </>
                         : null }
                 </div>
             </div>
 
         }
 
-        const displayRowIabotStatus = (r => {
-            if (!r.status_searchurldata) {
+        const getArchiveStatus = (r => {
+            return r.hasArchive
+                ? <span className={"yes-archive"}></span>
+                : <span className={"no-archive"}></span>
+        })
+
+        const getIabotStatus = (r => {
+            if (!r.searchurldata_status) {
                 return ''
             }
-            // return r.status_searchurldata + (r.status_searchurldata_archived ? ", A" : ', X') + (!r.status_searchurldata_hasarchive ? "-" : '')
-            return r.status_searchurldata + (r.status_searchurldata_archived ? ", A" : ', X')
+            // return r.searchurldata_status + (r.searchurldata_archived ? ", A" : ', X') + (!r.searchurldata_hasarchive ? "-" : '')
+            return r.searchurldata_status + (r.searchurldata_archived ? ", A" : ', X')
         })
 
         const getRowData = (u, i, classes) => {
-            return <div className={classes} key={i} data-url={u.data.url}
-                        data-status-code={u.data.status_code}
-                        data-live-state={u.data.status_searchurldata}
-                        data-archived={u.data.status_searchurldata_archived} >
-                <div className={"url-name"}>{u.data.url}</div>
-                <div className={"url-status"}>{u.data.status_code}</div>
+            return <div className={classes} key={i} data-url={u.url}
+                        data-status-code={u.status_code}
+                        data-live-state={u.searchurldata_status}
+                        data-archived={u.searchurldata_archived} >
+                <div className={"url-name"}>{u.url}</div>
+                <div className={"url-status"}>{u.status_code}</div>
                 {fetchMethod === UrlStatusCheckMethods.IABOT.key
-                    ? <div className={"url-botstat"}>{displayRowIabotStatus(u.data)}</div>
+                    ? <>
+                        <div className={"url-archived"}>{getArchiveStatus(u)}</div>
+                        <div className={"url-botstat"}>{getIabotStatus(u)}</div>
+                    </>
                     : null }
 
             </div>
@@ -189,16 +207,19 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
 
         const getRowError = (u, i, errText) => {
             return <div className={`url-row url-row-error`} key={i}
-                        data-url={u.data.url}
+                        data-url={u.url}
                         data-err-text={errText}
                 // onMouseOverCapture={handleRowHover}>
                         onMouseOver={handleErrorRowHover}
                         onMouseLeave={() => setUrlTooltipText('')}
             >
-                <div className={"url-name"}>{u.data.url ? u.data.url : `ERROR: No url for index ${i}`}</div>
+                <div className={"url-name"}>{u.url ? u.url : `ERROR: No url for index ${i}`}</div>
                 <div className={"url-status"}>{-1}</div>
                 {fetchMethod === UrlStatusCheckMethods.IABOT.key
-                    ? <div className={"url-botstat"}>---</div>
+                    ? <>
+                        <div className={"url-archived"}>arch?</div>
+                        <div className={"url-botstat"}>---</div>
+                        </>
                     : null }
             </div>
         }
@@ -209,11 +230,11 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
             // TODO: we should sanitize earlier on in the process to save time here...
 
             // if url object is problematic...
-            if (!u.data || u.data.url === undefined || u.data.status_code === undefined) {
+            if (!u || u.url === undefined || u.status_code === undefined) {
 
-                const errText = !u.data ? `URL data not defined for index ${i}`
-                    : !u.data.url ? `URL missing for index ${i}`
-                    : u.data.status_code === undefined ? `URL status code undefined (try Force Refresh)`
+                const errText = !u ? `URL data not defined for index ${i}`
+                    : !u.url ? `URL missing for index ${i}`
+                    : u.status_code === undefined ? `URL status code undefined (try Force Refresh)`
                     : 'Unknown error'; // this last case should not happen
 
                 return getRowError(u, i, errText)
@@ -221,12 +242,12 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
 
             // otherwise show "normally"
             const classes = 'url-row '
-                + (u.data.status_code === 0 ? ' url-is-unknown'
-                    : u.data.status_code >= 300 && u.data.status_code < 400 ? ' url-is-redirect'
-                    : u.data.status_code >= 400 && u.data.status_code < 500 ? ' url-is-notfound'
-                    : u.data.status_code >= 500 && u.data.status_code < 600 ? ' url-is-error'
+                + (u.status_code === 0 ? ' url-is-unknown'
+                    : u.status_code >= 300 && u.status_code < 400 ? ' url-is-redirect'
+                    : u.status_code >= 400 && u.status_code < 500 ? ' url-is-notfound'
+                    : u.status_code >= 500 && u.status_code < 600 ? ' url-is-error'
                     : '')
-                + (u.data.url === selectedUrl ? ' url-selected' : '')
+                + (u.url === selectedUrl ? ' url-selected' : '')
 
             return getRowData(u, i, classes)
 

@@ -33,7 +33,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
     // production mode shows limited shortcuts, vs. staging which allows for more testing
     const shortcuts = env === 'env-production'
         ? ['easterIslandFilename', 'internetArchiveFilename', 'pdfCovid',]
-        : ['easterIslandFilename', 'internetArchiveFilename', 'karen_bakker', 'pdfDesantis', 'pdfOneLink'];
+        : ['easterIslandFilename', 'internetArchiveFilename', 'karen_bakker', 'lindsay_lohan', 'pdfDesantis', 'pdfOneLink'];
 
 
     // add class to body to indicate environment

@@ -10,6 +10,7 @@ import {URL_FILTER_MAP} from "./filters/urlFilterMaps";
 /*
 When this component is rendered, it must "process" the pageData. This involves:
 - fetching the URL status codes of all the URLS
+- process the urls into urlArray
 - process the references
   - reduce reference array by coalescing all named refs together
   - calculate link status of all urls within reference to allow filtering
@@ -21,9 +22,8 @@ article fetch call, with a few minor decorations added at receive time.
 
 we immediately fetch the URL details for each URL in pageData.urls, creating
 urlDict, which is a url-keyed javascript object with the info for each url.
-(we may/need/ought to have a urlArray as well, with each entry of the array
-pointing to a url object. optimally this object would be a reference to the
-one in urlDict.)
+we have a urlArray as well, with each entry of the array pointing to a url
+object in urlDict.
 
 we then flatten the Reference list, making only one entry for each multiply-
 referenced URL with the number of times reference added as a reference property.
@@ -31,16 +31,9 @@ referenced URL with the number of times reference added as a reference property.
 using UrlDict we can check the status of the urls in each reference, appending
 each reference array object in pageData.references.
     NB: we should use only "references" property, not "dehydrated_references"
-
-steps to do this:
-1. create the reference array property, including only once each multiply-reffed reference;
-    set the link_status property of each ref to "0" (will determine format later) as a
-    placeholder that will be reified once the URLS all come in
-2. pull in url status and place results in urlDict
-3. set the link_status for each reference based on status of urls for each link
-    (determined by url-keying into urlDict)
-
+    TODO: deprecate "dehydrated_references" and use a "dehydrated" flag instead
 */
+
 export default function PageData({pageData = {}}) {
 
     const [selectedViewType, setSelectedViewType] = useState('urls');
@@ -53,33 +46,53 @@ export default function PageData({pageData = {}}) {
     const myIariBase = myConfig.iariSource;
     const myStatusCheckMethod = myConfig.urlStatusMethod;
 
-
     // process url results and create a urlDict from it
     //
     // called upon useEffect of new url status data
-    const processUrls = useCallback( (pageData, urlResults) => {
+    const processUrls = useCallback( (pageData) => {
 
         const urlDict = {}
+        const regexWayback = new RegExp(/https?:\/\/(?:web\.)archive\.org\/web\/([\d*]+)\/(.*)/);
 
-        // turn url array into object dict
-        // keyed by url; contains: { status_code: XXX, ref_count: 1 or more }
-        // making room for { hasArchive: true/false, isArchive: true/false }
-        urlResults.forEach(d => {
-            // console.log (d)
-            // initialize entry with count 0 if not there
+        const isArchive = (targetUrl) => {
+            return targetUrl.match(regexWayback)
+        }
+
+        pageData.urlResults && pageData.urlResults.forEach(d => {
             if (!urlDict[d.data.url]) {
-                urlDict[d.data.url] = {
-                    status_code: d.data.status_code,
-                    url_count: 0,
-                    // set archive status? is this archive or not? maybe not...
-                }
+                // add entry for url if not there yet
+                urlDict[d.data.url] = d.data  // initialize with result data
+                urlDict[d.data.url].urlCount = 0
+                urlDict[d.data.url].isArchive = isArchive(d.data.url)
             }
-            // increment count no matter what
-            urlDict[d.data.url].url_count++
+            urlDict[d.data.url].urlCount++  // increment count to keep track of repeats
         })
 
-        // and append to pageData
+        const archiveUrls = Object.keys(urlDict).filter(urlKey => {
+            return (urlDict[urlKey].isArchive)
+        })
+        const primaryUrls = Object.keys(urlDict).filter(urlKey => {
+            return !(urlDict[urlKey].isArchive)
+        })
+
+        archiveUrls.forEach(archiveUrl => {
+            // test if this archive url archives one of our primary urls
+            // NB: this is specifically for Wayback Machine pattern...others may vary
+            const results = archiveUrl.match(regexWayback) // is archiveUrl a possible archive? if so, extract primary url
+            if (results) {
+                // see if rescued url is one that we have; if so, assign this archive url to it's hasArchive value
+                const targetUrl = results[2]
+                if (primaryUrls.includes(targetUrl)) {
+                    urlDict[targetUrl].hasArchive = archiveUrl
+                }
+            }
+        })
+
+        // append urlDict and urlArray to pageData
         pageData.urlDict = urlDict
+        pageData.urlArray = primaryUrls.map(urlKey => {
+            return urlDict[urlKey]
+        })
 
     }, [])
 
@@ -130,7 +143,7 @@ export default function PageData({pageData = {}}) {
 
         ref.urls.forEach(url => {
             if (!usedUrls[url]) {
-                const urlStatusCode = urlDict[url]?.status_code
+                const urlStatusCode = urlDict[url]?.status_codeed
                 const urlLinkStatus = (urlStatusCode === undefined) ? 'no_template_bad'
                     : (urlStatusCode >= 200 && urlStatusCode < 400) ? 'no_template_good'
                         : 'no_template_bad'
@@ -153,7 +166,7 @@ export default function PageData({pageData = {}}) {
     // urls in the templates in each reference
     // TODO: this should be done with the IARI API, not here at front-end retrieval
     //
-    const processReferences = useCallback( (pageData, refResults) => {
+    const processReferences = useCallback( pageData => {
 
         // Process the "named" refs by looping thru each reference
         // if named, make an entry in named_refs or increment already entry
@@ -211,9 +224,9 @@ export default function PageData({pageData = {}}) {
     useEffect( () => { // [myIariBase, pageData, processReferences, processUrls, myStatusCheckMethod]
         const context = 'PageData::useEffect [pageData]'
 
-        const postProcessData = (urlResults, refResults) => {
-            processUrls(pageData, urlResults); // creates urlDict
-            processReferences(pageData, refResults)
+        const postProcessData = (pageData) => {
+            processUrls(pageData); // creates urlDict and urlArray
+            processReferences(pageData)
             pageData.statusCheckMethod = myStatusCheckMethod;
         }
 
@@ -231,10 +244,9 @@ export default function PageData({pageData = {}}) {
                 console.log(`${context} fetchStatusUrls.then: urlResults has ${urlResults.length} elements`);
 
                 // TODO check erroneous results here -
-                pageData.urlArray = urlResults
-                console.log(`${context} fetchStatusUrls.then: after pageData.urlArray set to urlResults`);
+                pageData.urlResults = urlResults
 
-                postProcessData(urlResults, null); // creates urlDict
+                postProcessData(pageData); // creates urlDict and urlArray
 
                 // let the system know all is ready
                 setDataReady(true);

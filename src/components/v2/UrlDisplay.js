@@ -11,6 +11,8 @@ import {UrlStatusCheckMethods} from "../../constants/endpoints";
 
 export default function UrlDisplay ({ pageData, options, urlFilterMap = {} } ) {
 
+    // pageData contains urlArray, which is filtered and displayed
+
     const [urlStatistics, setUrlStatistics] = useState({});
     const [urlFilter, setUrlFilter] = useState( null ); // filter to pass in to UrlFlock
     const [refFilter, setRefFilter] = useState( null ); // filter to pass in to RefFlock
@@ -63,8 +65,7 @@ export default function UrlDisplay ({ pageData, options, urlFilterMap = {} } ) {
         }
 
         if (action === "setUrlReferenceFilter") {
-            // filter references list to those that contain a specific.
-            // The url is specified by the value parameter
+            // filter References to those that contain a url specified by the value parameter
             setRefFilter(getUrlRefFilter(value))
             setSelectedUrl(value)
         }
@@ -116,11 +117,13 @@ export default function UrlDisplay ({ pageData, options, urlFilterMap = {} } ) {
         return {
             desc: `Citations with URL: ${targetUrl}`,
 
-            caption: <span>Contains URL: <br/><span className={'target-url'}
-                ><a href={targetUrl} target={"_blank"} rel={"noreferrer"}>{targetUrl}</a
+            caption: <span>Contains URL: <br/><span
+                className={'target-url'}><a target={"_blank"} rel={"noreferrer"}
+                href={targetUrl} >{targetUrl}</a
                 ></span></span>,
 
             filterFunction: () => (d) => {
+                // TODO make this use an array of targetUrls
                 return d.urls.includes( targetUrl )
             },
         }
@@ -132,12 +135,12 @@ export default function UrlDisplay ({ pageData, options, urlFilterMap = {} } ) {
 
         // get one row per line:
         const urlArrayData = pageData.urlArray.sort(
-            (a, b) => (a.data.url > b.data.url) ? 1 : (a.data.url < b.data.url) ? -1 : 0
+            (a, b) => (a.url > b.url) ? 1 : (a.url < b.url) ? -1 : 0
         ).map( u => {
             if (myConfig.urlStatusMethod === UrlStatusCheckMethods.IABOT.key) {
-                return [ u.data.url, u.data.status_code, u.data.status_code_error_details, u.data.status_searchurldata ]
+                return [ u.url, u.status_code, u.status_code_error_details, u.searchurldata_status ]
             } else {
-                return [ u.data.url, u.data.status_code, u.data.status_code_error_details ]
+                return [ u.url, u.status_code, u.status_code_error_details ]
             }
 
         })

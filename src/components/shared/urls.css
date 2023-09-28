@@ -1,10 +1,18 @@
 :root {
-    --width-url-list: 30rem;
-    --width-url-name: 22rem;
-    --width-url-status: 4rem;
-    --width-url-botstat: 6rem;
+    --width-url-list: 32.5rem;
+    --width-url-name: 20rem;
+    --width-url-status: 3.5rem;
+    --width-url-archived: 3.5rem;
+    --width-url-botstat: 5.5rem;
 
     --width-col-url-overview: 327px;
+    /*--width-cell-border: 1pt solid black;*/
+    --width-cell-border: none;
+    --color-cell-border: grey;
+
+    --width-check-icon: 1.25rem;
+    --height-check-icon: 1.25rem;
+
 }
 
 #my-url-tooltip {
@@ -107,15 +115,41 @@
     width: var(--width-url-name);
     min-width: var(--width-url-name);
     max-width: var(--width-url-name);
-    border-right: 1px solid black;
+    border-right: var(--width-cell-border);
+    border-right-color: var(--color-cell-border);
 }
 .url-row .url-status {
+    text-align: center;
     width: var(--width-url-status);
+    max-width: var(--width-url-status);
+    min-width: var(--width-url-status);
+    border-right: var(--width-cell-border);
+    border-right-color: pink;/*var(--color-cell-border);*/
+}
+.url-row .url-archived {
+    text-align: center;
+    width: var(--width-url-archived);
+    max-width: var(--width-url-archived);
+    border-right: var(--width-cell-border);
+    border-right-color: var(--color-cell-border);
+}
+.url-row .url-archived .yes-archive {
+    width:var(--width-check-icon);
+    height:var(--height-check-icon);
+    content: url(../../images/yes_check.png);
+}
+.url-row .url-archived .no-archive {
+    width:var(--width-check-icon);
+    height:var(--height-check-icon);
+    content: url(../../images/no_x.png);
 }
 .url-row .url-botstat {
-    border-left: 1px solid black;
+    text-align: center;
+    /*border-left: 1px solid black;*/
     width: var(--width-url-botstat);
+    max-width: var(--width-url-botstat);
 }
+
 .url-list a, .url-list .url-name {
     overflow-wrap: break-word;
 }
@@ -130,7 +164,7 @@
 
 .url-filters {
     display:flex;
-    flex-d5irection: column;
+    flex-direction: column;
 
 }
 .url-filters button {

@@ -15,6 +15,10 @@ export default function RefActions( {onAction}) {
                 <span>Save Changes</span>
             </button>
 
+            <button type="button" className="btn btn-primary">
+                <span>Jump to Article Citation</span>
+            </button>
+
             {/*<img src={ai_img} className="big-button" style={{width: "100%"}} alt="ai this"/>*/}
 
         </div>
