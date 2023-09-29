@@ -13,6 +13,7 @@
     --width-check-icon: 1.25rem;
     --height-check-icon: 1.25rem;
 
+    --extent-archive-icon: 1.75rem;
 }
 
 #my-url-tooltip {
@@ -189,8 +190,52 @@
     padding-left:1em;
 }
 
+/* url archive status filter buttons */
 
-.
+.archive-status-filter-buttons button:hover {
+    color:var(--color-list-fg-hover);
+    background-color: var(--color-list-bg-hover);
+    border-color: black;
+}
+.filters-archive-status button {
+    position:relative;
+
+    font-size:.75rem;
+    text-align:left;
+    /*font-weight: bold;*/
+    padding:.3rem .5rem;
+    margin-bottom:.3rem;
+}
+
+.filters-archive-status .filter-count {
+    position:absolute;
+    top:.4rem;
+    right:3.5rem;
+    display:block;
+    /*font-weight:bold;*/
+    font-size:120%;
+}
+
+.filter-archive-status-wrapper {
+    position:absolute;
+    top:.2rem;
+    right:.5rem;
+    display:block;
+}
+.filter-archive-status-wrapper .archive-status {
+    width: var(--extent-archive-icon);
+    height: var(--extent-archive-icon);
+    display:block;
+}
+.archive-status-yes_archive {
+    content: url('../../images/yes_check.png');
+}
+.archive-status-no_archive {
+    content: url('../../images/no_x.png');
+}
+
+
+/* other */
 .status-method-display {
     color:#808080 !important;
 }

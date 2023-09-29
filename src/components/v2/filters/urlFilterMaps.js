@@ -1,4 +1,4 @@
-export const URL_FILTER_MAP = {
+export const URL_STATUS_FILTER_MAP = {
     all: {
         caption: "Show All",
         desc: "no filter",
@@ -42,4 +42,23 @@ export const URL_FILTER_MAP = {
 
 };
 
-export const URL_FILTER_NAMES = Object.keys(URL_FILTER_MAP);
+// export const URL_FILTER_NAMES = Object.keys(URL_STATUS_FILTER_MAP);
+
+export const URL_ARCHIVE_STATUS_FILTER_MAP = {
+    yes_archive: {
+        caption: "URL has archive",
+        desc: "There is an archive link associated with the URL.",
+        // lines: ['Original link is OK', 'Archive link is OK'],
+        filterFunction: () => (url) => {
+            return url.hasArchive
+        },
+    },
+    no_archive: {
+        caption: "URL has NO archive",
+        desc: "There is no archive link associated with this URL",
+        filterFunction: () => (url) => {
+            return !url.hasArchive
+        },
+    },
+
+};

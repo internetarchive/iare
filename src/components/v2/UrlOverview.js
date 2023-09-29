@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import FilterButtons from "../FilterButtons";
 import {REF_LINK_STATUS_FILTERS} from "./filters/refFilterMaps";
 import PieChart from "../PieChart";
@@ -13,6 +13,7 @@ import {
     SubTitle,
     Colors,
 } from 'chart.js'
+import {URL_ARCHIVE_STATUS_FILTER_MAP} from "./filters/urlFilterMaps";
 
 Chart.register(
     LinearScale,
@@ -49,6 +50,8 @@ const colors = {
     }
 */
 const UrlOverview = React.memo(({pageData, statistics, onAction}) => {
+
+    const [showCitationLinks, setShowCitationLinks] = useState(false)
 
     if (!statistics) {
         return <div>
@@ -141,6 +144,13 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {
         })
     }
 
+    const handleArchiveStatusAction = (archiveStatus) => {
+        // alert(`handleArchiveStatusAction: action is ${archiveStatus}`)
+        onAction({
+            action: "setArchiveStatusFilter", value: archiveStatus,
+        })
+    }
+
     // callback for button render function of <FilterButton>
     const renderLinkStatusButton = (props) => {
         return <>
@@ -152,30 +162,74 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {
             </div>
             <div className={'filter-count'}>{props.filter.count}</div>
         </>
-
     }
-    const linkStatusFilters = <div className={"filters-link-status"}>
-        <FilterButtons
-            flock={pageData.references}
-            filterMap={REF_LINK_STATUS_FILTERS}
-            filterList={[]}
-            onClick={(e) => {
-                handleLinkAction(e)
-            }}
-            caption=''
-            className="link-status-filter-buttons"
-            currentFilterName=''
-            onRender={renderLinkStatusButton}
-        />
-    </div>
+
+    const linkStatusFilters = <>
+        <h4 style={{fontStyle: "italic", fontWeight: "bold"}}>Click to filter References List</h4>
+        <div className={"filters-link-status"}>
+            <FilterButtons
+                flock={pageData.references}
+                filterMap={REF_LINK_STATUS_FILTERS}
+                filterList={[]}
+                onClick={(e) => {
+                    handleLinkAction(e)
+                }}
+                caption=''
+                className="link-status-filter-buttons"
+                currentFilterName=''
+                onRender={renderLinkStatusButton}
+            />
+        </div>
+    </>
 
     const urlStatusCaption = <>
         <h4>URL Status Codes</h4>
         <h4 style={{fontStyle: "italic", fontWeight: "bold"}}>Click to filter URL List</h4>
     </>
+
+    const buttonShowHideLinkStats = <button
+        onClick={() => setShowCitationLinks(!showCitationLinks)} className={"utility-button"}
+        >{showCitationLinks ? "hide" : "show"}</button>
+    // const buttonShowHideLinkStats = null
+
     const linkStatusCaption = <>
-        <h4>Citation Link Statuses</h4>
-        <h4 style={{fontStyle: "italic", fontWeight: "bold"}}>Click to filter References List</h4>
+        <h4>Citation Link Statuses{buttonShowHideLinkStats}</h4>
+    </>
+
+    const archiveStatusCaption = <>
+        <h4>URL Archive Statuses</h4>
+    </>
+
+    // callback for button render function of <FilterButton>
+    // NB: props.filter.name is magically set to object key name of filter
+    // NB: props.filter.count is magically set to count of number of items resulting from filter
+    // TODO: this should be made into a class, or something that takes a standard interface
+    const renderArchiveStatusButton = (props) => {
+        return <>
+            <div>{props.filter.caption}</div>
+            <div className={`filter-archive-status-wrapper`}>
+                <span className={`archive-status archive-status-${props.filter.name}`} />
+            </div>
+            <div className={'filter-count'}>{props.filter.count}</div>
+        </>
+    }
+
+    const archiveStatusFilters = <>
+        <h4 style={{fontStyle: "italic", fontWeight: "bold"}}>Click to filter URLs by Archive status</h4>
+        <div className={"filters-archive-status"}>
+            <FilterButtons
+                flock={pageData.urlArray}
+                filterMap={URL_ARCHIVE_STATUS_FILTER_MAP}
+                filterList={[]}
+                onClick={(e) => {
+                    handleArchiveStatusAction(e)
+                }}
+                caption=''
+                className="archive-status-filter-buttons"
+                currentFilterName=''
+                onRender={renderArchiveStatusButton}
+            />
+        </div>
     </>
 
     return <div className={"url-overview"}>
@@ -190,8 +244,13 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {
         </div>
 
         <div className={'section-sub'}>
+            {archiveStatusCaption}
+            {archiveStatusFilters}
+        </div>
+
+        <div className={'section-sub'}>
             {linkStatusCaption}
-            {linkStatusFilters}
+            {showCitationLinks ? linkStatusFilters : null}
         </div>
     </div>
 

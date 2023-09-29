@@ -5,7 +5,7 @@ import FldDisplay from "./FldDisplay";
 import Loader from "../Loader";
 import {fetchStatusUrls} from "../../utils/iariUtils.js"
 import {ConfigContext} from "../../contexts/ConfigContext";
-import {URL_FILTER_MAP} from "./filters/urlFilterMaps";
+import {URL_ARCHIVE_STATUS_FILTER_MAP, URL_STATUS_FILTER_MAP} from "./filters/urlFilterMaps";
 
 /*
 When this component is rendered, it must "process" the pageData. This involves:
@@ -59,13 +59,16 @@ export default function PageData({pageData = {}}) {
         }
 
         pageData.urlResults && pageData.urlResults.forEach(d => {
-            if (!urlDict[d.data.url]) {
+            const myUrl = encodeURI(d.data.url)
+            // const myUrl = encodeURI(d.data.url)
+            // console.log(myUrl)
+            if (!urlDict[myUrl]) {
                 // add entry for url if not there yet
-                urlDict[d.data.url] = d.data  // initialize with result data
-                urlDict[d.data.url].urlCount = 0
-                urlDict[d.data.url].isArchive = isArchive(d.data.url)
+                urlDict[myUrl] = d.data  // initialize with result data
+                urlDict[myUrl].urlCount = 0
+                urlDict[myUrl].isArchive = isArchive(myUrl)
             }
-            urlDict[d.data.url].urlCount++  // increment count to keep track of repeats
+            urlDict[myUrl].urlCount++  // increment count to keep track of repeats
         })
 
         const archiveUrls = Object.keys(urlDict).filter(urlKey => {
@@ -317,7 +320,9 @@ export default function PageData({pageData = {}}) {
 
                             {selectedViewType === 'urls' &&
                                 <UrlDisplay pageData={pageData} options={{refresh: pageData.forceRefresh}}
-                                            urlFilterMap={URL_FILTER_MAP}/>
+                                            urlFilterMap={URL_STATUS_FILTER_MAP}
+                                            urlArchiveFilterMap={URL_ARCHIVE_STATUS_FILTER_MAP}
+                                />
                             }
 
                             {selectedViewType === 'stats' &&

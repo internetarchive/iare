@@ -122,8 +122,8 @@
 
     max-height: calc(var(--height-list) + 2rem);
     height: calc(var(--height-list)+ 2rem);
-
-    overflow: scroll;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 
 .ref-list-header {

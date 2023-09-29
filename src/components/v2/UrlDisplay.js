@@ -9,7 +9,7 @@ import {ConfigContext} from "../../contexts/ConfigContext";
 import {UrlStatusCheckMethods} from "../../constants/endpoints";
 
 
-export default function UrlDisplay ({ pageData, options, urlFilterMap = {} } ) {
+export default function UrlDisplay ({ pageData, options, urlFilterMap = {}, urlArchiveFilterMap = {} } ) {
 
     // pageData contains urlArray, which is filtered and displayed
 
@@ -39,7 +39,7 @@ export default function UrlDisplay ({ pageData, options, urlFilterMap = {} } ) {
 
         setUrlStatistics({urlCounts: urlCounts});
 
-    }, [pageData, urlFilterMap])
+    }, [pageData, urlFilterMap, urlArchiveFilterMap, ])
 
 
     // callback from sub-components.
@@ -58,22 +58,16 @@ export default function UrlDisplay ({ pageData, options, urlFilterMap = {} } ) {
             setUrlFilter(f)
         }
 
-        if (action === "removeUrlFilter") {
-            // clear filter (show all) for URL list
-            setUrlFilter(null)
-            setSelectedUrl(null)
+        if (action === "setArchiveStatusFilter") {
+            // value is filter key name
+            const f = value ? urlArchiveFilterMap[value] : null
+            setUrlFilter(f)
         }
 
         if (action === "setUrlReferenceFilter") {
             // filter References to those that contain a url specified by the value parameter
             setRefFilter(getUrlRefFilter(value))
             setSelectedUrl(value)
-        }
-
-        if (action === "removeReferenceFilter") {
-            // clear filter (show all) for references list
-            setRefFilter(null)
-            setSelectedUrl(null)
         }
 
         if (action === "setLinkStatusFilter") {
@@ -95,11 +89,23 @@ export default function UrlDisplay ({ pageData, options, urlFilterMap = {} } ) {
             // TODO: some sort of feedback? selected filter?
         }
 
+        if (action === "removeUrlFilter") {
+            // clear filter (show all) for URL list
+            setUrlFilter(null)
+            setSelectedUrl(null)
+        }
+
+        if (action === "removeReferenceFilter") {
+            // clear filter (show all) for references list
+            setRefFilter(null)
+            setSelectedUrl(null)
+        }
+
 
         // TODO: Action for setReferenceFilter/ShowReference for filtered URLS
         // i.e. show all refs that contain ANY of the URLS in the filtered URL list
 
-    }, [urlFilterMap])
+    }, [urlFilterMap, urlArchiveFilterMap])
 
 
     if (!pageData) return null;
