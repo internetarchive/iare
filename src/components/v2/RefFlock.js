@@ -1,6 +1,8 @@
-import React, {useEffect, useState} from 'react';
-import { IARI_V2_URL_BASE } from '../../constants/endpoints.js';
+import React, {useEffect, useState, useContext} from 'react';
+//// import { IARI_V2_URL_BASE } from '../../constants/endpoints.js';
 import RefView from "./RefView/RefView";
+// import {UrlStatusCheckContext} from "../../contexts/UrlStatusCheckContext";
+import {ConfigContext} from "../../contexts/ConfigContext";
 
 function getReferenceCaption(ref) {
 
@@ -56,7 +58,6 @@ function getReferenceCaption(ref) {
 
     </>
 
-
     return markup
 }
 
@@ -67,6 +68,9 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
 
     const [openModal, setOpenModal] = useState(false)
 
+    const myConfig = useContext(ConfigContext);
+    const myIariBase = myConfig?.iariSource;
+
     const fetchDetail = (ref) => {
         // handle null ref
         if (!ref) {
@@ -75,7 +79,8 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
         }
 
         // TODO: use refresh here ?
-        const myEndpoint = `${IARI_V2_URL_BASE}/statistics/reference/${ref.id}`;
+        // const myEndpoint = `${IARI_V2_URL_BASE}/statistics/reference/${ref.id}`;
+        const myEndpoint = `${myIariBase}/statistics/reference/${ref.id}`;
 
         // fetch the data
         fetch(myEndpoint, {
@@ -153,9 +158,10 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
             {listHeader}
             <div className={"ref-list"}>
                 {filteredRefs.map((ref, i) => {
-                    return <button key={i}
+                    return <button key={ref.id}
                        className={"ref-button"}
                        onClick={(e) => {
+                           console.log ('ref clicked')
                            fetchDetail(ref)
                        }}>{getReferenceCaption(ref)}</button>
                 })}

@@ -5,17 +5,21 @@ import UrlOverview from "./UrlOverview";
 import '../shared/urls.css';
 import {convertToCSV} from "../../utils/utils";
 import {REF_LINK_STATUS_FILTERS} from "./filters/refFilterMaps";
+import {ConfigContext} from "../../contexts/ConfigContext";
+import {UrlStatusCheckMethods} from "../../constants/endpoints";
 
 
 export default function UrlDisplay ({ pageData, options, urlFilterMap = {} } ) {
 
-    console.log("UrlDisplay: render");
+    // pageData contains urlArray, which is filtered and displayed
 
     const [urlStatistics, setUrlStatistics] = useState({});
     const [urlFilter, setUrlFilter] = useState( null ); // filter to pass in to UrlFlock
     const [refFilter, setRefFilter] = useState( null ); // filter to pass in to RefFlock
     const [selectedUrl, setSelectedUrl] = useState(''); // currently selected url in url list
 
+    let myConfig = React.useContext(ConfigContext);
+    myConfig = myConfig ? myConfig : {} // prevents undefined.<param> errors
 
     // calculate url stats
     useEffect( () => {
@@ -61,8 +65,7 @@ export default function UrlDisplay ({ pageData, options, urlFilterMap = {} } ) {
         }
 
         if (action === "setUrlReferenceFilter") {
-            // filter references list to those that contain a specific.
-            // The url is specified by the value parameter
+            // filter References to those that contain a url specified by the value parameter
             setRefFilter(getUrlRefFilter(value))
             setSelectedUrl(value)
         }
@@ -114,11 +117,13 @@ export default function UrlDisplay ({ pageData, options, urlFilterMap = {} } ) {
         return {
             desc: `Citations with URL: ${targetUrl}`,
 
-            caption: <span>Contains URL: <br/><span className={'target-url'}
-                ><a href={targetUrl} target={"_blank"} rel={"noreferrer"}>{targetUrl}</a
+            caption: <span>Contains URL: <br/><span
+                className={'target-url'}><a target={"_blank"} rel={"noreferrer"}
+                href={targetUrl} >{targetUrl}</a
                 ></span></span>,
 
             filterFunction: () => (d) => {
+                // TODO make this use an array of targetUrls
                 return d.urls.includes( targetUrl )
             },
         }
@@ -129,14 +134,24 @@ export default function UrlDisplay ({ pageData, options, urlFilterMap = {} } ) {
     const handleCopyClick = () => { // used to copy url list and status
 
         // get one row per line:
-        const jsonData = pageData.urlArray.sort(
-            (a, b) => (a.data.url > b.data.url) ? 1 : (a.data.url < b.data.url) ? -1 : 0
+        const urlArrayData = pageData.urlArray.sort(
+            (a, b) => (a.url > b.url) ? 1 : (a.url < b.url) ? -1 : 0
         ).map( u => {
-            return [ u.data.url, u.data.status_code ]
+            if (myConfig.urlStatusMethod === UrlStatusCheckMethods.IABOT.key) {
+                return [ u.url, u.status_code, u.status_code_error_details, u.searchurldata_status ]
+            } else {
+                return [ u.url, u.status_code, u.status_code_error_details ]
+            }
+
         })
+        if (myConfig.urlStatusMethod === UrlStatusCheckMethods.IABOT.key) {
+            urlArrayData.unshift( [ 'URL', `${myConfig.urlStatusMethod} status`, `error details`, "IABOT searchurlstatus" ] )
+        } else {
+            urlArrayData.unshift( [ 'URL', `${myConfig.urlStatusMethod} status`, `error details` ] )
+        }
 
         // convert to CSV and send to clipboard
-        const csvString = convertToCSV(jsonData);
+        const csvString = convertToCSV(urlArrayData);
 
         navigator.clipboard.writeText(csvString)
             .then(() => {
@@ -151,9 +166,13 @@ export default function UrlDisplay ({ pageData, options, urlFilterMap = {} } ) {
 
     const refArray = (pageData.references)
 
-    const urlListCaption = <h3>URL List</h3>
+    const copyButton = <button onClick={handleCopyClick} className={'utility-button'} ><span>Copy to Clipboard</span></button>
+
+    const urlListCaption = <h3>URL List{myConfig.isDebug ? copyButton : null }</h3>
     const extraUrlCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click a URL to show References using that URL</h4>
     const extraRefCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click a Reference to view reference details</h4>
+
+    console.log("UrlDisplay: render");
 
     return <>
 
@@ -165,7 +184,8 @@ export default function UrlDisplay ({ pageData, options, urlFilterMap = {} } ) {
         <div className={"section-box"}>
             {urlListCaption}
             <UrlFlock urlArray={pageData.urlArray} urlFilterDef={urlFilter}
-                      onAction={handleAction} selectedUrl={selectedUrl} extraCaption={extraUrlCaption}/>
+                      onAction={handleAction} selectedUrl={selectedUrl} extraCaption={extraUrlCaption}
+                      fetchMethod={myConfig.urlStatusMethod} />
         </div>
 
         <div className={"section-box"}>

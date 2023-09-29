@@ -46,7 +46,7 @@ export default function RefTemplates({ templates }) {
 
     const getTabContent = (templates) => {
         if (!templates || !templates.length) {
-            return <Tab title={"No Templates"} disabled={1} >
+            return <Tab title={"No Templates"} disabled={true} >
                 <p>No Templates to show</p>
             </Tab>
         }

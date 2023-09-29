@@ -2,7 +2,11 @@
     --color-list-fg-selected: #054630; /*#1c654f;*/
     --color-list-bg-selected: #ceefd9; /*#c4e4c8;*/
     --color-list-fg-hover: #fffde5; /*blue;*/
-    --color-list-bg-hover: #81c8e7;
+
+    --color-list-bg-hover: #9ccfe5;
+    /*--color-list-bg-hover: #81c8e7;*/
+    /*--color-list-bg-hover: #CFF0FF;*/
+    /*--color-list-bg-hover: #cfdeff;*/
 
     --color-list-header-bg: #cff0ff;
 
@@ -11,6 +15,8 @@
 
     --color-h3: #666666;
     --color-h4: #808080;
+
+    --color-debug-lite: #a8a8a8;
 
     /* status codes colors */
     --color-http-unknown: #000000;
@@ -81,7 +87,9 @@ body.env-other .version-display span.non-production {
 .debug-on button {
     margin-bottom:.75rem;
 }
-
+.debug-on .label {
+    color: var(--color-debug-lite)
+}
 .debug-off {
     display:none;
 }
@@ -89,23 +97,63 @@ body.env-other .version-display span.non-production {
     font-style: italic;
     color:#8191a4;
 }
-.debug-button, .more-button {
-    border-radius: 0.75rem;
-    background-color: #dadffd;
-    padding:0em .5em 0.18em;
-    color: #454545;
-    border: 1px solid black;
-    font-size: .75rem;
+
+
+/* utility buttons (including debug buttons */
+
+button.utility-button {
+    display: inline-block;
+    text-align: center;
+    line-height: 1;
+    cursor: pointer;
+    -webkit-appearance: none;
+
+    transition: background-color .25s ease-out, color .25s ease-out;
+
+    border: 1px solid transparent;
+    border-radius: .3rem;
+    padding: .28rem .42rem;
+    margin: 0 0 .5rem .5rem;
+    vertical-align: middle;
+    font-size: .69rem;
+
+    background-color: #2199e8;
+    color: #fefefe
 }
+.utility-button:focus, .utility-button:hover {
+    background-color: #1583cc;
+    color: #fefefe
+}
+
+
+.utility-button.debug-button {
+    background-color: #2199e8;
+    color: #fefefe;
+    margin: 0 0 .5rem 0rem;
+}
+            /*.debug-button, .more-button {*/
+            /*    border-radius: 0.75rem;*/
+            /*    background-color: #dadffd;*/
+            /*    padding:0em .5em 0.18em;*/
+            /*    color: #454545;*/
+            /*    border: 1px solid black;*/
+            /*    font-size: .75rem;*/
+            /*}*/
+
 .more-button {
     background-color: transparent;
     border:none;
     text-decoration: underline;
     color:grey;
 }
-.debug-on .debug-button {
-    background-color: #c9e3f9;
-}
+
+/*.debug-on .debug-button {*/
+/*    background-color: #c9e3f9;*/
+/*}*/
+
+
+
+
 
 /* GENERAL ELEMENTS */
 
@@ -246,17 +294,29 @@ table.single-detail tr td:not(:first-child) {
     flex-direction:row;
     flex-wrap:wrap
 }
-.status-check-methods-wrapper {
-    display:block;
-}
-.status-check-methods {
-    display: flex;
-    flex-direction: row;
+
+.iari-source-wrapper,
+.check-method-wrapper {
+    display:inline-block;
     font-size:.9rem;
-    /*padding-bottom:.5rem;*/
-    margin-left:2rem;
-    margin-top:.45rem;
+    font-weight:normal;
+    color:black;
+    margin-left: .5rem;
 }
+.iari-source-wrapper select,
+.check-method-wrapper select {
+    margin-left:.3rem;
+}
+
+
+            /*.status-check-methods {*/
+            /*    display: flex;*/
+            /*    flex-direction: row;*/
+            /*    font-size:.9rem;*/
+            /*    !*padding-bottom:.5rem;*!*/
+            /*    margin-left:2rem;*/
+            /*    margin-top:.45rem;*/
+            /*}*/
 
 /*-ms-transform: scale(var(--radio-button-magnify)); !* IE 9 *!*/
 /*-webkit-transform: scale(1.5); !* Chrome, Safari, Opera *!*/
@@ -278,34 +338,3 @@ table.single-detail tr td:not(:first-child) {
 }
 
 
-button.utility-button {
-    /*border-radius: 0.75rem;*/
-    /*background-color: #dadffd;*/
-    /*margin-left:.75rem;*/
-    /*padding:0em .5em 0.18em;*/
-    /*color: #454545;*/
-    /*border: 1px solid black;*/
-    /*font-size: .75rem;*/
-
-    display: inline-block;
-    text-align: center;
-    line-height: 1;
-    cursor: pointer;
-    -webkit-appearance: none;
-    transition: background-color .25s ease-out, color .25s ease-out;
-    vertical-align: middle;
-    border: 1px solid transparent;
-    border-radius: .3rem;
-    padding: .28rem .42rem;
-    margin: 0 .5rem 0rem;
-    font-size: .69rem;
-    background-color: #2199e8;
-    color: #fefefe
-
-
-}
-
-.utility-button:focus, .utility-button:hover {
-    background-color: #1583cc;
-    color: #fefefe
-}
