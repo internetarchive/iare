@@ -156,9 +156,9 @@
 
 .url-header-row .url-status {
     cursor: pointer;
-    /*width:100%;*/
-    /*text-align: center;*/
-    /*color:#0000EE;*/
+}
+.url-header-row .url-archived {
+    cursor: pointer;
 }
 
 

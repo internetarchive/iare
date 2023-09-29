@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {Tooltip as MyTooltip} from "react-tooltip";
 import {UrlStatusCheckMethods} from "../../constants/endpoints";
 import {httpStatusCodes, iabotLiveStatusCodes} from "../../constants/httpStatusCodes"
@@ -40,9 +40,63 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
     const [urlTooltipText, setUrlTooltipText] = useState( '' );
     const [urlTooltipHtml, setUrlTooltipHtml] = useState( '<div>ToolTip<br />second line' );
 
-    // const [sort, setSort] = useState("status");
-    const sort = "status";
-    const [sortDir, setSortDir] = useState(true);
+    const [sort, setSort] = useState({
+        sorts: {
+            "status": {name: "status", dir: 1},  // dir: 1 is asc, -1 is desc, 0 is do not sort
+            "archived": {name: "archived", dir: 1},
+        },
+        sortOrder: ["status"]
+    })
+
+    const handleSortClick = (sortName, sortDir) => {
+        // selectively change the specified sort type
+        // https://stackoverflow.com/questions/43638938/updating-an-object-with-setstate-in-react
+        setSort(prevState => ({
+                // TODO NB: must check if sortName is there already and append to array if not
+                sorts: {
+                    ...prevState.sorts,
+                    [sortName]: {
+                        ...prevState.sorts[sortName],
+                        dir: sortDir
+                    }
+                },
+                sortOrder: [sortName]  // set only one for now...
+            }
+        ))
+    }
+
+    const sortByStatus = (a,b) => {
+        const statusA = a && a.status_code !== undefined ? a.status_code : -1;
+        const statusB = b && b.status_code !== undefined ? b.status_code : -1;
+
+        // respect sort dir
+        if (statusA < statusB) return sort.sorts['status'].dir * -1;
+        if (statusA > statusB) return sort.sorts['status'].dir;
+        return 0;
+    }
+
+    const sortByArchive = (a,b) => {
+        const archiveA = a?.hasArchive ? 1 : 0;
+        const archiveB = b?.hasArchive ? 1 : 0;
+
+        // respect sortDir
+        if (archiveA < archiveB) return sort.sorts['archived'].dir * -1;
+        if (archiveA > archiveB) return sort.sorts['archived'].dir;
+        return 0;
+    }
+
+    const sortFunction = (a,b) => {
+        // TODO make this recursive to do all sorts defined in sort.sortOrder array
+        if(sort.sortOrder[0] === "status") {
+            return sortByStatus(a,b)
+        }
+        else if(sort.sortOrder[0] === "archived") {
+            return sortByArchive(a,b)
+        }
+        else {
+            return 0  //
+        }
+    }
 
     const handleRowClick = (e) => {
         // get the url from the data of the row associated with the clicked element
@@ -99,15 +153,6 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
         setUrlTooltipHtml(html)
     }
 
-    const handleSort = (sortType) => {
-        if (sortType === "archived") {
-            // add "archive" to sort snake - if archive existed already, remove it and make it the head
-            // toggle the sort dir itself
-            // modify sort object - make a new object and save it
-            console.log("will set head sort to archived")
-        }
-    }
-
     let urls, caption;
 
     if (!urlArray || urlArray.length === 0) {
@@ -119,20 +164,12 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
         // filter the urls if filter defined
         const filteredUrls = urlFilterDef
             ? urlArray.filter( (urlFilterDef.filterFunction)() ) // Note self-calling function
-            : urlArray;
+            : urlArray
 
         // sort if specified
-        if (sort === "status") {
-            filteredUrls.sort((a,b) => {
-                // use status code of -1 if there was a problem with status code
-                const statusA = a && a.status_code !== undefined ? a.status_code : -1;
-                const statusB = b && b.status_code !== undefined ? b.status_code : -1;
-
-                // respect sortDir
-                if (statusA < statusB) return sortDir ? -1 : 1;
-                if (statusA > statusB) return sortDir ? 1 : -1;
-                return 0;
-            })
+        if (sort.sortOrder?.length > 0) {
+            console.log(`sorting urls by: ${sort.sortOrder[0]}`)
+            filteredUrls.sort(sortFunction)
         }
 
         const buttonRemove = urlFilterDef
@@ -156,13 +193,13 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
                 <div className={"url-row url-header-row"}>
                     <div className={"url-name"}>URL</div>
                     <div className={"url-status"} onClick={() => {
-                        setSortDir(!sortDir);
+                        handleSortClick("status", -1 * sort.sorts['status'].dir )
                     }
                     }>status</div>
                     {fetchMethod === UrlStatusCheckMethods.IABOT.key
                         ? <>
                             <div className={"url-archived"} onClick={() => {
-                                handleSort("archived");
+                                handleSortClick("archived", -1 * sort.sorts['archived'].dir);
                             }
                             }>Archive</div>
                             <div className={"url-botstat"}>IABOT</div>
@@ -279,7 +316,7 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
             >
             {caption}
             {urls}
-            {tooltip}
         </div>
+        {tooltip}
     </>
 }
