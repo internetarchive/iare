@@ -58,6 +58,7 @@ export default function PageData({pageData = {}}) {
             return targetUrl.match(regexWayback)
         }
 
+        // create url dict from returned results
         pageData.urlResults && pageData.urlResults.forEach(d => {
             const myUrl = encodeURI(d.data.url)
             // const myUrl = encodeURI(d.data.url)
@@ -67,6 +68,7 @@ export default function PageData({pageData = {}}) {
                 urlDict[myUrl] = d.data  // initialize with result data
                 urlDict[myUrl].urlCount = 0
                 urlDict[myUrl].isArchive = isArchive(myUrl)
+                urlDict[myUrl].hasTemplateArchive = false  // TODO: this will be recalculated when processing references
             }
             urlDict[myUrl].urlCount++  // increment count to keep track of repeats
         })
@@ -112,26 +114,26 @@ export default function PageData({pageData = {}}) {
     //
     // All other urls are just checked for good or bad, regardless of whether it is an archive link or not.
     //
-    const calcLinkStatus = useCallback( (ref, urlDict) => {
+    const processReference = useCallback( (ref, urlDict) => {
 
         const linkStatus = []
 
         // create linkStatus for every url/archive_url pair in templates
         // as each url is processed, save in "used_urls" array
         const templates = ref?.templates ? ref.templates : []
-        const usedUrls = {}
+        const templateUrls = {}
         templates.forEach( template => {
 
-            const pureUrl = template.parameters.url
+            const primaryUrl = template.parameters.url
             const archiveUrl = template.parameters.archive_url
-            usedUrls[pureUrl] = true
-            usedUrls[archiveUrl] = true
+            templateUrls[primaryUrl] = true
+            templateUrls[archiveUrl] = true
 
-            const pureLinkStatusCode = urlDict[pureUrl]?.status_code // need to handle undefined if url not a key in urlDict
+            const primaryLinkStatusCode = urlDict[primaryUrl]?.status_code // need to handle undefined if url not a key in urlDict
             const archiveLinkStatusCode = urlDict[archiveUrl]?.status_code // need to handle undefined if archive url not a key in urlDict
 
-            const pureLinkStatus = (pureLinkStatusCode === undefined) ? 'none'
-                : (pureLinkStatusCode >= 200 && pureLinkStatusCode < 400) ? 'good'
+            const pureLinkStatus = (primaryLinkStatusCode === undefined) ? 'none'
+                : (primaryLinkStatusCode >= 200 && primaryLinkStatusCode < 400) ? 'good'
                     : 'bad'
 
             const archiveLinkStatus = (archiveLinkStatusCode === undefined) ? 'none'
@@ -139,13 +141,19 @@ export default function PageData({pageData = {}}) {
                     : 'bad'
 
             linkStatus.push( pureLinkStatus + '_' + archiveLinkStatus)
+
+            // if archived url exists and archiveLinkStatus is good,
+            // set the hasTemplateArchive property of the primaryUrl to true
+            if (archiveLinkStatus === 'good' && urlDict[primaryUrl]) {
+                urlDict[primaryUrl].hasTemplateArchive = true
+            }
         })
 
         // now go thru the ref.urls, and if there are any that are not in the
-        // usedUrls list, process that url
+        // templateUrls list, process that url
 
         ref.urls.forEach(url => {
-            if (!usedUrls[url]) {
+            if (!templateUrls[url]) {
                 const urlStatusCode = urlDict[url]?.status_codeed
                 const urlLinkStatus = (urlStatusCode === undefined) ? 'no_template_bad'
                     : (urlStatusCode >= 200 && urlStatusCode < 400) ? 'no_template_good'
@@ -159,7 +167,7 @@ export default function PageData({pageData = {}}) {
            linkStatus.push('no_links')
         }
 
-        return linkStatus
+        ref.link_status = linkStatus
 
     }, [])
 
@@ -176,7 +184,7 @@ export default function PageData({pageData = {}}) {
         // if named with no content, pull that reference info, and add it to named_ref entry
         //      - its like an array of links to where in article a reference is referred to
         const namedRefs = {} // collect 'em as we find 'em
-        const newRefs = []
+        const uniqueRefs = []
 
         // for refs, if dehydrated=true, use pageData.dehydrated_references, else use pageData.references
         const refs = (pageData?.dehydrated_references?.length)
@@ -199,29 +207,32 @@ export default function PageData({pageData = {}}) {
                 }
             }
 
-            // carry over all refs that are not indirect "named" references
+            // carry over refs that are NOT indirect "named" references
             if (!(ref.type === 'footnote' && ref.footnote_subtype === 'named')) {
                 ref.reference_count = 1 // will replace counts of multiply referenced refs in next loop
-                newRefs.push( ref )
+                uniqueRefs.push( ref )
             }
         })
 
         // For all references that were saved in named references, set reference count of "anchor" refs
-        // TODO when we get the page_refs in the reference data, we can save those, too for each named reference
+        // TODO when we get the cite_refs in the reference data, we can save those, too for each named reference
         Object.keys(namedRefs).forEach( refName => {
             const nr = namedRefs[refName]
             nr.origin.reference_count = nr.count
         })
 
-        // process link_status
-        newRefs.forEach( ref => {
-            ref.link_status = calcLinkStatus(ref, pageData.urlDict)
+        // process all anchor references
+        uniqueRefs.forEach( ref => {
+            // ref.link_status = processReference(ref, pageData.urlDict)
+            processReference(ref, pageData.urlDict)
         })
 
-        // and append to pageData
-        pageData.references = newRefs
+        // TODO while processing refs, set template archive property for primary url of template
 
-    }, [calcLinkStatus])
+        // and append to pageData
+        pageData.references = uniqueRefs
+
+    }, [processReference])
 
 
     useEffect( () => { // [myIariBase, pageData, processReferences, processUrls, myStatusCheckMethod]

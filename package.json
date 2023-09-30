@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.2.21.1",
-  "version_name": "0.2.21.1.sorturls",
+  "version": "0.2.21.2",
+  "version_name": "0.2.21.2.archive_columns",
   "private": true,
   "dependencies": {
     "bootstrap": "^5.3.0-alpha3",

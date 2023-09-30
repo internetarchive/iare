@@ -1,14 +1,14 @@
 :root {
-    --width-url-list: 32.5rem;
+    --width-url-list: 35rem;
     --width-url-name: 20rem;
     --width-url-status: 3.5rem;
-    --width-url-archived: 3.5rem;
+    --width-url-archive-check: 2rem;
     --width-url-botstat: 5.5rem;
 
     --width-col-url-overview: 327px;
-    /*--width-cell-border: 1pt solid black;*/
+    --width-cell-border: 1pt solid black;
     --width-cell-border: none;
-    --color-cell-border: grey;
+    /*--color-cell-border: grey;*/
 
     --width-check-icon: 1.25rem;
     --height-check-icon: 1.25rem;
@@ -110,9 +110,6 @@
     padding:.5rem;
 }
 .url-row .url-name {
-    /*width: 80%;*/
-    /*min-width: 80%;*/
-    /*max-width: 80%;*/
     width: var(--width-url-name);
     min-width: var(--width-url-name);
     max-width: var(--width-url-name);
@@ -125,25 +122,19 @@
     max-width: var(--width-url-status);
     min-width: var(--width-url-status);
     border-right: var(--width-cell-border);
-    border-right-color: pink;/*var(--color-cell-border);*/
 }
-.url-row .url-archived {
+.url-row .url-arch-iari,
+.url-row .url-arch-ia,
+.url-row .url-arch-tmplt
+{
     text-align: center;
-    width: var(--width-url-archived);
-    max-width: var(--width-url-archived);
+    min-width: var(--width-url-archive-check);
+    max-width: var(--width-url-archive-check);
     border-right: var(--width-cell-border);
     border-right-color: var(--color-cell-border);
+    padding:.25rem 0 0;
 }
-.url-row .url-archived .yes-archive {
-    width:var(--width-check-icon);
-    height:var(--height-check-icon);
-    content: url(../../images/yes_check.png);
-}
-.url-row .url-archived .no-archive {
-    width:var(--width-check-icon);
-    height:var(--height-check-icon);
-    content: url(../../images/no_x.png);
-}
+
 .url-row .url-botstat {
     text-align: center;
     /*border-left: 1px solid black;*/
@@ -155,13 +146,28 @@
     overflow-wrap: break-word;
 }
 
-.url-header-row .url-status {
+.url-header-row .url-status,
+.url-header-row .url-arch-iari,
+.url-header-row .url-arch-ia,
+.url-header-row .url-arch-tmplt,
+.url-header-row .url-botstat,
+.url-header-row .url-name
+{
     cursor: pointer;
 }
-.url-header-row .url-archived {
-    cursor: pointer;
+.yes-archive {
+    width:var(--width-check-icon);
+    height:var(--height-check-icon);
+    content: url('../../images/yes_check.png');
+}
+.no-archive {
+    width:var(--width-check-icon);
+    height:var(--height-check-icon);
+    content: url('../../images/no_x.png');
 }
 
+
+/* URL Filters selections etc. */
 
 .url-filters {
     display:flex;
