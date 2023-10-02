@@ -144,7 +144,7 @@ export default function PageData({pageData = {}}) {
 
             // if archived url exists and archiveLinkStatus is good,
             // set the hasTemplateArchive property of the primaryUrl to true
-            if (archiveLinkStatus === 'good' && urlDict[primaryUrl]) {
+            if (archiveUrl && urlDict[primaryUrl]) {
                 urlDict[primaryUrl].hasTemplateArchive = true
             }
         })
