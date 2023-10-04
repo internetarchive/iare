@@ -5,7 +5,10 @@ import FldDisplay from "./FldDisplay";
 import Loader from "../Loader";
 import {fetchStatusUrls} from "../../utils/iariUtils.js"
 import {ConfigContext} from "../../contexts/ConfigContext";
-import {URL_ARCHIVE_STATUS_FILTER_MAP, URL_STATUS_FILTER_MAP} from "./filters/urlFilterMaps";
+import {
+    ARCHIVE_STATUS_FILTER_MAP,
+    URL_STATUS_FILTER_MAP
+} from "./filters/urlFilterMaps";
 
 /*
 When this component is rendered, it must "process" the pageData. This involves:
@@ -54,8 +57,18 @@ export default function PageData({pageData = {}}) {
         const urlDict = {}
         const regexWayback = new RegExp(/https?:\/\/(?:web\.)archive\.org\/web\/([\d*]+)\/(.*)/);
 
+        const sanitizeUrlForWayback = (targetUrl) => {
+            // let inputString = 'http://example.com:http://example2.com:some:text:with:colons';
+            const regexColon = /:(?!\/\/)/g;  // Regular expression to match colons not followed by "//"
+            const regexEquals = /=/g;  // Regular expression to match equals signs
+            let resultUrl
+            resultUrl = targetUrl.replace(regexColon, '%3A');  // Replace solo colons with encoded "%3A"
+            resultUrl = resultUrl.replace(regexEquals, '%3D')
+            return resultUrl
+        }
+
         const isArchive = (targetUrl) => {
-            return targetUrl.match(regexWayback)
+            return !!(sanitizeUrlForWayback(targetUrl).match(regexWayback))
         }
 
         // create url dict from returned results
@@ -80,15 +93,33 @@ export default function PageData({pageData = {}}) {
             return !(urlDict[urlKey].isArchive)
         })
 
+        // create sanitizedUrls array of strings.
+        // NB: this is specifically for Wayback Machine link patterns...for now...others may vary
+        // sanitizeToPrimaryDict is a dict crosslinking sanitized links with the primary "original"
+        // ones. It's sort of de-normalizing the wayback rescued url into it's original form.
+        const sanitizeToPrimaryDict = {}
+        const sanitizedPrimaryUrls = primaryUrls.map( u => {
+            let s = sanitizeUrlForWayback(u)
+            sanitizeToPrimaryDict[s] = u
+            return s
+        })
+
+        // test if this archive link rescues(d) one of our primary urls
         archiveUrls.forEach(archiveUrl => {
-            // test if this archive url archives one of our primary urls
-            // NB: this is specifically for Wayback Machine pattern...others may vary
-            const results = archiveUrl.match(regexWayback) // is archiveUrl a possible archive? if so, extract primary url
-            if (results) {
-                // see if rescued url is one that we have; if so, assign this archive url to it's hasArchive value
-                const targetUrl = results[2]
-                if (primaryUrls.includes(targetUrl)) {
-                    urlDict[targetUrl].hasArchive = archiveUrl
+            const results = archiveUrl.match(regexWayback)  // is archiveUrl a possible archive?
+            if (results) {  // if a match, extract pattern parts
+
+                /* must see if rescued url, in wayback encoding, is matchy to ONE of our
+                 * wayback-enhanced primary urls.
+                 */
+                const rescueUrl = results[2]
+                if (sanitizedPrimaryUrls.includes(rescueUrl)) {
+
+                    // ge un-sanitized original primaryUrl from crossRef dict
+                    const primaryUrl = sanitizeToPrimaryDict[rescueUrl]
+
+                    // and we use the original url to key into the "master" urlDict, saving the archiveUrl with it
+                    urlDict[primaryUrl].hasArchive = archiveUrl
                 }
             }
         })
@@ -102,17 +133,20 @@ export default function PageData({pageData = {}}) {
     }, [])
 
 
-    // returns a linkStatus array indicating the status of all the links in a reference.
+    // sets the ref[linkStatus] property to an array containing a list of the status
+    // relationship between the primary and archived links in a reference. These can
+    // be indicated through template parameters, as in the properties "url" and
+    // "archive_url", or, exist in the reference as a "wild" link, not connected to
+    // anything. These are often in special "link collection" segments such as External Links, e.g.
     //
-    // there are two "kinds" of link we currently deal with:
-    // - those indicated in the template parameters "url" and "archive_url"
-    // - all others
+    // The status of the links found represented with the "url" template parameter are checked,
+    // and the status of the links indicated by the "archive_url" parameter are also checked.
     //
-    // for those links found in template parameters, the status of the url indicated by the "url" parameter
-    // is checked, along with the status of the url indicated by the "archive_url" parameter.
-    // TODO: for other templates, the "pure" url is indicated by alternate parameter names
+    // NB: some other templates (as in not standard...not CS1?) indicate the primary url with
+    // NB  parameter names other than 'url'
     //
-    // All other urls are just checked for good or bad, regardless of whether it is an archive link or not.
+    // All other urls (non-template) are checked for "good"ness or "bad"ness, regardless of
+    // whether it is an archive link or not.
     //
     const processReference = useCallback( (ref, urlDict) => {
 
@@ -172,10 +206,11 @@ export default function PageData({pageData = {}}) {
     }, [])
 
 
-    // reduce any repeated references into one reference with multiple page referrals, and
-    // calculate the status of the links in the references by examining the pure and archived
-    // urls in the templates in each reference
-    // TODO: this should be done with the IARI API, not here at front-end retrieval
+    // * reduce any repeated references into one reference with multiple page referrals
+    // * calculate the status of the links in the references by examining the pure and archived
+    //   urls in the templates in each reference
+    //
+    // TODO: this should be done with the IARI API, not here after front-end retrieval
     //
     const processReferences = useCallback( pageData => {
 
@@ -331,8 +366,8 @@ export default function PageData({pageData = {}}) {
 
                             {selectedViewType === 'urls' &&
                                 <UrlDisplay pageData={pageData} options={{refresh: pageData.forceRefresh}}
-                                            urlFilterMap={URL_STATUS_FILTER_MAP}
-                                            urlArchiveFilterMap={URL_ARCHIVE_STATUS_FILTER_MAP}
+                                            urlStatusFilterMap={URL_STATUS_FILTER_MAP}
+                                            urlArchiveFilterDefs={ARCHIVE_STATUS_FILTER_MAP}
                                 />
                             }
 

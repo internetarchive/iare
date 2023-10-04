@@ -90,16 +90,22 @@ export default function RefView({ open, onClose, details }) {
     }, [onClose]);
 
     const handleRefViewAction = useCallback( (result={}) => {
-            const {action, value} = result;
+        // extract action and value from result
+        const {action, value} = result;
 
-            console.log(`RefView: handleAction: action=${action}, value=${value}`);
+        console.log(`RefView: handleAction: action=${action}, value=${value}`);
 
-            if (action === "refreshUrlStatus") {
-                alert("Refreshing Url Status")
-                //fetchData()
+        if (action === "refreshUrlStatus") {
+            alert("Refreshing Url Status (not really...)")
+            //fetchData()???
+        }
 
-            }
-        }, [])
+        if (action === "jumpToCitationRef") {
+            const citeRef = value
+            alert(`jumpToCitationRef: Coming Soon (citeRef=${citeRef})`)
+        }
+
+    }, [])
 
     // close modal if not in open state
     if (!open || !details) return null;
@@ -132,7 +138,7 @@ export default function RefView({ open, onClose, details }) {
                     </div>
 
                     <div className="col-3">
-                        <RefActions onAction={handleRefViewAction} />
+                        <RefActions options={{citeRef:details.citeRef ? details.citeRef : 0}} onAction={handleRefViewAction} />
                         <RefStats details={details} />
                     </div>
 

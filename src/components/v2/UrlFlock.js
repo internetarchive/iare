@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {Tooltip as MyTooltip} from "react-tooltip";
 import {UrlStatusCheckMethods} from "../../constants/endpoints";
 import {httpStatusCodes, iabotLiveStatusCodes} from "../../constants/httpStatusCodes"
+// import {forEach} from "react-bootstrap/ElementChildren";
 
 /*
 assumes urlArray is an array of url objects wrapped in a data object:
@@ -35,10 +36,16 @@ example:
 useSort and sort: apply sorting if set to true, use ASC if sortDir is true, DESC otherwise
 
 */
-export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, selectedUrl = '', extraCaption = null, fetchMethod="" }) {
+// export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, selectedUrl = '', extraCaption = null, fetchMethod="" }) {
+export default function UrlFlock({ urlArray,
+                                     urlFilters = {},  // keyed object of filter definitions to apply to urlArray for final url list display
+                                     onAction,
+                                     selectedUrl = '',
+                                     extraCaption = null,
+                                     fetchMethod="" }) {
 
-    // const [urlTooltipText, setUrlTooltipText] = useState( '' );
     const [urlTooltipHtml, setUrlTooltipHtml] = useState( '<div>ToolTip<br />second line' );
+    // TODO fix tooltip using React.useRef somehow so that re-render is avoided upon every tooltip text/html change
 
     const [sort, setSort] = useState({
         sorts: {
@@ -55,22 +62,18 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
 
         // TODO eventually we need to add sortName to front of sort.sortOrder array
 
-        // <div className={"url-arch-tmplt"} onClick={() => { handleSortClick("arch_tmplt", -1 * sort.sorts['arch_tmplt'].dir); }
-
         // selectively change the specified sort type
         // https://stackoverflow.com/questions/43638938/updating-an-object-with-setstate-in-react
         setSort(prevState => ({
-                // TODO NB: must check if sortName is there already and append to array if not
-                sorts: {
-                    ...prevState.sorts,
-                    [sortName]: {
-                        ...prevState.sorts[sortName],
-                        dir: -1 * prevState.sorts[sortName].dir
-                    }
-                },
-                sortOrder: [sortName]  // set only one for now...TODO add/move to head of sortOrder array
-            }
-        ))
+            sorts: {
+                ...prevState.sorts,
+                [sortName]: {  // TODO NB: must check if sortName is there already and append to array if not
+                    ...prevState.sorts[sortName],
+                    dir: -1 * prevState.sorts[sortName].dir
+                }
+            },
+            sortOrder: [sortName]  // set only one for now...TODO add/move to head of sortOrder array
+        }))
     }
 
     const sortByStatus = (a,b) => {
@@ -159,11 +162,11 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
         } else if (e.target.className === "url-botstat") {
             html = `<div>Entry data from IABot database</div>`
         } else if (e.target.className === "url-arch-iari") {
-            html = `<div>Archive found within page URLs</div>`
+            html = `<div>Archive found within set of<br/>URLs returned from IARI</div>`
         } else if (e.target.className === "url-arch-ia") {
             html = `<div>Archive exists in IABot database</div>`
         } else if (e.target.className === "url-arch-tmplt") {
-            html = `<div>Archive described in citation template</div>`
+            html = `<div>Archive found in archive_url<br/>parameter of citation template</div>`
         }
         setUrlTooltipHtml(html)
     }
@@ -187,7 +190,7 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
                 : ''
         }
 
-        else if (e.target.className === "yes-archive" || e.target.className === "no-archive") {
+        else if (e.target.className === "archive-yes" || e.target.className === "archive-no") {
             if (e.target.parentElement.className === "url-arch-iari") {
                 html = `<div>${row.dataset.arch_iari === "true" ? "Archive in page URLs" : "Archive NOT in page URLs"}</div>`
             } else if (e.target.parentElement.className === "url-arch-ia") {
@@ -206,6 +209,14 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
         setUrlTooltipHtml(text);
     }
 
+    const getMultiLineCaption = ( myCaptions = [] ) => {
+        return myCaptions.map((str, index) => (
+            <React.Fragment key={index}>
+                {str}
+                {index < myCaptions.length - 1 && <br />}  {/* Add <br/> except for the last element */}
+            </React.Fragment>))
+    }
+
     let urls, caption;
 
     if (!urlArray || urlArray.length === 0) {
@@ -214,10 +225,31 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
 
     } else {
 
-        // filter the urls if filter defined
-        const filteredUrls = urlFilterDef
-            ? urlArray.filter( (urlFilterDef.filterFunction)() ) // Note self-calling function
-            : urlArray
+        if (!urlFilters) urlFilters = {}  // prevent null errors
+        // TODO what to do if urlFilters not a keyed object of UrlFilter's? Can we make it a custom type (of UrlFilters)?
+
+        // filter the urls if filters defined
+        let filteredUrls = urlArray
+
+        // aggregate captions at same time of applying filters
+        const filterCaptions = Object.keys(urlFilters)
+            .filter(key => urlFilters[key].filterFunction )  // exclude null filters
+            .map( filterName => {  // apply non-null filters and append filter caption
+                const f = urlFilters[filterName]
+                if (Array.isArray(f.filterFunction)) {
+                    // f is an array of filters; interpret f.filterFunction as an array of filters,
+                    //    and apply all filters one at a time
+                    // TODO turn this into some kind of effective recursive loop here
+                    const captionList = f.filterFunction.map( oneFilter => {
+                        filteredUrls = filteredUrls.filter( (oneFilter.filterFunction)() )  // NB: Note self-calling function
+                        return oneFilter.caption
+                    })
+                    return getMultiLineCaption(captionList)
+                } else {  // f is one filter
+                    filteredUrls = filteredUrls.filter( (f.filterFunction)() )  // NB: Note self-calling function
+                    return urlFilters[filterName].caption
+                }
+            })
 
         // sort if specified
         if (sort.sortOrder?.length > 0) {
@@ -225,7 +257,8 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
             filteredUrls.sort(sortFunction)
         }
 
-        const buttonRemove = urlFilterDef
+        // show Remove Filter button ONLY IF there are any filters applied
+        const buttonRemove = filterCaptions.length > 0
             ? <button onClick={handleRemoveFilter}
                       className={'utility-button'}
                       style={{position: "relative", top: "-0.1rem"}}
@@ -233,41 +266,17 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
             : null
 
         caption = <>
-            <h4>Applied Filter: {urlFilterDef ? urlFilterDef.caption : 'Show All'}</h4>
+            {/*<h4>Applied Filter: { filterCaptions.length ? filterCaptions.join('&amp;<br/>') : 'Show All' }</h4>*/}
+            <h4>Applied Filter: { filterCaptions.length ? filterCaptions : 'Show All' }</h4>
             <h4 style={{marginTop:".5rem"}}>{filteredUrls.length} {filteredUrls.length === 1
                 ? 'URL' : 'URLs'}{buttonRemove}</h4>
             {extraCaption}
         </>
 
-        const getHeaderRow = () => {
-            return <div className={"url-list-header"}
-                        onClick={onClickHeader}
-                        onMouseOver={onHoverHeaderRow} >
-                <div className={"url-row url-header-row"}>
-                    <div className={"url-name"}>URL</div>
-                    <div className={"url-status"} onClick={() => {
-                        handleSortClick("status")
-                    }
-                    }>status</div>
-
-                    {/* TODO this should be within IABOT row renderer */}
-                    {fetchMethod === UrlStatusCheckMethods.IABOT.key
-                        ? <>
-                            <div className={"url-arch-iari"} onClick={() => { handleSortClick("arch_iari"); } }>Arch IARI</div>
-                            <div className={"url-arch-ia"} onClick={() => { handleSortClick("arch_ia"); } }>Arch IA</div>
-                            <div className={"url-arch-tmplt"} onClick={() => { handleSortClick("arch_tmplt"); } }>Arch Tmplt</div>
-
-                            <div className={"url-botstat"}>IABOT</div>
-                            </>
-                        : null }
-                </div>
-            </div>
-        }
-
         // TODO this should be within IABOT row renderer
-        const getArchIariStatus = (u => <span className={u.hasArchive ? "yes-archive" : "no-archive" }></span> )
-        const getArchIaStatus = (u => <span className={u.searchurldata_archived ? "yes-archive" : "no-archive" }></span> )
-        const getArchTmpltStatus = (u => <span className={u.hasTemplateArchive ? "yes-archive" : "no-archive" }></span> )
+        const getArchIariStatus = (u => <span className={u.hasArchive ? "archive-yes" : "archive-no" }></span> )
+        const getArchIaStatus = (u => <span className={u.searchurldata_archived ? "archive-yes" : "archive-no" }></span> )
+        const getArchTmpltStatus = (u => <span className={u.hasTemplateArchive ? "archive-yes" : "archive-no" }></span> )
 
         // TODO this should be within IABOT row renderer
         const getIabotStatus = (r => {
@@ -325,6 +334,48 @@ export default function UrlFlock({ urlArray, urlFilterDef, isLoading, onAction, 
                     : null }
             </div>
         }
+
+        const getHeaderRow = () => {
+            return <div className={"url-list-header"}
+                        onClick={onClickHeader}
+                        onMouseOver={onHoverHeaderRow} >
+
+                <div className={"url-row url-header-row url-row-top"}>
+                    <div className={"url-name"}>&nbsp;</div>
+                    <div className={"url-status"}>&nbsp;</div>
+                    {fetchMethod === UrlStatusCheckMethods.IABOT.key
+                        ? <>
+                            <div className={"url-arch-iari"}>&nbsp;</div>
+                            <div className={"url-arch-ia"} >Archive</div>
+                            <div className={"url-arch-tmplt"}>&nbsp;</div>
+
+                            <div className={"url-botstat"}>&nbsp;</div>
+                        </>
+                        : null }
+                </div>
+
+                <div className={"url-row url-header-row"}>
+                    <div className={"url-name"}>URL</div>
+                    <div className={"url-status"} onClick={() => {
+                        handleSortClick("status")
+                    }
+                    }>status</div>
+
+                    {/* TODO this should be within IABOT row renderer */}
+                    {fetchMethod === UrlStatusCheckMethods.IABOT.key
+                        ? <>
+                            <div className={"url-arch-iari"} onClick={() => { handleSortClick("arch_iari"); } }>IARI</div>
+                            <div className={"url-arch-ia"} onClick={() => { handleSortClick("arch_ia"); } }>IABOT</div>
+                            <div className={"url-arch-tmplt"} onClick={() => { handleSortClick("arch_tmplt"); } }>Tmplt</div>
+
+                            <div className={"url-botstat"}>IABOT</div>
+                        </>
+                    : null }
+                </div>
+
+            </div>
+        }
+
 
         // iterate over array of url objects to create rendered output
         const rows = filteredUrls.map((u, i) => {

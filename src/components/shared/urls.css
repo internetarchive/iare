@@ -6,14 +6,23 @@
     --width-url-botstat: 5.5rem;
 
     --width-col-url-overview: 327px;
-    --width-cell-border: 1pt solid black;
+    /*--width-cell-border: 1pt solid black;*/
     --width-cell-border: none;
     /*--color-cell-border: grey;*/
+    --color-cell-border: inherit;
 
-    --width-check-icon: 1.25rem;
-    --height-check-icon: 1.25rem;
+    --width-check-icon-list: 1.25rem;     /* size of check / x icons in list */
+    --height-check-icon-list: 1.25rem;
 
-    --extent-archive-icon: 1.75rem;
+    /* archive status filter */
+    --width-check-icon-filter: 1.5rem;     /* size of check / x icons in list */
+    --height-check-icon-filter: 1.5rem;
+    --width-archive-caption: 4rem;
+    --width-archive-choice: 2.75rem;
+
+    /* deprecated? */
+    --extent-archive-icon: 1.75rem;  /* size of check / x icons in Status Filter Chooser */
+
 }
 
 #my-url-tooltip {
@@ -45,6 +54,7 @@
     color: grey;
 }
 
+
 .url-list {
     max-height: var(--height-list);
     height: var(--height-list);
@@ -65,9 +75,48 @@
     border-top:none;
     position:relative;
 }
-.url-list-header .url-row {
-    border-top:1px solid black;
+
+.url-list-header .url-header-row{
+    /*border-top:1px solid black;*/
+    bpadding-top:0;
 }
+.url-list-header .url-header-row.url-row-top {
+    border-top:1px solid black !important;
+    border-bottom: none !important;
+    /*padding-bottom:0 !important;*/
+    padding-top:.25rem;
+}
+.url-list-header .url-header-row.url-row-top .url-arch-ia {
+    padding-top: 0.4rem !important;
+}
+.url-list-header .url-header-row .url-arch-iari,
+.url-list-header .url-header-row .url-arch-ia,
+.url-list-header .url-header-row .url-arch-tmplt {
+    padding-top: 0.18rem !important;
+    font-size: 80%;
+}
+
+
+/*.url-list-header .url-header-row .url-arch-iari,*/
+/*.url-list-header .url-header-row .url-arch-ia,*/
+/*.url-list-header .url-header-row .url-arch-tmplt {*/
+/*    font-size: 80%;*/
+/*    padding:inherit !important;*/
+/*}*/
+
+
+
+
+.url-list-header .url-header-row div {
+    /*border-top:1px solid black;*/
+    /*background-color: lightgreen;*/
+    padding-top:0;
+}
+.url-list-header .url-header-row.url-row-top {
+    /*border-top:1px solid black;*/
+    padding-top:0;
+}
+
 
 .url-list .url-row.url-row-error {
     background-color: darkred;
@@ -79,6 +128,10 @@
     color:var(--color-list-fg-hover);
     background-color: var(--color-list-bg-hover);
 }
+.url-list .url-row {
+    cursor: pointer;
+}
+
 .url-list .url-selected {
     color:var(--color-list-fg-selected);
     background-color: var(--color-list-bg-selected);
@@ -101,10 +154,6 @@
 .url-list .url-row.url-is-error,
 .url-list .url-row.url-is-error a{
     color: red !important;
-}
-
-.url-list .url-row {
-    cursor: pointer;
 }
 .url-row > div {
     padding:.5rem;
@@ -155,14 +204,14 @@
 {
     cursor: pointer;
 }
-.yes-archive {
-    width:var(--width-check-icon);
-    height:var(--height-check-icon);
+.url-list .archive-yes {
+    width:var(--width-check-icon-list);
+    height:var(--height-check-icon-list);
     content: url('../../images/yes_check.png');
 }
-.no-archive {
-    width:var(--width-check-icon);
-    height:var(--height-check-icon);
+.url-list .archive-no {
+    width:var(--width-check-icon-list);
+    height:var(--height-check-icon-list);
     content: url('../../images/no_x.png');
 }
 
@@ -242,9 +291,48 @@
 
 
 /* other */
+
 .status-method-display {
     color:#808080 !important;
 }
 .status-method-display .embiggen{
     font-size:120%;
+}
+
+.archive-icon.archive-yes { content: url('../../images/yes_check.png'); }
+.archive-icon.archive-no { content: url('../../images/no_x.png'); }
+.archive-icon.archive-unknown { content: url('../../images/unknown_question.png'); }
+
+.archive-row .archive-icon {
+    width:var(--width-check-icon-filter);
+    height:var(--height-check-icon-filter);
+}
+.archive-row .archive-type-name {
+    padding-top:.5rem;
+    width: var(--width-archive-caption)
+}
+
+.filters-archive-status ul {
+    padding-left:0;
+}
+.filters-archive-status li {
+    list-style-type: none; /* Remove bullets */
+}
+li.archive-row {
+    display:inline-flex;
+}
+.archive-row ul {
+    /*display:inline-block;*/
+    display:block;
+}
+.archive-row li {
+    padding: 0; /* Remove padding */
+    margin: 0; /* Remove margins */
+    display:inline-block;
+    width: var(--width-archive-choice)
+}
+.archive-row input[type=checkbox] {
+    vertical-align: middle;
+    position: relative;
+    bottom: .5rem;
 }
