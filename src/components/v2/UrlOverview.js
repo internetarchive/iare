@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import FilterButtons from "../FilterButtons";
+import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "./filters/urlFilterMaps";
 import {REF_LINK_STATUS_FILTERS} from "./filters/refFilterMaps";
 import PieChart from "../PieChart";
 import {
@@ -48,7 +49,63 @@ const colors = {
         ]
     }
 */
-const UrlOverview = React.memo(({pageData, statistics, onAction}) => {
+
+
+const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React.memo so doesn't re-rerender with param changes
+
+    const [showCitationLinks, setShowCitationLinks] = useState(false)
+    const [archiveFilterStatus, setArchiveFilterStatus] = useState(
+        {
+            iari: {
+                yes: false,
+                no: false,
+                // unknown: false
+            },
+            iabot: {
+                yes: false,
+                no: false,
+                // unknown: false
+            },
+            template: {
+                yes: false,
+                no: false,
+                // unknown: false
+            },
+        }
+    )
+
+    useEffect( () => {
+        console.log('archiveFilterStatus changed to:', archiveFilterStatus)
+
+        let myFilters = []
+
+                    // let myCaptions = []
+
+                    // build myFilter from ArchiveStatusFilterDefs and archiveStatus state variable
+                    // traverse sources and then status, and if true, add filter definition to output array
+
+        //
+        Object.keys(archiveFilterStatus).forEach( archiveSource => {
+            Object.keys(archiveFilterStatus[archiveSource]).forEach( archiveStatus => {
+                if (archiveFilterStatus[archiveSource][archiveStatus]) {
+                    myFilters.push(archiveFilterDefs[archiveSource][archiveStatus])
+                }
+            })
+        })
+
+        const caption = "Placeholder Caption for multi filters"
+
+        const polyFilter = {
+            caption: caption,
+            filterFunction: myFilters,
+        }
+
+        onAction({
+            action: "setArchiveStatusFilters", value: polyFilter,
+        })
+
+    }, [ archiveFilterStatus, onAction ])
+
 
     if (!statistics) {
         return <div>
@@ -69,12 +126,12 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {
         // console.log(`legend index: ${index}, link: ${link}`);
 
         // pass link up to passed in click routine
-        onAction({action: "setFilter", value: link})
+        onAction({action: "setUrlStatusFilter", value: link})
     }
 
     const myClickChart = (link) => {
         // console.log("pie chart clicked, link=", link)
-        onAction({action: "setFilter", value: link})
+        onAction({action: "setUrlStatusFilter", value: link})
     }
 
 
@@ -141,6 +198,13 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {
         })
     }
 
+    // const handleArchiveStatusAction = (archiveStatus) => {
+    //     // alert(`handleArchiveStatusAction: action is ${archiveStatus}`)
+    //     onAction({
+    //         action: "setArchiveStatusFilter", value: archiveStatus,
+    //     })
+    // }
+
     // callback for button render function of <FilterButton>
     const renderLinkStatusButton = (props) => {
         return <>
@@ -152,31 +216,146 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {
             </div>
             <div className={'filter-count'}>{props.filter.count}</div>
         </>
-
     }
-    const linkStatusFilters = <div className={"filters-link-status"}>
-        <FilterButtons
-            flock={pageData.references}
-            filterMap={REF_LINK_STATUS_FILTERS}
-            filterList={[]}
-            onClick={(e) => {
-                handleLinkAction(e)
-            }}
-            caption=''
-            className="link-status-filter-buttons"
-            currentFilterName=''
-            onRender={renderLinkStatusButton}
-        />
-    </div>
+
+    const linkStatusFilters = <>
+        <h4 style={{fontStyle: "italic", fontWeight: "bold"}}>Click to filter References List</h4>
+        <div className={"filters-link-status"}>
+            <FilterButtons
+                flock={pageData.references}
+                filterMap={REF_LINK_STATUS_FILTERS}
+                filterList={[]}
+                onClick={(e) => {
+                    handleLinkAction(e)
+                }}
+                caption=''
+                className="link-status-filter-buttons"
+                currentFilterName=''
+                onRender={renderLinkStatusButton}
+            />
+        </div>
+    </>
 
     const urlStatusCaption = <>
         <h4>URL Status Codes</h4>
         <h4 style={{fontStyle: "italic", fontWeight: "bold"}}>Click to filter URL List</h4>
     </>
+
+    const buttonShowHideLinkStats = <button
+        onClick={() => setShowCitationLinks(!showCitationLinks)} className={"utility-button"}
+        >{showCitationLinks ? "hide" : "show"}</button>
+
     const linkStatusCaption = <>
-        <h4>Citation Link Statuses</h4>
-        <h4 style={{fontStyle: "italic", fontWeight: "bold"}}>Click to filter References List</h4>
+        <h4>Citation Link Statuses{buttonShowHideLinkStats}</h4>
     </>
+
+    const archiveStatusCaption = <>
+        <h4>URL Archive Statuses</h4>
+    </>
+
+    const handleArchiveStatusCheck = (e) => {
+
+        const source = e.target.dataset['source']
+        const status = e.target.dataset['status']
+        const checked = e.target.checked
+
+        // if checked === true, make all other status in source false and this opne true
+        // if checked == false, make this one false; dont have to worry about others (doesnt hav eto be opposite, only
+        //                      needs to have ONLY ONE true
+        setArchiveFilterStatus(prevState => {
+
+            let newSourceState = prevState[source]
+            // falsify everything
+            Object.keys(newSourceState).forEach(key => {
+                newSourceState[key] = false;
+            })
+            // make this one special
+            newSourceState[status] = checked
+
+            return {
+                ...prevState,
+                [source]: newSourceState
+            }
+        })
+    }
+
+    const makeArchiveStatusChoices = () => {
+
+        // render Archive Status Filter based on archiveFilterStatus state
+        // go thru archiveFilterStatus state and display as encountered
+        return <ul>
+
+            {Object.keys(archiveFilterStatus).map( archiveSource => {
+
+                const sourceObject = archiveFilterStatus[archiveSource]
+                const sourceLabel = archiveFilterDefs[archiveSource]._.name
+
+                return <li className={"archive-row"}><span className={"archive-source-name"}>{sourceLabel}</span>
+                    <ul>{Object.keys(sourceObject).map( archiveStatus => {
+                        const status = sourceObject[archiveStatus]
+                        const inputKey = `${archiveSource}-${archiveStatus}`
+                        const label = <span className={`archive-icon archive-${archiveStatus}`}
+                            >{`${archiveSource}-${archiveStatus}`}</span>
+
+                        return <li><input
+                                type="checkbox"
+                                id={`checkbox-${inputKey}`}
+                                checked={status}
+                                onChange={handleArchiveStatusCheck}
+                                data-source={archiveSource}
+                                data-status={archiveStatus}
+                            />
+                            <label htmlFor={`checkbox-${inputKey}`}>{label}</label>
+                        </li>})}
+                    </ul>
+                </li>
+            })}
+        </ul>
+    }
+
+                        // //
+                        // DO NOT DELETE - may recover this code and filter buttons later...
+                        // //
+                        // // callback for button render function of <FilterButton>
+                        // // NB: props.filter.name is magically set to object key name of filter
+                        // // NB: props.filter.count is magically set to count of number of items resulting from filter
+                        // // TODO: this should be made into a class, or something that takes a standard interface
+                        // const renderArchiveStatusButton = (props) => {
+                        //     return <>
+                        //         <div>{props.filter.caption}</div>
+                        //         <div className={`filter-archive-status-wrapper`}>
+                        //             <span className={`archive-status archive-status-${props.filter.name}`} />
+                        //         </div>
+                        //         <div className={'filter-count'}>{props.filter.count}</div>
+                        //     </>
+                        // }
+                        // const makeArchiveStatusFilters = () => {
+                        //     return (<>
+                        //         <FilterButtons
+                        //             flock={pageData.urlArray}
+                        //             filterMap={URL_ARCHIVE_STATUS_FILTER_MAP}
+                        //             filterList={[]}
+                        //             onClick={(e) => {
+                        //                 handleArchiveStatusAction(e)
+                        //             }}
+                        //             caption=''
+                        //             className="archive-status-filter-buttons"
+                        //             currentFilterName=''
+                        //             onRender={renderArchiveStatusButton}
+                        //         />
+                        //     </>)
+                        // }
+
+    const archiveStatusFiltersDisplay = <>
+        <h4 style={{fontStyle: "italic", fontWeight: "bold"}}>Click to filter URLs by Archive Status</h4>
+
+        <div className={"filters-archive-status"}>
+            {makeArchiveStatusChoices()}
+            {/*{makeArchiveStatusFilters()}*/}
+
+        </div>
+    </>
+
 
     return <div className={"url-overview"}>
 
@@ -190,8 +369,13 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {
         </div>
 
         <div className={'section-sub'}>
+            {archiveStatusCaption}
+            {archiveStatusFiltersDisplay}
+        </div>
+
+        <div className={'section-sub'}>
             {linkStatusCaption}
-            {linkStatusFilters}
+            {showCitationLinks ? linkStatusFilters : null}
         </div>
     </div>
 

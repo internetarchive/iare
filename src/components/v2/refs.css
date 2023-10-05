@@ -40,6 +40,7 @@
     padding:.3rem 1.8rem .3rem .4rem;
     margin-bottom:2pt;
     position:relative;
+    overflow-wrap: break-word;
 }
 .ref-button.is-pressed {
     background-color: #7690c4; /* #c1d4e0;*/
@@ -122,8 +123,8 @@
 
     max-height: calc(var(--height-list) + 2rem);
     height: calc(var(--height-list)+ 2rem);
-
-    overflow: scroll;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 
 .ref-list-header {

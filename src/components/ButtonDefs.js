@@ -50,7 +50,7 @@ const ButtonDefs = {
         value : "https://s3.documentcloud.org/documents/23782225/mwg-fdr-document-04-16-23-1.pdf"
     },
     "pdfOneLink"  : {
-        label : "1 link PDF",
+        label : "1 Link PDF",
         value : "https://www.foundationforfreedomonline.com/wp-content/uploads/2023/03/FFO-FLASH-REPORT-REV.pdf"
     },
     "pdfDesantis"  : {

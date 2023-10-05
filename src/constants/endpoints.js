@@ -49,6 +49,9 @@ export const UrlStatusCheckMethods = {
         caption: 'Corentin',
         endpoint: 'https://iabot-api.archive.org/undertaker/'
     },
+
+
+
     IABOT_SEARCHURL: {
         key: 'IABOT_SEARCHURL',
         caption: 'IA Bot SearchUrlData',
