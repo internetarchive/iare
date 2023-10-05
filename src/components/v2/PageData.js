@@ -60,7 +60,7 @@ export default function PageData({pageData = {}}) {
         const sanitizeUrlForWayback = (targetUrl) => {
             // let inputString = 'http://example.com:http://example2.com:some:text:with:colons';
             const regexColon = /:(?!\/\/)/g;  // Regular expression to match colons not followed by "//"
-            const regexEquals = /=/g;  // Regular expression to match equals signs
+            // const regexEquals = /=/g;  // Regular expression to match equals signs
             let resultUrl
             resultUrl = targetUrl.replace(regexColon, '%3A');  // Replace solo colons with encoded "%3A"
             // resultUrl = resultUrl.replace(regexEquals, '%3D')
