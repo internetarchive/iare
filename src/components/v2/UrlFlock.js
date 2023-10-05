@@ -235,7 +235,7 @@ export default function UrlFlock({ urlArray,
         let filteredUrls = urlArray
 
         // aggregate captions concurrently with applying filters
-        const filterCaptions = Object.keys(urlFilters)
+        let filterCaptions = Object.keys(urlFilters)
             .filter(key => urlFilters[key].filterFunction )  // exclude null filters
             .map( filterName => {  // apply non-null filters and append filter caption
                 const f = urlFilters[filterName]
@@ -253,6 +253,11 @@ export default function UrlFlock({ urlArray,
                     return urlFilters[filterName].caption
                 }
             })
+        // temporarily fixes bug where urlFilters is being set to an array with a singkle elment of another empoty array.
+        // it has something to do with the empty Archive Status state setting the urlFilters when it shouldn't
+        if (filterCaptions.length === 1 && filterCaptions[0].length === 0) {
+            filterCaptions = ''
+        }
 
         // sort if specified
         if (sort.sortOrder?.length > 0) {
@@ -267,6 +272,7 @@ export default function UrlFlock({ urlArray,
                       style={{position: "relative", top: "-0.1rem"}}
             ><span>Remove Filter</span></button>
             : null
+
 
         caption = <>
             {/*<h4>Applied Filter: { filterCaptions.length ? filterCaptions.join('&amp;<br/>') : 'Show All' }</h4>*/}
