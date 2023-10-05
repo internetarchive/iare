@@ -63,7 +63,7 @@ export default function PageData({pageData = {}}) {
             const regexEquals = /=/g;  // Regular expression to match equals signs
             let resultUrl
             resultUrl = targetUrl.replace(regexColon, '%3A');  // Replace solo colons with encoded "%3A"
-            resultUrl = resultUrl.replace(regexEquals, '%3D')
+            // resultUrl = resultUrl.replace(regexEquals, '%3D')
             return resultUrl
         }
 
@@ -112,15 +112,38 @@ export default function PageData({pageData = {}}) {
                 /* must see if rescued url, in wayback encoding, is matchy to ONE of our
                  * wayback-enhanced primary urls.
                  */
-                const rescueUrl = results[2]
-                if (sanitizedPrimaryUrls.includes(rescueUrl)) {
+                let rescueUrl = results[2]
 
+                if (sanitizedPrimaryUrls.includes(rescueUrl)) {
                     // ge un-sanitized original primaryUrl from crossRef dict
                     const primaryUrl = sanitizeToPrimaryDict[rescueUrl]
-
                     // and we use the original url to key into the "master" urlDict, saving the archiveUrl with it
                     urlDict[primaryUrl].hasArchive = archiveUrl
                 }
+
+                // if rescueUrl not found in primaryurls, then try again with protocoal changed in rescue url
+                // for instance, if first-pass rescue url is:
+                // http://www.bbc.co.uk/news/world-latin-america-12378736, and that doesnt match any urls in primaryurls,
+                // then try changing protocol and retesting with:
+                // https://www.bbc.co.uk/news/world-latin-america-12378736
+
+                else {
+                    // if rescue has http://, then change to https://
+                    // if rescue has https://, then change to http://
+                    const rescueUrlMod = rescueUrl.startsWith("http://")
+                        ? rescueUrl.replace(/^http:\/\//i, "https://")
+                        : rescueUrl.replace(/^https:\/\//i, "http://")
+
+                    if (sanitizedPrimaryUrls.includes(rescueUrlMod)) {
+                        // get un-sanitized original primaryUrl from crossRef dict
+                        const primaryUrl = sanitizeToPrimaryDict[rescueUrlMod]
+                        // and we use that to key into the "master" urlDict, saving the archiveUrl as its value
+                        urlDict[primaryUrl].hasArchive = archiveUrl
+                    }
+
+
+                }
+
             }
         })
 

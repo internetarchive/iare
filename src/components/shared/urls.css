@@ -95,6 +95,9 @@
     padding-top: 0.18rem !important;
     font-size: 80%;
 }
+.url-list-header .url-header-row.url-row-top .url-arch-ia {
+    font-size:inherit;
+}
 
 
 /*.url-list-header .url-header-row .url-arch-iari,*/
@@ -185,7 +188,7 @@
 }
 
 .url-row .url-botstat {
-    text-align: center;
+    text-align: left;
     /*border-left: 1px solid black;*/
     width: var(--width-url-botstat);
     max-width: var(--width-url-botstat);
@@ -307,7 +310,7 @@
     width:var(--width-check-icon-filter);
     height:var(--height-check-icon-filter);
 }
-.archive-row .archive-type-name {
+.archive-row .archive-source-name {
     padding-top:.5rem;
     width: var(--width-archive-caption)
 }
@@ -320,6 +323,7 @@
 }
 li.archive-row {
     display:inline-flex;
+    display:flex;
 }
 .archive-row ul {
     /*display:inline-block;*/

@@ -20,7 +20,7 @@ export default function PageInfo({ pageData }) {
 
     return <div className="page-info">
         <h6>Wiki Page Analyzed: <a href={pageData.pathName} target={"_blank"} rel={"noreferrer"}>{pageData.pathName}</a
-        > {ores_score_display ? <span className={"ores-display"}>ORES score: {ores_score_display}</span> : null}
+        > {ores_score_display ? <span className={"ores-display"}>ORES Score: {ores_score_display}</span> : null}
             <button onClick={()=>setShowDetail(!showDetail)} className={"more-button"}>{ showDetail ? "less" : "more" } details</button>
         </h6>
 
@@ -31,7 +31,7 @@ export default function PageInfo({ pageData }) {
 
                 {ores_score_display
                     ? <>
-                        <p style={{marginBottom:0}}>ORES score: {ores_score_display}</p>
+                        <p style={{marginBottom:0}}>ORES Score: {ores_score_display}</p>
                         <PureJson data={pageData.ores_score} caption={null} />
                     </>
                     : null

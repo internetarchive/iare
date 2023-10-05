@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {Tooltip as MyTooltip} from "react-tooltip";
 import {UrlStatusCheckMethods} from "../../constants/endpoints";
 import {httpStatusCodes, iabotLiveStatusCodes} from "../../constants/httpStatusCodes"
+import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "./filters/urlFilterMaps";
 // import {forEach} from "react-bootstrap/ElementChildren";
 
 /*
@@ -210,8 +211,10 @@ export default function UrlFlock({ urlArray,
     }
 
     const getMultiLineCaption = ( myCaptions = [] ) => {
+        const prefixBreak = myCaptions.length > 1
         return myCaptions.map((str, index) => (
             <React.Fragment key={index}>
+                {prefixBreak && index === 0 ? <br/> : null}
                 {str}
                 {index < myCaptions.length - 1 && <br />}  {/* Add <br/> except for the last element */}
             </React.Fragment>))
@@ -231,15 +234,15 @@ export default function UrlFlock({ urlArray,
         // filter the urls if filters defined
         let filteredUrls = urlArray
 
-        // aggregate captions at same time of applying filters
+        // aggregate captions concurrently with applying filters
         const filterCaptions = Object.keys(urlFilters)
             .filter(key => urlFilters[key].filterFunction )  // exclude null filters
             .map( filterName => {  // apply non-null filters and append filter caption
                 const f = urlFilters[filterName]
                 if (Array.isArray(f.filterFunction)) {
-                    // f is an array of filters; interpret f.filterFunction as an array of filters,
+                    // interpret f.filterFunction as an array of filters,
                     //    and apply all filters one at a time
-                    // TODO turn this into some kind of effective recursive loop here
+                    // TODO turn this into some kind of effective recursive loop
                     const captionList = f.filterFunction.map( oneFilter => {
                         filteredUrls = filteredUrls.filter( (oneFilter.filterFunction)() )  // NB: Note self-calling function
                         return oneFilter.caption
@@ -267,7 +270,7 @@ export default function UrlFlock({ urlArray,
 
         caption = <>
             {/*<h4>Applied Filter: { filterCaptions.length ? filterCaptions.join('&amp;<br/>') : 'Show All' }</h4>*/}
-            <h4>Applied Filter: { filterCaptions.length ? filterCaptions : 'Show All' }</h4>
+            <h4><span style={{fontSize:"78%"}}>Applied Filter:</span> { filterCaptions.length > 0 ? filterCaptions : 'Show All' }</h4>
             <h4 style={{marginTop:".5rem"}}>{filteredUrls.length} {filteredUrls.length === 1
                 ? 'URL' : 'URLs'}{buttonRemove}</h4>
             {extraCaption}
@@ -336,10 +339,13 @@ export default function UrlFlock({ urlArray,
         }
 
         const getHeaderRow = () => {
-            return <div className={"url-list-header"}
+
+            return <div
+                className={"url-list-header"}
                         onClick={onClickHeader}
                         onMouseOver={onHoverHeaderRow} >
 
+                {/* top row of header - for layout reasons */}
                 <div className={"url-row url-header-row url-row-top"}>
                     <div className={"url-name"}>&nbsp;</div>
                     <div className={"url-status"}>&nbsp;</div>
@@ -354,6 +360,7 @@ export default function UrlFlock({ urlArray,
                         : null }
                 </div>
 
+                {/* second header row - contains column labels */}
                 <div className={"url-row url-header-row"}>
                     <div className={"url-name"}>URL</div>
                     <div className={"url-status"} onClick={() => {
@@ -364,11 +371,14 @@ export default function UrlFlock({ urlArray,
                     {/* TODO this should be within IABOT row renderer */}
                     {fetchMethod === UrlStatusCheckMethods.IABOT.key
                         ? <>
-                            <div className={"url-arch-iari"} onClick={() => { handleSortClick("arch_iari"); } }>IARI</div>
-                            <div className={"url-arch-ia"} onClick={() => { handleSortClick("arch_ia"); } }>IABOT</div>
-                            <div className={"url-arch-tmplt"} onClick={() => { handleSortClick("arch_tmplt"); } }>Tmplt</div>
+                            <div className={"url-arch-iari"} onClick={() => { handleSortClick("arch_iari"); } }
+                            >{archiveFilterDefs['iari']._.name}</div>
+                            <div className={"url-arch-ia"} onClick={() => { handleSortClick("arch_ia"); } }
+                            >{archiveFilterDefs['iabot']._.name}</div>
+                            <div className={"url-arch-tmplt"} onClick={() => { handleSortClick("arch_tmplt"); } }
+                            >{archiveFilterDefs['template']._.name}</div>
 
-                            <div className={"url-botstat"}>IABOT</div>
+                            <div className={"url-botstat"}>IABot</div>
                         </>
                     : null }
                 </div>

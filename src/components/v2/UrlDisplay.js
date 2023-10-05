@@ -177,7 +177,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
     const urlListCaption = <h3>URL List{myConfig.isDebug ? copyButton : null }</h3>
     const extraUrlCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click a URL to show References using that URL</h4>
-    const extraRefCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click a Reference to view reference details</h4>
+    const extraRefCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click a Reference to view Reference details</h4>
 
     console.log("UrlDisplay: render");
 

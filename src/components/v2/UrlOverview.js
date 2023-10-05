@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import FilterButtons from "../FilterButtons";
+import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "./filters/urlFilterMaps";
 import {REF_LINK_STATUS_FILTERS} from "./filters/refFilterMaps";
 import PieChart from "../PieChart";
 import {
@@ -13,7 +14,6 @@ import {
     SubTitle,
     Colors,
 } from 'chart.js'
-import {ARCHIVE_STATUS_FILTER_MAP} from "./filters/urlFilterMaps";
 
 Chart.register(
     LinearScale,
@@ -88,7 +88,7 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
         Object.keys(archiveFilterStatus).forEach( archiveSource => {
             Object.keys(archiveFilterStatus[archiveSource]).forEach( archiveStatus => {
                 if (archiveFilterStatus[archiveSource][archiveStatus]) {
-                    myFilters.push(ARCHIVE_STATUS_FILTER_MAP[archiveSource][archiveStatus])
+                    myFilters.push(archiveFilterDefs[archiveSource][archiveStatus])
                 }
             })
         })
@@ -280,70 +280,74 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
     }
 
     const makeArchiveStatusChoices = () => {
-        // render Archive Status Filter based on state var archiveFilterStatus
+
+        // render Archive Status Filter based on archiveFilterStatus state
+        // go thru archiveFilterStatus state and display as encountered
         return <ul>
 
             {Object.keys(archiveFilterStatus).map( archiveSource => {
-            const mySource = archiveFilterStatus[archiveSource]
 
-            return <li className={"archive-row"}><span className={"archive-type-name"}>{archiveSource}</span>
-                <ul>
-                {Object.keys(mySource).map( archiveStatus => {
-                    const inputKey = `${archiveSource}-${archiveStatus}`
-                    const label = <span className={`archive-icon archive-${archiveStatus}`}>{inputKey}</span>
-                    return <li><input
-                            type="checkbox"
-                            id={`checkbox-${inputKey}`}
-                            checked={mySource[archiveStatus]}
-                            onChange={handleArchiveStatusCheck}
-                            data-source={archiveSource}
-                            data-status={archiveStatus}
-                        />
-                        <label htmlFor={`checkbox-${inputKey}`}>{label}</label>
-                    </li>
-                    })}
-                </ul>
-            </li>
+                const sourceObject = archiveFilterStatus[archiveSource]
+                const sourceLabel = archiveFilterDefs[archiveSource]._.name
+
+                return <li className={"archive-row"}><span className={"archive-source-name"}>{sourceLabel}</span>
+                    <ul>{Object.keys(sourceObject).map( archiveStatus => {
+                        const status = sourceObject[archiveStatus]
+                        const inputKey = `${archiveSource}-${archiveStatus}`
+                        const label = <span className={`archive-icon archive-${archiveStatus}`}
+                            >{`${archiveSource}-${archiveStatus}`}</span>
+
+                        return <li><input
+                                type="checkbox"
+                                id={`checkbox-${inputKey}`}
+                                checked={status}
+                                onChange={handleArchiveStatusCheck}
+                                data-source={archiveSource}
+                                data-status={archiveStatus}
+                            />
+                            <label htmlFor={`checkbox-${inputKey}`}>{label}</label>
+                        </li>})}
+                    </ul>
+                </li>
             })}
         </ul>
     }
 
-
-    // //
-    // DO NOT DELETE - may recover this code and filter buttons later...
-    // //
-    // // callback for button render function of <FilterButton>
-    // // NB: props.filter.name is magically set to object key name of filter
-    // // NB: props.filter.count is magically set to count of number of items resulting from filter
-    // // TODO: this should be made into a class, or something that takes a standard interface
-    // const renderArchiveStatusButton = (props) => {
-    //     return <>
-    //         <div>{props.filter.caption}</div>
-    //         <div className={`filter-archive-status-wrapper`}>
-    //             <span className={`archive-status archive-status-${props.filter.name}`} />
-    //         </div>
-    //         <div className={'filter-count'}>{props.filter.count}</div>
-    //     </>
-    // }
-    // const makeArchiveStatusFilters = () => {
-    //     return (<>
-    //         <FilterButtons
-    //             flock={pageData.urlArray}
-    //             filterMap={URL_ARCHIVE_STATUS_FILTER_MAP}
-    //             filterList={[]}
-    //             onClick={(e) => {
-    //                 handleArchiveStatusAction(e)
-    //             }}
-    //             caption=''
-    //             className="archive-status-filter-buttons"
-    //             currentFilterName=''
-    //             onRender={renderArchiveStatusButton}
-    //         />
-    //     </>)
-    // }
+                        // //
+                        // DO NOT DELETE - may recover this code and filter buttons later...
+                        // //
+                        // // callback for button render function of <FilterButton>
+                        // // NB: props.filter.name is magically set to object key name of filter
+                        // // NB: props.filter.count is magically set to count of number of items resulting from filter
+                        // // TODO: this should be made into a class, or something that takes a standard interface
+                        // const renderArchiveStatusButton = (props) => {
+                        //     return <>
+                        //         <div>{props.filter.caption}</div>
+                        //         <div className={`filter-archive-status-wrapper`}>
+                        //             <span className={`archive-status archive-status-${props.filter.name}`} />
+                        //         </div>
+                        //         <div className={'filter-count'}>{props.filter.count}</div>
+                        //     </>
+                        // }
+                        // const makeArchiveStatusFilters = () => {
+                        //     return (<>
+                        //         <FilterButtons
+                        //             flock={pageData.urlArray}
+                        //             filterMap={URL_ARCHIVE_STATUS_FILTER_MAP}
+                        //             filterList={[]}
+                        //             onClick={(e) => {
+                        //                 handleArchiveStatusAction(e)
+                        //             }}
+                        //             caption=''
+                        //             className="archive-status-filter-buttons"
+                        //             currentFilterName=''
+                        //             onRender={renderArchiveStatusButton}
+                        //         />
+                        //     </>)
+                        // }
 
     const archiveStatusFiltersDisplay = <>
-        <h4 style={{fontStyle: "italic", fontWeight: "bold"}}>Click to filter URLs by Archive status</h4>
+        <h4 style={{fontStyle: "italic", fontWeight: "bold"}}>Click to filter URLs by Archive Status</h4>
 
         <div className={"filters-archive-status"}>
             {makeArchiveStatusChoices()}

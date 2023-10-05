@@ -64,7 +64,38 @@ export const URL_STATUS_FILTER_MAP = {
 // };
 
 export const ARCHIVE_STATUS_FILTER_MAP = {
+    iabot: {
+        _: { name: 'IABot'},
+
+        yes: {
+            caption: "IABOT has archive for URL",
+            desc: "IABOT has archive for URL.",
+            default: false,
+            filterFunction: () => (url) => {
+                return url.searchurldata_archived
+            },
+        },
+        no: {
+            caption: "IABot does not have archive for URL",
+            desc: "IABot does not have archive for URL",
+            default: false,
+            filterFunction: () => (url) => {
+                return !(url.searchurldata_archived)
+            },
+        },
+        unknown: {
+            caption: "IABOT archive status for URL unknown",
+            desc: "IABOT archive status for URL unknown.",
+            default: false,
+            filterFunction: () => (url) => {
+                return url.searchurldata_archived === undefined
+            },
+        },
+    },
+
     iari: {
+        _: { name: 'IARI' },
+
         yes: {
             caption: "URL has archive in page URLs",
             desc: "Archive link found in page URLs.",
@@ -92,34 +123,8 @@ export const ARCHIVE_STATUS_FILTER_MAP = {
         },
     },
 
-    iabot: {
-        yes: {
-            caption: "IABOT has archive for URL",
-            desc: "IABOT has archive for URL.",
-            default: false,
-            filterFunction: () => (url) => {
-                return url.searchurldata_archived
-            },
-        },
-        no: {
-            caption: "IABOT does not have archive for URL",
-            desc: "IABOT does not have archive for URL",
-            default: false,
-            filterFunction: () => (url) => {
-                return !(url.searchurldata_archived)
-            },
-        },
-        unknown: {
-            caption: "IABOT archive status for URL unknown",
-            desc: "IABOT archive status for URL unknown.",
-            default: false,
-            filterFunction: () => (url) => {
-                return url.searchurldata_archived === undefined
-            },
-        },
-    },
-
     template: {
+        _: { name: 'Cite'},
         yes: {
             caption: "Template has archive URL",
             desc: "Template has archive URL.",
