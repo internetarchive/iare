@@ -206,21 +206,21 @@ export const REF_LINK_STATUS_FILTERS = {
         },
     },
 
-    no_template_bad: {
+    exotemplate_bad: {
         caption: "Link Status: No Template, Bad link",
         desc: "Link found outside of template, and it is bad.",
         lines: ['Link outside of template', 'Link is bad'],
         filterFunction: () => (d) => {
-            return d.link_status && d.link_status.includes('no_template_bad')
+            return d.link_status && d.link_status.includes('exotemplate_bad')
         },
     },
 
-    no_template_good: {
+    exotemplate_good: {
         caption: "Link Status: No Template, Good link",
         desc: "Link found outside of template, and it is good.",
         lines: ['Link outside of template', 'Link is good'],
         filterFunction: () => (d) => {
-            return d.link_status && d.link_status.includes('no_template_good')
+            return d.link_status && d.link_status.includes('exotemplate_good')
         },
     },
 

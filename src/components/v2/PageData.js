@@ -211,15 +211,15 @@ export default function PageData({pageData = {}}) {
 
         ref.urls.forEach(url => {
             if (!templateUrls[url]) {
-                const urlStatusCode = urlDict[url]?.status_codeed
-                const urlLinkStatus = (urlStatusCode === undefined) ? 'no_template_bad'
-                    : (urlStatusCode >= 200 && urlStatusCode < 400) ? 'no_template_good'
-                        : 'no_template_bad'
+                const urlStatusCode = urlDict[url]?.status_code
+                const urlLinkStatus = (urlStatusCode === undefined) ? 'exotemplate_bad'
+                    : (urlStatusCode >= 200 && urlStatusCode < 400) ? 'exotemplate_good'
+                        : 'exotemplate_bad'
                 linkStatus.push(urlLinkStatus)
             }
         })
 
-        // if link_status still empty, then we have no links at all
+        // if linkStatus still empty, we have no links at all in this citation
         if (linkStatus.length < 1) {
            linkStatus.push('no_links')
         }

@@ -90,11 +90,11 @@
 .link-status-none_none {
     content: url('../../images/none_none.png');
 }
-.link-status-no_template_bad {
-    content: url('../../images/no_template_bad.png');
+.link-status-exotemplate_bad {
+    content: url('../../images/exotemplate_bad.png');
 }
-.link-status-no_template_good {
-    content: url('../../images/no_template_good.png');
+.link-status-exotemplate_good {
+    content: url('../../images/exotemplate_good.png');
 }
 .link-status-no_links {
     content: url('../../images/no_links.png');
