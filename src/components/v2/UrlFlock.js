@@ -52,7 +52,7 @@ export default function UrlFlock({ urlArray,
         sorts: {
             "status": {name: "status", dir: 1},  // dir: 1 is asc, -1 is desc, 0 is do not sort
             "arch_iari": {name: "arch_iari", dir: 1},
-            "arch_ia": {name: "arch_ia", dir: 1},
+            "arch_iabot": {name: "arch_iabot", dir: 1},
             "arch_tmplt": {name: "arch_tmplt", dir: 1},
         },
         sortOrder: ["status"]
@@ -102,8 +102,8 @@ export default function UrlFlock({ urlArray,
         const archiveB = b?.searchurldata_archived ? 1 : 0;
 
         // respect sortDir
-        if (archiveA < archiveB) return sort.sorts['arch_ia'].dir * -1;
-        if (archiveA > archiveB) return sort.sorts['arch_ia'].dir;
+        if (archiveA < archiveB) return sort.sorts['arch_iabot'].dir * -1;
+        if (archiveA > archiveB) return sort.sorts['arch_iabot'].dir;
         return 0;
     }
     const sortByArchTmlpt = (a,b) => {
@@ -124,7 +124,7 @@ export default function UrlFlock({ urlArray,
         else if(sort.sortOrder[0] === "arch_iari") {
             return sortByArchIari(a,b)
         }
-        else if(sort.sortOrder[0] === "arch_ia") {
+        else if(sort.sortOrder[0] === "arch_iabot") {
             return sortByArchIa(a,b)
         }
         else if(sort.sortOrder[0] === "arch_tmplt") {
@@ -160,7 +160,7 @@ export default function UrlFlock({ urlArray,
         let html = ''
         if (e.target.className === "url-status") {
             html = `<div>HTTP status code of primary URL</div>`
-        } else if (e.target.className === "url-botstat") {
+        } else if (e.target.className === "url-iabot-status") {
             html = `<div>Entry data from IABot database</div>`
         } else if (e.target.className === "url-arch-iari") {
             html = `<div>Archive found within set of<br/>URLs returned from IARI</div>`
@@ -177,25 +177,27 @@ export default function UrlFlock({ urlArray,
 
         const row = e.target.closest('.url-row')
 
-        // console.log(`onHoverDataRow: ${e.target.className} ${row.dataset.statusCode} ${row.dataset.liveState} ${row.dataset.url} ${row.dataset.archived === "true" ? "archived" : "not archived"}`)
-
         let html = ''
+        
         if (e.target.className === "url-status") {
-            const statusDescription = httpStatusCodes[row.dataset.statusCode]
-            html = `<div>${row.dataset.statusCode} : ${statusDescription}</div>`
+            // status code column
+            const statusDescription = httpStatusCodes[row.dataset.status_code]
+            html = `<div>${row.dataset.status_code} : ${statusDescription}</div>`
 
-        } else if (e.target.className === "url-botstat") {
-            html = row.dataset.liveState
-                ? `<div>${row.dataset.liveState}: ${iabotLiveStatusCodes[row.dataset.liveState]}` +
-                `<br/>${row.dataset.archived === "true" ? 'Archived' : 'Not archived'}</div>`
+        } else if (e.target.className === "url-iabot-status") {
+            // IABot info column
+            html = row.dataset.live_state
+                ? `<div>${row.dataset.live_state}: ${iabotLiveStatusCodes[row.dataset.live_state]}` +
+                `<br/>${row.dataset.arch_iabot === "true" ? 'Archived' : 'Not archived'}</div>`
                 : ''
         }
 
         else if (e.target.className === "archive-yes" || e.target.className === "archive-no") {
+            // any of the archive status columns
             if (e.target.parentElement.className === "url-arch-iari") {
                 html = `<div>${row.dataset.arch_iari === "true" ? "Archive in page URLs" : "Archive NOT in page URLs"}</div>`
             } else if (e.target.parentElement.className === "url-arch-ia") {
-                html = `<div>${row.dataset.arch_ia === "true" ? "Archive in IA database" : "Archive NOT in IA database"}</div>`
+                html = `<div>${row.dataset.arch_iabot === "true" ? "Archive in IA database" : "Archive NOT in IA database"}</div>`
             } else if (e.target.parentElement.className === "url-arch-tmplt") {
                 html = `<div>${row.dataset.arch_tmplt === "true" ? "Archive supplied in citation template" : "Archive NOT supplied in citation template"}</div>`
             }
@@ -288,20 +290,20 @@ export default function UrlFlock({ urlArray,
         const getArchTmpltStatus = (u => <span className={u.hasTemplateArchive ? "archive-yes" : "archive-no" }></span> )
 
         // TODO this should be within IABOT row renderer
-        const getIabotStatus = (r => {
-            if (!r.searchurldata_status) {
+        const getIabotStatus = (u => {
+            if (!u.searchurldata_status) {
                 return ''
             }
             // return r.searchurldata_status + (r.searchurldata_archived ? ", A" : ', X') + (!r.searchurldata_hasarchive ? "-" : '')
-            return r.searchurldata_status + (r.searchurldata_archived ? ", A" : ', X')
+            return u.searchurldata_status + (u.searchurldata_archived ? ", A" : ', X')
         })
 
         const getDataRow = (u, i, classes) => {
             return <div className={classes} key={i} data-url={u.url}
-                        data-status-code={u.status_code}
-                        data-live-state={u.searchurldata_status}
+                        data-status_code={u.status_code}
+                        data-live_state={u.searchurldata_status}
                         data-arch_iari={!!u.hasArchive}
-                        data-arch_ia={!!u.searchurldata_archived}
+                        data-arch_iabot={!!u.searchurldata_archived}
                         data-arch_tmplt={!!u.hasTemplateArchive}
             >
                 <div className={"url-name"}>{u.url}</div>
@@ -312,7 +314,7 @@ export default function UrlFlock({ urlArray,
                         <div className={"url-arch-ia"}>{getArchIaStatus(u)}</div>
                         <div className={"url-arch-tmplt"}>{getArchTmpltStatus(u)}</div>
 
-                        <div className={"url-botstat"}>{getIabotStatus(u)}</div>
+                        <div className={"url-iabot-status"}>{getIabotStatus(u)}</div>
                     </>
                     : null }
 
@@ -338,7 +340,7 @@ export default function UrlFlock({ urlArray,
                         <div className={"url-arch-ia"}>?</div>
                         <div className={"url-arch-tmplt"}>?</div>
 
-                        <div className={"url-botstat"}>---</div>
+                        <div className={"url-iabot-status"}>---</div>
                         </>
                     : null }
             </div>
@@ -361,7 +363,7 @@ export default function UrlFlock({ urlArray,
                             <div className={"url-arch-ia"} >Archive</div>
                             <div className={"url-arch-tmplt"}>&nbsp;</div>
 
-                            <div className={"url-botstat"}>&nbsp;</div>
+                            <div className={"url-iabot-status"}>&nbsp;</div>
                         </>
                         : null }
                 </div>
@@ -379,12 +381,12 @@ export default function UrlFlock({ urlArray,
                         ? <>
                             <div className={"url-arch-iari"} onClick={() => { handleSortClick("arch_iari"); } }
                             >{archiveFilterDefs['iari']._.name}</div>
-                            <div className={"url-arch-ia"} onClick={() => { handleSortClick("arch_ia"); } }
+                            <div className={"url-arch-ia"} onClick={() => { handleSortClick("arch_iabot"); } }
                             >{archiveFilterDefs['iabot']._.name}</div>
                             <div className={"url-arch-tmplt"} onClick={() => { handleSortClick("arch_tmplt"); } }
                             >{archiveFilterDefs['template']._.name}</div>
 
-                            <div className={"url-botstat"}>IABot</div>
+                            <div className={"url-iabot-status"}>IABot</div>
                         </>
                     : null }
                 </div>

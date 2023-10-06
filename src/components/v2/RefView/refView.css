@@ -5,8 +5,9 @@
 
     /*--width-col-url: 25rem;*/
     /*--width-col-status: 25rem;*/
-    --width-col-url: 32rem;
-    --width-col-status: 6rem;
+    --width-col-url: 27.5rem;
+    --width-col-status: 4.5rem;
+    --width-col-iabot-status: 6rem;
 
     --spacing-heading-top: 1rem;
     --color-hilite: var(--bs-primary-rgb)
@@ -174,7 +175,8 @@
 .ref-view-urls thead {
     border-bottom: 2px solid var(--color-h3);
 }
-.ref-view-urls th, .ref-view-urls th h3 {
+.ref-view-urls th,
+.ref-view-urls th h3 {
     color: var(--color-h3);
     padding:0;
     margin-left:0;
@@ -185,12 +187,26 @@
     max-width:var(--width-col-url);
     padding-left:0;
 }
-.ref-view-urls th.ref-view-url-status {
+
+/*.ref-view-urls th.ref-view-url-status {*/
+/*    width:var(--width-col-status);*/
+/*    max-width:var(--width-col-status);*/
+/*    padding-left:.25rem;*/
+/*    text-align:center;*/
+/*}*/
+.ref-view-urls th.url-status {
     width:var(--width-col-status);
     max-width:var(--width-col-status);
     padding-left:.25rem;
     text-align:center;
 }
+.ref-view-urls th.url-iabot-status {
+    width:var(--width-col-iabot-status);
+    max-width:var(--width-col-iabot-status);
+    padding-left:.25rem;
+    text-align:center;
+}
+
 .ref-view-urls tr {
     border-bottom:1px solid var(--grid-color-light);
 }
@@ -198,12 +214,17 @@
     border:none;
     padding:.4rem .2rem;
 }
+
+/* 1st column (url) */
 .ref-view-urls tr td:first-child {
     overflow-wrap: break-word;
     width: var(--width-col-url);
     max-width: var(--width-col-url);
     /*background-color: blueviolet;*/
+    padding-right:.75rem;
 }
+
+/* 2nd column (status) */
 .ref-view-urls tr td:nth-child(2) {
     padding:0.2rem 0;
     width: var(--width-col-status);
@@ -214,6 +235,14 @@
     border-radius: 0.3rem;
     padding: 0.3rem 0;
 }
+
+/* 3rd column (iabot-status) */
+.ref-view-urls tr td:nth-child(3) div {
+    text-align: center;
+    padding: 0;
+}
+
+
 .ref-view-urls tr.url-is-unknown td:nth-child(2) div {
     color: var(--color-http-unknown);
     background-color: var(--color-http-unknown-bg);
