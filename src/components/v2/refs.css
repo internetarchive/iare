@@ -207,9 +207,10 @@
     display:block;
 }
 .filter-link-status-wrapper .link-status {
-    width:2.25rem;
-    height:2.25rem;
+    width:1.85rem;
+    height:1.85rem;
     display:block;
+    margin-top:.175rem;
 }
 
 /* deprecated? */
