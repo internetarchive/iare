@@ -23,11 +23,11 @@ export default function RefActions( {options, onAction}) {
 
             <p className={"ref-note-alert"}>Coming soon...</p>
 
-            <button type="button" className="btn btn-primary" onClick={() => {alert("Will Jump to IABot Management Page (coming soon...)")}}>
-                <span>Jump to<br/>IABot<br/>Management</span>
-            </button>
+            {/*<button type="button" className="btn btn-primary" onClick={() => {alert("Will Jump to IABot Management Page (coming soon...)")}}>*/}
+            {/*    <span>Jump to<br/>IABot<br/>Management</span>*/}
+            {/*</button>*/}
 
-            <p className={"ref-note-alert"}>Coming soon...</p>
+            {/*<p className={"ref-note-alert"}>Coming soon...</p>*/}
 
             {/*<button type="button" className="btn btn-primary">*/}
             {/*    <span>Suggest Changes</span>*/}
