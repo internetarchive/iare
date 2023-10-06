@@ -3,7 +3,7 @@
     --width-url-name: 20rem;
     --width-url-status: 3.5rem;
     --width-url-archive-check: 2rem;
-    --width-url-botstat: 5.5rem;
+    --width-url-iabot-status: 5.5rem;
 
     --width-col-url-overview: 327px;
     /*--width-cell-border: 1pt solid black;*/
@@ -187,11 +187,11 @@
     padding:.25rem 0 0;
 }
 
-.url-row .url-botstat {
+.url-row .url-iabot-status {
     text-align: left;
     /*border-left: 1px solid black;*/
-    width: var(--width-url-botstat);
-    max-width: var(--width-url-botstat);
+    width: var(--width-url-iabot-status);
+    max-width: var(--width-url-iabot-status);
 }
 
 .url-list a, .url-list .url-name {
@@ -202,7 +202,7 @@
 .url-header-row .url-arch-iari,
 .url-header-row .url-arch-ia,
 .url-header-row .url-arch-tmplt,
-.url-header-row .url-botstat,
+.url-header-row .url-iabot-status,
 .url-header-row .url-name
 {
     cursor: pointer;
