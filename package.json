@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.2.22.2",
-  "version_name": "0.2.22.2.iabot manage urls",
+  "version": "0.2.22.3",
+  "version_name": "0.2.22.3.new filter icons",
   "private": true,
   "dependencies": {
     "bootstrap": "^5.3.0-alpha3",
