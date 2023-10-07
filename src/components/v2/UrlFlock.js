@@ -160,14 +160,16 @@ export default function UrlFlock({ urlArray,
         let html = ''
         if (e.target.className === "url-status") {
             html = `<div>HTTP status code of primary URL</div>`
-        } else if (e.target.className === "url-iabot-status") {
-            html = `<div>Entry data from IABot database</div>`
+
         } else if (e.target.className === "url-arch-iari") {
             html = `<div>Archive found within set of<br/>URLs returned from IARI</div>`
         } else if (e.target.className === "url-arch-ia") {
             html = `<div>Archive exists in IABot database</div>`
         } else if (e.target.className === "url-arch-tmplt") {
             html = `<div>Archive found in archive_url<br/>parameter of citation template</div>`
+
+        } else if (e.target.className === "url-iabot-status") {
+            html = `<div>URL status reported by IABot</div>`
         }
         setUrlTooltipHtml(html)
     }
@@ -193,11 +195,14 @@ export default function UrlFlock({ urlArray,
         }
 
         else if (e.target.className === "archive-yes" || e.target.className === "archive-no") {
-            // any of the archive status columns
+            // target is any of the archive status columns
+
             if (e.target.parentElement.className === "url-arch-iari") {
                 html = `<div>${row.dataset.arch_iari === "true" ? "Archive in page URLs" : "Archive NOT in page URLs"}</div>`
+
             } else if (e.target.parentElement.className === "url-arch-ia") {
-                html = `<div>${row.dataset.arch_iabot === "true" ? "Archive in IA database" : "Archive NOT in IA database"}</div>`
+                html = `<div>${row.dataset.arch_iabot === "true" ? "Archive in IABot database" : "Archive NOT in IABot database"}</div>`
+
             } else if (e.target.parentElement.className === "url-arch-tmplt") {
                 html = `<div>${row.dataset.arch_tmplt === "true" ? "Archive supplied in citation template" : "Archive NOT supplied in citation template"}</div>`
             }

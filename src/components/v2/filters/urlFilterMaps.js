@@ -68,8 +68,8 @@ export const ARCHIVE_STATUS_FILTER_MAP = {
         _: { name: 'IABot'},
 
         yes: {
-            caption: "IABOT has archive for URL",
-            desc: "IABOT has archive for URL.",
+            caption: "IABot has archive for URL",
+            desc: "IABot has archive for URL.",
             default: false,
             filterFunction: () => (url) => {
                 return url.searchurldata_archived
@@ -83,13 +83,11 @@ export const ARCHIVE_STATUS_FILTER_MAP = {
                 return !(url.searchurldata_archived)
             },
         },
-        unknown: {
-            caption: "IABOT archive status for URL unknown",
-            desc: "IABOT archive status for URL unknown.",
+        all: {
+            caption: "IABot archive status for URL is anything",
+            desc: "IABot archive status for URL  is anything.",
             default: false,
-            filterFunction: () => (url) => {
-                return url.searchurldata_archived === undefined
-            },
+            filterFunction: () => (url) => {return true},
         },
     },
 
@@ -113,13 +111,11 @@ export const ARCHIVE_STATUS_FILTER_MAP = {
                 return !url.hasArchive
             },
         },
-        unknown: {
-            caption: "Archive in page URLs unknown",
-            desc: "Archive in page URLs unknown.",
+        all: {
+            caption: "Archive in page URLs is anything",
+            desc: "Archive in page URLs is anything.",
             default: false,
-            filterFunction: () => (url) => {
-                return url.hasArchive === undefined
-            },
+            filterFunction: () => (url) => {return true},
         },
     },
 
@@ -141,13 +137,11 @@ export const ARCHIVE_STATUS_FILTER_MAP = {
                 return !(url.hasTemplateArchive)
             },
         },
-        unknown: {
-            caption: "Template archive status unknown",
-            desc: "Template archive status unknown.",
+        all: {
+            caption: "Cite Template archive status is anything",
+            desc: "Template archive status is anything.",
             default: false,
-            filterFunction: () => (url) => {
-                return url.hasTemplateArchive === undefined
-            },
+            filterFunction: () => (url) => {return true},
         },
     },
 };
