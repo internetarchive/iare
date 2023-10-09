@@ -6,15 +6,12 @@ import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "./filters/urlFilte
 // import {forEach} from "react-bootstrap/ElementChildren";
 
 /*
-assumes urlArray is an array of url objects wrapped in a data object:
+assumes urlArray is an array of url objects:
     [
         {
-            data: {
-                url : <url>,
-                status_code : <status_code>,
-                <other url info>
-            },
-            status_code: XXX
+            url : <url>,
+            status_code : <status_code>,
+            <other url info>
         },
         ...
     ]
@@ -227,10 +224,10 @@ export default function UrlFlock({ urlArray,
             </React.Fragment>))
     }
 
-    let urls, caption;
+    let urls, flockCaption;
 
     if (!urlArray || urlArray.length === 0) {
-        caption = <h4>No URLs to show</h4>
+        flockCaption = <h4>No URLs to show</h4>
         urls = null
 
     } else {
@@ -238,10 +235,11 @@ export default function UrlFlock({ urlArray,
         if (!urlFilters) urlFilters = {}  // prevent null errors
         // TODO what to do if urlFilters not a keyed object of UrlFilter's? Can we make it a custom type (of UrlFilters)?
 
-        // filter the urls if filters defined
+        // initialize the urls as the full provided array
         let filteredUrls = urlArray
 
-        // aggregate captions concurrently with applying filters
+        // we apply any specified filters successively, while at the same time aggregating the filter captions
+        // into the filterCaptions array. This uses a side effect of the .map() function.
         let filterCaptions = Object.keys(urlFilters)
             .filter(key => urlFilters[key].filterFunction )  // exclude null filters
             .map( filterName => {  // apply non-null filters and append filter caption
@@ -260,6 +258,7 @@ export default function UrlFlock({ urlArray,
                     return urlFilters[filterName].caption
                 }
             })
+
         // temporarily fixes bug where urlFilters is being set to an array with a singkle elment of another empoty array.
         // it has something to do with the empty Archive Status state setting the urlFilters when it shouldn't
         if (filterCaptions.length === 1 && filterCaptions[0].length === 0) {
@@ -281,16 +280,16 @@ export default function UrlFlock({ urlArray,
             : null
 
 
-        caption = <>
-            {/*<h4>Applied Filter: { filterCaptions.length ? filterCaptions.join('&amp;<br/>') : 'Show All' }</h4>*/}
-            <h4><span style={{fontSize:"78%"}}>Applied Filter:</span> { filterCaptions.length > 0 ? filterCaptions : 'Show All' }</h4>
+        flockCaption = <>
+            <h4><span className={"filter-title"}>Applied Filter:</span> {
+                filterCaptions.length > 0 ? filterCaptions : 'Show All' }</h4>
             <h4 style={{marginTop:".5rem"}}>{filteredUrls.length} {filteredUrls.length === 1
                 ? 'URL' : 'URLs'}{buttonRemove}</h4>
             {extraCaption}
         </>
 
         // TODO this should be within IABOT row renderer
-        const getArchIariStatus = (u => <span className={u.hasArchive ? "archive-yes" : "archive-no" }></span> )
+        // const getArchIariStatus = (u => <span className={u.hasArchive ? "archive-yes" : "archive-no" }></span> )
         const getArchIaStatus = (u => <span className={u.searchurldata_archived ? "archive-yes" : "archive-no" }></span> )
         const getArchTmpltStatus = (u => <span className={u.hasTemplateArchive ? "archive-yes" : "archive-no" }></span> )
 
@@ -315,7 +314,7 @@ export default function UrlFlock({ urlArray,
                 <div className={"url-status"}>{u.status_code}</div>
                 {fetchMethod === UrlStatusCheckMethods.IABOT.key
                     ? <>
-                        <div className={"url-arch-iari"}>{getArchIariStatus(u)}</div>
+                        {/*<div className={"url-arch-iari"}>{getArchIariStatus(u)}</div>*/}
                         <div className={"url-arch-ia"}>{getArchIaStatus(u)}</div>
                         <div className={"url-arch-tmplt"}>{getArchTmpltStatus(u)}</div>
 
@@ -341,7 +340,7 @@ export default function UrlFlock({ urlArray,
                 {/* TODO this should be within IABOT row renderer */}
                 {fetchMethod === UrlStatusCheckMethods.IABOT.key
                     ? <>
-                        <div className={"url-arch-iari"}>?</div>
+                        {/*<div className={"url-arch-iari"}>?</div>*/}
                         <div className={"url-arch-ia"}>?</div>
                         <div className={"url-arch-tmplt"}>?</div>
 
@@ -364,7 +363,7 @@ export default function UrlFlock({ urlArray,
                     <div className={"url-status"}>&nbsp;</div>
                     {fetchMethod === UrlStatusCheckMethods.IABOT.key
                         ? <>
-                            <div className={"url-arch-iari"}>&nbsp;</div>
+                            {/*<div className={"url-arch-iari"}>&nbsp;</div>*/}
                             <div className={"url-arch-ia"} >Archive</div>
                             <div className={"url-arch-tmplt"}>&nbsp;</div>
 
@@ -384,8 +383,8 @@ export default function UrlFlock({ urlArray,
                     {/* TODO this should be within IABOT row renderer */}
                     {fetchMethod === UrlStatusCheckMethods.IABOT.key
                         ? <>
-                            <div className={"url-arch-iari"} onClick={() => { handleSortClick("arch_iari"); } }
-                            >{archiveFilterDefs['iari']._.name}</div>
+                            {/*<div className={"url-arch-iari"} onClick={() => { handleSortClick("arch_iari"); } }*/}
+                            {/*>{archiveFilterDefs['iari']._.name}</div>*/}
                             <div className={"url-arch-ia"} onClick={() => { handleSortClick("arch_iabot"); } }
                             >{archiveFilterDefs['iabot']._.name}</div>
                             <div className={"url-arch-tmplt"} onClick={() => { handleSortClick("arch_tmplt"); } }
@@ -434,7 +433,10 @@ export default function UrlFlock({ urlArray,
         urls = <>
             {/* TODO do something akin to "myMethodRenderer.getHeaderRow" */}
             {getHeaderRow()}
-            <div className={"url-list"} onClick={handleRowClick} onMouseOver={onHoverDataRow} >
+            <div className={"url-list"}
+                 onClick={handleRowClick}
+                 onMouseOver={onHoverDataRow}
+            >
                 {rows}
             </div>
         </>
@@ -456,7 +458,7 @@ export default function UrlFlock({ urlArray,
              // data-tooltip-content={urlTooltipText}
              data-tooltip-html={urlTooltipHtml}
             >
-            {caption}
+            {flockCaption}
             {urls}
         </div>
         {tooltip}

@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import FilterButtons from "../FilterButtons";
+import FilterStatusChoices from "../FilterStatusChoices";
 import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "./filters/urlFilterMaps";
 import {REF_LINK_STATUS_FILTERS} from "./filters/refFilterMaps";
 import PieChart from "../PieChart";
@@ -50,57 +51,18 @@ const colors = {
     }
 */
 
-const ArchiveFilterStatusChoices = ( { filterDefs = {}, filterStatus={}, handleClick } ) => {
-    // TODO to make this unuversal, accept a "prefix" arg to prefix classnaame with...e.g. "archive-" for archive-row, archive-source-name, etc.
-    // render Archive Status Filter based on filterStatus state
-    // go thru filterStatus state and display as encountered
-    return <ul>
 
-        {Object.keys(filterStatus).map(filterType => {
-
-            const filterGroup = filterStatus[filterType]
-            const filterLabel = filterDefs[filterType]._.name
-
-            const filterGroupChoices = Object.keys(filterGroup).map( filterStatusName => {
-
-                const status = filterGroup[filterStatusName] // the value of the setting for the sub-status of the group
-                const statusClass = status ? 'filter-on' : 'filter-off'
-                const inputKey = `${filterType}-${filterStatusName}`
-
-                // label span gets replaced by image icon based on class
-                const label = <span className={`filter-icon archive-${filterStatusName} ${statusClass}`}>{`${filterType}-${filterStatusName}`}</span>
-
-                return <li><input
-                    type="checkbox"
-                    id={`checkbox-${inputKey}`}
-                    checked={status}
-
-                    data-source={filterType}
-                    data-status={filterStatusName}
-
-                    onChange={handleClick}
-
-                    /><label htmlFor={`checkbox-${inputKey}`}>{label}</label>
-                </li>})
-
-            return <li className={"archive-row"}><span className={"filter-group-name"}>{filterLabel}</span>
-                <ul>{filterGroupChoices}</ul>
-            </li>
-
-        })}
-    </ul>
-}
 
 const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React.memo so doesn't re-rerender with param changes
 
     const [showCitationLinks, setShowCitationLinks] = useState(false)
     const [archiveFilterStatus, setArchiveFilterStatus] = useState(
         {
-            iari: {
-                yes: false,
-                no: false,
-                all: true
-            },
+            // iari: {
+            //     yes: false,
+            //     no: false,
+            //     all: true
+            // },
             iabot: {
                 yes: false,
                 no: false,
@@ -117,14 +79,8 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
     useEffect( () => {
         console.log('filterStatus changed to:', archiveFilterStatus)
 
+        // create filters array based on archive status values
         let myFilters = []
-
-                    // let myCaptions = []
-
-                    // build myFilter from ArchiveStatusFilterDefs and archiveStatus state variable
-                    // traverse sources and then status, and if true, add filter definition to output array
-
-        //
         Object.keys(archiveFilterStatus).forEach( archiveSource => {
             Object.keys(archiveFilterStatus[archiveSource]).forEach( archiveStatus => {
                 if (archiveFilterStatus[archiveSource][archiveStatus]) {
@@ -133,15 +89,13 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
             })
         })
 
-        const caption = "Placeholder Caption for multi filters"
-
-        const polyFilter = {
-            caption: caption,
-            filterFunction: myFilters,
-        }
-
+        // activate the filters
         onAction({
-            action: "setArchiveStatusFilters", value: polyFilter,
+            action: "setArchiveStatusFilters",
+            value: {
+                caption: "Unused Caption for multi filters",
+                filterFunction: myFilters,
+            },
         })
 
     }, [ archiveFilterStatus, onAction ])
@@ -355,13 +309,47 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
                         //     </>)
                         // }
 
+    const buttonArchiveNoCite = <button
+        onClick={() => setArchiveFilterStatus (
+            {
+                // iari: {
+                //     yes: false,
+                //     no: false,
+                //     all: true
+                // },
+                iabot: {
+                    yes: true,
+                    no: false,
+                    all: false
+                },
+                template: {
+                    yes: false,
+                    no: true,
+                    all: false
+                },
+            }
+        )}
+        className={"utility-button shortcut-button no-left-margin"}
+        >IABot archive not in Citation</button>
+
+
     const archiveStatusFiltersDisplay = <>
         <h4 style={{fontStyle: "italic", fontWeight: "bold"}}>Click to filter URLs by Archive Status</h4>
+
+        <div>Shortcut: {buttonArchiveNoCite}</div>
 
         <div className={"filters-archive-status"}>
             {/*{makeArchiveStatusChoices()}*/}
             {/*{makeArchiveStatusFilters()}*/}
-            <ArchiveFilterStatusChoices filterDefs={archiveFilterDefs} filterStatus={archiveFilterStatus} handleClick={handleArchiveStatusCheck} />
+            <FilterStatusChoices filterDefs={archiveFilterDefs} filterStatus={archiveFilterStatus} handleClick={handleArchiveStatusCheck} />
+        </div>
+    </>
+
+    const urlStatusDisplay = <>
+        <div className={"url-chart-display"}>
+            {chartData.datasets[0].data.length > 0 ?
+                <PieChart chartData={chartData} options={options} onClick={myClickChart}/>
+                : <p>No Pie</p>}
         </div>
     </>
 
@@ -370,11 +358,7 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
 
         <div className={'section-sub'}>
             {urlStatusCaption}
-            <div className={"url-chart-display"}>
-                {chartData.datasets[0].data.length > 0 ?
-                    <PieChart chartData={chartData} options={options} onClick={myClickChart}/>
-                    : <p>No Pie</p>}
-            </div>
+            {urlStatusDisplay}
         </div>
 
         <div className={'section-sub'}>

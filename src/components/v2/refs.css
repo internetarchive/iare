@@ -96,8 +96,8 @@
 .link-status-exotemplate_good {
     content: url('../../images/exotemplate_good.png');
 }
-.link-status-no_links {
-    content: url('../../images/no_links.png');
+.link-status-missing {
+    content: url('../../images/missing.png');
 }
 
 /***********************
@@ -213,6 +213,13 @@
     margin-top:.175rem;
 }
 
+.ref-view-wrapper .link-status {
+    width:2.85rem;
+    height:2.85rem;
+    display:block;
+    margin-top:.375rem;
+}
+
 /* deprecated? */
             .ref-filters {
                 display:flex;
@@ -237,4 +244,9 @@
     width:60rem;
     /*min-width:45rem;*/
     /*height:30rem;*/
+}
+.ref-list-tooltip {
+    font-size:1.25em;
+    font-weight:normal;
+    z-index: 999;
 }

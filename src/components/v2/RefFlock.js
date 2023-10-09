@@ -1,8 +1,8 @@
 import React, {useEffect, useState, useContext} from 'react';
-//// import { IARI_V2_URL_BASE } from '../../constants/endpoints.js';
 import RefView from "./RefView/RefView";
-// import {UrlStatusCheckContext} from "../../contexts/UrlStatusCheckContext";
 import {ConfigContext} from "../../contexts/ConfigContext";
+import {Tooltip as MyTooltip} from "react-tooltip";
+import {REF_LINK_STATUS_FILTERS as linkDefs} from "./filters/refFilterMaps";
 
 function getReferenceCaption(ref) {
 
@@ -11,9 +11,9 @@ function getReferenceCaption(ref) {
     const markup = <>
 
         {ref.titles
-            ? ref.titles.map( t => {
+            ? ref.titles.map( (t,i) => {
                 hasContent = true
-                return <span className={'ref-line ref-title'} style={{fontWeight: "bold"}}>{t}{hasContent = true}</span>
+                return <span className={'ref-line ref-title'} style={{fontWeight: "bold"}}>{t}</span>
             }) : null }
 
         {ref.name
@@ -47,9 +47,10 @@ function getReferenceCaption(ref) {
             ? <div className={`ref-link-status-wrapper`}>
 
                 {ref.link_status.length > 0
-                    ? ref.link_status.map( linkStat => {
+                    ? ref.link_status.map( linkStatus => {
                         // return <span className={'ref-line ref-status'}>Link Status: {linkStat}</span>
-                        return <span className={`ref-link-status link-status-${linkStat}`} />
+                        return <span className={`ref-link-status link-status-${linkStatus}`}
+                            data-link-status={linkStatus}  />
                         })
                     : <span className={`ref-link-status link-status-missing`} /> }
 
@@ -65,6 +66,7 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
 
     const [refDetails, setRefDetails] = useState(null);
     // const [isLoading, setIsLoading] = useState(false);
+    const [tooltipHtmlRefList, setTooltipHtmlRefList] = useState( '<div>ToolTip<br />second line</div>' );
 
     const [openModal, setOpenModal] = useState(false)
 
@@ -123,6 +125,19 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
         // do we need to do anything local?
     }
 
+    const onHoverListItem = e => {
+        // show tool tip for link status icon
+
+        const linkStatus = e.target.dataset['linkStatus']
+
+        let html = ''
+        if (linkStatus) {
+            html = `<div>${linkDefs[linkStatus]?.desc ? linkDefs[linkStatus]?.desc : "Unknown link status"}</div>`
+        }
+
+        setTooltipHtmlRefList(html)
+    }
+
     let refs, caption;
 
     if (!refArray) {
@@ -143,7 +158,14 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
             : null
 
         caption = <>
-            <h4>Applied Filter: {refFilterDef ? refFilterDef.caption : 'Show All'}</h4>
+            {/*<h4>Applied Filter: {refFilterDef ? <div>{refFilterDef.desc}</div> : 'Show All'}</h4>*/}
+            <h4><span className={"filter-title"}>Applied Filter:</span> {
+                refFilterDef?.lines
+                    ? <div>{refFilterDef.lines[0]}<br/>{refFilterDef.lines[1]}</div>
+                    : refFilterDef?.desc
+                        ? <div>{refFilterDef.desc}</div>
+                        : 'Show All'
+            }</h4>
             <h4>{filteredRefs.length} {filteredRefs.length === 1
                 ? 'Reference' : 'References'}{buttonRemove}</h4>
             {extraCaption}
@@ -157,7 +179,11 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
 
         refs = <>
             {listHeader}
-            <div className={"ref-list"}>
+            <div className={"ref-list"}
+                 data-tooltip-id="ref-list-tooltip"
+                 data-tooltip-html={tooltipHtmlRefList}
+                 onMouseOver={onHoverListItem}
+            >
                 {filteredRefs.map((ref, i) => {
                     return <button key={ref.id}
                        className={"ref-button"}
@@ -171,6 +197,16 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
 
     }
 
+    const refTooltip = <MyTooltip id="ref-list-tooltip"
+                               float={true}
+                               closeOnEsc={true}
+                               delayShow={220}
+                               variant={"info"}
+                               noArrow={true}
+                               offset={5}
+                               className={"ref-list-tooltip"}
+    />
+
     return <div className={"ref-flock"}>
 
         <div className={"ref-list-wrapper"}>
@@ -179,6 +215,8 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
         </div>
 
         <RefView details={refDetails} open={openModal} onClose={() => setOpenModal(false)} />
+
+        {refTooltip}
 
     </div>
 }

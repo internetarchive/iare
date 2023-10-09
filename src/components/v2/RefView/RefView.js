@@ -6,7 +6,7 @@ import RefActions from "./RefActions";
 import RefStats from "./RefStats";
 import RefUrls from "./RefUrls";
 import {copyToClipboard} from "../../../utils/utils";
-// import RefLinkStatus from "./RefLinkStatus";
+import RefLinkStatus from "./RefLinkStatus";
 
 /*
 idea details:
@@ -107,15 +107,22 @@ export default function RefView({ open, onClose, details }) {
 
     }, [])
 
+    const onClickLinkStatus = (e) => {
+        // "jump" to selected linkStatus (which is a template, or an exotemplate url
+
+        // TODO: we need a sub-citation item id here, which will refer to an item that contains URLs
+
+        // const linkStatus = e.target.dataset['linkStatus']
+        console.log("will jump to section containing this link")
+    }
+
+
     // close modal if not in open state
     if (!open || !details) return null;
 
+    return <div className='ref-modal-overlay' onClick={onClose} >
 
-    return <div className='ref-modal-overlay'
-                onClick={onClose}
-    >
-
-    <div className={"ref-modal-container ref-view"}
+        <div className={"ref-modal-container ref-view"}
              onClick={(e) => {e.stopPropagation()}}
              onMouseMove={(e) => {e.stopPropagation()}}
              onScroll={(e) => {e.stopPropagation()}}
@@ -138,6 +145,7 @@ export default function RefView({ open, onClose, details }) {
                     </div>
 
                     <div className="col-3">
+                        <RefLinkStatus details={details} onClick={onClickLinkStatus} />
                         <RefActions options={{citeRef:details.citeRef ? details.citeRef : 0}} onAction={handleRefViewAction} />
                         <RefStats details={details} />
                     </div>
@@ -147,6 +155,7 @@ export default function RefView({ open, onClose, details }) {
             </div>
 
         </div>
+
     </div>
 
 }

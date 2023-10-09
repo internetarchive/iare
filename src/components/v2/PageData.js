@@ -221,7 +221,7 @@ export default function PageData({pageData = {}}) {
 
         // if linkStatus still empty, we have no links at all in this citation
         if (linkStatus.length < 1) {
-           linkStatus.push('no_links')
+           linkStatus.push('missing')
         }
 
         ref.link_status = linkStatus
