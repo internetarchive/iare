@@ -160,11 +160,17 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
         caption = <>
             {/*<h4>Applied Filter: {refFilterDef ? <div>{refFilterDef.desc}</div> : 'Show All'}</h4>*/}
             <h4><span className={"filter-title"}>Applied Filter:</span> {
-                refFilterDef?.lines
-                    ? <div>{refFilterDef.lines[0]}<br/>{refFilterDef.lines[1]}</div>
-                    : refFilterDef?.desc
-                        ? <div>{refFilterDef.desc}</div>
-                        : 'Show All'
+                refFilterDef
+                    ? (
+                        refFilterDef?.lines
+                            ? <div>{refFilterDef.lines[0]}<br/>{refFilterDef.lines[1]}</div>
+                            : refFilterDef?.caption
+                                ? <div>{refFilterDef.caption}</div>
+                                : refFilterDef?.desc
+                                    ? <div>{refFilterDef.desc}</div>
+                                    : <div style={{fontStyle:"italic"}}>Invalid filter definition</div>
+                    )
+                    : "Show All"
             }</h4>
             <h4>{filteredRefs.length} {filteredRefs.length === 1
                 ? 'Reference' : 'References'}{buttonRemove}</h4>
