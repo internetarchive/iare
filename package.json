@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.2.22.4",
-  "version_name": "0.2.22.4.link status tooltips",
+  "version": "0.2.22.5",
+  "version_name": "0.2.22.4.citation ref page links",
   "private": true,
   "dependencies": {
     "bootstrap": "^5.3.0-alpha3",

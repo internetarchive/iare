@@ -33,7 +33,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
     // production mode shows limited shortcuts, vs. staging which allows for more testing
     const shortcuts = env === 'env-production'
         ? ['easterIslandFilename', 'internetArchiveFilename', 'pdfCovid',]
-        : ['easterIslandFilename', 'internetArchiveFilename', 'karen_bakker', 'lindsay_lohan', 'pdfDesantis', 'pdfOneLink'];
+        : ['easterIslandFilename', 'internetArchiveFilename', 'karen_bakker', 'short_test', 'pdfDesantis', 'pdfOneLink'];
 
 
     // add class to body to indicate environment
@@ -97,7 +97,8 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         const convertPathToEndpoint = (path = '', mediaType = 'wiki', refresh = false) => {
 
             const iariBase = IariSources[myIariSourceId]?.proxy
-            // TODO: error if iariBase is undefined or otherwise falsey
+            // TODO: error if ia
+            //  riBase is undefined or otherwise falsey
             console.log(`convertPathToEndpoint: myIariSourceId = ${myIariSourceId}, iariBase = ${iariBase}`)
             if (mediaType === "wiki") {
                 const sectionRegex = '&regex=bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09

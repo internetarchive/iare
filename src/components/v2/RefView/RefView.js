@@ -146,7 +146,7 @@ export default function RefView({ open, onClose, details }) {
 
                     <div className="col-3">
                         <RefLinkStatus details={details} onClick={onClickLinkStatus} />
-                        <RefActions options={{citeRef:details.citeRef ? details.citeRef : 0}} onAction={handleRefViewAction} />
+                        <RefActions details={details} onAction={handleRefViewAction} />
                         <RefStats details={details} />
                     </div>
 

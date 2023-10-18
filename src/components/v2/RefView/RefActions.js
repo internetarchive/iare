@@ -1,27 +1,35 @@
 import React from "react";
 // import ai_img from '../../../images/ai_this.v2r1.redblack.png';
 
-export default function RefActions( {options, onAction}) {
+export default function RefActions( {details, onAction}) {
 
     const handleJumpToCitation = (e) => {
         const mainTarget = e.target.closest('.btn')
         const myCiteRef = mainTarget.dataset['citeRef']
-        onAction({action:'jumpToCitationRef', value:myCiteRef})
+        // onAction({action:'jumpToCitationRef', value:myCiteRef})
+        const baseWikiUrl = "https://en.wikipedia.org/wiki/"
+        const resolvedCiteRef = myCiteRef.replace( /^\.\//, baseWikiUrl)
+        window.open(resolvedCiteRef, "_blank")
     }
 
-    const myCiteRef = options?.citeRef || 0
+    const citeRefLinks = details.cite_refs
+        ? details.cite_refs.map( cr => {
+            return <>
+                <button type="button" className="btn btn-primary" data-cite-ref={cr.href} onClick={handleJumpToCitation}>
+                    <span>Jump to<br/>Article Citation</span>
+                </button>
+            </>
+        })
+        : <div>No Citation Refs!</div>
+
 
     return <div className="row ref-view-actions">
+
         <div className={"col-12"}><h3>Actions</h3>
 
-            {/*<button type="button" className="btn btn-primary" data-cite-ref={options?.cite_ref} onClick={handleJumpToCitation}>*/}
-            {/*    <span>Jump to<br/>Article<br/>Citation</span>*/}
-            {/*</button>*/}
-            <button type="button" className="btn btn-primary" data-cite-ref={myCiteRef} onClick={handleJumpToCitation}>
-                <span>Jump to<br/>Article<br/>Citation</span>
-            </button>
+            {citeRefLinks}
 
-            <p className={"ref-note-alert"}>Coming soon...</p>
+            <p className={"ref-note-alert"}>Under development...<br/>(may not jump to correct location)</p>
 
             {/*<button type="button" className="btn btn-primary" onClick={() => {alert("Will Jump to IABot Management Page (coming soon...)")}}>*/}
             {/*    <span>Jump to<br/>IABot<br/>Management</span>*/}

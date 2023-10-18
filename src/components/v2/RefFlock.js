@@ -72,6 +72,7 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
 
     const myConfig = useContext(ConfigContext);
     const myIariBase = myConfig?.iariSource;
+    // TODO catch myIariBase being undefined
 
     const fetchDetail = (ref) => {
         // handle null ref
@@ -80,33 +81,38 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
             return;
         }
 
-        // TODO: use refresh here ?
-        // const myEndpoint = `${IARI_V2_URL_BASE}/statistics/reference/${ref.id}`;
         const myEndpoint = `${myIariBase}/statistics/reference/${ref.id}`;
+        const data = ref
+        data.endpoint = myEndpoint;
+        setRefDetails(data);
 
-        // fetch the data
-        fetch(myEndpoint, {
-        })
-
-            .then((res) => {
-                if(!res.ok) throw new Error(res.status);
-                return res.json();
-            })
-
-            .then((data) => {
-                data.endpoint = myEndpoint;
-                data.link_status = ref.link_status
-                data.citeRef = 'TEMP'  // ref.cite_ref ? ref.cite_ref : '?'
-                setRefDetails(data);
-            })
-
-            .catch((err) => {
-                setRefDetails(`Error with details (${err})`);
-            })
-
-            .finally(() => {
-                // console.log("fetch finally")
-            });
+        //
+        // // TODO: use refresh here ?
+        // const myEndpoint = `${myIariBase}/statistics/reference/${ref.id}`;
+        //
+        // // fetch the data
+        // fetch(myEndpoint, {
+        // })
+        //
+        //     .then((res) => {
+        //         if(!res.ok) throw new Error(res.status);
+        //         return res.json();
+        //     })
+        //
+        //     .then((data) => {
+        //         data.endpoint = myEndpoint;
+        //         data.link_status = ref.link_status
+        //         data.citeRef = 'TEMP'  // ref.cite_ref ? ref.cite_ref : '?'
+        //         setRefDetails(data);
+        //     })
+        //
+        //     .catch((err) => {
+        //         setRefDetails(`Error with details (${err})`);
+        //     })
+        //
+        //     .finally(() => {
+        //         // console.log("fetch finally")
+        //     });
 
     }
 

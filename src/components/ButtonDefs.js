@@ -3,6 +3,10 @@ const ButtonDefs = {
         label : "Karen Bakker",
         value : "https://en.wikipedia.org/wiki/Karen_Bakker"
     },
+    "short_test"  : {
+        label : "Short Test",
+        value : "https://en.wikipedia.org/wiki/User:Iamojo/iaritest/links"
+    },
     "lindsay_lohan"  : {
         label : "Lindsay Lohan",
         value : "https://en.wikipedia.org/wiki/Lindsay_Lohan"

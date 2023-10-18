@@ -334,3 +334,7 @@
     font-weight:normal;
     z-index: 999;
 }
+
+.row.ref-view-actions {
+    margin-top:1rem;
+}

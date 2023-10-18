@@ -279,13 +279,28 @@ export default function PageData({pageData = {}}) {
             nr.origin.reference_count = nr.count
         })
 
+
+        // create keyed citeRef dict to link citerefs to refs entries
+        const citeRefs = {}
+        pageData.cite_refs.forEach( cite => {
+            // TODO must resolve citerefs for relative jump within page...
+            citeRefs[cite.ref_index] = cite.page_refs
+        })
+
+
+
         // process all anchor references
         uniqueRefs.forEach( ref => {
             // ref.link_status = processReference(ref, pageData.urlDict)
             processReference(ref, pageData.urlDict)
+
+            // associate citerefs
+            ref.cite_refs = citeRefs[ref.ref_index]
         })
 
-        // TODO while processing refs, set template archive property for primary url of template
+
+
+        // ?? TODO while processing refs, set template archive property for primary url of template
 
         // and append to pageData
         pageData.references = uniqueRefs
