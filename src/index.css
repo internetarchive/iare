@@ -53,11 +53,14 @@ body {
     font-weight:bold;
 }
 
+body .iare-view .header h1 {
+    color:red;
+}
 body.env-production .iare-view .header h1 {
     color:#e30040;
 }
-body.env-other .iare-view .header h1 {
-    color:red;
+body.env-local .iare-view .header h1 {
+    color: #28cf1a;
 }
 .version-display {
     font-size: .7em;

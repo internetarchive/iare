@@ -103,7 +103,7 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
 
     if (!statistics) {
         return <div>
-            <h4>Urls</h4>
+            <h4>URLs</h4>
             <p>No Url statistics to show.</p>
         </div>
     }

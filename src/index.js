@@ -10,11 +10,19 @@ import './index.css';
 import {UrlStatusCheckMethods} from "./constants/endpoints";
 import {IariSources} from "./constants/endpoints";
 
+const getEnvironment = () => {
+    const host = window.location.host
+    if (host === "archive.org") return 'env-production'
+    if (host === "internetarchive.github.io") return 'env-staging'
+    if (host === "localhost:3000") return 'env-local'
+    return "env-other"
+}
+
 // ========================================
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const queryParameters = new URLSearchParams(window.location.search)
-const env = window.location.host === "archive.org" ? 'env-production' : 'env-other';
+const env = getEnvironment();
 const myDebug = queryParameters.has("debug") ? queryParameters.get("debug").toLowerCase() === 'true' : false;
 const myPath = queryParameters.has("url") ? queryParameters.get("url") : '';
 const myRefresh = queryParameters.has("refresh") ? queryParameters.get("refresh").toLowerCase() === 'true' : false;

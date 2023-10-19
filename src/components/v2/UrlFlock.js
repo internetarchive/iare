@@ -314,7 +314,6 @@ export default function UrlFlock({ urlArray,
                 <div className={"url-status"}>{u.status_code}</div>
                 {fetchMethod === UrlStatusCheckMethods.IABOT.key
                     ? <>
-                        {/*<div className={"url-arch-iari"}>{getArchIariStatus(u)}</div>*/}
                         <div className={"url-arch-ia"}>{getArchIaStatus(u)}</div>
                         <div className={"url-arch-tmplt"}>{getArchTmpltStatus(u)}</div>
 

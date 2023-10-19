@@ -20,7 +20,7 @@ export default function RefUrls({ urls }) {
     const endpointIabot = 'https://iabot.wmcloud.org/index.php?page=manageurlsingle'
 
     const headerRow = <tr>
-        <th className={'url-name'}><h3 className={"urls-header"}>Urls</h3></th>
+        <th className={'url-name'}><h3 className={"urls-header"}>URLs</h3></th>
         <th className={'url-status'}>Status</th>
         <th className={'url-iabot-status'}>IABot</th>
     </tr>

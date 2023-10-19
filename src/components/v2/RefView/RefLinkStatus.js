@@ -25,7 +25,7 @@ export default function RefLinkStatus( {details = {}, onClick=()=>{} } ) {
 
     return <div className={"ref-view-link-status"} >
 
-        <h3>Links Status:</h3>
+        <h3>Links Status</h3>
 
         <div className={`ref-link-status-wrapper`}
              data-tooltip-id="link-status-tooltip"
