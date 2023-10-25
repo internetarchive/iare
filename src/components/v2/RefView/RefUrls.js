@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useCallback} from "react";
 import MakeLink from "../../MakeLink";
-import {convertUrlArray} from "../../../utils/utils";
+import {normalizeUrlArray} from "../../../utils/utils";
 import {fetchStatusUrls} from "../../../utils/iariUtils";
 // import {UrlStatusCheckContext} from "../../../contexts/UrlStatusCheckContext"
 import {ConfigContext} from "../../../contexts/ConfigContext";
@@ -78,7 +78,7 @@ export default function RefUrls({ urls }) {
             })
 
             .then( results => {
-                const bareUrls = convertUrlArray(results) // currently results come "decorated" with surrounding "data : {...}"
+                const bareUrls = normalizeUrlArray(results) // currently results come "decorated" with surrounding "data : {...}"
                 setUrlArray(bareUrls)
                 }
             )

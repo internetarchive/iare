@@ -1,7 +1,15 @@
 import React, {useState} from "react";
 import ArrayDisplay from "../ArrayDisplay";
 import PureJson from "../utils/PureJson";
+import {convertToCSV, copyToClipboard} from "../../utils/utils";
 
+function CiteRefCopy( {handleClick}) {
+
+    return <div style={{marginBottom: "1rem"}}>
+        <button onClick={handleClick} className={'utility-button small-button'} ><span>Copy CiteRefs to Clipboard</span></button>
+    </div>
+
+}
 
 /* displays basic info from the original returned json for the page fetch */
 export default function PageInfo({ pageData }) {
@@ -17,6 +25,30 @@ export default function PageInfo({ pageData }) {
     const ores_score_display = ores_score
         ? `${ores_prediction} ${Number(ores_score).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:0})}`
         : null
+
+    const handleCopyCiteRefs = () => {
+        // gathers cite_ref parallel ref data to try to match it up.
+
+        const citeRefData = pageData.cite_refs.map( cr => {
+            return [
+                cr["ref_index"],
+                cr["id"],
+                cr["page_refs"].map( pr => {
+                    return `[${pr.id}] ${pr.href}` }).join("+++"),
+                cr["raw_data"],
+            ]
+        })
+
+        // add column labels
+        citeRefData.unshift( [
+            'ref_index',
+            'cite_id',
+            'page_refs',
+            'raw_data',
+        ] )
+
+        copyToClipboard( convertToCSV(citeRefData) )
+    }
 
     return <div className="page-info">
         <h6>Wiki Page Analyzed: <a href={pageData.pathName} target={"_blank"} rel={"noreferrer"}>{pageData.pathName}</a
@@ -39,6 +71,8 @@ export default function PageInfo({ pageData }) {
 
                 <p>endpoint: <a href={pageData.endpoint} target={"_blank"} rel={"noreferrer"}>{pageData.endpoint}</a></p>
 
+                <CiteRefCopy handleClick={handleCopyCiteRefs} />
+
                 <div style={{display: "flex", flexDirection: "row"}}>
 
                     <ArrayDisplay arr={[
@@ -57,6 +91,7 @@ export default function PageInfo({ pageData }) {
 
                     ]} styleObj={{marginLeft: "1em"}}/>
                 </div>
+
             </div>
 
             : <p>Nothing to display - pageData is missing.</p>

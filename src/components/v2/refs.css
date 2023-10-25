@@ -63,6 +63,7 @@
     top:.15rem;
     right:.2rem;
     display:block;
+    text-align: right;
 }
 .ref-button .ref-link-status {
     width:1.25rem;
@@ -249,4 +250,12 @@
     font-size:1.25em;
     font-weight:normal;
     z-index: 999;
+}
+
+/* citation ref jump links in Reference button caption */
+.cite-ref-jump-link {
+    content: url('../../images/link-external-small-ltr-progressive.svg');
+    width:1.25rem;
+    height:1.25rem;
+    display:inline;
 }

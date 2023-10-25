@@ -138,8 +138,8 @@ export const ARCHIVE_STATUS_FILTER_MAP = {
             },
         },
         all: {
-            caption: "Cite Template archive status is anything",
-            desc: "Template archive status is anything.",
+            caption: "Cite archive status is anything",
+            desc: "Cite archive status is anything.",
             default: false,
             filterFunction: () => (url) => {return true},
         },

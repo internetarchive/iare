@@ -123,6 +123,16 @@ button.utility-button {
     background-color: #2199e8;
     color: #fefefe
 }
+button.utility-button.small-button {
+    padding: 0.3em 0.55em 0.25em 0.4em;
+    font-size: 80%;
+    margin: -0.4rem 0 0 0.2rem;
+    background-color: #d3d3d3;
+    color: #4d4d4d;
+    border-color: #888888;
+}
+
+
 .utility-button:focus, .utility-button:hover {
     background-color: #1583cc;
     color: #fefefe

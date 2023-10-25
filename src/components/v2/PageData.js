@@ -9,6 +9,7 @@ import {
     ARCHIVE_STATUS_FILTER_MAP,
     URL_STATUS_FILTER_MAP
 } from "./filters/urlFilterMaps";
+import {areObjectsEqual} from "../../utils/utils";
 
 /*
 When this component is rendered, it must "process" the pageData. This involves:
@@ -156,6 +157,83 @@ export default function PageData({pageData = {}}) {
     }, [])
 
 
+    // take the wt:value and put it straight to value:<value>
+    const normalizeMediaWikiParams = (oldParams) => {
+
+        const newParams = {}
+
+        // Iterate through keys and build normalized retrun param object values
+        for (let key of Object.keys(oldParams)) {
+            // set newParams value
+            newParams[key] = oldParams[key].wt
+        }
+
+        return newParams;
+    }
+
+
+    const processCiteRefs = useCallback( (refsArray, pageData) => {
+
+        const citeRefs = pageData?.cite_refs ? pageData.cite_refs : []
+
+        citeRefs.forEach( cite => {
+
+            const mwData = cite.raw_data ? JSON.parse(cite.raw_data) : {}
+
+            console.log(`processCiteRefs: mwData[${cite.ref_index}] is `, mwData)
+
+            // if mwData has parts[0]
+                // if parts[0].template
+
+                // save template.target in target_type for citeref
+
+                // for each ref in uniqueRef
+                    // if ref.isAssigned then skip
+                    // else
+                        // if match cite.template.params
+                            // attach citeref to that reference
+                            // tag that reference as "assigned"
+
+            if (mwData.parts && mwData.parts[0].template) {
+
+                const template = mwData.parts[0].template
+
+                // mark citation as having template type
+                cite.template_target = template.target?.wt
+
+                const citeParams = normalizeMediaWikiParams(template.params)
+
+                // see if template.params matches any wikiText ref params; returns undefined if no mathcing ref element found
+                const foundRef = refsArray.find( _ref => {
+                    if (!(_ref.templates && _ref.templates[0])) return false
+                    // TODO skip if not a footnote ref
+                    // TODO skip if type===footnote and footnote_subtype === named
+
+                    // remove "template_name" parameter from object
+                    // TODO this is an IARI bug - should not be adding template_name to wikitext parameters!!
+                    // TODO when fixed, must also change RefView parameter display logic
+                    const refParams = {..._ref.templates[0].parameters}
+                    delete refParams.template_name
+
+                    return areObjectsEqual(refParams, citeParams)
+                })
+
+                if (foundRef) {
+                    console.log(`Found matching ref for citeRef# ${cite.ref_index}`)
+                    foundRef.cite_refs = cite.page_refs
+                }
+
+            } else {
+                // we do not have parts[0].templates - what should we do?
+            }
+
+        })
+
+        // end result : anchor refs are assigned with citeref
+    }, [])
+
+
+
     // sets the ref[linkStatus] property to an array containing a list of the status
     // relationship between the primary and archived links in a reference. These can
     // be indicated through template parameters, as in the properties "url" and
@@ -171,7 +249,7 @@ export default function PageData({pageData = {}}) {
     // All other urls (non-template) are checked for "good"ness or "bad"ness, regardless of
     // whether it is an archive link or not.
     //
-    const processReference = useCallback( (ref, urlDict) => {
+    const processReference = useCallback( (ref, urlDict, citeRefs) => {
 
         const linkStatus = []
 
@@ -280,32 +358,22 @@ export default function PageData({pageData = {}}) {
         })
 
 
-        // create keyed citeRef dict to link citerefs to refs entries
-        const citeRefs = {}
-        pageData.cite_refs.forEach( cite => {
-            // TODO must resolve citerefs for relative jump within page...
-            citeRefs[cite.ref_index] = cite.page_refs
-        })
-
-
 
         // process all anchor references
         uniqueRefs.forEach( ref => {
             // ref.link_status = processReference(ref, pageData.urlDict)
             processReference(ref, pageData.urlDict)
 
-            // associate citerefs
-            ref.cite_refs = citeRefs[ref.ref_index]
         })
 
+        // associate citeref data with uniqueRefs
+       processCiteRefs(uniqueRefs, pageData)
 
-
-        // ?? TODO while processing refs, set template archive property for primary url of template
 
         // and append to pageData
         pageData.references = uniqueRefs
 
-    }, [processReference])
+    }, [processReference, processCiteRefs])
 
 
     useEffect( () => { // [myIariBase, pageData, processReferences, processUrls, myStatusCheckMethod]

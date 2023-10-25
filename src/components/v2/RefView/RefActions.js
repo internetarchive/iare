@@ -29,7 +29,7 @@ export default function RefActions( {details, onAction}) {
 
             {citeRefLinks}
 
-            <p className={"ref-note-alert"}>Under development...<br/>(may not jump to correct location)</p>
+            {/*<p className={"ref-note-alert"}>Under development...<br/>(may not jump to correct location)</p>*/}
 
             {/*<button type="button" className="btn btn-primary" onClick={() => {alert("Will Jump to IABot Management Page (coming soon...)")}}>*/}
             {/*    <span>Jump to<br/>IABot<br/>Management</span>*/}

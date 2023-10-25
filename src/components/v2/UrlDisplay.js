@@ -3,7 +3,7 @@ import UrlFlock from "./UrlFlock";
 import RefFlock from "./RefFlock";
 import UrlOverview from "./UrlOverview";
 import '../shared/urls.css';
-import {convertToCSV} from "../../utils/utils";
+import {convertToCSV, copyToClipboard} from "../../utils/utils";
 import {REF_LINK_STATUS_FILTERS} from "./filters/refFilterMaps";
 import {ConfigContext} from "../../contexts/ConfigContext";
 import {UrlStatusCheckMethods} from "../../constants/endpoints";
@@ -137,47 +137,39 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
     }
 
 
-    // eslint-disable-next-line no-unused-vars
-    const handleCopyClick = () => { // used to copy url list and status
-
-        // get one row per line:
-        const urlArrayData = pageData.urlArray.sort(
-            (a, b) => (a.url > b.url) ? 1 : (a.url < b.url) ? -1 : 0
-        ).map( u => {
-            if (myConfig.urlStatusMethod === UrlStatusCheckMethods.IABOT.key) {
-                return [ u.url, u.status_code, u.status_code_error_details, u.searchurldata_status ]
-            } else {
-                return [ u.url, u.status_code, u.status_code_error_details ]
-            }
-
-        })
-        if (myConfig.urlStatusMethod === UrlStatusCheckMethods.IABOT.key) {
-            urlArrayData.unshift( [ 'URL', `${myConfig.urlStatusMethod} status`, `error details`, "IABOT searchurlstatus" ] )
-        } else {
-            urlArrayData.unshift( [ 'URL', `${myConfig.urlStatusMethod} status`, `error details` ] )
-        }
-
-        // convert to CSV and send to clipboard
-        const csvString = convertToCSV(urlArrayData);
-
-        navigator.clipboard.writeText(csvString)
-            .then(() => {
-                console.log('CSV data copied to clipboard');
-                alert(`CSV data copied to clipboard.`);
-            })
-            .catch((error) => {
-                console.error('Failed to copy CSV data to clipboard:', error);
-                alert(`Failed to copy CSV data to clipboard: ${error}`);
-            });
-    }
+                // const handleCopyClick = () => { // used to copy url list and status
+                //
+                //     // get one row per line:
+                //     const urlArrayData = pageData.urlArray.sort(
+                //         (a, b) => (a.url > b.url) ? 1 : (a.url < b.url) ? -1 : 0
+                //     ).map( u => {
+                //         if (myConfig.urlStatusMethod === UrlStatusCheckMethods.IABOT.key) {
+                //             return [ u.url, u.status_code, u.status_code_error_details, u.searchurldata_status ]
+                //         } else {
+                //             return [ u.url, u.status_code, u.status_code_error_details ]
+                //         }
+                //
+                //     })
+                //
+                //     // add column labels
+                //     if (myConfig.urlStatusMethod === UrlStatusCheckMethods.IABOT.key) {
+                //         urlArrayData.unshift( [ 'URL', `${myConfig.urlStatusMethod} status`, `error details`, "IABOT searchurlstatus" ] )
+                //     } else {
+                //         urlArrayData.unshift( [ 'URL', `${myConfig.urlStatusMethod} status`, `error details` ] )
+                //     }
+                //
+                //     copyToClipboard(convertToCSV(urlArrayData))
+                //
+                // }
 
     const refArray = (pageData.references)
 
-    const copyButton = <button onClick={handleCopyClick} className={'utility-button'} ><span>Copy to Clipboard</span></button>
+    // const copyButton = <button onClick={handleCopyClick} className={'utility-button'} ><span>Copy to Clipboard</span></button>
 
-    const urlListCaption = <h3>URL List{myConfig.isDebug ? copyButton : null }</h3>
+    // const urlListCaption = <h3>URL List{myConfig.isDebug ? copyButton : null }</h3>
+    const urlListCaption = <h3>URL List</h3>
     const extraUrlCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click a URL to show References using that URL</h4>
-    const extraRefCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click a Reference to view Reference details</h4>
+    const extraRefCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click on Reference to view details</h4>
 
     console.log("UrlDisplay: render");
 

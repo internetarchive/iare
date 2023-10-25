@@ -3,10 +3,29 @@ import RefView from "./RefView/RefView";
 import {ConfigContext} from "../../contexts/ConfigContext";
 import {Tooltip as MyTooltip} from "react-tooltip";
 import {REF_LINK_STATUS_FILTERS as linkDefs} from "./filters/refFilterMaps";
+import {convertToCSV, copyToClipboard} from "../../utils/utils";
+
+const baseWikiUrl = "https://en.wikipedia.org/wiki/" // for now TODO get from config or context or pageData
+
+const handleCiteRefClick = (e) => {
+    e.stopPropagation()
+    window.open(e.currentTarget.href, "_blank")
+}
 
 function getReferenceCaption(ref) {
 
     let hasContent = false;
+
+    const citeRefLinks = ref.cite_refs
+        ? ref.cite_refs.map( cr => {
+            const citeRefLink = cr.href.replace( /^\.\//, baseWikiUrl)
+            return <>
+                <a href={citeRefLink} target={"_blank"} rel={"noreferrer"} onClick={handleCiteRefClick}>
+                    <span className={"cite-ref-jump-link"}></span>
+                </a>
+            </>
+        })
+        : null // <div>No Citation Refs!</div>
 
     const markup = <>
 
@@ -32,12 +51,7 @@ function getReferenceCaption(ref) {
                 </>
             : null}
 
-        {ref.reference_count && ref.reference_count > 1
-            ? <>
-                {hasContent = true}
-                <span className={'ref-line ref-count'}>Reference used {ref.reference_count} times</span>
-            </>
-            : null}
+        {citeRefLinks}
 
         {/*{ !hasContent ? <span>ref id: {ref.id}</span> : null }*/}
         { !hasContent ? <span>{ref.wikitext}</span> : null }
@@ -54,7 +68,7 @@ function getReferenceCaption(ref) {
                         })
                     : <span className={`ref-link-status link-status-missing`} /> }
 
-                </div>
+            </div>
             : null}
 
     </>
@@ -72,7 +86,10 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
 
     const myConfig = useContext(ConfigContext);
     const myIariBase = myConfig?.iariSource;
-    // TODO catch myIariBase being undefined
+    // TODO catch undefined myIariBase exception
+
+    let flockCaption, flockRows;
+
 
     const fetchDetail = (ref) => {
         // handle null ref
@@ -87,8 +104,8 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
         setRefDetails(data);  // use reference data direct from page data, rather than fetching it again fresh from source
         setOpenModal(true)
 
-        //
-        // // TODO: use refresh here ?
+        // // TODO: we do NOT do a force refresh of ref data here; instead we get it from ref list that cae with article page data
+        // // TODO: do we want to use refresh here? respect a refresh flag?
         // const myEndpoint = `${myIariBase}/statistics/reference/${ref.id}`;
         //
         // // fetch the data
@@ -145,11 +162,10 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
         setTooltipHtmlRefList(html)
     }
 
-    let refs, caption;
 
     if (!refArray) {
-        caption = <h4>No references!</h4>
-        refs = null
+        flockCaption = <h4>No references!</h4>
+        flockRows = null
 
     } else {
         // filter the refs if filter defined
@@ -164,7 +180,41 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
                 ><span>Remove Filter</span></button>
             : null
 
-        caption = <>
+        const handleCopyClick = () => { // used to copy url list and status
+
+            // filter filteredRefs to only show footnote citations
+            let refArrayData = filteredRefs.filter( r => {
+                return r.type === "footnote" && r.footnote_subtype === "content"
+            })
+
+            // sort filtered refs and return fields per each ref
+            refArrayData = refArrayData.sort(
+                (a, b) => (a.ref_index > b.ref_index) ? 1 : (a.ref_index < b.ref_index) ? -1 : 0
+            ).map( r => {
+                return [
+                    r["ref_index"],
+                    r["id"],
+                    r["name"],
+                    r["titles"].join("+++"),
+                    r["urls"].join("+++"),
+                ]
+            })
+
+            // add column labels
+            refArrayData.unshift( [
+                'ref_index',
+                'wari_id',
+                'name',
+                'title',
+                'urls',
+            ] )
+
+            copyToClipboard(convertToCSV(refArrayData))
+
+        }
+
+        // flockCaption is a complicated algorithm to show filter definition contents
+        flockCaption = <>
             {/*<h4>Applied Filter: {refFilterDef ? <div>{refFilterDef.desc}</div> : 'Show All'}</h4>*/}
             <h4><span className={"filter-title"}>Applied Filter:</span> {
                 refFilterDef
@@ -184,13 +234,15 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
             {extraCaption}
         </>
 
+        const buttonCopy = <button onClick={handleCopyClick} className={'utility-button small-button'} ><span>Copy to Clipboard</span></button>
+
         const listHeader = <div className={"ref-list-header"} >
             <div className={"list-header-row"}>
-                <div className={"list-name"}>Reference</div>
+                <div className={"list-name"}>Reference {buttonCopy}</div>
             </div>
         </div>
 
-        refs = <>
+        flockRows = <>
             {listHeader}
             <div className={"ref-list"}
                  data-tooltip-id="ref-list-tooltip"
@@ -223,8 +275,8 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
     return <div className={"ref-flock"}>
 
         <div className={"ref-list-wrapper"}>
-            {caption}
-            {refs}
+            {flockCaption}
+            {flockRows}
         </div>
 
         <RefView details={refDetails} open={openModal} onClose={() => setOpenModal(false)} />
@@ -235,3 +287,4 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
 }
 
 export default RefFlock;
+

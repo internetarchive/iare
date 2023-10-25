@@ -1,13 +1,10 @@
 
 
-export const convertUrlArray = (urlArray=[]) => {
-
+export const normalizeUrlArray = (urlArray=[]) => {
+    // transform urlArray, which is an array of url objects wrapped in a "data" property,
+    // returns array of bare url objects extracted from "data" wrapper
     if (!urlArray || !urlArray.length) return [];
-
-    // transform urlArray, which is an array of objects wrapping a url object in a "data" property,
-    // into an array of bare url objects
     return urlArray.map( uData => uData.data )
-
 }
 
 
@@ -66,4 +63,27 @@ export const convertToCSV = (json) => {
         return myRowItems.join(',');
     });
     return rows.join('\n');
+}
+
+
+export const areObjectsEqual = (objA, objB) => {
+    // Get the keys of the objects
+    const keysA = Object.keys(objA);
+    const keysB = Object.keys(objB);
+
+    // Check if the number of keys is the same
+    if (keysA.length !== keysB.length) {
+        return false;
+    }
+
+    // Iterate through keys and compare values
+    for (let key of keysA) {
+        // If the values of the current key are not the same, objects are not equal
+        if (objA[key] !== objB[key]) {
+            return false;
+        }
+    }
+
+    // If all values are equal, objects are equal
+    return true;
 }
