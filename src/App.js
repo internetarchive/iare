@@ -294,10 +294,11 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
             > STAGING SITE <
                 button onClick={toggleDebug} className={"utility-button debug-button"}
             >{isDebug ? "hide" : "show"} debug</button
-            ></span></span>{iariChoiceSelect}{methodChoiceSelect}</h1>
+            ></span></span></h1>
     </div>
 
-    const debug = <div className={isDebug ? "debug-on" : "debug-off"}>
+    const debug = <div className={"debug-section " + (isDebug ? "debug-on" : "debug-off")}>
+        <div className={"choice-wrapper"}>{iariChoiceSelect}{methodChoiceSelect}</div>
         <p><span className={'label'}>IARI Source:</span> {myIariSourceId} ({IariSources[myIariSourceId]?.proxy})</p>
         <p><span className={'label'}>Check Method:</span> {statusMethod}</p>
         <p><span className={'label'}>pathName:</span> <MakeLink href={targetPath}/></p>

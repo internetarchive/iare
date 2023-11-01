@@ -5,8 +5,50 @@ import UrlOverview from "./UrlOverview";
 import '../shared/urls.css';
 // import {convertToCSV, copyToClipboard} from "../../utils/utils";
 import {REF_LINK_STATUS_FILTERS} from "./filters/refFilterMaps";
+import {URL_ACTION_FILTER_MAP} from "./filters/urlFilterMaps";
 import {ConfigContext} from "../../contexts/ConfigContext";
+import FilterButtons from "../FilterButtons";
 // import {UrlStatusCheckMethods} from "../../constants/endpoints";
+
+const localized = {
+    "URLs":"URLs",
+    "Actionable": "Actionable",
+}
+
+function ActionFilters( {filterSet=null, filterRender, flock = [], onAction, options = {}, className = null}) {
+    const handleActionable = (actionable) => {
+        onAction({
+            action: "setUrlActionFilter", value: actionable,
+        })
+    }
+
+    return <>
+        <h4 style={{fontStyle: "italic", fontWeight: "bold"}}>Actionable</h4>
+        <div className={className}>
+            <FilterButtons
+                flock={flock}
+                filterMap={filterSet}
+                onClick={handleActionable}
+                caption=''
+                currentFilterName=''
+                onRender={filterRender}
+            />
+        </div>
+    </>
+
+    // return = <>
+    //     <h4>{localized.Actionable}<span className={"inferior"}
+    //     > - These are the things that can be fixed right now</span></h4>
+    //
+    //     <button>Show Original Status bad, but Cite status is live</button>
+    //     {/*<p>if the original link is dead, this is the action yuou can take</p>*/}
+    //     <div>filter for Citations / General / All ?</div>
+    //     <div>some more filters here...</div>
+    //     <div>&nbsp;</div>
+    // </>
+
+}
+
 
 
 export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {}, urlArchiveFilterDefs = {} } ) {
@@ -42,8 +84,8 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
     }, [pageData, urlStatusFilterMap, urlArchiveFilterDefs, ])
 
 
-    // callback from sub-components.
-    // result is an object like:
+    // callback from sub-components that induce actions upon flocks.
+    // result is an object:
     //  {
     //      action: <action name>,
     //      value: <param value>
@@ -68,8 +110,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                     //
 
         if (action === "setArchiveStatusFilters") {
-            // value is filter definition itself
-            setUrlFilters({ "archive_status" : value })
+            setUrlFilters({ "archive_status" : value })  // NB: value is filter object
         }
 
 
@@ -77,6 +118,12 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             // filter References to those that contain a url specified by the value parameter
             setRefFilter(getUrlRefFilter(value))
             setSelectedUrl(value)
+        }
+
+        if (action === "setUrlActionFilter") {
+            // filter References to those that adhere to certain action conditions
+            const f = value ? URL_ACTION_FILTER_MAP[value] : null
+            setUrlFilters( { "action_filter": f } )
         }
 
         if (action === "setLinkStatusFilter") {
@@ -110,6 +157,23 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
     if (!pageData) return null;
 
 
+    const renderUrlActionButton = (props) => {
+        /*
+        callback for button render function of <FilterButton>
+        expects:
+            props.filter.caption
+            props.filter.count
+        */
+
+        // TODO put in some element data for tooltip, like filter.desc
+        // TODO Question: where does tool tip come from? is it generic tooltip for the page?
+        return <>
+            <div>{props.filter?.caption}</div>
+            <div className={'filter-count'}>{props.filter?.count}</div>
+        </>
+    }
+
+
 
     // TODO candidate for external shared function
     // TODO allow targetUrl(s) to be an array of Urls
@@ -136,56 +200,36 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         }
     }
 
-
-                // const handleCopyClick = () => { // used to copy url list and status
-                //
-                //     // get one row per line:
-                //     const urlArrayData = pageData.urlArray.sort(
-                //         (a, b) => (a.url > b.url) ? 1 : (a.url < b.url) ? -1 : 0
-                //     ).map( u => {
-                //         if (myConfig.urlStatusMethod === UrlStatusCheckMethods.IABOT.key) {
-                //             return [ u.url, u.status_code, u.status_code_error_details, u.searchurldata_status ]
-                //         } else {
-                //             return [ u.url, u.status_code, u.status_code_error_details ]
-                //         }
-                //
-                //     })
-                //
-                //     // add column labels
-                //     if (myConfig.urlStatusMethod === UrlStatusCheckMethods.IABOT.key) {
-                //         urlArrayData.unshift( [ 'URL', `${myConfig.urlStatusMethod} status`, `error details`, "IABOT searchurlstatus" ] )
-                //     } else {
-                //         urlArrayData.unshift( [ 'URL', `${myConfig.urlStatusMethod} status`, `error details` ] )
-                //     }
-                //
-                //     copyToClipboard(convertToCSV(urlArrayData))
-                //
-                // }
-
     const refArray = (pageData.references)
 
     // const copyButton = <button onClick={handleCopyClick} className={'utility-button'} ><span>Copy to Clipboard</span></button>
 
     // const urlListCaption = <h3>URL List{myConfig.isDebug ? copyButton : null }</h3>
-    const urlListCaption = <h3>URL List</h3>
     const extraUrlCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click a URL to show References using that URL</h4>
     const extraRefCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click on Reference to view details</h4>
 
     console.log("UrlDisplay: render");
 
+
     return <>
 
         <div className={"section-box"}>
-            {urlListCaption}
-            <h4>Action Items</h4>
-            <p>These are the things that can be fixed right now</p>
-            <button>Show Original Status bad, but Cite status is live</button>
-            {/*<p>if the original link is dead, this is the action yuou can take</p>*/}
-            <div>filter for Citations / General / All ?</div>
-            <div>some more filters here...</div>
-            <div>&nbsp;</div>
-            <UrlFlock urlArray={pageData.urlArray} urlFilters={urlFilters}
-                      onAction={handleAction} selectedUrl={selectedUrl} extraCaption={extraUrlCaption}
+            <h3>{localized.URLs}</h3>
+
+            <ActionFilters
+                filterSet={URL_ACTION_FILTER_MAP}
+                filterRender={renderUrlActionButton}
+                flock={pageData.urlArray}
+                onAction={handleAction}
+                options ={{}}
+                className={"url-action-filter-buttons"}
+            />
+
+            <UrlFlock urlArray={pageData.urlArray}
+                      urlFilters={urlFilters}
+                      onAction={handleAction}
+                      selectedUrl={selectedUrl}
+                      extraCaption={extraUrlCaption}
                       fetchMethod={myConfig.urlStatusMethod} />
         </div>
 

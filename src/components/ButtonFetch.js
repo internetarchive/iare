@@ -1,8 +1,8 @@
 import React from "react";
-import ButtonDefs from "./ButtonDefs";
+import ShortcutDefs from "../constants/ShortcutDefs";
 
 /*
-relies on global; ButtonDefs for the button for buttonKey key
+relies on global; ShortcutDefs for the button for buttonKey key
 
     expected props:
         buttonKey
@@ -10,8 +10,8 @@ relies on global; ButtonDefs for the button for buttonKey key
         className
  */
 export default function ButtonFetch( {buttonKey, onClick, className=''}) {
-    const buttonObj = ButtonDefs[buttonKey]
-        ? ButtonDefs[buttonKey]
+    const buttonObj = ShortcutDefs[buttonKey]
+        ? ShortcutDefs[buttonKey]
         : {
             label : "Unknown Key '" + buttonKey + "'",
             value : ""

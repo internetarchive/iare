@@ -1,4 +1,4 @@
-const ButtonDefs = {
+const ShortcutDefs = {
     "karen_bakker"  : {
         label : "Karen Bakker",
         value : "https://en.wikipedia.org/wiki/Karen_Bakker"
@@ -62,4 +62,4 @@ const ButtonDefs = {
         value : "https://ia601600.us.archive.org/31/items/Book_URLs/DeSantis.pdf"
     },
 }
-export default ButtonDefs;
+export default ShortcutDefs;

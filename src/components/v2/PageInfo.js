@@ -3,12 +3,11 @@ import ArrayDisplay from "../ArrayDisplay";
 import PureJson from "../utils/PureJson";
 import {convertToCSV, copyToClipboard} from "../../utils/utils";
 
-function CiteRefCopy( {handleClick}) {
-
+function ClickButton( {buttonCaption=null, buttonText='', handleClick}) {
+    const buttonMarkup = buttonCaption ? buttonCaption : <span>{buttonText}</span>
     return <div style={{marginBottom: "1rem"}}>
-        <button onClick={handleClick} className={'utility-button small-button'} ><span>Copy CiteRefs to Clipboard</span></button>
+        <button onClick={handleClick} className={'utility-button small-button'} >{buttonMarkup}</button>
     </div>
-
 }
 
 /* displays basic info from the original returned json for the page fetch */
@@ -25,6 +24,11 @@ export default function PageInfo({ pageData }) {
     const ores_score_display = ores_score
         ? `${ores_prediction} ${Number(ores_score).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:0})}`
         : null
+
+    const handleCopyUrlArray = () => {
+        copyToClipboard( JSON.stringify(pageData.urlArray), "URL Data" )
+    }
+
 
     const handleCopyCiteRefs = () => {
         // gathers cite_ref parallel ref data to try to match it up.
@@ -47,7 +51,7 @@ export default function PageInfo({ pageData }) {
             'raw_data',
         ] )
 
-        copyToClipboard( convertToCSV(citeRefData) )
+        copyToClipboard( convertToCSV(citeRefData), "CiteRef Data" )
     }
 
     return <div className="page-info">
@@ -71,7 +75,8 @@ export default function PageInfo({ pageData }) {
 
                 <p>endpoint: <a href={pageData.endpoint} target={"_blank"} rel={"noreferrer"}>{pageData.endpoint}</a></p>
 
-                <CiteRefCopy handleClick={handleCopyCiteRefs} />
+                <ClickButton buttonText={"Copy CiteRefs to Clipboard"} handleClick={handleCopyCiteRefs} />
+                <ClickButton buttonText={"Copy UrlArray to Clipboard"} handleClick={handleCopyUrlArray} />
 
                 <div style={{display: "flex", flexDirection: "row"}}>
 

@@ -7,7 +7,7 @@ expected props
     pathInitial            path string to put in input field
     checkInitial           initial checkbox state for "Force Refresh"
     handlePathResults      callback "Load" button clicked; expects 2 element array: [pathName, checked]
-    shortcuts              array of keys into global ButtonDefs, describing shortcut buttons to show
+    shortcuts              array of keys into global ShortcutDefs, describing shortcut buttons to show
  */
 export default function PathNameFetch({ pathInitial='', checkInitial= false,
                                           handlePathResults, shortcuts=[], placeholder='' } ) {

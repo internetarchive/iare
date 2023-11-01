@@ -42,26 +42,30 @@ export const URL_STATUS_FILTER_MAP = {
 
 };
 
-// export const URL_FILTER_NAMES = Object.keys(URL_STATUS_FILTER_MAP);
+export const URL_ACTION_FILTER_MAP = {
+    all: {
+        caption: "Show All",
+        desc: "no filter",
+        filterFunction: () => () => {return true},
+    },
+    bad_live: {
+        name: "bad_live",
+        caption: "Show Original Status bad, Cite Status \"live\"",
+        desc: "Tooltip description here",
+        filterFunction: () => (d) => {
+            return true;
+        },
+    },
+    // status3XX: {
+    //     caption: "Status 3XX",
+    //     desc: "'",
+    //     filterFunction: () => (d) => {
+    //         return d.status_code >= 300 && d.status_code < 400;
+    //     },
+    // },
 
-// export const URL_ARCHIVE_STATUS_FILTER_MAP = {
-//     yes_archive: {
-//         caption: "URL has archive",
-//         desc: "There is an archive link associated with the URL.",
-//         // lines: ['Original link is OK', 'Archive link is OK'],
-//         filterFunction: () => (url) => {
-//             return url.hasArchive
-//         },
-//     },
-//     no_archive: {
-//         caption: "URL has NO archive",
-//         desc: "There is no archive link associated with this URL",
-//         filterFunction: () => (url) => {
-//             return !url.hasArchive
-//         },
-//     },
-//
-// };
+};
+
 
 export const ARCHIVE_STATUS_FILTER_MAP = {
     iabot: {

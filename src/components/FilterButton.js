@@ -14,7 +14,7 @@ import React from "react";
  */
 
 // default function to render button, if not passed FilterFunction props.onRender
-const renderFunc = (props) => {
+const defaultRenderFunc = (props) => {
     return <>
         <span>{props.caption}{
             (props.count || props.count === 0)
@@ -31,10 +31,10 @@ export default function FilterButton(props) {
         onClick={() => props.onClick(props.name)}
 
         // tooltip attributes
-        data-tooltip-id="my-filter-tooltip"
+        data-tooltip-id="my-filter-tooltip"  // TODO pass this in as customizable??
         data-tooltip-content={props.desc}
     >
-        {props.onRender ? props.onRender(props) : renderFunc(props)}
+        {props.onRender ? props.onRender(props) : defaultRenderFunc(props)}
 
     </button>;
 

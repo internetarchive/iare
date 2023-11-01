@@ -30,6 +30,9 @@
     --color-http-error: #FFFFFF;
     --color-http-error-bg: #f763ff;
 
+    --font-size-debug-section:.8rem;
+    --font-weight-debug-section:normal;
+
     /* heights of lists - NB: should be dynamic */
     --height-list: 68vh;
     --height-list-pdf: 70vh;
@@ -77,29 +80,40 @@ body.env-other .version-display span.non-production {
     display:inherit;
 }
 
-.debug-on {
-    display: block;
+
+/* debug elements */
+
+.debug-section {
     border: 1px black solid;
     padding: 0.5rem 1rem 0;
     background: #2f357d;
     color: white;
+    border-radius: .85rem;
+    font-size:var(--font-size-debug-section);
+    font-weight:var(--font-weight-debug-section);
 }
-.debug-on a {
+.debug-section.debug-on {
+    display: block;
+}
+.debug-section.debug-off {
+    display: none;
+}
+.debug-section a {
     color:lightskyblue;
 }
-.debug-on button {
+.debug-section button {
     margin-bottom:.75rem;
 }
-.debug-on .label {
-    color: var(--color-debug-lite)
+.debug-section .label,  /* label class span within element */
+.debug-section label    /* label element */
+{
+    color: var(--color-debug-lite) !important;
 }
-.debug-off {
-    display:none;
+.debug-section .choice-wrapper {
+    color:black;
+    margin-bottom:.75rem;
 }
-.debug-info {
-    font-style: italic;
-    color:#8191a4;
-}
+
 
 
 /* utility buttons (including debug buttons */
@@ -160,15 +174,25 @@ button.utility-button.small-button {
     color:grey;
 }
 
-/*.debug-on .debug-button {*/
-/*    background-color: #c9e3f9;*/
-/*}*/
 
 
+/* choice selections */
+
+.iari-source-wrapper,
+.check-method-wrapper {
+    display:inline-block;
+    margin-left: .5rem;
+}
+.iari-source-wrapper {
+    margin-left: 0;
+}
+.iari-source-wrapper select,
+.check-method-wrapper select {
+    margin-left:.3rem;
+}
 
 
-
-/* GENERAL ELEMENTS */
+/* OTHER ELEMENTS */
 
 .detail-show {
     display:inherit;
@@ -231,6 +255,11 @@ table.single-detail tr td:not(:first-child) {
 }
 .iare-view h4 {
     color:var(--color-h4);
+}
+.iare-view h4 .inferior {
+    font-size:88%;
+    font-weight:normal;
+    font-style:italic;
 }
 
 
@@ -308,18 +337,7 @@ table.single-detail tr td:not(:first-child) {
     flex-wrap:wrap
 }
 
-.iari-source-wrapper,
-.check-method-wrapper {
-    display:inline-block;
-    font-size:.9rem;
-    font-weight:normal;
-    color:black;
-    margin-left: .5rem;
-}
-.iari-source-wrapper select,
-.check-method-wrapper select {
-    margin-left:.3rem;
-}
+
 
 
             /*.status-check-methods {*/
@@ -331,23 +349,23 @@ table.single-detail tr td:not(:first-child) {
             /*    margin-top:.45rem;*/
             /*}*/
 
-/*-ms-transform: scale(var(--radio-button-magnify)); !* IE 9 *!*/
-/*-webkit-transform: scale(1.5); !* Chrome, Safari, Opera *!*/
-/*transform: scale(1.5);*/
-/*margin-right:.23rem;*/
+            /*-ms-transform: scale(var(--radio-button-magnify)); !* IE 9 *!*/
+            /*-webkit-transform: scale(1.5); !* Chrome, Safari, Opera *!*/
+            /*transform: scale(1.5);*/
+            /*margin-right:.23rem;*/
 
-.status-check-methods input[type="radio"]{
-    -ms-transform: scale(var(--radio-button-magnify)); /* IE 9 */
-    -webkit-transform: scale(var(--radio-button-magnify)); /* Chrome, Safari, Opera */
-    transform: scale(var(--radio-button-magnify));
-    margin-right:.23rem;
-}
-.status-check-methods > div {
-    margin-left: .8rem;
-    /*flex: 0 0 auto;*/
-}
-.status-check-methods > div:first-child {
-    margin-left:0;
-}
+            /*.status-check-methods input[type="radio"]{*/
+            /*    -ms-transform: scale(var(--radio-button-magnify)); !* IE 9 *!*/
+            /*    -webkit-transform: scale(var(--radio-button-magnify)); !* Chrome, Safari, Opera *!*/
+            /*    transform: scale(var(--radio-button-magnify));*/
+            /*    margin-right:.23rem;*/
+            /*}*/
+            /*.status-check-methods > div {*/
+            /*    margin-left: .8rem;*/
+            /*    !*flex: 0 0 auto;*!*/
+            /*}*/
+            /*.status-check-methods > div:first-child {*/
+            /*    margin-left:0;*/
+            /*}*/
 
 

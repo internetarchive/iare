@@ -407,6 +407,27 @@ export default function PageData({pageData = {}}) {
 
             })
         })
+
+        // now that each url has its references property set, reduce those references into
+        // a "referenceInfo" property, containing for now just a "statuses" property
+
+        Object.keys(pageData.urlDict).forEach( link => {
+            const myUrl = pageData.urlDict[link]
+            const statuses = []
+            myUrl.refs.forEach( r => {  // traverse each reference this url is involved in
+                if (r.templates) {
+                    r.templates.forEach(t => {
+                        statuses.push(t.parameters["url_status"]
+                            ? t.parameters["url_status"]
+                            : "--")
+                    })
+                } else {
+                    statuses.push("no templates")
+                }
+            })
+            myUrl["reference_info"] = { "statuses" : statuses }
+        })
+
     }, [])
 
 
@@ -453,7 +474,7 @@ export default function PageData({pageData = {}}) {
                 setIsLoadingUrls(false);
             })
 
-        }, [myIariBase, pageData, processReferences, processUrls, myStatusCheckMethod]
+        }, [myIariBase, pageData, processReferences, processUrls, associateRefsWithLinks, myStatusCheckMethod]
 
     )
 
@@ -509,6 +530,7 @@ export default function PageData({pageData = {}}) {
                                 <UrlDisplay pageData={pageData} options={{refresh: pageData.forceRefresh}}
                                             urlStatusFilterMap={URL_STATUS_FILTER_MAP}
                                             urlArchiveFilterDefs={ARCHIVE_STATUS_FILTER_MAP}
+
                                 />
                             }
 

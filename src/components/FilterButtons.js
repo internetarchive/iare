@@ -5,10 +5,10 @@ import FilterButton from "./FilterButton";
 export default function FilterButtons ( {
                 flock,
                 filterMap,
-                filterList = [],
+                filterList = [],  /* array of keys of which filters to include; empty means use all */
                 onClick,
                 caption = "Filters",
-                className = "",
+                className = null,
                 currentFilterName = "",
                 onRender = null
            }) {

@@ -225,7 +225,7 @@ export default function UrlFlock({ urlArray,
     }
 
 
-    const getUrls = (flockArray, flockFilters) => {
+    const getFlock = (flockArray, flockFilters) => {
         if (!flockArray || flockArray.length === 0) return <h4>No URLs to show</h4>
 
         if (!flockFilters) flockFilters = {}  // prevent null errors
@@ -331,26 +331,31 @@ export default function UrlFlock({ urlArray,
         })
 
         const getReferenceInfo = (u => {
-            if (!u.refs) return null
+            // if (!u.refs) return null
+            //
+            // const statuses = []
+            // u.refs.forEach( r => {  // traverse each reference this url is involved in
+            //     if (r.templates) {
+            //         r.templates.forEach(t => {
+            //             statuses.push(t.parameters["url_status"]
+            //                 ? t.parameters["url_status"]
+            //                 : "--")
+            //         })
+            //     } else {
+            //         statuses.push("no templates")
+            //     }
+            // })
+            //
+            // return statuses.map( (s,i) => {
+            //     return <div key={i}>{s}</div>
+            // })
 
-            const statuses = []
-            u.refs.forEach( r => {  // traverse each reference this url is involved in
-                if (r.templates) {
-                    r.templates.forEach(t => {
-                        statuses.push(t.parameters["url_status"]
-                            ? t.parameters["url_status"]
-                            : "--")
-                    })
-                } else {
-                    statuses.push("no templates")
-                }
-            })
+            if (!u.reference_info?.statuses) return null
 
-            return statuses.map( (s,i) => {
+            return u.reference_info.statuses.map( (s,i) => {
                 return <div key={i}>{s}</div>
             })
 
-            // return refDisplay  // "refs go here"
         })
 
         const getDataRow = (u, i, classes) => {
@@ -360,6 +365,7 @@ export default function UrlFlock({ urlArray,
                         data-arch_iari={!!u.hasArchive}
                         data-arch_iabot={!!u.searchurldata_archived}
                         data-arch_tmplt={!!u.hasTemplateArchive}
+                        data-references={!!u.hasTemplateArchive}
             >
                 <div className={"url-name"}>{u.url}</div>
                 <div className={"url-status"}>{u.status_code}</div>
@@ -513,7 +519,7 @@ export default function UrlFlock({ urlArray,
                                className={"url-flock-tooltip"}
     />
 
-    const urls = getUrls(urlArray, urlFilters)
+    const urls = getFlock(urlArray, urlFilters)
 
     return <>
         <div className={"url-flock"}
