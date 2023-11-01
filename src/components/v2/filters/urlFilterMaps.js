@@ -43,33 +43,38 @@ export const URL_STATUS_FILTER_MAP = {
 };
 
 export const URL_ACTION_FILTER_MAP = {
-    all: {
-        caption: "Show All",
-        desc: "no filter",
-        filterFunction: () => () => {return true},
-    },
+    // all: {
+    //     caption: "Show All",
+    //     desc: "no filter",
+    //     filterFunction: () => () => {return true},
+    // },
     bad_live: {
         name: "bad_live",
-        caption: "Show Original Status bad, Cite Status \"live\"",
+        caption: "Show Original Status BAD, Citation Link Status \"live\"",
         desc: "Tooltip description here",
         filterFunction: () => (d) => {
-            return true;
+            return (d.status_code < 200 || d.status_code >= 400)
+                &&
+                (d.reference_info?.statuses?.length && d.reference_info.statuses.includes('live'));
         },
     },
-    // status3XX: {
-    //     caption: "Status 3XX",
-    //     desc: "'",
-    //     filterFunction: () => (d) => {
-    //         return d.status_code >= 300 && d.status_code < 400;
-    //     },
-    // },
-
+    good_not_live: {
+        name: "good_not_live",
+        caption: "Show Original Status GOOD, Citation Link Status not \"live\"",
+        desc: "Tooltip description here",
+        filterFunction: () => (d) => {
+            return (d.status_code >= 200 && d.status_code < 400)
+                &&
+                (d.reference_info?.statuses?.length && !d.reference_info.statuses.includes('live') );
+        },
+    },
 };
 
 
 export const ARCHIVE_STATUS_FILTER_MAP = {
     iabot: {
-        _: { name: 'IABot'},
+        // _: { name: 'IABot'},
+        _: { name: <>Archive<br/>status</>},
 
         yes: {
             caption: "IABot has archive for URL",

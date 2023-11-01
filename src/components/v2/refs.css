@@ -136,45 +136,6 @@
     background-color: var(--color-ref-bg-header);
 }
 
-/***********************
- filter buttons
- ***********************/
-
-.filter-box {
-    /*margin-left:1rem;*/
-}
-.filter-box.ref-filters-0 {
-    margin-left:0;
-}
-.filter-box h4 {
-    margin-bottom:.5rem;
-}
-
-.filter-buttons {
-    display:flex;
-    flex-direction: column;
-}
-.filter-buttons button {
-    cursor: pointer;
-
-    background-color: #d1d5da; /*#8191a4;*/
-    border:1px solid black;
-    padding:.5rem;
-    min-width:11.5rem;
-    max-width:16.8rem;
-}
-.filter-buttons button.btn-pressed {
-    background-color: #b9cbc3;
-}
-.filter-buttons .btn-description {
-    font-style: italic;
-    font-size: smaller;
-    font-weight: normal;
-    padding-left:1em;
-}
-.filter-buttons .lolite {
-    color: #888888;
-}
 
 /* specialized filter buttons */
 

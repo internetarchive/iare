@@ -200,7 +200,7 @@
     padding-left:.25rem;
     text-align:center;
 }
-.ref-view-urls th.url-iabot-status {
+.ref-view-urls th.url-iabot_status {
     width:var(--width-col-iabot-status);
     max-width:var(--width-col-iabot-status);
     padding-left:.25rem;

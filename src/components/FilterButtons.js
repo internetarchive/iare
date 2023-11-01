@@ -7,7 +7,7 @@ export default function FilterButtons ( {
                 filterMap,
                 filterList = [],  /* array of keys of which filters to include; empty means use all */
                 onClick,
-                caption = "Filters",
+                caption = <>Filters</>,
                 className = null,
                 currentFilterName = "",
                 onRender = null
@@ -15,7 +15,7 @@ export default function FilterButtons ( {
 
     // if filterList is empty, use all keys for filterMap
     // otherwise, just show the keys as described in filterList array
-    const keyList = filterList.length === 0
+    const includeList = filterList.length === 0
         ? Object.keys(filterMap) // use all keys of map if specified filterList is empty
         : filterList;
 
@@ -23,11 +23,11 @@ export default function FilterButtons ( {
         onClick(e); // might want to decorate this later...
     }
 
-    return <div className={`filter-box ${className}`}>
+    return <div className={"filter-group" + (className ? ' ' + className : '')}>
         {caption?<h4>{caption}</h4>:null}
-        <div className={`filter-buttons ${className}`}>
+        <div className={`filter-buttons`}>
 
-            {keyList.map( name => {
+            {includeList.map( name => {
 
                 let f = filterMap[name];
 

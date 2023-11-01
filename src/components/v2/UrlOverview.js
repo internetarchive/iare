@@ -77,26 +77,27 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
     )
 
     useEffect( () => {
-        console.log('filterStatus changed to:', archiveFilterStatus)
 
-        // create filters array based on archive status values
-        let myFilters = []
-        Object.keys(archiveFilterStatus).forEach( archiveSource => {
-            Object.keys(archiveFilterStatus[archiveSource]).forEach( archiveStatus => {
-                if (archiveFilterStatus[archiveSource][archiveStatus]) {
-                    myFilters.push(archiveFilterDefs[archiveSource][archiveStatus])
-                }
-            })
-        })
-
-        // activate the filters
-        onAction({
-            action: "setArchiveStatusFilters",
-            value: {
-                caption: "Unused Caption for multi filters",
-                filterFunction: myFilters,
-            },
-        })
+                    // console.log('filterStatus changed to:', archiveFilterStatus)
+                    //
+                    // // create filters array based on archive status values
+                    // let myFilters = []
+                    // Object.keys(archiveFilterStatus).forEach( archiveSource => {
+                    //     Object.keys(archiveFilterStatus[archiveSource]).forEach( archiveStatus => {
+                    //         if (archiveFilterStatus[archiveSource][archiveStatus]) {
+                    //             myFilters.push(archiveFilterDefs[archiveSource][archiveStatus])
+                    //         }
+                    //     })
+                    // })
+                    //
+                    // // activate the filters
+                    // onAction({
+                    //     action: "setArchiveStatusFilters",
+                    //     value: {
+                    //         caption: "Unused Caption for multi filters",
+                    //         filterFunction: myFilters,
+                    //     },
+                    // })
 
     }, [ archiveFilterStatus, onAction ])
 
@@ -339,8 +340,6 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
         <div>Shortcut: {buttonArchiveNoCite}</div>
 
         <div className={"filters-archive-status"}>
-            {/*{makeArchiveStatusChoices()}*/}
-            {/*{makeArchiveStatusFilters()}*/}
             <FilterStatusChoices filterDefs={archiveFilterDefs} filterStatus={archiveFilterStatus} handleClick={handleArchiveStatusCheck} />
         </div>
     </>
@@ -361,10 +360,10 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
             {urlStatusDisplay}
         </div>
 
-        <div className={'section-sub'}>
+        {null && <div className={'section-sub'}>
             {archiveStatusCaption}
             {archiveStatusFiltersDisplay}
-        </div>
+        </div>}
 
         <div className={'section-sub'}>
             {linkStatusCaption}

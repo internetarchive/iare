@@ -3,6 +3,7 @@ import UrlFlock from "./UrlFlock";
 import RefFlock from "./RefFlock";
 import UrlOverview from "./UrlOverview";
 import '../shared/urls.css';
+import '../shared/filters.css';
 // import {convertToCSV, copyToClipboard} from "../../utils/utils";
 import {REF_LINK_STATUS_FILTERS} from "./filters/refFilterMaps";
 import {URL_ACTION_FILTER_MAP} from "./filters/urlFilterMaps";
@@ -15,37 +16,22 @@ const localized = {
     "Actionable": "Actionable",
 }
 
-function ActionFilters( {filterSet=null, filterRender, flock = [], onAction, options = {}, className = null}) {
+function ActionFilters( {filterSet=null, filterRender, flock = [], onAction, options = {}, currentFilterName = '', className = null}) {
     const handleActionable = (actionable) => {
         onAction({
             action: "setUrlActionFilter", value: actionable,
         })
     }
 
-    return <>
-        <h4 style={{fontStyle: "italic", fontWeight: "bold"}}>Actionable</h4>
-        <div className={className}>
-            <FilterButtons
-                flock={flock}
-                filterMap={filterSet}
-                onClick={handleActionable}
-                caption=''
-                currentFilterName=''
-                onRender={filterRender}
-            />
-        </div>
-    </>
-
-    // return = <>
-    //     <h4>{localized.Actionable}<span className={"inferior"}
-    //     > - These are the things that can be fixed right now</span></h4>
-    //
-    //     <button>Show Original Status bad, but Cite status is live</button>
-    //     {/*<p>if the original link is dead, this is the action yuou can take</p>*/}
-    //     <div>filter for Citations / General / All ?</div>
-    //     <div>some more filters here...</div>
-    //     <div>&nbsp;</div>
-    // </>
+    return <FilterButtons
+        flock={flock}  // flock set to count filters against
+        filterMap={filterSet}
+        onClick={handleActionable}
+        caption={<>{localized.Actionable}<span className={"inferior"}> - These are the things that can be fixed right now</span></>}
+        currentFilterName={currentFilterName}  // sets "pressed" default selection
+        className={className}
+        onRender={filterRender}  // how to render each button
+    />
 
 }
 
@@ -59,9 +45,11 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
     const [urlFilters, setUrlFilters] = useState( null ); // keyed object of url filters to pass in to UrlFlock  TODO: implement UrlFilter custom objects
     const [refFilter, setRefFilter] = useState( null ); // filter to pass in to RefFlock
     const [selectedUrl, setSelectedUrl] = useState(''); // currently selected url in url list
+    const [selectedUrlActionFilterName, setSelectedUrlActionFilterName] = useState('')
+
 
     let myConfig = React.useContext(ConfigContext);
-    myConfig = myConfig ? myConfig : {} // prevents undefined.<param> errors
+    myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
 
     // calculate url stats
     useEffect( () => {
@@ -124,6 +112,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             // filter References to those that adhere to certain action conditions
             const f = value ? URL_ACTION_FILTER_MAP[value] : null
             setUrlFilters( { "action_filter": f } )
+            setSelectedUrlActionFilterName(value)
         }
 
         if (action === "setLinkStatusFilter") {
@@ -139,6 +128,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             // clear filter (show all) for URL list
             setUrlFilters(null)
             setSelectedUrl(null)
+            setSelectedUrlActionFilterName(null)
         }
 
         if (action === "removeReferenceFilter") {
@@ -205,7 +195,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
     // const copyButton = <button onClick={handleCopyClick} className={'utility-button'} ><span>Copy to Clipboard</span></button>
 
     // const urlListCaption = <h3>URL List{myConfig.isDebug ? copyButton : null }</h3>
-    const extraUrlCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click a URL to show References using that URL</h4>
+    const extraUrlCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click a URL row to show References using that URL</h4>
     const extraRefCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click on Reference to view details</h4>
 
     console.log("UrlDisplay: render");
@@ -222,6 +212,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                 flock={pageData.urlArray}
                 onAction={handleAction}
                 options ={{}}
+                currentFilterName={selectedUrlActionFilterName}
                 className={"url-action-filter-buttons"}
             />
 
@@ -233,10 +224,10 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                       fetchMethod={myConfig.urlStatusMethod} />
         </div>
 
-        <div className={"section-box"}>
+        {null && <div className={"section-box"}>
             <h3>References List</h3>
             <RefFlock refArray={refArray} refFilterDef={refFilter} onAction={handleAction} extraCaption={extraRefCaption} />
-        </div>
+        </div>}
 
         <div className={"section-box url-overview-column"}>
             <h3>Filters</h3>

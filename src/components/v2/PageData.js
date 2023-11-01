@@ -414,7 +414,10 @@ export default function PageData({pageData = {}}) {
         Object.keys(pageData.urlDict).forEach( link => {
             const myUrl = pageData.urlDict[link]
             const statuses = []
+            const templates = []
+            const sections = []
             myUrl.refs.forEach( r => {  // traverse each reference this url is involved in
+                // do statuses
                 if (r.templates) {
                     r.templates.forEach(t => {
                         statuses.push(t.parameters["url_status"]
@@ -422,10 +425,32 @@ export default function PageData({pageData = {}}) {
                             : "--")
                     })
                 } else {
-                    statuses.push("no templates")
+                    statuses.push("no templates")  // only one entry
                 }
+
+                // do template names
+                if (r.template_names) {
+                    r.template_names.forEach(tn => {
+                        if (!templates.includes(tn)) {
+                            templates.push(tn)
+                        }
+                    })
+                }
+
+                // do sections
+                if (r.section) {
+                    const hybridSection = (r.type === "general" ? 'General: ' : '') + r.section
+                    if (!sections.includes(hybridSection)) {
+                        sections.push(hybridSection)
+                    }
+                }
+
             })
-            myUrl["reference_info"] = { "statuses" : statuses }
+            myUrl["reference_info"] = {
+                "statuses" : statuses,
+                "templates" : templates,
+                "sections" : sections,
+            }
         })
 
     }, [])
