@@ -1,9 +1,10 @@
 :root {
-    --width-url-list: 33rem;
+    --width-url-list: 38rem;
     --width-url-name: 20rem;
     --width-url-status: 3.5rem;
     --width-url-archive-status: 2rem;
     --width-url-iabot-status: 5.5rem;
+    --width-url-references: 5.5rem;
 
     --width-col-url-overview: 327px;
     /*--width-cell-border: 1pt solid black;*/

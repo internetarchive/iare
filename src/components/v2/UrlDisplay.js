@@ -175,13 +175,15 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
     return <>
 
-        <div className={"section-box url-overview-column"}>
-            <h3>Filters</h3>
-            <UrlOverview pageData={pageData} statistics={urlStatistics} onAction={handleAction}/>
-        </div>
-
         <div className={"section-box"}>
             {urlListCaption}
+            <h4>Action Items</h4>
+            <p>These are the things that can be fixed right now</p>
+            <button>Show Original Status bad, but Cite status is live</button>
+            {/*<p>if the original link is dead, this is the action yuou can take</p>*/}
+            <div>filter for Citations / General / All ?</div>
+            <div>some more filters here...</div>
+            <div>&nbsp;</div>
             <UrlFlock urlArray={pageData.urlArray} urlFilters={urlFilters}
                       onAction={handleAction} selectedUrl={selectedUrl} extraCaption={extraUrlCaption}
                       fetchMethod={myConfig.urlStatusMethod} />
@@ -192,5 +194,11 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             <RefFlock refArray={refArray} refFilterDef={refFilter} onAction={handleAction} extraCaption={extraRefCaption} />
         </div>
 
-      </>
+        <div className={"section-box url-overview-column"}>
+            <h3>Filters</h3>
+            <UrlOverview pageData={pageData} statistics={urlStatistics} onAction={handleAction}/>
+        </div>
+
+
+    </>
 }

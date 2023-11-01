@@ -9,7 +9,7 @@ import {
     ARCHIVE_STATUS_FILTER_MAP,
     URL_STATUS_FILTER_MAP
 } from "./filters/urlFilterMaps";
-import {areObjectsEqual} from "../../utils/utils";
+import {areObjectsEqual, getLinkStatus} from "../../utils/utils";
 
 /*
 When this component is rendered, it must "process" the pageData. This involves:
@@ -59,13 +59,14 @@ export default function PageData({pageData = {}}) {
         const regexWayback = new RegExp(/https?:\/\/(?:web\.)archive\.org\/web\/([\d*]+)\/(.*)/);
 
         const sanitizeUrlForWayback = (targetUrl) => {
-            // let inputString = 'http://example.com:http://example2.com:some:text:with:colons';
-            const regexColon = /:(?!\/\/)/g;  // Regular expression to match colons not followed by "//"
-            // const regexEquals = /=/g;  // Regular expression to match equals signs
-            let resultUrl
-            resultUrl = targetUrl.replace(regexColon, '%3A');  // Replace solo colons with encoded "%3A"
-            // resultUrl = resultUrl.replace(regexEquals, '%3D')
-            return resultUrl
+                        // // let inputString = 'http://example.com:http://example2.com:some:text:with:colons';
+                        // const regexColon = /:(?!\/\/)/g;  // Regular expression to match colons not followed by "//"
+                        // // const regexEquals = /=/g;  // Regular expression to match equals signs
+                        // let resultUrl
+                        // resultUrl = targetUrl.replace(regexColon, '%3A');  // Replace solo colons with encoded "%3A"
+                        // // resultUrl = resultUrl.replace(regexEquals, '%3D')
+                        // return resultUrl
+            return targetUrl  // for now - trying to debug and see if it is necessary
         }
 
         const isArchive = (targetUrl) => {
@@ -74,8 +75,8 @@ export default function PageData({pageData = {}}) {
 
         // create url dict from returned results
         pageData.urlResults && pageData.urlResults.forEach(d => {
-            const myUrl = encodeURI(d.data.url)
             // const myUrl = encodeURI(d.data.url)
+            const myUrl = d.data.url  // try not encoding and see if it still works
             // console.log(myUrl)
             if (!urlDict[myUrl]) {
                 // add entry for url if not there yet
@@ -204,14 +205,14 @@ export default function PageData({pageData = {}}) {
                 const citeParams = normalizeMediaWikiParams(template.params)
 
                 // see if template.params matches any wikiText ref params; returns undefined if no mathcing ref element found
-                const foundRef = refsArray.find( _ref => {
+                const foundRef = refsArray.find( _ref => {  // NB cannot use "ref" as a variable name as "ref" is a keyword in React
                     if (!(_ref.templates && _ref.templates[0])) return false
                     // TODO skip if not a footnote ref
                     // TODO skip if type===footnote and footnote_subtype === named
 
                     // remove "template_name" parameter from object
-                    // TODO this is an IARI bug - should not be adding template_name to wikitext parameters!!
-                    // TODO when fixed, must also change RefView parameter display logic
+                        // TODO this is an IARI bug - should not be adding template_name to wikitext parameters!!
+                        // TODO when fixed, must also change RefView parameter display logic
                     const refParams = {..._ref.templates[0].parameters}
                     delete refParams.template_name
 
@@ -240,21 +241,22 @@ export default function PageData({pageData = {}}) {
     // "archive_url", or, exist in the reference as a "wild" link, not connected to
     // anything. These are often in special "link collection" segments such as External Links, e.g.
     //
-    // The status of the links found represented with the "url" template parameter are checked,
-    // and the status of the links indicated by the "archive_url" parameter are also checked.
+    // links represented by the "url" and "archive_url" template parameter values
+    // are checked.
     //
     // NB: some other templates (as in not standard...not CS1?) indicate the primary url with
     // NB  parameter names other than 'url'
     //
-    // All other urls (non-template) are checked for "good"ness or "bad"ness, regardless of
-    // whether it is an archive link or not.
+    // Other url links found outside of a template are deemed "exotemplate", and
+    // can be a primary or archive url. They are checked for "good" or "bad" status
     //
-    const processReference = useCallback( (ref, urlDict, citeRefs) => {
+    const processReference = useCallback( (ref, urlDict) => {
 
         const linkStatus = []
 
         // create linkStatus for every url/archive_url pair in templates
         // as each url is processed, save in "used_urls" array
+
         const templates = ref?.templates ? ref.templates : []
         const templateUrls = {}
         templates.forEach( template => {
@@ -267,26 +269,27 @@ export default function PageData({pageData = {}}) {
             const primaryLinkStatusCode = urlDict[primaryUrl]?.status_code // need to handle undefined if url not a key in urlDict
             const archiveLinkStatusCode = urlDict[archiveUrl]?.status_code // need to handle undefined if archive url not a key in urlDict
 
-            const pureLinkStatus = (primaryLinkStatusCode === undefined) ? 'none'
-                : (primaryLinkStatusCode >= 200 && primaryLinkStatusCode < 400) ? 'good'
-                    : 'bad'
-
-            const archiveLinkStatus = (archiveLinkStatusCode === undefined) ? 'none'
-                : (archiveLinkStatusCode >= 200 && archiveLinkStatusCode < 400) ? 'good'
-                    : 'bad'
+            // const pureLinkStatus = (primaryLinkStatusCode === undefined) ? 'none'
+            //     : (primaryLinkStatusCode >= 200 && primaryLinkStatusCode < 400) ? 'good'
+            //         : 'bad'
+            //
+            // const archiveLinkStatus = (archiveLinkStatusCode === undefined) ? 'none'
+            //     : (archiveLinkStatusCode >= 200 && archiveLinkStatusCode < 400) ? 'good'
+            //         : 'bad'
+            const pureLinkStatus = getLinkStatus(primaryLinkStatusCode)
+            const archiveLinkStatus = getLinkStatus(archiveLinkStatusCode)
 
             linkStatus.push( pureLinkStatus + '_' + archiveLinkStatus)
 
-            // if archived url exists and archiveLinkStatus is good,
+            // if link referenced by archive_url exists and archiveLinkStatus is good,
             // set the hasTemplateArchive property of the primaryUrl to true
             if (archiveUrl && urlDict[primaryUrl]) {
                 urlDict[primaryUrl].hasTemplateArchive = true
             }
         })
 
-        // now go thru the ref.urls, and if there are any that are not in the
-        // templateUrls list, process that url
-
+        // check for exotemplate url links in the reference and process.
+        // exotemplate links are links in ref but not in templateUrls array
         ref.urls.forEach(url => {
             if (!templateUrls[url]) {
                 const urlStatusCode = urlDict[url]?.status_code
@@ -367,21 +370,53 @@ export default function PageData({pageData = {}}) {
         })
 
         // associate citeref data with uniqueRefs
-       processCiteRefs(uniqueRefs, pageData)
+        processCiteRefs(uniqueRefs, pageData)
 
 
-        // and append to pageData
+        // append unique refs to pageData
         pageData.references = uniqueRefs
 
     }, [processReference, processCiteRefs])
+
+
+
+    // for each reference in pageData.references, for each url link, add ref to refs list
+    const associateRefsWithLinks = useCallback( pageData => {
+        if (!pageData?.references) return
+
+        pageData.references.forEach(ref => {
+            // process each url link
+            ref.urls.forEach(url => {
+                const myUrl = pageData.urlDict[url]
+                // TODO what to do if url not in urlDict?
+                // TODO we should send and display a notice...shouldnt happen
+                // TODO add to test case: associateRefsWithLinks w/ bad urlDict
+
+                // create refs and ref_ids array properties if not there
+                if (!(myUrl["ref_ids"])) myUrl["ref_ids"] = []
+                if (!(myUrl["refs"])) myUrl["refs"] = []
+
+                // add reference if url does not already have it
+                // TODO check and debug here if ref.id will be reliable
+                // TODO it might change over time, and then havoc may be iontroduced
+                // TODO but maybe not, as it is specific to wikitext
+                if (!myUrl["ref_ids"].includes(ref.id)) {
+                    myUrl["ref_ids"].push(ref.id)
+                    myUrl["refs"].push(ref)
+                }
+
+            })
+        })
+    }, [])
 
 
     useEffect( () => { // [myIariBase, pageData, processReferences, processUrls, myStatusCheckMethod]
         const context = 'PageData::useEffect [pageData]'
 
         const postProcessData = (pageData) => {
-            processUrls(pageData); // creates urlDict and urlArray
-            processReferences(pageData)
+            processUrls(pageData);  // creates urlDict and urlArray
+            processReferences(pageData)  // associates url links with references
+            associateRefsWithLinks(pageData)
             pageData.statusCheckMethod = myStatusCheckMethod;
         }
 

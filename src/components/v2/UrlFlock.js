@@ -224,6 +224,7 @@ export default function UrlFlock({ urlArray,
             </React.Fragment>))
     }
 
+
     const getUrls = (flockArray, flockFilters) => {
         if (!flockArray || flockArray.length === 0) return <h4>No URLs to show</h4>
 
@@ -233,8 +234,34 @@ export default function UrlFlock({ urlArray,
         // initialize the urls as the full provided array
         let filteredUrls = flockArray
 
-        // we apply any specified filters successively, while at the same time aggregating the filter captions
-        // into the filterCaptions array. This uses a side effect of the .map() function.
+        const handleCopyClick = () => { // used to copy url list and status
+            // TODO Add column heading for cite status
+
+            // get one row per line:
+            const urlArrayData = [...filteredUrls].sort(
+                (a, b) => (a.url > b.url) ? 1 : (a.url < b.url) ? -1 : 0
+            ).map( u => {
+                if (fetchMethod === UrlStatusCheckMethods.IABOT.key) {
+                    return [ u.url, u.status_code, u.status_code_error_details, u.searchurldata_status ]
+                } else {
+                    return [ u.url, u.status_code, u.status_code_error_details ]
+                }
+            })
+
+            // add column labels
+            if (fetchMethod === UrlStatusCheckMethods.IABOT.key) {
+                urlArrayData.unshift( [ 'URL', `${fetchMethod} status`, `error details`, "IABOT searchurlstatus" ] )
+            } else {
+                urlArrayData.unshift( [ 'URL', `${fetchMethod} status`, `error details` ] )
+            }
+
+            copyToClipboard(convertToCSV(urlArrayData))
+
+        }
+
+        // get final filteredUrls by applying filters successively, while accumulating the
+        // filter captions into the filterCaptions array, via a side effect within .map()
+
         let filterCaptions = Object.keys(flockFilters)
             .filter(key => flockFilters[key].filterFunction )  // exclude null filters
             .map( filterName => {  // apply non-null filters and append filter caption
@@ -254,13 +281,14 @@ export default function UrlFlock({ urlArray,
                 }
             })
 
-        // temporarily fixes bug where flockFilters is being set to an array with a singkle elment of another empoty array.
+        // temporarily fixes bug where flockFilters is being set to an array with a single elment of another emoty array.
         // it has something to do with the empty Archive Status state setting the flockFilters when it shouldn't
+        // TODO NB Fix this bug
         if (filterCaptions.length === 1 && filterCaptions[0].length === 0) {
             filterCaptions = ''
         }
 
-        // sort if specified
+        // sort filteredUrls if specified
         if (sort.sortOrder?.length > 0) {
             console.log(`sorting urls by: ${sort.sortOrder[0]}`)
             filteredUrls.sort(sortFunction)
@@ -276,10 +304,15 @@ export default function UrlFlock({ urlArray,
 
 
         const flockCaption = <>
-            <h4><span className={"filter-title"}>Applied Filter:</span> {
-                filterCaptions.length > 0 ? filterCaptions : 'Show All' }</h4>
-            <h4 style={{marginTop:".5rem"}}>{filteredUrls.length} {filteredUrls.length === 1
+
+            <h4>{filteredUrls.length} {filteredUrls.length === 1
                 ? 'URL' : 'URLs'}{buttonRemove}</h4>
+
+            <h4><span className={"filter-title"}
+            >{`Applied Filter${filterCaptions.length === 1 ? '' : 's'}:`}<
+            /span> {
+                filterCaptions.length > 0 ? filterCaptions : 'Show All' }</h4>
+
             {extraCaption}
         </>
 
@@ -297,6 +330,29 @@ export default function UrlFlock({ urlArray,
             return u.searchurldata_status + (u.searchurldata_archived ? ", A" : ', X')
         })
 
+        const getReferenceInfo = (u => {
+            if (!u.refs) return null
+
+            const statuses = []
+            u.refs.forEach( r => {  // traverse each reference this url is involved in
+                if (r.templates) {
+                    r.templates.forEach(t => {
+                        statuses.push(t.parameters["url_status"]
+                            ? t.parameters["url_status"]
+                            : "--")
+                    })
+                } else {
+                    statuses.push("no templates")
+                }
+            })
+
+            return statuses.map( (s,i) => {
+                return <div key={i}>{s}</div>
+            })
+
+            // return refDisplay  // "refs go here"
+        })
+
         const getDataRow = (u, i, classes) => {
             return <div className={classes} key={i} data-url={u.url}
                         data-status_code={u.status_code}
@@ -308,11 +364,15 @@ export default function UrlFlock({ urlArray,
                 <div className={"url-name"}>{u.url}</div>
                 <div className={"url-status"}>{u.status_code}</div>
                 {fetchMethod === UrlStatusCheckMethods.IABOT.key
+                    // we are sort of assuming IABot status for now - if we use corentin, then these wont display!
+                    // TODO we could use corentin, and just add as a column? add other columns? later...
                     ? <>
                         <div className={"url-arch-ia"}>{getArchIaStatus(u)}</div>
                         <div className={"url-arch-tmplt"}>{getArchTmpltStatus(u)}</div>
 
                         <div className={"url-iabot-status"}>{getIabotStatus(u)}</div>
+                        <div className={"url-references"}>{getReferenceInfo(u)}</div>
+
                     </>
                     : null }
 
@@ -339,33 +399,11 @@ export default function UrlFlock({ urlArray,
                         <div className={"url-arch-tmplt"}>?</div>
 
                         <div className={"url-iabot-status"}>---</div>
+                        <div className={"url-references"}>&nbsp;</div>
+
                     </>
                     : null }
             </div>
-        }
-
-        const handleCopyClick = () => { // used to copy url list and status
-
-            // get one row per line:
-            const urlArrayData = [...filteredUrls].sort(
-                (a, b) => (a.url > b.url) ? 1 : (a.url < b.url) ? -1 : 0
-            ).map( u => {
-                if (fetchMethod === UrlStatusCheckMethods.IABOT.key) {
-                    return [ u.url, u.status_code, u.status_code_error_details, u.searchurldata_status ]
-                } else {
-                    return [ u.url, u.status_code, u.status_code_error_details ]
-                }
-            })
-
-            // add column labels
-            if (fetchMethod === UrlStatusCheckMethods.IABOT.key) {
-                urlArrayData.unshift( [ 'URL', `${fetchMethod} status`, `error details`, "IABOT searchurlstatus" ] )
-            } else {
-                urlArrayData.unshift( [ 'URL', `${fetchMethod} status`, `error details` ] )
-            }
-
-            copyToClipboard(convertToCSV(urlArrayData))
-
         }
 
         const buttonCopy = <button onClick={handleCopyClick} className={'utility-button small-button'} ><span>Copy to Clipboard</span></button>
@@ -387,6 +425,7 @@ export default function UrlFlock({ urlArray,
                         <div className={"url-arch-tmplt"}>&nbsp;</div>
 
                         <div className={"url-iabot-status"}>&nbsp;</div>
+                        <div className={"url-references"}>&nbsp;</div>
                     </>
                     : null }
             </div>
@@ -410,6 +449,7 @@ export default function UrlFlock({ urlArray,
                         >{archiveFilterDefs['template']._.name}</div>
 
                         <div className={"url-iabot-status"}>IABot</div>
+                        <div className={"url-references"}>Cite Url Status</div>
                     </>
                     : null }
             </div>

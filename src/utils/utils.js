@@ -87,3 +87,9 @@ export const areObjectsEqual = (objA, objB) => {
     // If all values are equal, objects are equal
     return true;
 }
+
+export const getLinkStatus = (statusCode) => {
+    return (statusCode === undefined) ? 'none'
+        : (statusCode >= 200 && statusCode < 400) ? 'good'
+            : 'bad'
+}
