@@ -224,16 +224,16 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                       fetchMethod={myConfig.urlStatusMethod} />
         </div>
 
-        {null && <div className={"section-box"}>
-            <h3>References List</h3>
-            <RefFlock refArray={refArray} refFilterDef={refFilter} onAction={handleAction} extraCaption={extraRefCaption} />
-        </div>}
-
         <div className={"section-box url-overview-column"}>
             <h3>Filters</h3>
             <UrlOverview pageData={pageData} statistics={urlStatistics} onAction={handleAction}/>
         </div>
 
+
+        {true && <div className={"section-box"}>
+            <h3>References List</h3>
+            <RefFlock refArray={refArray} refFilterDef={refFilter} onAction={handleAction} extraCaption={extraRefCaption} />
+        </div>}
 
     </>
 }
