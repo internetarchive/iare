@@ -192,8 +192,13 @@ button.utility-button.small-button {
 }
 
 
-/* OTHER ELEMENTS */
+/* OTHER ELEMENTS - to be organized as time goes on */
 
+.detail-section {
+    background-color: #aad4d8;
+    border-radius:.8rem;
+    padding:.5rem;
+}
 .detail-show {
     display:inherit;
     margin-bottom:1rem;

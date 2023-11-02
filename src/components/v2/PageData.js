@@ -17,28 +17,25 @@ When this component is rendered, it must "process" the pageData. This involves:
 - process the urls into urlArray
 - process the references
   - reduce reference array by coalescing all named refs together
-  - calculate link status of all urls within reference to allow filtering
+  - assign reference to url items that are "owned" by reference
 */
 
-/*
-when we get to this component, we have raw pageData from the
-article fetch call, with a few minor decorations added at receive time.
-
-we immediately fetch the URL details for each URL in pageData.urls, creating
-urlDict, which is a url-keyed javascript object with the info for each url.
-we have a urlArray as well, with each entry of the array pointing to a url
-object in urlDict.
-
-we then flatten the Reference list, making only one entry for each multiply-
-referenced URL with the number of times reference added as a reference property.
-
-using UrlDict we can check the status of the urls in each reference, appending
-each reference array object in pageData.references.
-    NB: we should use only "references" property, not "dehydrated_references"
-    TODO: deprecate "dehydrated_references" and use a "dehydrated" flag instead
-*/
 
 export default function PageData({pageData = {}}) {
+    /*
+    pageData arrives with the data from the /article endpoint fetch call,
+    with a few minor decoration properties added for convenience.
+
+    we immediately fetch the URL details for each URL in pageData.urls, which
+    creates urlDict (a url-keyed javascript object with the info for each url).
+    urlArray is created as well, with each entry pointing to a urlDict object.
+
+    we then flatten the Reference list, making only one entry for each multiply-
+    referenced URL with the number of times reference added as a reference property.
+
+        NB: we should use only "references" property, not "dehydrated_references"
+        TODO: deprecate "dehydrated_references" and use a "dehydrated" flag instead
+    */
 
     const [selectedViewType, setSelectedViewType] = useState('urls');
     const [isLoadingUrls, setIsLoadingUrls] = useState(false);
@@ -50,10 +47,9 @@ export default function PageData({pageData = {}}) {
     const myIariBase = myConfig.iariSource;
     const myStatusCheckMethod = myConfig.urlStatusMethod;
 
-    // process url results and create a urlDict from it
-    //
-    // called upon useEffect of new url status data
+    // called upon useEffect when new url status data received
     const processUrls = useCallback( (pageData) => {
+        // process url results and create urlDict from it
 
         const urlDict = {}
         const regexWayback = new RegExp(/https?:\/\/(?:web\.)archive\.org\/web\/([\d*]+)\/(.*)/);
@@ -106,7 +102,7 @@ export default function PageData({pageData = {}}) {
             return s
         })
 
-        // test if this archive link rescues(d) one of our primary urls
+        // test if this archive link rescued one of our primary urls
         archiveUrls.forEach(archiveUrl => {
             const results = archiveUrl.match(regexWayback)  // is archiveUrl a possible archive?
             if (results) {  // if a match, extract pattern parts
@@ -269,13 +265,6 @@ export default function PageData({pageData = {}}) {
             const primaryLinkStatusCode = urlDict[primaryUrl]?.status_code // need to handle undefined if url not a key in urlDict
             const archiveLinkStatusCode = urlDict[archiveUrl]?.status_code // need to handle undefined if archive url not a key in urlDict
 
-            // const pureLinkStatus = (primaryLinkStatusCode === undefined) ? 'none'
-            //     : (primaryLinkStatusCode >= 200 && primaryLinkStatusCode < 400) ? 'good'
-            //         : 'bad'
-            //
-            // const archiveLinkStatus = (archiveLinkStatusCode === undefined) ? 'none'
-            //     : (archiveLinkStatusCode >= 200 && archiveLinkStatusCode < 400) ? 'good'
-            //         : 'bad'
             const pureLinkStatus = getLinkStatus(primaryLinkStatusCode)
             const archiveLinkStatus = getLinkStatus(archiveLinkStatusCode)
 
@@ -310,46 +299,50 @@ export default function PageData({pageData = {}}) {
     }, [])
 
 
-    // * reduce any repeated references into one reference with multiple page referrals
-    // * calculate the status of the links in the references by examining the pure and archived
-    //   urls in the templates in each reference
-    //
-    // TODO: this should be done with the IARI API, not here after front-end retrieval
-    //
-    const processReferences = useCallback( pageData => {
-
-        // Process the "named" refs by looping thru each reference
-        // if named, make an entry in named_refs or increment already entry
-        // if named with no content, pull that reference info, and add it to named_ref entry
-        //      - its like an array of links to where in article a reference is referred to
-        const namedRefs = {} // collect 'em as we find 'em
-        const uniqueRefs = []
+    const getAnchorReferences = (pageData) => {
+        // reduce references by eliminating repeats and collecting ref referrals
 
         // for refs, if dehydrated=true, use pageData.dehydrated_references, else use pageData.references
         const refs = (pageData?.dehydrated_references?.length)
             ? pageData.dehydrated_references
             : (pageData?.references?.length) ? pageData.references
-            : []
+                : []
 
-        // reduce references by eliminating repeats and collecting page referrals
+        const namedRefs = {}
+        const anchorRefs = []
+
+        // Process the "named" refs by looping thru each reference
+        // if named
+        //      - increment reference count for namedRef[name]
+        //      - if no content, assume its a reference to an anchor reference
         refs.forEach(ref => {
-            // "named" references point to another "anchor" reference
-            // handle named ref by making entry into namedRef dict
+
             if (ref.name) {
-                // initialize if first time
-                if (!namedRefs[ref.name]) namedRefs[ref.name] = { count : 0 }
-                // increment count
-                namedRefs[ref.name].count++
-                // if named ref is anchor (footnote subtype === content), save it in our namedRefs dict
+                // "named" references point to another "anchor" reference with the same name
+                // namedRef[fef.name] hold the reference count of this name
+
+                if (!namedRefs[ref.name]) namedRefs[ref.name] = {
+                    count : 0,
+                    anchor : {}
+                }  // if first time, create
+
+                namedRefs[ref.name].count++  // increment "how many times this reference is referenced by name"
+
+                // if this definition of the reference is the "anchor" one, i.e., the citation which
+                // defines the reference that is to be referenced by name by other citations, then,
+                // save a pointer to this reference in the namedRef[<this ref>].anchor property
+
                 if (ref.type ==='footnote' && ref.footnote_subtype === 'content') {
-                    namedRefs[ref.name].origin = ref
+                    // an "anchor" reference is one labeled as footnote with a subtype of 'content'
+                    namedRefs[ref.name].anchor = ref
+                    // TODO: bug: if a "named ref" does not contain an "anchor" citation, there is a problem.
                 }
             }
 
-            // carry over refs that are NOT indirect "named" references
+            // if this ref is a non-footnote ref, or, is a footnote-anchor (subtype != named) ref, save it in anchorRefs
             if (!(ref.type === 'footnote' && ref.footnote_subtype === 'named')) {
                 ref.reference_count = 1 // will replace counts of multiply referenced refs in next loop
-                uniqueRefs.push( ref )
+                anchorRefs.push( ref )
             }
         })
 
@@ -357,31 +350,42 @@ export default function PageData({pageData = {}}) {
         // TODO when we get the cite_refs in the reference data, we can save those, too for each named reference
         Object.keys(namedRefs).forEach( refName => {
             const nr = namedRefs[refName]
-            nr.origin.reference_count = nr.count
+            nr.anchor.reference_count = nr.count
         })
 
+        return anchorRefs
+    }
 
+    const processReferences = useCallback( pageData => {
+        // * reduce any repeated references into one reference with multiple page referrals
+        // * calculate the status of the links in the references by examining the pure and archived
+        //   urls in the templates in each reference
+        //
+        // TODO: this should be done with the IARI API, not here after front-end retrieval
+        //
+
+        const anchorRefs = getAnchorReferences(pageData)
 
         // process all anchor references
-        uniqueRefs.forEach( ref => {
-            // ref.link_status = processReference(ref, pageData.urlDict)
+        anchorRefs.forEach( ref => {
             processReference(ref, pageData.urlDict)
-
         })
 
-        // associate citeref data with uniqueRefs
-        processCiteRefs(uniqueRefs, pageData)
+        // associate citeref data with anchorRefs
+        processCiteRefs(anchorRefs, pageData)
 
-
-        // append unique refs to pageData
-        pageData.references = uniqueRefs
+        // set achnorRefs as the definitive references property of pageData
+        pageData.references = anchorRefs
 
     }, [processReference, processCiteRefs])
 
 
 
-    // for each reference in pageData.references, for each url link, add ref to refs list
     const associateRefsWithLinks = useCallback( pageData => {
+        // for each reference in pageData.references
+        //  - for each url link
+        //      - add ref to url's refs list
+
         if (!pageData?.references) return
 
         pageData.references.forEach(ref => {
@@ -396,10 +400,10 @@ export default function PageData({pageData = {}}) {
                 if (!(myUrl["ref_ids"])) myUrl["ref_ids"] = []
                 if (!(myUrl["refs"])) myUrl["refs"] = []
 
-                // add reference if url does not already have it
+                // if url does not have current reference in it's associated reference list, add it now
                 // TODO check and debug here if ref.id will be reliable
                 // TODO it might change over time, and then havoc may be iontroduced
-                // TODO but maybe not, as it is specific to wikitext
+                // TODO but maybe not, as it is unique to each wikitext
                 if (!myUrl["ref_ids"].includes(ref.id)) {
                     myUrl["ref_ids"].push(ref.id)
                     myUrl["refs"].push(ref)
@@ -408,8 +412,12 @@ export default function PageData({pageData = {}}) {
             })
         })
 
-        // now that each url has its references property set, reduce those references into
-        // a "referenceInfo" property, containing for now just a "statuses" property
+
+        // for each url, reduce various reference info into the url's reference_info property
+        // for now, reference_info contains:
+        // - url status from templates
+        // - template names
+        // - sections where reference came from
 
         Object.keys(pageData.urlDict).forEach( link => {
             const myUrl = pageData.urlDict[link]
@@ -417,7 +425,8 @@ export default function PageData({pageData = {}}) {
             const templates = []
             const sections = []
             myUrl.refs.forEach( r => {  // traverse each reference this url is involved in
-                // do statuses
+
+                // process url_status's
                 if (r.templates) {
                     r.templates.forEach(t => {
                         statuses.push(t.parameters["url_status"]
@@ -428,7 +437,7 @@ export default function PageData({pageData = {}}) {
                     statuses.push("no templates")  // only one entry
                 }
 
-                // do template names
+                // process template names
                 if (r.template_names) {
                     r.template_names.forEach(tn => {
                         if (!templates.includes(tn)) {
@@ -437,7 +446,7 @@ export default function PageData({pageData = {}}) {
                     })
                 }
 
-                // do sections
+                // process sections
                 if (r.section) {
                     const hybridSection = (r.type === "general" ? 'General: ' : '') + r.section
                     if (!sections.includes(hybridSection)) {
@@ -457,7 +466,7 @@ export default function PageData({pageData = {}}) {
 
 
     useEffect( () => { // [myIariBase, pageData, processReferences, processUrls, myStatusCheckMethod]
-        const context = 'PageData::useEffect [pageData]'
+        const context = 'PageData::useEffect [myIariBase, pageData, processReferences, processUrls, associateRefsWithLinks, myStatusCheckMethod]'
 
         const postProcessData = (pageData) => {
             processUrls(pageData);  // creates urlDict and urlArray

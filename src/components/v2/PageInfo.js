@@ -61,7 +61,7 @@ export default function PageInfo({ pageData }) {
         </h6>
 
         {pageData
-            ? <div className={ showDetail ? "detail-show" : "detail-hide" }>
+            ? <div className={'detail-section' + (showDetail ? ' detail-show' : ' detail-hide') }>
 
                 <p>media type: {pageData.mediaType}</p>
 

@@ -12,7 +12,7 @@ import FilterButtons from "../FilterButtons";
 // import {UrlStatusCheckMethods} from "../../constants/endpoints";
 
 const localized = {
-    "URLs":"URLs",
+    "url_display_title":"URLs",
     "Actionable": "Actionable",
 }
 
@@ -109,7 +109,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         }
 
         if (action === "setUrlActionFilter") {
-            // filter References to those that adhere to certain action conditions
+            // filter References as determined by conditions set by chosen Action
             const f = value ? URL_ACTION_FILTER_MAP[value] : null
             setUrlFilters( { "action_filter": f } )
             setSelectedUrlActionFilterName(value)
@@ -204,7 +204,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
     return <>
 
         <div className={"section-box"}>
-            <h3>{localized.URLs}</h3>
+            <h3>{localized.url_display_title}</h3>
 
             <ActionFilters
                 filterSet={URL_ACTION_FILTER_MAP}
