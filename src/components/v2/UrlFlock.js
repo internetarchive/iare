@@ -45,6 +45,7 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
                                      selectedUrl = '',
                                      extraCaption = null,
                                      fetchMethod="" }) {
+    // TODO maybe should not use memo here
 
     const [urlTooltipHtml, setUrlTooltipHtml] = useState( '<div>ToolTip<br />second line' );
     // TODO fix tooltip using React.useRef somehow so that re-render is avoided upon every tooltip text/html change
@@ -205,8 +206,12 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
         const url = e.target.closest('.url-row').getAttribute('data-url');
 
         // send action back up the component tree to filter the references list
+                        // onAction( {
+                        //     "action": "setUrlReferenceFilter",
+                        //     "value": url,
+                        // })
         onAction( {
-            "action": "setUrlReferenceFilter",
+            "action": "showRefsForUrl",
             "value": url,
         })
     }

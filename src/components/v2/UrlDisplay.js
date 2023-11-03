@@ -10,6 +10,7 @@ import {URL_ACTION_FILTER_MAP} from "./filters/urlFilterMaps";
 import {ConfigContext} from "../../contexts/ConfigContext";
 import FilterButtons from "../FilterButtons";
 import ChoiceFetch from "../ChoiceFetch";
+import RefView from "./RefView/RefView";
 // import {UrlStatusCheckMethods} from "../../constants/endpoints";
 
 const localized = {
@@ -49,9 +50,13 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
     const [selectedUrlActionFilterName, setSelectedUrlActionFilterName] = useState('')
     const [selectedCitationType, setSelectedCitationType] = useState('')
 
+    const [openModal, setOpenModal] = useState(false)
+    const [refDetails, setRefDetails] = useState(null);
+
 
     let myConfig = React.useContext(ConfigContext);
     myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
+    const myIariBase = myConfig?.iariSource;
 
 
     // calculate url stats
@@ -73,6 +78,21 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         setUrlStatistics({urlCounts: urlCounts});
 
     }, [pageData, urlStatusFilterMap, urlArchiveFilterDefs, ])
+
+
+    const fetchDetail = useCallback( (ref) => {
+        // handle null ref
+        if (!ref) {
+            setRefDetails("Trying to fetch invalid reference");
+            return;
+        }
+
+        const myEndpoint = `${myIariBase}/statistics/reference/${ref.id}`;
+        const data = ref
+        data.endpoint = myEndpoint;
+        setRefDetails(data);
+        setOpenModal(true)
+    }, [myIariBase])
 
 
     // callback from sub-components that induce actions upon flocks.
@@ -99,6 +119,13 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                     //     setUrlFilters({ "archive_status" : f })
                     // }
                     //
+
+        if (action === "showRefsForUrl") {
+            // value is url key name
+            const myRef = pageData.urlDict[value]?.refs[0] // for now...shall pass entire array soon
+            fetchDetail(myRef)
+            setSelectedUrl(value)
+        }
 
         if (action === "setArchiveStatusFilters") {
             setUrlFilters({ "archive_status" : value })  // NB: value is filter object
@@ -144,7 +171,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         // TODO: Action for setReferenceFilter/ShowReference for filtered URLS
         // i.e. show all refs that contain ANY of the URLS in the filtered URL list
 
-    }, [urlStatusFilterMap])
+    }, [urlStatusFilterMap, fetchDetail, pageData.urlDict])
 
 
     if (!pageData) return null;  /// NB must be put AFTER useEffect and useCallback, as these hooks cannot after conditional statements
@@ -226,7 +253,6 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
     console.log("UrlDisplay: render");
 
-
     return <>
 
         <div className={"section-box"}>
@@ -265,10 +291,12 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         </div>
 
 
-        {true && <div className={"section-box"}>
+        {false && <div className={"section-box"}>
             <h3>References List</h3>
             <RefFlock refArray={refArray} refFilterDef={refFilter} onAction={handleAction} extraCaption={extraRefCaption} />
         </div>}
+
+        <RefView details={refDetails} open={openModal} onClose={() => setOpenModal(false)} />
 
     </>
 }

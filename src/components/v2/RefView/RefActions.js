@@ -20,7 +20,8 @@ export default function RefActions( {details, onAction}) {
                 </button>
             </>
         })
-        : <div>No Citation Refs!</div>
+        // : <div style={{fontStyle:"italic"}}>Shall jump to Citation<br/>&lt;Error: jumps broken&gt;</div>
+        : <button className={"btn btn-outline-danger btn-sm"} disabled style={{fontStyle:"italic"}}>Shall jump to Citation<br/>&lt;Error: jumps broken&gt;</button>
 
 
     return <div className="row ref-view-actions">
