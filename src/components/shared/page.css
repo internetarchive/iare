@@ -36,10 +36,10 @@
     margin-bottom: 1.5rem;
 }
 /********************
- for choosing Domains. urls or Reference Types
+ for choosing View type: Domains. urls or Reference Types
  ******************* */
 
-.ref-filter-types {
+.view-options-selection {
     display: flex;
     flex-direction: row;
     font-size:1rem;
@@ -47,17 +47,17 @@
     border-bottom:1px solid black;
 }
 
-.ref-filter-types input[type="radio"]{
+.view-options-selection input[type="radio"]{
     -ms-transform: scale(var(--radio-button-magnify)); /* IE 9 */
     -webkit-transform: scale(var(--radio-button-magnify)); /* Chrome, Safari, Opera */
     transform: scale(var(--radio-button-magnify));
     margin-right:.23rem;
 }
-.ref-filter-types > div {
+.view-options-selection > div {
     margin-left: 1.25rem;
     /*flex: 0 0 auto;*/
 }
-.ref-filter-types > div:first-child {
+.view-options-selection > div:first-child {
     margin-left:0;
 }
 

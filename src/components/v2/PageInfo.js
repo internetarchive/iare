@@ -54,9 +54,11 @@ export default function PageInfo({ pageData }) {
         copyToClipboard( convertToCSV(citeRefData), "CiteRef Data" )
     }
 
+
+
     return <div className="page-info">
         <h6>Wiki Page Analyzed: <a href={pageData.pathName} target={"_blank"} rel={"noreferrer"}>{pageData.pathName}</a
-        > {ores_score_display ? <span className={"ores-display"}>ORES Score: {ores_score_display}</span> : null}
+        > {ores_score_display ? false && <span className={"ores-display"}>ORES Score: {ores_score_display}</span> : null}
             <button onClick={()=>setShowDetail(!showDetail)} className={"more-button"}>{ showDetail ? "less" : "more" } details</button>
         </h6>
 

@@ -7,7 +7,7 @@ import {convertToCSV, copyToClipboard} from "../../utils/utils";
 // import {forEach} from "react-bootstrap/ElementChildren";
 
 const localized = {
-    "Show All":"Show All",
+    "show_all_button_text":"Show All",
 }
 
 /*
@@ -408,9 +408,9 @@ otherwise, get the className of parent as comparison
 
         // get final filteredUrls by applying filters successively, while accumulating the
         // filter captions into the filterCaptions array, via a side effect within .map()
-
+// TODO turn this into a function...
         let filterCaptions = Object.keys(flockFilters)
-            .filter(key => flockFilters[key].filterFunction )  // exclude null filters
+            .filter(key => !!flockFilters[key] && flockFilters[key].filterFunction )  // exclude null filter defs, and null filter functions
             .map( filterName => {  // apply non-null filters and append filter caption
                 const f = flockFilters[filterName]
                 if (Array.isArray(f.filterFunction)) {
@@ -440,29 +440,6 @@ otherwise, get the className of parent as comparison
             console.log(`sorting urls by: ${sort.sortOrder[0]}`)
             filteredUrls.sort(sortFunction)
         }
-
-        // const buttonRemove = filterCaptions.length > 0
-        const buttonRemove = (Object.keys(flockFilters).length > 0 && flockFilters[Object.keys(flockFilters)[0]]['name'] !== 'all')
-            // show Remove Filter button ONLY IF there are any filters applied
-            ? <button onClick={handleRemoveFilter}
-                      // className={'utility-button button-remove-url-filter'}
-                      className={'button-remove-url-filter'}
-            ><span>{localized["Show All"]}</span></button>
-            : null
-
-
-        const flockCaption = <>
-
-            <h4 className={"url-flock-caption"}>{filteredUrls.length.toString() + ' ' + (filteredUrls.length === 1 ? 'URL' : 'URLs')
-                }</h4>{buttonRemove}
-
-            <h4><span className={"filter-title"}
-            >{`Applied Filter${filterCaptions.length === 1 ? '' : 's'}:`}<
-            /span> {
-                filterCaptions.length > 0 ? filterCaptions : 'Show All' }</h4>
-
-            {extraCaption}
-        </>
 
         // TODO this should be within IABOT row renderer
         // const getArchIariStatus = (u => <span className={u.hasArchive ? "archive-yes" : "archive-no" }></span> )
@@ -562,10 +539,48 @@ otherwise, get the className of parent as comparison
             </div>
         }
 
-        const buttonCopy = <button onClick={handleCopyClick} className={'utility-button small-button'} ><span>Copy to Clipboard</span></button>
+        const enableShowAllButton = Object.keys(flockFilters).length > 0
+            && flockFilters[Object.keys(flockFilters)[0]]
+            && flockFilters[Object.keys(flockFilters)[0]]['name'] !== 'all'
+                // make sure filter definition is not null
+                // and that this is not the "all" filter,
+                // in which case we disable the "Show All" button
+        const buttonRemove = <button
+                className={`utility-button small-button${enableShowAllButton ?'':' disabled'}` }
+                onClick={handleRemoveFilter}
+                // className={'utility-button button-remove-url-filter'}
+            ><span>{localized['show_all_button_text']}</span></button>
+
+        const buttonCopy = <button className={'btn utility-button small-button'} onClick={handleCopyClick} ><span>Copy to Clipboard</span></button>
+
+        const flockCaption = <>
+
+            <h4 className={"url-flock-caption"}>{filteredUrls.length.toString() + ' ' + (filteredUrls.length === 1 ? 'URL' : 'URLs')
+            }</h4>{buttonRemove}
+
+            <h4><span className={"filter-title"}
+            >{`Applied Filter${filterCaptions.length === 1 ? '' : 's'}:`}<
+            /span> {
+                filterCaptions.length > 0 ? filterCaptions : 'Show All' }</h4>
+
+            {extraCaption}
+        </>
+
 
         const flockMetaHeader = <div className={"url-list-meta-header"}>
-            53 URls  (copy to clipboard)
+
+            <div>
+                <h4 className={"url-flock-caption"}>{filteredUrls.length.toString() + ' ' + (filteredUrls.length === 1 ? 'URL' : 'URLs')
+                }</h4>{buttonCopy}
+
+                {/*<h4><span className={"filter-title"}*/}
+                {/*>{`Applied Filter${filterCaptions.length === 1 ? '' : 's'}:`}<*/}
+                {/*/span> {*/}
+                {/*    filterCaptions.length > 0 ? filterCaptions : 'Show All' }</h4>*/}
+                {/*53 URls  (copy to clipboard)*/}
+            </div>
+
+            <div>{buttonRemove}</div>
         </div>
 
         const flockHeaderRow = <div
@@ -597,7 +612,7 @@ otherwise, get the className of parent as comparison
                 <div className={"url-name"} onClick={() => {
                     handleSortClick("name")
                 }
-                }>URL {buttonCopy}</div>
+                }>URL</div>
 
                 <div className={"url-status"} onClick={() => {
                     handleSortClick("status")
@@ -667,9 +682,9 @@ otherwise, get the className of parent as comparison
         } )
 
         return <>
-            {flockCaption}
+            {false && flockCaption}
             {/* TODO do something akin to "myMethodRenderer.getHeaderRow" */}
-            {false && flockMetaHeader}
+            {flockMetaHeader}
             {flockHeaderRow}
             <div className={"url-list"}
                  onClick={handleRowClick}

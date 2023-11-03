@@ -528,34 +528,32 @@ export default function PageData({pageData = {}}) {
         },
     }
 
-    const viewOptions = Object.keys(viewTypes).map(viewType => {
-        return <div key={viewType} >
-            <label>
-                <input
-                    type="radio"
-                    value={viewType}
-                    checked={selectedViewType === viewType}
-                    onChange={handleViewTypeChange}
-                /> {viewTypes[viewType].caption}
-            </label>
+    const viewOptions = <div className={"view-options-selection"}>
+            <div>View by</div>{Object.keys(viewTypes).map(viewType => {
+                return <div key={viewType} >
+                    <label>
+                        <input
+                            type="radio"
+                            value={viewType}
+                            checked={selectedViewType === viewType}
+                            onChange={handleViewTypeChange}
+                        /> {viewTypes[viewType].caption}
+                    </label>
+                </div>
+            })}
         </div>
-    })
-
 
     if (!pageData) return null;
-
 
     return <>
 
         {isLoadingUrls ? <Loader message={"Retrieving URL status codes..."}/>
-            : (dataReady ? <div className={"page-data"}>
+            : (dataReady ? <div className={"page-data"} xxstyle={{backgroundColor:"grey"}}>
 
-                        <div className={"ref-filter-types"}>
-                            <div>View References by</div>
-                            {viewOptions}
-                        </div>
+                        {false && viewOptions}
 
                         <div className={`display-content`}>
+
                             {selectedViewType === 'domains' &&
                                 <FldDisplay pageData={pageData}/>
                             }
@@ -574,6 +572,7 @@ export default function PageData({pageData = {}}) {
                         </div>
 
                     </div>
+
                     : <p>Data Not Ready</p>
             )
         }

@@ -286,15 +286,17 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         <Dropdown choices={iariChoices} label={'Iari Source:'} onSelect={handleIariSourceIdChange} defaultChoice={myIariSourceId}/>
     </div>
 
+    const versionDisplay = `version ${package_json.version}`
+    const siteDisplay = ` STAGING SITE `
+    const showHideDebugButton = <button // this is the 'show/hide debug' button
+        className={"utility-button debug-button"}
+        onClick={toggleDebug} >{isDebug ? "hide" : "show"} debug</button>
 
     const heading = <div className={"header-contents"}>
-        <h1>Internet Archive Reference Explorer <span
-            className={"version-display"}> version {package_json.version}
-            <span className={"non-production"}
-            > STAGING SITE <
-                button onClick={toggleDebug} className={"utility-button debug-button"}
-            >{isDebug ? "hide" : "show"} debug</button
-            ></span></span></h1>
+        <h1>Internet Archive Reference Explorer</h1>
+        <div className={"header-aux1"}>
+            <span className={"non-production"}>{versionDisplay}{siteDisplay
+            }{showHideDebugButton}</span></div>
     </div>
 
     const debug = <div className={"debug-section " + (isDebug ? "debug-on" : "debug-off")}>
@@ -337,7 +339,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
 
                 <PathNameFetch pathInitial={targetPath} checkInitial={refreshCheck}
                                placeholder={"Enter a Wikipedia article or PDF url here"}
-                               shortcuts={shortcuts}
+                               shortcuts={false && shortcuts}
                                handlePathResults={handlePathResults}
                 />
 
