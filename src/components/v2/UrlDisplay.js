@@ -53,6 +53,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
     const [openModal, setOpenModal] = useState(false)
     const [refDetails, setRefDetails] = useState(null);
 
+    const [showRefList, setShowRefList] = useState(false);
 
     let myConfig = React.useContext(ConfigContext);
     myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
@@ -124,6 +125,10 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             // value is url key name
             const myRef = pageData.urlDict[value]?.refs[0] // for now...shall pass entire array soon
             fetchDetail(myRef)
+
+            // also set Ref filter
+            setRefFilter(getUrlRefFilter(value))
+
             setSelectedUrl(value)
         }
 
@@ -291,10 +296,18 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         </div>
 
 
-        {false && <div className={"section-box"}>
-            <h3>References List</h3>
-            <RefFlock refArray={refArray} refFilterDef={refFilter} onAction={handleAction} extraCaption={extraRefCaption} />
+        {true && <div className={"section-box"}>
+            <button className={"utility-button small-button button-show-ref-list"} style={{display:"inline-block"}}
+                    onClick={() => {setShowRefList(prevState => !prevState)}}
+            ><span>{showRefList ? 'Hide' : 'Show'} Reference List<br/><br/>This is temporary while the interface is being developed</span></button>
+
+
+            {showRefList && <>
+                <h3 style={{xxdisplay:"inline-block"}}>References List</h3>
+                <RefFlock refArray={refArray} refFilterDef={refFilter} onAction={handleAction} extraCaption={extraRefCaption} />
+            </>}
         </div>}
+
 
         <RefView details={refDetails} open={openModal} onClose={() => setOpenModal(false)} />
 

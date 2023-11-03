@@ -56,7 +56,7 @@ function getReferenceCaption(ref) {
         {/*{ !hasContent ? <span>ref id: {ref.id}</span> : null }*/}
         { !hasContent ? <span>{ref.wikitext}</span> : null }
 
-        {ref.link_status
+        {false && ref.link_status
             // display link_status array values
             ? <div className={`ref-link-status-wrapper`}>
 

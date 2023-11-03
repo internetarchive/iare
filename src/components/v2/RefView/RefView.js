@@ -135,7 +135,7 @@ export default function RefView({ open, onClose, details }) {
 
                 <div className="row no-gutters">
 
-                    <div className="col-9">
+                    <div className="xxx.col-9">
                         <div className={'ref-view-content'}>
                             <RefTemplates templates={details.templates} />
                             <RefUrls urls={details.urls} />
@@ -144,11 +144,11 @@ export default function RefView({ open, onClose, details }) {
                         <RefViewFooter details={details} />
                     </div>
 
-                    <div className="col-3">
+                    {false && <div className="col-3">
                         <RefLinkStatus details={details} onClick={onClickLinkStatus} />
                         <RefActions details={details} onAction={handleRefViewAction} />
                         <RefStats details={details} />
-                    </div>
+                    </div>}
 
                 </div>
 

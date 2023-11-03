@@ -242,6 +242,10 @@
     overflow-wrap: break-word;
 }
 
+.url-list .url-row > div {
+    text-align:center !important;
+}
+
 .url-header-row .url-name,
 .url-header-row .url-status,
 .url-header-row .url-arch-iari,
@@ -253,7 +257,13 @@
 .url-header-row .url-sections
 {
     cursor: pointer;
+    text-align:center;
 }
+.url-header-row .url-name,
+.url-list .url-row .url-name {
+    text-align:left !important;
+}
+
 .url-list .archive-yes {
     width:var(--width-check-icon-list);
     height:var(--height-check-icon-list);
@@ -419,4 +429,10 @@ button.utility-button.disabled {
     color: #a6a6a6 !important;
     border-color: #a6a6a6 !important;
     cursor: inherit;
+}
+
+.button-show-ref-list {
+    width:8rem;
+    padding:.5rem !important;
+    opacity: .85;
 }

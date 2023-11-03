@@ -50,7 +50,7 @@ export const URL_ACTION_FILTER_MAP = {
     // },
     bad_live: {
         name: "bad_live",
-        caption: "Show Original Status BAD, Citation Link Status \"live\"",
+        caption: "Show URL Status BAD, Citation Status LIVE",
         desc: "Tooltip description here",
         filterFunction: () => (d) => {
             return (d.status_code < 200 || d.status_code >= 400)
@@ -60,7 +60,7 @@ export const URL_ACTION_FILTER_MAP = {
     },
     good_not_live: {
         name: "good_not_live",
-        caption: "Show Original Status GOOD, Citation Link Status not \"live\"",
+        caption: "Show URL Status GOOD, Citation Status not LIVE",
         desc: "Tooltip description here",
         filterFunction: () => (d) => {
             return (d.status_code >= 200 && d.status_code < 400)
@@ -74,7 +74,7 @@ export const URL_ACTION_FILTER_MAP = {
 export const ARCHIVE_STATUS_FILTER_MAP = {
     iabot: {
         // _: { name: 'IABot'},
-        _: { name: <>Archive<br/>status</>},
+        _: { name: <>Archive<br/>Status</>},
 
         yes: {
             caption: "IABot has archive for URL",

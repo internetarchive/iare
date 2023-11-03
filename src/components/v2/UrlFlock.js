@@ -480,6 +480,7 @@ otherwise, get the className of parent as comparison
             return !u.reference_info?.sections
                 ? null
                 : u.reference_info.sections.map( (s,i) => {
+                    s = (s === 'root'?'Lead':s)
                     return <div key={i}>{s}</div>
                 })
         })
@@ -619,12 +620,12 @@ otherwise, get the className of parent as comparison
                 <div className={"url-name"} onClick={() => {
                     handleSortClick("name")
                 }
-                }>URL</div>
+                }>URL<br/>Link</div>
 
                 <div className={"url-status"} onClick={() => {
                     handleSortClick("status")
                 }
-                }>status</div>
+                }>URL<br/>Status</div>
 
                 {/* TODO this should be within IABOT row renderer */}
                 {fetchMethod === UrlStatusCheckMethods.IABOT.key
@@ -641,7 +642,7 @@ otherwise, get the className of parent as comparison
                         {/*<div className={"url-iabot_status"}>IABot</div>*/}
 
                         <div className={"url-references"} onClick={() => { handleSortClick("references"); } }
-                        >Citation<br/>Link Status</div>
+                        >Citation<br/>Status</div>
 
                         <div className={"url-templates"} onClick={() => { handleSortClick("templates"); } }
                         >Template<br/>Type</div>
@@ -689,7 +690,8 @@ otherwise, get the className of parent as comparison
         } )
 
         return <>
-            {false && flockCaption}
+            {false
+                && flockCaption}
             {/* TODO do something akin to "myMethodRenderer.getHeaderRow" */}
             {flockMetaHeader}
             {flockHeaderRow}

@@ -360,15 +360,15 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
             {urlStatusDisplay}
         </div>
 
-        {null && <div className={'section-sub'}>
+        {false && <div className={'section-sub'}>
             {archiveStatusCaption}
             {archiveStatusFiltersDisplay}
         </div>}
 
-        <div className={'section-sub'}>
+        {false && <div className={'section-sub'}>
             {linkStatusCaption}
             {showCitationLinks ? linkStatusFilters : null}
-        </div>
+        </div>}
     </div>
 
 })
