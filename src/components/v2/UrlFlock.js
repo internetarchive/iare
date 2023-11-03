@@ -546,8 +546,10 @@ otherwise, get the className of parent as comparison
                 // and that this is not the "all" filter,
                 // in which case we disable the "Show All" button
         const buttonRemove = <button
-                className={`utility-button small-button${enableShowAllButton ?'':' disabled'}` }
+            // className={`utility-button small-button${enableShowAllButton ?'':' disabled'}` }
+            className={`utility-button small-button${enableShowAllButton ?'':' disabled'}` }
                 onClick={handleRemoveFilter}
+                disabled={!enableShowAllButton}
                 // className={'utility-button button-remove-url-filter'}
             ><span>{localized['show_all_button_text']}</span></button>
 

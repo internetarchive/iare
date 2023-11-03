@@ -135,7 +135,7 @@
 .url-list-meta-header {
     background-color: var(--color-list-header-bg);
     width: var(--width-url-list);
-    padding:.85rem;
+    padding:.65rem .5rem;
     border: var(--border-default);
     border-bottom:none;
     display:flex;
@@ -414,6 +414,9 @@ h4.url-flock-caption {
     border-radius: var(--choice-fetch-border-radius)
 }
 
-.utility-button.disabled {
-    background-color: #392f67;
+button.utility-button.disabled {
+    background-color: #e4e4e4 !important;
+    color: #a6a6a6 !important;
+    border-color: #a6a6a6 !important;
+    cursor: inherit;
 }
