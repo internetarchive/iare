@@ -31,6 +31,8 @@
     /*--extent-archive-icon: 1.75rem;  !* size of check / x icons in Status Filter Chooser *!*/
     --choice-fetch-color-bg: inherit; /*#d1d5da;*/
     --choice-fetch-border-radius: .375rem;
+
+    --border-default:1px solid black;
 }
 
 #my-url-tooltip {
@@ -418,4 +420,12 @@ button.button-remove-url-filter {
     background-color: var(--choice-fetch-color-bg);
     border:1px solid black;
     border-radius: var(--choice-fetch-border-radius)
+}
+
+.url-list-meta-header {
+    background-color: var(--color-list-header-bg);
+    width: var(--width-url-list);
+    padding:.85rem;
+    border: var(--border-default);
+    border-bottom:none;
 }

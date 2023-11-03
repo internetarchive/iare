@@ -546,6 +546,9 @@ otherwise, get the className of parent as comparison
 
         const buttonCopy = <button onClick={handleCopyClick} className={'utility-button small-button'} ><span>Copy to Clipboard</span></button>
 
+        const flockMetaHeader = <div className={"url-list-meta-header"}>
+            53 URls  (copy to clipboard)
+        </div>
 
         const flockHeaderRow = <div
             className={"url-list-header"}
@@ -648,6 +651,7 @@ otherwise, get the className of parent as comparison
         return <>
             {flockCaption}
             {/* TODO do something akin to "myMethodRenderer.getHeaderRow" */}
+            {flockMetaHeader}
             {flockHeaderRow}
             <div className={"url-list"}
                  onClick={handleRowClick}
