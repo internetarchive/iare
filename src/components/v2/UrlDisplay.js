@@ -170,7 +170,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         // TODO Question: where does tool tip come from? is it generic tooltip for the page?
         return <>
             <div>{props.filter?.caption}</div>
-            <div className={'filter-count'}>{props.filter?.count}</div>
+            <div className={'filter-count'}>{props.filter?.count} items</div>
         </>
     }
 
@@ -232,14 +232,14 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         <div className={"section-box"}>
             <h3>{localized.url_display_title}</h3>
 
-            <ChoiceFetch
+            {false && <ChoiceFetch
                 choices={citationTypes}
                 selectedChoice={selectedCitationType}
                 options={{
                     caption:"Show citations from: ",
                     className:"citation-choices"
                 }}
-                onChange={handleCitationTypeChange} />
+                onChange={handleCitationTypeChange} />}
 
             <ActionFilters
                 filterSet={URL_ACTION_FILTER_MAP}

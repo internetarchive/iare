@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.2.23.0",
-  "version_name": "0.2.23.0.Action filters and citation templates, links and sections",
+  "version": "0.2.23.1",
+  "version_name": "0.2.23.1.fixed no anchor ref for named ref bug",
   "private": true,
   "dependencies": {
     "bootstrap": "^5.3.0-alpha3",

@@ -62,23 +62,38 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
         sortOrder: ["status"]
     })
 
-    const handleSortClick = (sortName) => {
+    const handleSortClick = (sortKey) => {
         // toggle sort direction of specified sort
 
         // TODO eventually we need to add sortName to front of sort.sortOrder array
 
         // selectively change the specified sort type
         // https://stackoverflow.com/questions/43638938/updating-an-object-with-setstate-in-react
-        setSort(prevState => ({
-            sorts: {
-                ...prevState.sorts,
-                [sortName]: {  // TODO NB: must check if sortName is there already and append to array if not
-                    ...prevState.sorts[sortName],
-                    dir: -1 * prevState.sorts[sortName].dir
-                }
-            },
-            sortOrder: [sortName]  // set only one for now...TODO add/move to head of sortOrder array
-        }))
+        setSort(prevState => {
+            if (!(prevState.sorts[sortKey])) {
+                prevState.sorts[sortKey] = { name: sortKey, dir: 1}
+            }
+            return {
+                sorts: {
+                    ...prevState.sorts,
+                    [sortKey]: {  // TODO NB: must check if sortName is there already and append to array if not
+                        ...prevState.sorts[sortKey],
+                        dir: -1 * prevState.sorts[sortKey].dir
+                    }
+                },
+                sortOrder: [sortKey]  // set only one for now...TODO add/move to head of sortOrder array
+            }
+        })
+    }
+
+    const sortByName = (a,b) => {
+        const nameA = a.url
+        const nameB = b.url
+
+        // respect sortDir
+        if (nameA < nameB) return sort.sorts['name'].dir * -1;
+        if (nameA > nameB) return sort.sorts['name'].dir;
+        return 0;
     }
 
     const sortByStatus = (a,b) => {
@@ -156,7 +171,10 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
     const sortFunction = (a,b) => {
         // TODO make this recursive to do collection of sort definitions as described in a "sort.sortOrder" array of key names for sort methods
         // TODO e.g: sort.sortOrder = ["references", "arch_wbm", "name"]
-        if(sort.sortOrder[0] === "status") {
+        if(sort.sortOrder[0] === "name") {
+            return sortByName(a,b)
+        }
+        else if(sort.sortOrder[0] === "status") {
             return sortByStatus(a,b)
         }
         else if(sort.sortOrder[0] === "arch_iari") {
@@ -451,7 +469,7 @@ otherwise, get the className of parent as comparison
         const getArchIaStatus = (u => <span className={u.searchurldata_archived ? "archive-yes" : "archive-no" }></span> )
         // const getArchTmpltStatus = (u => <span className={u.hasTemplateArchive ? "archive-yes" : "archive-no" }></span> )
 
-        // // TODO this should be within IABOT row renderer
+        // // TODO this should be within a passed in a "IABOT row renderer"
         // const getIabotStatus = (u => {
         //     if (!u.searchurldata_status) {
         //         return ''
@@ -651,7 +669,7 @@ otherwise, get the className of parent as comparison
         return <>
             {flockCaption}
             {/* TODO do something akin to "myMethodRenderer.getHeaderRow" */}
-            {flockMetaHeader}
+            {false && flockMetaHeader}
             {flockHeaderRow}
             <div className={"url-list"}
                  onClick={handleRowClick}
