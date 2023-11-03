@@ -39,7 +39,7 @@ example:
 useSort and sort: apply sorting if set to true, use ASC if sortDir is true, DESC otherwise
 
 */
-export default function UrlFlock({ urlArray,
+const urlFlock = React.memo( function UrlFlock({ urlArray,
                                      urlFilters = {},  // keyed object of filter definitions to apply to urlArray for final url list display
                                      onAction,
                                      selectedUrl = '',
@@ -682,4 +682,6 @@ otherwise, get the className of parent as comparison
         </div>
         {tooltip}
     </>
-}
+})
+
+export default urlFlock

@@ -29,7 +29,8 @@
 
     /* deprecated? */
     /*--extent-archive-icon: 1.75rem;  !* size of check / x icons in Status Filter Chooser *!*/
-
+    --choice-fetch-color-bg: inherit; /*#d1d5da;*/
+    --choice-fetch-border-radius: .375rem;
 }
 
 #my-url-tooltip {
@@ -283,10 +284,6 @@ xxx.url-list-header .url-header-row .url-arch_tmplt {
 }
 
 
-/* url actionable filter buttons */
-
-
-
 /* url archive status filter buttons */
 
 .archive-status-filter-buttons button:hover {
@@ -414,4 +411,11 @@ button.button-remove-url-filter {
     position:relative;
     top:-.25rem;
     padding:.135rem .45rem;
+}
+
+.choice-fetch-items.citation-choices {
+    padding:.5rem .65rem;
+    background-color: var(--choice-fetch-color-bg);
+    border:1px solid black;
+    border-radius: var(--choice-fetch-border-radius)
 }

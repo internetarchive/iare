@@ -39,6 +39,7 @@
     --border-list:1px solid black;
 
     --radio-button-magnify:1.35;
+
 }
 
 body {
@@ -343,9 +344,21 @@ table.single-detail tr td:not(:first-child) {
 }
 
 
+/* defaults for ChoiceFetch component */
+
+.choice-fetch-items {
+    display:flex;
+    margin-bottom:.5rem;
+    font-size: .85rem;
+    color:var(--color-h4)
+}
+.choice-fetch-item {
+    margin-left: .8rem;
+}
 
 
-            /*.status-check-methods {*/
+
+/*.status-check-methods {*/
             /*    display: flex;*/
             /*    flex-direction: row;*/
             /*    font-size:.9rem;*/

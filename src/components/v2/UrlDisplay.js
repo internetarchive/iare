@@ -9,6 +9,7 @@ import {REF_LINK_STATUS_FILTERS} from "./filters/refFilterMaps";
 import {URL_ACTION_FILTER_MAP} from "./filters/urlFilterMaps";
 import {ConfigContext} from "../../contexts/ConfigContext";
 import FilterButtons from "../FilterButtons";
+import ChoiceFetch from "../ChoiceFetch";
 // import {UrlStatusCheckMethods} from "../../constants/endpoints";
 
 const localized = {
@@ -16,7 +17,7 @@ const localized = {
     "Actionable": "Actionable",
 }
 
-function ActionFilters( {filterSet=null, filterRender, flock = [], onAction, options = {}, currentFilterName = '', className = null}) {
+function ActionFilters( {filterSet= null, filterRender, flock = [], onAction, options = {}, currentFilterName = '', className = null}) {
     const handleActionable = (actionable) => {
         onAction({
             action: "setUrlActionFilter", value: actionable,
@@ -46,10 +47,12 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
     const [refFilter, setRefFilter] = useState( null ); // filter to pass in to RefFlock
     const [selectedUrl, setSelectedUrl] = useState(''); // currently selected url in url list
     const [selectedUrlActionFilterName, setSelectedUrlActionFilterName] = useState('')
+    const [selectedCitationType, setSelectedCitationType] = useState('')
 
 
     let myConfig = React.useContext(ConfigContext);
     myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
+
 
     // calculate url stats
     useEffect( () => {
@@ -144,7 +147,15 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
     }, [urlStatusFilterMap])
 
 
-    if (!pageData) return null;
+    if (!pageData) return null;  /// NB must be put AFTER useEffect and useCallback, as these hooks cannot after conditional statements
+
+
+    const handleCitationTypeChange = (e) => {
+        const citationType = e.target.value
+        console.log("Citation type changed to: " + citationType + ", take appropriate filter action")
+        setSelectedCitationType(citationType)
+    }
+
 
 
     const renderUrlActionButton = (props) => {
@@ -190,6 +201,21 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         }
     }
 
+    const citationTypes = {
+        "footnotes": {
+            caption: "Footnotes",
+            value: "footnotes"
+        },
+        "sections": {
+            caption: "General Sections",
+            value: "sections"
+        },
+        "all": {
+            caption: "All",
+            value: "all"
+        },
+    }
+
     const refArray = (pageData.references)
 
     // const copyButton = <button onClick={handleCopyClick} className={'utility-button'} ><span>Copy to Clipboard</span></button>
@@ -205,6 +231,15 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
         <div className={"section-box"}>
             <h3>{localized.url_display_title}</h3>
+
+            <ChoiceFetch
+                choices={citationTypes}
+                selectedChoice={selectedCitationType}
+                options={{
+                    caption:"Show citations from: ",
+                    className:"citation-choices"
+                }}
+                onChange={handleCitationTypeChange} />
 
             <ActionFilters
                 filterSet={URL_ACTION_FILTER_MAP}
