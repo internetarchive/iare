@@ -53,6 +53,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
     const [openModal, setOpenModal] = useState(false)
     const [refDetails, setRefDetails] = useState(null);
 
+// eslint-disable-next-line
     const [showRefList, setShowRefList] = useState(false);
 
     let myConfig = React.useContext(ConfigContext);
@@ -330,9 +331,9 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
         {/* References List is tentative - may go away soon... */}
         {true && <div className={"section-box"}>
-            <button className={"utility-button small-button button-show-ref-list"} style={{display:"inline-block"}}
-                    onClick={() => {setShowRefList(prevState => !prevState)}}
-            ><span>{showRefList ? 'Hide' : 'Show'} Reference List<br/><br/>This is temporary while the interface is being developed</span></button>
+            {/*<button className={"utility-button small-button button-show-ref-list"} style={{display:"inline-block"}}*/}
+            {/*        onClick={() => {setShowRefList(prevState => !prevState)}}*/}
+            {/*><span>{showRefList ? 'Hide' : 'Show'} Reference List<br/><br/>This is temporary while the interface is being developed</span></button>*/}
 
 
             {showRefList && <>

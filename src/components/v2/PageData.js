@@ -550,7 +550,7 @@ export default function PageData({pageData = {}}) {
         {isLoadingUrls ? <Loader message={"Retrieving URL status codes..."}/>
             : (dataReady ? <div className={"page-data"} xxstyle={{backgroundColor:"grey"}}>
 
-                        {false && viewOptions}
+                        {true && viewOptions}
 
                         <div className={`display-content`}>
 
