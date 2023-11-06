@@ -13,28 +13,28 @@ const localized = {
 const urlListDef = {
     columns : {
         "url-name": {
-            ttHeader: `<div>URL link text</div>`,
-            ttData: `<div>Link text of URL</div>`
+            ttHeader: `<div>URL Link Text</div>`,
+            ttData: `<div>Link Text of URL</div>`
         },
         "url-status": {
-            ttHeader: `<div>HTTP status code of primary URL</div>`,
+            ttHeader: `<div>HTTP Status Code of Primary URL</div>`,
             ttData: `<div>{status_code} : {statusDescription}</div>`
         },
         "url-iabot_status": {
-            ttHeader: `<div>URL status reported by IABot</div>`,
+            ttHeader: `<div>URL Status reported by IABot</div>`,
             ttData: `placeholder`,
         },
         "url-references": {
-            ttHeader: `<div>URL status as indicated by citation template ("url-status" parameter)</div>`,
-            ttData: '<div>Link status as indicated in Citation</div>',
+            ttHeader: `<div>URL Status as indicated by Citation Template "url-status" Parameter</div>`,
+            ttData: '<div>Link Status as indicated in Citation</div>',
         },
         "url-templates": {
-            ttHeader: `<div>Names of templates used by citation</div>`,
+            ttHeader: `<div>Names of Templates used by Citation</div>`,
             ttData: `<div>Templates used by Citation</div>`,
         },
         "url-sections": {
             ttHeader: `<div>Section in Wikipedia article where Citation is defined</div>`,
-            ttData: `Section in Wikipedia article where reference originated`,
+            ttData: `Section in Wikipedia article where Reference originated`,
         },
 
         // archive flavors; NB only IABot is used practically
@@ -47,7 +47,7 @@ const urlListDef = {
             ttData: ``,
         },
         "url-arch_tmplt": {
-            ttHeader: `<div>Archive found in archive_url<br/>parameter of citation template</div>`,
+            ttHeader: `<div>Archive found in "archive_url"<br/>parameter of citation template</div>`,
             ttData: ``,
         },
 
@@ -299,14 +299,14 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
             // WBM archive status column special handling
             html = row.dataset.live_state
                 ? `<div>${row.dataset.live_state}: ${iabotLiveStatusCodes[row.dataset.live_state]}` +
-                    `<br/>${row.dataset.arch_wbm === "true" ? 'Archived' : 'Not archived'}</div>`
+                    `<br/>${row.dataset.arch_wbm === "true" ? 'Archived' : 'Not Archived'}</div>`
                 : ''
 
         } else if (myClassName === "url-references") {
             // live status from template special handling
             html = row.dataset.live_status && row.dataset.live_status !== '--'
-                ? `<div>Link status ${'"' + row.dataset.live_status + '"'} as indicated in Citation</div>`
-                : `<div>No link status defined in Citation</div>`
+                ? `<div>Link Status ${'"' + row.dataset.live_status + '"'} as indicated in Citation</div>`
+                : `<div>No Link Status defined in Citation</div>`
 
         } else {
             // show tooltip from list definition

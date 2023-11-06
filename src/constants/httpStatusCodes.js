@@ -60,11 +60,11 @@ export const httpStatusCodes = {
 }
 
 export const iabotLiveStatusCodes = {
-    "alive": "Link is good",
-    "dead": "Link has been dead for several tries",
-    "dying": "Link has been dead, but still trying",
-    "permalive": "Link is always set as alive",
-    "permadead": "Link is set as always dead",
-    "paywalled" : "Link behind paywall",
-    "unknown" : "Link status unknown",
+    "alive": "Link is Good",
+    "dead": "Link has been Dead for several tries",
+    "dying": "Link has been Dead, but still trying",
+    "permalive": "Link is always set as Alive",
+    "permadead": "Link is set as Always Dead",
+    "paywalled" : "Link behind Paywall",
+    "unknown" : "Link Status unknown",
 }
