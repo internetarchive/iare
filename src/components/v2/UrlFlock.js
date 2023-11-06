@@ -532,7 +532,7 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
 
         const flockMetaHeader = <div className={"url-list-meta-header"}>
             <div>
-                <h4 className={"url-flock-caption"}>{firstLineCaption}</h4>{buttonCopy}
+                <h4 className={"url-flock-caption"}>{firstLineCaption}</h4> {buttonCopy}
             </div>
             <div>{buttonRemove}</div>
         </div>
@@ -543,19 +543,19 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
         const allFilterNames = Object.keys(flockFilters)
         const oneFilter = allFilterNames?.length > 0 ?  flockFilters[allFilterNames[0]] : {} // first filter only gets "info treatment"
         const flockInfoHeader = <div className={"url-list-info-header"}>
-            {oneFilter.desc
+            {oneFilter?.desc
                 ? <div>
-                    <div className={"flock-info-condition"}>Condition:</div>
+                    <div className={"flock-info-condition" + (oneFilter.fixit ? '' : ' condition-calm')}>Condition:</div>
                     <div>{oneFilter.desc}</div>
                   </div>
                 : <div>
-                    <div className={"flock-info-condition"}>Condition:</div>
+                    <div className={"flock-info-condition condition-calm"}>Condition:</div>
                     <div>No Conditions applied; All URLs shown.</div>
                   </div>
             }
-            {oneFilter.fixit
+            {oneFilter?.fixit
                 ? <div>
-                <div className={"flock-info-condition"}>To Fix:</div>
+                <div className={"flock-info-tofix"}>To Fix:</div>
                 <div>{oneFilter.fixit}</div>
                 </div>
                 : null}

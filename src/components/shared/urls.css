@@ -162,10 +162,19 @@
 .url-list-info-header > div:first-of-type {
     margin-top:0;
 }
-.url-list-info-header div.flock-info-condition {
+.url-list-info-header div.flock-info-condition,
+.url-list-info-header div.flock-info-tofix {
     font-weight: bold;
     width: 6rem;
-    color:red;
+}
+.url-list-info-header div.flock-info-condition {
+    color:#ce6347;
+}
+.url-list-info-header div.flock-info-condition.condition-calm {
+    color:inherit;
+}
+.url-list-info-header div.flock-info-tofix {
+    color: #2177c0;
 }
 
 .url-list .url-row.url-row-error {
