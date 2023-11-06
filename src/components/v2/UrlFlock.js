@@ -141,10 +141,12 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
         const statusA = a.reference_info?.statuses?.length ? a.reference_info.statuses[0] : ''
         const statusB = b.reference_info?.statuses?.length ? b.reference_info.statuses[0] : ''
 
-        // respect sortDir
-        if (statusA < statusB) return sort.sorts['references'].dir * -1;
-        if (statusA > statusB) return sort.sorts['references'].dir;
-        return 0;
+        // // respect sortDir
+        // if (statusA < statusB) return sort.sorts['references'].dir * -1;
+        // if (statusA > statusB) return sort.sorts['references'].dir;
+        // return 0;
+
+        return sort.sorts['references'].dir * ((statusA > statusB)?1:(statusA < statusB?-1:0));
     }
 
     const sortByTemplate = (a,b) => {

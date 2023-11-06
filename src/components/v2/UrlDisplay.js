@@ -6,7 +6,7 @@ import '../shared/urls.css';
 import '../shared/filters.css';
 // import {convertToCSV, copyToClipboard} from "../../utils/utils";
 import {REF_LINK_STATUS_FILTERS} from "./filters/refFilterMaps";
-import {URL_ACTION_FILTER_MAP} from "./filters/urlFilterMaps";
+import {ACTIONABLE_FILTER_MAP} from "./filters/urlFilterMaps";
 import {ConfigContext} from "../../contexts/ConfigContext";
 import FilterButtons from "../FilterButtons";
 import ChoiceFetch from "../ChoiceFetch";
@@ -144,8 +144,8 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         }
 
         if (action === "setUrlActionFilter") {
-            // filter References as determined by conditions set by chosen Action
-            const f = value ? URL_ACTION_FILTER_MAP[value] : null
+            // filter References as determined by action.value as key into actionable filter map
+            const f = value ? ACTIONABLE_FILTER_MAP[value] : null
             setUrlFilters( { "action_filter": f } )
             setSelectedUrlActionFilterName(value)
         }
@@ -239,7 +239,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             value: "footnotes"
         },
         "sections": {
-            caption: "General Sections",
+            caption: "Other Sections",
             value: "sections"
         },
         "all": {
@@ -258,29 +258,48 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
     console.log("UrlDisplay: render");
 
+    const showChoiceFetch = false;
+
     return <>
 
         <div className={"section-box"}>
             <h3>{localized.url_display_title}</h3>
 
-            {false && <ChoiceFetch
-                choices={citationTypes}
-                selectedChoice={selectedCitationType}
-                options={{
-                    caption:"Show citations from: ",
-                    className:"citation-choices"
-                }}
-                onChange={handleCitationTypeChange} />}
+            {showChoiceFetch
+                ? <div className={"row"}>
+                    <div className={"col-9"}>
+                        <ActionFilters
+                            filterSet={ACTIONABLE_FILTER_MAP}
+                            filterRender={renderUrlActionButton}
+                            flock={pageData.urlArray}
+                            onAction={handleAction}
+                            options ={{}}
+                            currentFilterName={selectedUrlActionFilterName}
+                            className={"url-action-filter-buttons"}
+                        />
+                    </div>
+                        <div className={"col-3"}>
+                            <ChoiceFetch
+                                choices={citationTypes}
+                                selectedChoice={selectedCitationType}
+                                options={{
+                                    caption:<h4>Show Citations from: </h4>,
+                                    className:"citation-choices"
+                                }}
+                                onChange={handleCitationTypeChange} />
+                        </div>
+                    </div>
 
-            <ActionFilters
-                filterSet={URL_ACTION_FILTER_MAP}
-                filterRender={renderUrlActionButton}
-                flock={pageData.urlArray}
-                onAction={handleAction}
-                options ={{}}
-                currentFilterName={selectedUrlActionFilterName}
-                className={"url-action-filter-buttons"}
-            />
+                : <ActionFilters
+                    filterSet={ACTIONABLE_FILTER_MAP}
+                    filterRender={renderUrlActionButton}
+                    flock={pageData.urlArray}
+                    onAction={handleAction}
+                    options ={{}}
+                    currentFilterName={selectedUrlActionFilterName}
+                    className={"url-action-filter-buttons"}
+                    />
+            }
 
             <UrlFlock urlArray={pageData.urlArray}
                       urlFilters={urlFilters}
@@ -291,7 +310,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         </div>
 
         <div className={"section-box url-overview-column"}>
-            <h3>Filters</h3>
+            {/*<h3>Filters</h3>*/}
             <UrlOverview pageData={pageData} statistics={urlStatistics} onAction={handleAction}/>
         </div>
 

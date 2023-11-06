@@ -351,6 +351,7 @@ table.single-detail tr td:not(:first-child) {
 
 .choice-fetch-items {
     display:flex;
+    flex-direction:column;
     margin-bottom:.5rem;
     font-size: .85rem;
     color:var(--color-h4)

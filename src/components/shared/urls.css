@@ -420,8 +420,8 @@ h4.url-flock-caption {
 .choice-fetch-items.citation-choices {
     padding:.5rem .65rem;
     background-color: var(--choice-fetch-color-bg);
-    border:1px solid black;
-    border-radius: var(--choice-fetch-border-radius)
+    /*border:1px solid black;*/
+    /*border-radius: var(--choice-fetch-border-radius)*/
 }
 
 button.utility-button.disabled {

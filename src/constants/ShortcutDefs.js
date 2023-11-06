@@ -11,20 +11,31 @@ const ShortcutDefs = {
         label : "Lindsay Lohan",
         value : "https://en.wikipedia.org/wiki/Lindsay_Lohan"
     },
-    "easterIslandFilename"  : {
+    "easterIsland"  : {
         label : "Easter Island",
         value : "https://en.wikipedia.org/wiki/Easter_Island"
     },
-    "internetArchiveFilename"  : {
+    "internetArchive"  : {
         label : "Internet Archive",
         value : "https://en.wikipedia.org/wiki/Internet_Archive"
     },
+
+
+    "jamesWebb"  : {
+        label : "James Webb Shortcut",
+        value : "https://en.wikipedia.org/wiki/James_Webb_Space_Telescope"
+    },
+    "marcBolan"  : {
+        label : "Marc Bolan",
+        value : "https://en.wikipedia.org/wiki/Marc_Bolan"
+    },
+
 
     "defaultFile"  : {
         label : "Easter Island Version 1",
         value : "http://18.217.22.248/v1/get-statistics?lang=en&site=wikipedia&title=Easter_Island"
     },
-    "easterIsland"  : {
+    "easterIslandV1"  : {
         label : "Easter Island Version 1",
         value : "http://18.217.22.248/v1/get-statistics?lang=en&site=wikipedia&title=Easter_Island"
     },
@@ -32,21 +43,13 @@ const ShortcutDefs = {
         label : "Easter Island Wiki Stats",
         value : "https://archive.org/services/context/wari/v2/statistics/article?lang=en&site=wikipedia&title=Easter_Island",
     },
-    "internetArchive"  : {
+    "internetArchiveV1"  : {
         label : "Internet Archive Shortcut",
         value : "http://18.217.22.248/v1/get-statistics?lang=en&site=wikipedia&title=Internet_Archive"
     },
     "internetArchive2"  : {
         label : "Internet Archive Wiki Stats",
         value : "https://archive.org/services/context/wari/v2/statistics/article?lang=en&site=wikipedia&title=Internet_Archive"
-    },
-    "jamesWebb"  : {
-        label : "James Webb Shortcut",
-        value : "http://18.217.22.248/v1/get-statistics?lang=en&site=wikipedia&title=James_Webb_Space_Telescope"
-    },
-    "marcBolan"  : {
-        label : "Marc Bolan Shortcut",
-        value : "http://18.217.22.248/v1/get-statistics?lang=en&site=wikipedia&title=Marc_Bolan"
     },
 
     "pdfCovid"  : {

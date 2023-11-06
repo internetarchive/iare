@@ -30,12 +30,16 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         setDebug(!isDebug);
     }
 
-    // production mode shows limited shortcuts, vs. staging which allows for more testing
+    // production mode shows limited shortcuts
+    // staging shows a little more for testing
+    // everything else (my dev env, e.g.) shows lots more
     const shortcuts = env === 'env-production'
-        ? ['easterIslandFilename', 'internetArchiveFilename', 'pdfCovid',]
+        ? ['easterIsland', 'internetArchive', 'pdfCovid',]
         : env === 'env-staging'
-            ? ['easterIslandFilename', 'internetArchiveFilename', 'short_test', 'pdfOneLink']
-            : ['easterIslandFilename', 'internetArchiveFilename', 'karen_bakker', 'short_test', 'pdfDesantis', 'pdfOneLink'];
+            ? ['easterIsland', 'internetArchive', 'short_test', 'pdfOneLink']
+
+              // my developement buttons
+            : ['marcBolan', 'easterIsland', 'internetArchive', 'karen_bakker', 'short_test', 'pdfDesantis', 'pdfOneLink'];
 
 
     // add class to body to indicate environment

@@ -42,17 +42,18 @@ export const URL_STATUS_FILTER_MAP = {
 
 };
 
-export const URL_ACTION_FILTER_MAP = {
+export const ACTIONABLE_FILTER_MAP = {
     // all: {
     //     caption: "Show All",
     //     desc: "no filter",
-    //     filterFunction: () => () => {return true},
+    //     filterFunction: () => () => {return true},  // NB function returns function
     // },
     bad_live: {
         name: "bad_live",
-        caption: "Show URL Status BAD, Citation Status LIVE",
+        caption: "URL Status BAD, Citation Status LIVE",
         desc: "Tooltip description here",
         filterFunction: () => (d) => {
+            // reference_info.statuses is an aggregate of
             return (d.status_code < 200 || d.status_code >= 400)
                 &&
                 (d.reference_info?.statuses?.length && d.reference_info.statuses.includes('live'));
@@ -60,7 +61,7 @@ export const URL_ACTION_FILTER_MAP = {
     },
     good_not_live: {
         name: "good_not_live",
-        caption: "Show URL Status GOOD, Citation Status not LIVE",
+        caption: "URL Status GOOD, Citation Status NOT LIVE",
         desc: "Tooltip description here",
         filterFunction: () => (d) => {
             return (d.status_code >= 200 && d.status_code < 400)
