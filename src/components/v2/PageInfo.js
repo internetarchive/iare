@@ -29,6 +29,24 @@ export default function PageInfo({ pageData }) {
         copyToClipboard( JSON.stringify(pageData.urlArray), "URL Data" )
     }
 
+    const handleCopyUrlArrayCsv = () => {
+        // copyToClipboard( JSON.stringify(pageData.urlArray), "URL Data" )
+
+        const urlData = pageData.urlArray.map( url => {
+            return [
+                url["url"]
+            ]
+        })
+
+        // add column labels
+        urlData.unshift( [
+            'url',
+        ] )
+
+        copyToClipboard( convertToCSV(urlData), "Url Data" )
+
+    }
+
 
     const handleCopyCiteRefs = () => {
         // gathers cite_ref parallel ref data to try to match it up.
@@ -54,6 +72,31 @@ export default function PageInfo({ pageData }) {
         copyToClipboard( convertToCSV(citeRefData), "CiteRef Data" )
     }
 
+    const handleCopyRefs = () => {
+        // gathers reference data into CS.
+
+        const refData = pageData.references.map( _ref => {
+            return [
+                _ref["id"],
+                _ref["name"],
+                _ref["type"],
+                _ref["footnote_subtype"],
+                _ref["wikitext"],
+            ]
+        })
+
+        // add column labels
+        refData.unshift( [
+            'ref_id',
+            'name',
+            'type',
+            'subtype',
+            'wikitext',
+        ] )
+
+        copyToClipboard( convertToCSV(refData), "Reference Data" )
+    }
+
 
 
     return <div className="page-info">
@@ -77,8 +120,10 @@ export default function PageInfo({ pageData }) {
 
                 <p>endpoint: <a href={pageData.endpoint} target={"_blank"} rel={"noreferrer"}>{pageData.endpoint}</a></p>
 
-                <ClickButton buttonText={"Copy CiteRefs to Clipboard"} handleClick={handleCopyCiteRefs} />
-                <ClickButton buttonText={"Copy UrlArray to Clipboard"} handleClick={handleCopyUrlArray} />
+                <ClickButton buttonText={"Copy CiteRefs to CSV"} handleClick={handleCopyCiteRefs} />
+                <ClickButton buttonText={"Copy Reference Data to CSV"} handleClick={handleCopyRefs} />
+                <ClickButton buttonText={"Copy UrlArray to clipboard (JSON)"} handleClick={handleCopyUrlArray} />
+                <ClickButton buttonText={"Copy UrlArray to CSV"} handleClick={handleCopyUrlArrayCsv} />
 
                 <div style={{display: "flex", flexDirection: "row"}}>
 

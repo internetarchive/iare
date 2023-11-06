@@ -1,40 +1,40 @@
 export const URL_STATUS_FILTER_MAP = {
     all: {
         caption: "Show All",
-        desc: "no filter",
+        desc: "All URLs are shown",
         filterFunction: () => () => {return true},
     },
     status2XX: {
         caption: "Status 2XX",
-        desc: "'",
+        desc: "URL Link HTTP Status code is in the 2XX range.",
         filterFunction: () => (d) => {
             return d.status_code >= 200 && d.status_code < 300;
         },
     },
     status3XX: {
         caption: "Status 3XX",
-        desc: "'",
+        desc: "URL Link HTTP Status code is in the 3XX range.",
         filterFunction: () => (d) => {
             return d.status_code >= 300 && d.status_code < 400;
         },
     },
     status4XX: {
         caption: "Status 4XX",
-        desc: "'",
+        desc: "URL Link HTTP Status code is in the 4XX range.",
         filterFunction: () => (d) => {
             return d.status_code >= 400 && d.status_code < 500;
         },
     },
     status5XX: {
         caption: "Status 5XX",
-        desc: "'",
+        desc: "URL Link HTTP Status code is in the 5XX range.",
         filterFunction: () => (d) => {
             return d.status_code >= 500 && d.status_code < 600;
         },
     },
     statusUnknown: {
         caption: "Unknown Status",
-        desc: "'",
+        desc: "URL Link HTTP Status is Unknown, possibly because of non-response.",
         filterFunction: () => (d) => {
             return !d.status_code;
         },
@@ -51,7 +51,9 @@ export const ACTIONABLE_FILTER_MAP = {
     bad_live: {
         name: "bad_live",
         caption: "URL Status BAD, Citation Status LIVE",
-        desc: "Tooltip description here",
+        desc: "URL Status BAD, Citation Status LIVE",
+        tooltip: `<div>Original URL Status is NOT 2XX or 3XX<br/>AND<br/>Template Parameter "url_status" is set to "live"</div>`,
+        fixit: <div>Set "url_status" parameter in Citation Template to "dead"</div>,
         filterFunction: () => (d) => {
             // reference_info.statuses is an aggregate of
             return (d.status_code < 200 || d.status_code >= 400)
@@ -62,7 +64,9 @@ export const ACTIONABLE_FILTER_MAP = {
     good_not_live: {
         name: "good_not_live",
         caption: "URL Status GOOD, Citation Status NOT LIVE",
-        desc: "Tooltip description here",
+        desc: "URL Status GOOD, Citation Status NOT LIVE",
+        tooltip: `<div>Original URL Status IS 2XX or 3XX<br/>AND<br/>Template Parameter "url_status" is NOT set to "live"</div>`,
+        fixit: <div>Set "url_status" parameter in Citation Template to "live"</div>,
         filterFunction: () => (d) => {
             return (d.status_code >= 200 && d.status_code < 400)
                 &&

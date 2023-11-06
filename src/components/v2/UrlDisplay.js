@@ -4,13 +4,13 @@ import RefFlock from "./RefFlock";
 import UrlOverview from "./UrlOverview";
 import '../shared/urls.css';
 import '../shared/filters.css';
-// import {convertToCSV, copyToClipboard} from "../../utils/utils";
 import {REF_LINK_STATUS_FILTERS} from "./filters/refFilterMaps";
 import {ACTIONABLE_FILTER_MAP} from "./filters/urlFilterMaps";
 import {ConfigContext} from "../../contexts/ConfigContext";
 import FilterButtons from "../FilterButtons";
 import ChoiceFetch from "../ChoiceFetch";
 import RefView from "./RefView/RefView";
+import {Tooltip as MyTooltip} from "react-tooltip";
 // import {UrlStatusCheckMethods} from "../../constants/endpoints";
 
 const localized = {
@@ -18,7 +18,7 @@ const localized = {
     "Actionable": "Actionable",
 }
 
-function ActionFilters( {filterSet= null, filterRender, flock = [], onAction, options = {}, currentFilterName = '', className = null}) {
+function ActionFilters( {filterSet= null, filterRender, flock = [], onAction, options = {}, currentFilterName = '', tooltipId='', className = null}) {
     const handleActionable = (actionable) => {
         onAction({
             action: "setUrlActionFilter", value: actionable,
@@ -32,6 +32,7 @@ function ActionFilters( {filterSet= null, filterRender, flock = [], onAction, op
         caption={<>{localized.Actionable}<span className={"inferior"}> - These are the things that can be fixed right now</span></>}
         currentFilterName={currentFilterName}  // sets "pressed" default selection
         className={className}
+        tooltipId={tooltipId}
         onRender={filterRender}  // how to render each button
     />
 
@@ -40,8 +41,7 @@ function ActionFilters( {filterSet= null, filterRender, flock = [], onAction, op
 
 
 export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {}, urlArchiveFilterDefs = {} } ) {
-    // pageData.urlArray is filtered and displayed
-    // urlStatusFilterMap and urlArchiveFilterDefs describe available filters that we show here
+    // pageData.urlArray displayed with UrlFlock with filter maps applied
 
     const [urlStatistics, setUrlStatistics] = useState({});
     const [urlFilters, setUrlFilters] = useState( null ); // keyed object of url filters to pass in to UrlFlock  TODO: implement UrlFilter custom objects
@@ -260,9 +260,20 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
     const showChoiceFetch = false;
 
+    const actionableTooltip = <MyTooltip id="tooltip-actionable"
+                               float={true}
+                               closeOnEsc={true}
+                               delayShow={420}
+                               variant={"info"}
+                               noArrow={true}
+                               offset={5}
+                               className={"tooltip-actionable"}
+    />
+
     return <>
 
         <div className={"section-box"}>
+            {actionableTooltip}
             <h3>{localized.url_display_title}</h3>
 
             {showChoiceFetch
@@ -275,7 +286,8 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                             onAction={handleAction}
                             options ={{}}
                             currentFilterName={selectedUrlActionFilterName}
-                            className={"url-action-filter-buttons"}
+                            className={'url-action-filter-buttons'}
+                            tooltipId={'tooltip-actionable'}
                         />
                     </div>
                         <div className={"col-3"}>
@@ -298,6 +310,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                     options ={{}}
                     currentFilterName={selectedUrlActionFilterName}
                     className={"url-action-filter-buttons"}
+                    tooltipId={'tooltip-actionable'}
                     />
             }
 
@@ -315,6 +328,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         </div>
 
 
+        {/* References List is tentative - may go away soon... */}
         {true && <div className={"section-box"}>
             <button className={"utility-button small-button button-show-ref-list"} style={{display:"inline-block"}}
                     onClick={() => {setShowRefList(prevState => !prevState)}}

@@ -9,6 +9,7 @@ export default function FilterButtons ( {
                 onClick,
                 caption = <>Filters</>,
                 className = null,
+                tooltipId = null,
                 currentFilterName = "",
                 onRender = null
            }) {
@@ -43,9 +44,10 @@ export default function FilterButtons ( {
                     onClick={handleClick}
 
                     desc={f.desc}
+                    tooltip={f.tooltip}
                     useDesc={false}
                     onRender={onRender}
-
+                    tooltipId={tooltipId}
                     filter={f}
                     />
             })}

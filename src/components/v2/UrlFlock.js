@@ -10,6 +10,50 @@ const localized = {
     "show_all_button_text":"Show All",
 }
 
+const urlListDef = {
+    columns : {
+        "url-name": {
+            ttHeader: `<div>URL link text</div>`,
+            ttData: `<div>Link text of URL</div>`
+        },
+        "url-status": {
+            ttHeader: `<div>HTTP status code of primary URL</div>`,
+            ttData: `<div>{status_code} : {statusDescription}</div>`
+        },
+        "url-iabot_status": {
+            ttHeader: `<div>URL status reported by IABot</div>`,
+            ttData: `placeholder`,
+        },
+        "url-references": {
+            ttHeader: `<div>URL status as indicated by citation template ("url-status" parameter)</div>`,
+            ttData: '<div>Link status as indicated in Citation</div>',
+        },
+        "url-templates": {
+            ttHeader: `<div>Names of templates used by citation</div>`,
+            ttData: `<div>Templates used by Citation</div>`,
+        },
+        "url-sections": {
+            ttHeader: `<div>Section in Wikipedia article where Citation is defined</div>`,
+            ttData: `Section in Wikipedia article where reference originated`,
+        },
+
+        // archive flavors; NB only IABot is used practically
+        "url-arch-iari": {
+            ttHeader: `<div>Archive found within set of<br/>URLs returned from IARI</div>`,
+            ttData: ``,
+        },
+        "url-arch_wbm": {
+            ttHeader: `<div>Archive exists in IABot database</div>`,
+            ttData: ``,
+        },
+        "url-arch_tmplt": {
+            ttHeader: `<div>Archive found in archive_url<br/>parameter of citation template</div>`,
+            ttData: ``,
+        },
+
+    }
+}
+
 /*
 assumes urlArray is an array of url objects:
     [
@@ -45,13 +89,14 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
                                      selectedUrl = '',
                                      extraCaption = null,
                                      fetchMethod="" }) {
-    // TODO maybe should not use memo here
+    // TODO maybe should not/don't have to use memo here??
 
     const [urlTooltipHtml, setUrlTooltipHtml] = useState( '<div>ToolTip<br />second line' );
-    // TODO fix tooltip using React.useRef somehow so that re-render is avoided upon every tooltip text/html change
+        // TODO there is a bug where sort re-renders list every time tooltip text/html property is updated
+        // TODO maybe fix using React.useRef somehow???
 
     const [sort, setSort] = useState({
-        sorts: {
+        sorts: {  // holds sort value for all different sort types
             "status": {name: "status", dir: 1},  // dir: 1 is asc, -1 is desc, 0 is do not sort
             "arch_iari": {name: "arch_iari", dir: 1},
             "arch_wbm": {name: "arch_wbm", dir: -1},
@@ -60,20 +105,20 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
             "templates": {name: "templates", dir: -1},
             "sections": {name: "sections", dir: -1},
         },
-        sortOrder: ["status"]
+        sortOrder: ["status"]  // which sorts get applied and in what order. NB this is not implemented yet, but will be
     })
 
     const handleSortClick = (sortKey) => {
-        // toggle sort direction of specified sort
-
-        // TODO eventually we need to add sortName to front of sort.sortOrder array
+        // toggle sort direction of specified sort and set new sort state with setSort
 
         // selectively change the specified sort type
         // https://stackoverflow.com/questions/43638938/updating-an-object-with-setstate-in-react
         setSort(prevState => {
+            // guarantee new sort has entry in sorts object
             if (!(prevState.sorts[sortKey])) {
                 prevState.sorts[sortKey] = { name: sortKey, dir: 1}
             }
+            // change just the element associated with the specified sortKey
             return {
                 sorts: {
                     ...prevState.sorts,
@@ -82,7 +127,7 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
                         dir: -1 * prevState.sorts[sortKey].dir
                     }
                 },
-                sortOrder: [sortKey]  // set only one for now...TODO add/move to head of sortOrder array
+                sortOrder: [sortKey]  // set only one for now...TODO implement so that sortOrder array accumulates sortKey
             }
         })
     }
@@ -117,7 +162,7 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
         return 0;
     }
 
-    const sortByArchIa = (a,b) => {
+    const sortByArchWbm = (a,b) => {
         const archiveA = a?.searchurldata_archived ? 1 : 0;
         const archiveB = b?.searchurldata_archived ? 1 : 0;
 
@@ -137,16 +182,9 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
     }
 
     const sortByReference = (a,b) => {
-
         const statusA = a.reference_info?.statuses?.length ? a.reference_info.statuses[0] : ''
         const statusB = b.reference_info?.statuses?.length ? b.reference_info.statuses[0] : ''
-
-        // // respect sortDir
-        // if (statusA < statusB) return sort.sorts['references'].dir * -1;
-        // if (statusA > statusB) return sort.sorts['references'].dir;
-        // return 0;
-
-        return sort.sorts['references'].dir * ((statusA > statusB)?1:(statusA < statusB?-1:0));
+        return sort.sorts['references'].dir * ((statusA > statusB)?1:(statusA < statusB?-1:0));  // dir is multiplied by 1, -1 or 0
     }
 
     const sortByTemplate = (a,b) => {
@@ -180,15 +218,6 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
         else if(sort.sortOrder[0] === "status") {
             return sortByStatus(a,b)
         }
-        else if(sort.sortOrder[0] === "arch_iari") {
-            return sortByArchIari(a,b)
-        }
-        else if(sort.sortOrder[0] === "arch_wbm") {
-            return sortByArchIa(a,b)
-        }
-        else if(sort.sortOrder[0] === "arch_tmplt") {
-            return sortByArchTmlpt(a,b)
-        }
         else if(sort.sortOrder[0] === "references") {
             return sortByReference(a,b)
         }
@@ -198,6 +227,16 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
         else if(sort.sortOrder[0] === "sections") {
             return sortBySection(a,b)
         }
+
+        else if(sort.sortOrder[0] === "arch_iari") {
+            return sortByArchIari(a,b)
+        }
+        else if(sort.sortOrder[0] === "arch_wbm") {
+            return sortByArchWbm(a,b)
+        }
+        else if(sort.sortOrder[0] === "arch_tmplt") {
+            return sortByArchTmlpt(a,b)
+        }
         else {
             return 0  //
         }
@@ -205,18 +244,15 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
 
     const handleRowClick = (e) => {
         // get the url from the data of the row associated with the clicked element
-        const url = e.target.closest('.url-row').getAttribute('data-url');
+        const url = e.target.closest('.url-row').getAttribute('data-url');  // TODO fix this ti use dataset property
 
         // send action back up the component tree to filter the references list
-                        // onAction( {
-                        //     "action": "setUrlReferenceFilter",
-                        //     "value": url,
-                        // })
         onAction( {
             "action": "showRefsForUrl",
             "value": url,
         })
     }
+
     const handleRemoveFilter = (e) => {
         // send action back up the component tree
         onAction( {
@@ -235,130 +271,49 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
     const onHoverHeaderRow = (e) => {
         e.stopPropagation()  // prevents default onHover of UrlFlock from engaging and erasing tooltip
 
-        let html = ''
-
-        if (e.target.className === "url-status") {
-            html = `<div>HTTP status code of primary URL</div>`
-
-        } else if (e.target.className === "url-arch-iari") {
-            html = `<div>Archive found within set of<br/>URLs returned from IARI</div>`
-
-        } else if (e.target.className === "url-arch_wbm") {
-            html = `<div>Archive exists in IABot database</div>`
-
-        } else if (e.target.className === "url-arch_tmplt") {
-            html = `<div>Archive found in archive_url<br/>parameter of citation template</div>`
-
-        } else if (e.target.className === "url-iabot_status") {
-            html = `<div>URL status reported by IABot</div>`
-
-        } else if (e.target.className === "url-references") {
-            html = `<div>URL status as indicated by citation template ("url-status" parameter)</div>`
-
-        } else if (e.target.className === "url-sections") {
-            html = `<div>Section in Wikipedia article where reference originated</div>`
-
-        }
+        const html = urlListDef.columns[e.target.className]?.ttHeader
 
         setUrlTooltipHtml(html)
     }
 
     const onHoverDataRow = e => {
-        // show tool tip for appropriate column
-        e.stopPropagation()
+        // show tool tip for targeted column of hovered row
 
-
-                    // const row = e.target.closest('.url-row')
-                    // const classNames = row.className ? row.className.split(" ") : []
-                    //
-                    // let html = ''
-                    //
-                    // if (classNames.includes("url-status")) {
-                    //     // status code column
-                    //     const statusDescription = httpStatusCodes[row.dataset.status_code]
-                    //     html = `<div>${row.dataset.status_code} : ${statusDescription}</div>`
-                    //
-                    // } else if (classNames.includes("url-iabot_status")) {
-                    //     // IABot info column
-                    //     html = row.dataset.live_state
-                    //         ? `<div>${row.dataset.live_state}: ${iabotLiveStatusCodes[row.dataset.live_state]}` +
-                    //         `<br/>${row.dataset.arch_wbm === "true" ? 'Archived' : 'Not archived'}</div>`
-                    //         : ''
-                    // } else if (classNames.includes("url-references")) {
-                    //     // References info column
-                    //     html = 'Link status as indicated in template'
-                    //
-                    // } else if (classNames.includes("url-templates")) {
-                    //     // Template info column
-                    //     html = 'Template names used in this reference'
-                    //
-                    // } else if (classNames.includes("url-sections")) {
-                    //     // Template info column
-                    //     html = 'Section in Wikipedia article where reference originated'
-                    //
-                    // } else if (classNames.includes("archive-yes") || classNames.includes("archive-no")) {
-                    //     // target is any of the archive status columns
-                    //
-                    //     if (e.target.parentElement.className === "url-arch-iari") {
-                    //         html = `<div>${row.dataset.arch_iari === "true" ? "Archive in page URLs" : "Archive NOT in page URLs"}</div>`
-                    //
-                    //     } else if (e.target.parentElement.className === "url-arch_wbm") {
-                    //         html = `<div>${row.dataset.arch_wbm === "true" ? "Archive in IABot database" : "Archive NOT in IABot database"}</div>`
-                    //
-                    //     } else if (e.target.parentElement.className === "url-arch_tmplt") {
-                    //         html = `<div>${row.dataset.arch_tmplt === "true" ? "Archive supplied in citation template" : "Archive NOT supplied in citation template"}</div>`
-                    //     }
-                    // }
+        e.stopPropagation()  // stop higher up elements from changing tooltip
 
         const row = e.target.closest('.url-row')
 
+        // get the class name of the column we are in...this is a little tricky because of possible sub elements
+        const myClassName = e.target.parentElement.classList.contains('url-row')
+            ? e.target.className
+            : e.target.parentElement.className
+
         let html = ''
 
-        console.log(`parent className: ${e.target.parentElement.className}`)
-        /*
-        e.target.parentElement.className === url-list if in "space" of row
-if parentclass includes url-row, then use className of self
-if parentClass is url-list, we are probably on aborder, so igbnore
-otherwise, get the className of parent as comparison
-         */
-        if (e.target.className === "url-status") {
-            // status code column
+        if (myClassName === "url-status") {
+            // status code column special handling
             const statusDescription = httpStatusCodes[row.dataset.status_code]
             html = `<div>${row.dataset.status_code} : ${statusDescription}</div>`
 
-        } else if (e.target.className === "url-iabot_status") {
-            // IABot info column
+        } else if (myClassName === "url-arch_wbm") { // TODO: clarify this arch-wbm stuff!!!
+            // WBM archive status column special handling
             html = row.dataset.live_state
                 ? `<div>${row.dataset.live_state}: ${iabotLiveStatusCodes[row.dataset.live_state]}` +
-                `<br/>${row.dataset.arch_wbm === "true" ? 'Archived' : 'Not archived'}</div>`
+                    `<br/>${row.dataset.arch_wbm === "true" ? 'Archived' : 'Not archived'}</div>`
                 : ''
-        } else if (e.target.className === "url-references") {
-            // References info column
-            html = 'Link status as indicated in template'
 
-        } else if (e.target.className === "url-templates") {
-            // Template info column
-            html = 'Template names used in this reference'
+        } else if (myClassName === "url-references") {
+            // live status from template special handling
+            html = row.dataset.live_status && row.dataset.live_status !== '--'
+                ? `<div>Link status ${'"' + row.dataset.live_status + '"'} as indicated in Citation</div>`
+                : `<div>No link status defined in Citation</div>`
 
-        } else if (e.target.className === "url-sections") {
-            // Template info column
-            html = 'Section in Wikipedia article where reference originated'
+        } else {
+            // show tooltip from list definition
+            html = urlListDef.columns[myClassName]?.ttData
 
-        } else if (e.target.className === "archive-yes" || e.target.className === "archive-no") {
-            // target is any of the archive status columns
-
-            if (e.target.parentElement.className === "url-arch-iari") {
-                html = `<div>${row.dataset.arch_iari === "true" ? "Archive in page URLs" : "Archive NOT in page URLs"}</div>`
-
-            } else if (e.target.parentElement.className === "url-arch_wbm") {
-                html = `<div>${row.dataset.arch_wbm === "true" ? "Archive in IABot database" : "Archive NOT in IABot database"}</div>`
-
-            } else if (e.target.parentElement.className === "url-arch_tmplt") {
-                html = `<div>${row.dataset.arch_tmplt === "true" ? "Archive supplied in citation template" : "Archive NOT supplied in citation template"}</div>`
-            }
         }
 
-        
         setUrlTooltipHtml(html)
     }
 
@@ -415,7 +370,7 @@ otherwise, get the className of parent as comparison
 
         // get final filteredUrls by applying filters successively, while accumulating the
         // filter captions into the filterCaptions array, via a side effect within .map()
-// TODO turn this into a function...
+        // TODO turn this into a function...
         let filterCaptions = Object.keys(flockFilters)
             .filter(key => !!flockFilters[key] && flockFilters[key].filterFunction )  // exclude null filter defs, and null filter functions
             .map( filterName => {  // apply non-null filters and append filter caption
@@ -453,16 +408,8 @@ otherwise, get the className of parent as comparison
         const getArchIaStatus = (u => <span className={u.searchurldata_archived ? "archive-yes" : "archive-no" }></span> )
         // const getArchTmpltStatus = (u => <span className={u.hasTemplateArchive ? "archive-yes" : "archive-no" }></span> )
 
-        // // TODO this should be within a passed in a "IABOT row renderer"
-        // const getIabotStatus = (u => {
-        //     if (!u.searchurldata_status) {
-        //         return ''
-        //     }
-        //     // return r.searchurldata_status + (r.searchurldata_archived ? ", A" : ', X') + (!r.searchurldata_hasarchive ? "-" : '')
-        //     return u.searchurldata_status + (u.searchurldata_archived ? ", A" : ', X')
-        // })
-
         const getReferenceInfo = (u => {
+            // for now, returns array of statuses from url's associated references
             return !u.reference_info?.statuses
                 ? null
                 : u.reference_info.statuses.map( (s,i) => {
@@ -482,18 +429,24 @@ otherwise, get the className of parent as comparison
             return !u.reference_info?.sections
                 ? null
                 : u.reference_info.sections.map( (s,i) => {
-                    s = (s === 'root'?'Lead':s)
+                    s = (s === 'root'?'Lead':s)  // transform "root" section to "Lead  TODO: do this earlier...
                     return <div key={i}>{s}</div>
                 })
         })
 
         const getDataRow = (u, i, classes) => {
+
+            const liveStatus = !u.reference_info?.statuses
+                ? null
+                : u.reference_info.statuses[0]  // just return first one
+
             return <div className={classes} key={i} data-url={u.url}
                         data-status_code={u.status_code}
                         data-live_state={u.searchurldata_status}
                         data-arch_iari={!!u.hasArchive}
                         data-arch_wbm={!!u.searchurldata_archived}
                         data-arch_tmplt={!!u.hasTemplateArchive}
+                        data-live_status={liveStatus}
                         // data-references={!!u.hasTemplateArchive}
             >
                 <div className={"url-name"}>{u.url}</div>
@@ -507,12 +460,12 @@ otherwise, get the className of parent as comparison
                         {/*<div className={"url-arch_tmplt"}>{getArchTmpltStatus(u)}</div>*/}
                         {/*<div className={"url-iabot_status"}>{getIabotStatus(u)}</div>*/}
 
-                        <div className={"url-references"}>{getReferenceInfo(u)}</div>
-                        <div className={"url-templates"}>{getTemplateInfo(u)}</div>
-                        <div className={"url-sections"}>{getSectionInfo(u)}</div>
-
                     </>
                     : null }
+
+                <div className={"url-references"}>{getReferenceInfo(u)}</div>
+                <div className={"url-templates"}>{getTemplateInfo(u)}</div>
+                <div className={"url-sections"}>{getSectionInfo(u)}</div>
 
             </div>
 
@@ -538,12 +491,13 @@ otherwise, get the className of parent as comparison
                         {/*<div className={"url-arch_tmplt"}>?</div>*/}
                         {/*<div className={"url-iabot_status"}>---</div>*/}
 
-                        <div className={"url-references"}>&nbsp;</div>
-                        <div className={"url-templates"}>&nbsp;</div>
-                        <div className={"url-sections"}>&nbsp;</div>
-
                     </>
                     : null }
+
+                <div className={"url-references"}>&nbsp;</div>
+                <div className={"url-templates"}>&nbsp;</div>
+                <div className={"url-sections"}>&nbsp;</div>
+
             </div>
         }
 
@@ -554,7 +508,6 @@ otherwise, get the className of parent as comparison
                 // and that this is not the "all" filter,
                 // in which case we disable the "Show All" button
         const buttonRemove = <button
-            // className={`utility-button small-button${enableShowAllButton ?'':' disabled'}` }
             className={`utility-button small-button${enableShowAllButton ?'':' disabled'}` }
                 onClick={handleRemoveFilter}
                 disabled={!enableShowAllButton}
@@ -563,10 +516,10 @@ otherwise, get the className of parent as comparison
 
         const buttonCopy = <button className={'btn utility-button small-button'} onClick={handleCopyClick} ><span>Copy to Clipboard</span></button>
 
+        const firstLineCaption = filteredUrls.length.toString() + ' ' + (filteredUrls.length === 1 ? 'URL' : 'URLs')
         const flockCaption = <>
 
-            <h4 className={"url-flock-caption"}>{filteredUrls.length.toString() + ' ' + (filteredUrls.length === 1 ? 'URL' : 'URLs')
-            }</h4>{buttonRemove}
+            <h4 className={"url-flock-caption"}>{firstLineCaption}</h4>{buttonRemove}
 
             <h4><span className={"filter-title"}
             >{`Applied Filter${filterCaptions.length === 1 ? '' : 's'}:`}<
@@ -578,19 +531,34 @@ otherwise, get the className of parent as comparison
 
 
         const flockMetaHeader = <div className={"url-list-meta-header"}>
-
             <div>
-                <h4 className={"url-flock-caption"}>{filteredUrls.length.toString() + ' ' + (filteredUrls.length === 1 ? 'URL' : 'URLs')
-                }</h4>{buttonCopy}
-
-                {/*<h4><span className={"filter-title"}*/}
-                {/*>{`Applied Filter${filterCaptions.length === 1 ? '' : 's'}:`}<*/}
-                {/*/span> {*/}
-                {/*    filterCaptions.length > 0 ? filterCaptions : 'Show All' }</h4>*/}
-                {/*53 URls  (copy to clipboard)*/}
+                <h4 className={"url-flock-caption"}>{firstLineCaption}</h4>{buttonCopy}
             </div>
-
             <div>{buttonRemove}</div>
+        </div>
+
+        // show filter.desc
+        // show filter.fixit
+
+        const allFilterNames = Object.keys(flockFilters)
+        const oneFilter = allFilterNames?.length > 0 ?  flockFilters[allFilterNames[0]] : {} // first filter only gets "info treatment"
+        const flockInfoHeader = <div className={"url-list-info-header"}>
+            {oneFilter.desc
+                ? <div>
+                    <div className={"flock-info-condition"}>Condition:</div>
+                    <div>{oneFilter.desc}</div>
+                  </div>
+                : <div>
+                    <div className={"flock-info-condition"}>Condition:</div>
+                    <div>No Conditions applied; All URLs shown.</div>
+                  </div>
+            }
+            {oneFilter.fixit
+                ? <div>
+                <div className={"flock-info-condition"}>To Fix:</div>
+                <div>{oneFilter.fixit}</div>
+                </div>
+                : null}
         </div>
 
         const flockHeaderRow = <div
@@ -604,17 +572,14 @@ otherwise, get the className of parent as comparison
                 <div className={"url-status"}>&nbsp;</div>
                 {fetchMethod === UrlStatusCheckMethods.IABOT.key
                     ? <>
-                        {/*<div className={"url-arch-iari"}>&nbsp;</div>*/}
-                        {/*<div className={"url-arch_wbm"} >Archive</div>*/}
                         <div className={"url-arch_wbm"} >&nbsp;</div>
-                        <div className={"url-arch_tmplt"}>&nbsp;</div>
-
-                        <div className={"url-iabot_status"}>&nbsp;</div>
-                        <div className={"url-references"}>&nbsp;</div>
-                        <div className={"url-templates"}>&nbsp;</div>
-                        <div className={"url-sections"}>&nbsp;</div>
+                        {/*<div className={"url-arch_tmplt"}>&nbsp;</div>*/}
+                        {/*<div className={"url-iabot_status"}>&nbsp;</div>*/}
                     </>
                     : null }
+                <div className={"url-references"}>&nbsp;</div>
+                <div className={"url-templates"}>&nbsp;</div>
+                <div className={"url-sections"}>&nbsp;</div>
             </div>
 
             {/* second header row - contains column labels */}
@@ -643,17 +608,18 @@ otherwise, get the className of parent as comparison
 
                         {/*<div className={"url-iabot_status"}>IABot</div>*/}
 
-                        <div className={"url-references"} onClick={() => { handleSortClick("references"); } }
-                        >Citation<br/>Status</div>
-
-                        <div className={"url-templates"} onClick={() => { handleSortClick("templates"); } }
-                        >Template<br/>Type</div>
-
-                        <div className={"url-sections"} onClick={() => { handleSortClick("sections"); } }
-                        >Origin<br/>Section</div>
-
                     </>
                     : null }
+
+                <div className={"url-references"} onClick={() => { handleSortClick("references"); } }
+                >Citation<br/>Status</div>
+
+                <div className={"url-templates"} onClick={() => { handleSortClick("templates"); } }
+                >Template<br/>Type</div>
+
+                <div className={"url-sections"} onClick={() => { handleSortClick("sections"); } }
+                >Origin<br/>Section</div>
+
             </div>
 
         </div>
@@ -696,6 +662,7 @@ otherwise, get the className of parent as comparison
                 && flockCaption}
             {/* TODO do something akin to "myMethodRenderer.getHeaderRow" */}
             {flockMetaHeader}
+            {flockInfoHeader}
             {flockHeaderRow}
             <div className={"url-list"}
                  onClick={handleRowClick}

@@ -31,8 +31,8 @@ export default function FilterButton(props) {
         onClick={() => props.onClick(props.name)}
 
         // tooltip attributes
-        data-tooltip-id="my-filter-tooltip"  // TODO pass this in as customizable??
-        data-tooltip-content={props.desc}
+        data-tooltip-id={props.tooltipId}
+        data-tooltip-html={props.tooltip}
     >
         {props.onRender ? props.onRender(props) : defaultRenderFunc(props)}
 
