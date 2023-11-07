@@ -175,7 +175,7 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
             //     text: 'URL Return Status Code Breakdown'
             // },
             animation: {
-                animateScale: true,
+                animateScale: false,
                 animateRotate: true
             },
         },

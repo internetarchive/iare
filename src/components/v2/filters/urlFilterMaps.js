@@ -53,7 +53,7 @@ export const ACTIONABLE_FILTER_MAP = {
         caption: "URL Status BAD, Citation Status LIVE",
         desc: "URL Status BAD, Citation Status LIVE",
         tooltip: `<div>Original URL Status is NOT 2XX or 3XX<br/>AND<br/>Template Parameter "url_status" is set to "live"</div>`,
-        fixit: <div>Set "url_status" parameter in Citation Template to "dead"</div>,
+        fixit: <div>Set "url-status" parameter in Citation Template to "dead"</div>,
         filterFunction: () => (d) => {
             // reference_info.statuses is an aggregate of
             return (d.status_code < 200 || d.status_code >= 400)
@@ -66,7 +66,7 @@ export const ACTIONABLE_FILTER_MAP = {
         caption: "URL Status GOOD, Citation Status NOT LIVE",
         desc: "URL Status GOOD, Citation Status NOT LIVE",
         tooltip: `<div>Original URL Status IS 2XX or 3XX<br/>AND<br/>Template Parameter "url_status" is NOT set to "live"</div>`,
-        fixit: <div>Set "url_status" parameter in Citation Template to "live"</div>,
+        fixit: <div>Set "url-status" parameter in Citation Template to "live"</div>,
         filterFunction: () => (d) => {
             return (d.status_code >= 200 && d.status_code < 400)
                 &&

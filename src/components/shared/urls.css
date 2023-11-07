@@ -151,6 +151,8 @@
 .url-list-info-header {
     flex-direction: column;
     padding:.5rem .5rem;
+    background-color: #47e547;
+
 }
 .url-list-info-header > div > div {
     flex: none;
@@ -168,13 +170,13 @@
     width: 6rem;
 }
 .url-list-info-header div.flock-info-condition {
-    color:#ce6347;
+    color:black;
 }
 .url-list-info-header div.flock-info-condition.condition-calm {
     color:inherit;
 }
 .url-list-info-header div.flock-info-tofix {
-    color: #2177c0;
+    color: black;
 }
 
 .url-list .url-row.url-row-error {
