@@ -146,9 +146,13 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
 
     const options = {
         animation: false,
+        maintainAspectRatio: false,
+
         cutout: "50%",
         responsive: true,
         plugins: {
+            maintainAspectRatio: false,
+
             datalabels: false,
             legend: {
                 display: true,

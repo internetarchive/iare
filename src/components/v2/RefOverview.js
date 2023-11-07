@@ -152,6 +152,7 @@ export default function RefOverview ({ refArray, summary, onAction, selectedFilt
             // aspectRatio: .5,
 
             animation: false,
+            maintainAspectRatio: false,
 
             indexAxis: "y",
 
@@ -205,6 +206,7 @@ export default function RefOverview ({ refArray, summary, onAction, selectedFilt
             plugins: {
 
                 animation: false,
+                maintainAspectRatio: false,
 
                 legend: false,
 
