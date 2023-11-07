@@ -73,6 +73,16 @@ export const ACTIONABLE_FILTER_MAP = {
                 (d.reference_info?.statuses?.length && !d.reference_info.statuses.includes('live') );
         },
     },
+    dead_link_no_archive: {
+        name: "dead_link_no_archive",
+        caption: "URL Status BAD, Archive Status BAD",
+        desc: "URL Status BAD, Archive Status BAD",
+        tooltip: `<div>Original URL Status is NOT 2XX or 3XX<br/>AND<br/>No Archive exists in Wayback Machine</div>`,
+        fixit: <div>Add Wayback Machine archive for this URL in the citation</div>,
+        filterFunction: () => (d) => {
+            return false
+        },
+    },
 };
 
 
