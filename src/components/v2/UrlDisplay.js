@@ -322,10 +322,10 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                       fetchMethod={myConfig.urlStatusMethod} />
         </div>
 
-        <div className={"section-box url-overview-column"}>
+        {false && <div className={"section-box url-overview-column"}>
             {/*<h3>Filters</h3>*/}
             <UrlOverview pageData={pageData} statistics={urlStatistics} onAction={handleAction}/>
-        </div>
+        </div>}
 
 
         {/* References List is tentative - may go away soon... */}
