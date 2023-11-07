@@ -533,7 +533,7 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
 
         const flockMetaHeader = <div className={"url-list-meta-header"}>
             <div>
-                <h4 className={"url-flock-caption"}>{firstLineCaption}</h4> {buttonCopy}
+                <h4 className={"url-flock-caption"}>{firstLineCaption}</h4> {false && buttonCopy}
             </div>
             <div>{buttonRemove}</div>
         </div>
