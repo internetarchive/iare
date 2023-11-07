@@ -274,7 +274,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
         <div className={"section-box"}>
             {actionableTooltip}
-            <h3>{localized.url_display_title}</h3>
+            {false && <h3>{localized.url_display_title}</h3>}
 
             {showChoiceFetch
                 ? <div className={"row"}>

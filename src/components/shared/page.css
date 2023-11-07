@@ -46,7 +46,7 @@
     flex-direction: row;
     font-size:1rem;
     padding-bottom:.5rem;
-    border-bottom:1px solid black;
+    /*border-bottom:1px solid black;*/
 }
 
 .view-options-selection input[type="radio"]{

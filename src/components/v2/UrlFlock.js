@@ -38,12 +38,13 @@ const urlListDef = {
         },
 
         // archive flavors; NB only IABot is used practically
-        "url-arch-iari": {
-            ttHeader: `<div>Archive found within set of<br/>URLs returned from IARI</div>`,
-            ttData: ``,
-        },
         "url-arch_wbm": {
             ttHeader: `<div>Archive exists in IABot database</div>`,
+            ttData: ``,
+        },
+
+        "url-arch-iari": {
+            ttHeader: `<div>Archive found within set of<br/>URLs returned from IARI</div>`,
             ttData: ``,
         },
         "url-arch_tmplt": {
@@ -405,7 +406,7 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
 
         // TODO this should be within IABOT row renderer
         // const getArchIariStatus = (u => <span className={u.hasArchive ? "archive-yes" : "archive-no" }></span> )
-        const getArchIaStatus = (u => <span className={u.searchurldata_archived ? "archive-yes" : "archive-no" }></span> )
+        const getArchWbmStatus = (u => <span className={u.searchurldata_archived ? "archive-yes" : "archive-no" }></span> )
         // const getArchTmpltStatus = (u => <span className={u.hasTemplateArchive ? "archive-yes" : "archive-no" }></span> )
 
         const getReferenceInfo = (u => {
@@ -455,7 +456,7 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
                     // we are essentially assuming IABot status for now - if we use corentin, then these wont display!
                     // TODO if we use corentin, could we just add as a column? add other columns? later...
                     ? <>
-                        <div className={"url-arch_wbm"}>{getArchIaStatus(u)}</div>
+                        <div className={"url-arch_wbm"}>{getArchWbmStatus(u)}</div>
 
                         {/*<div className={"url-arch_tmplt"}>{getArchTmpltStatus(u)}</div>*/}
                         {/*<div className={"url-iabot_status"}>{getIabotStatus(u)}</div>*/}

@@ -529,7 +529,8 @@ export default function PageData({pageData = {}}) {
     }
 
     const viewOptions = <div className={"view-options-selection"}>
-            <div>View by</div>{Object.keys(viewTypes).map(viewType => {
+        {/*<div>View by</div>{Object.keys(viewTypes).map(viewType => {*/}
+            {Object.keys(viewTypes).map(viewType => {
                 return <div key={viewType} >
                     <label>
                         <input
@@ -550,7 +551,7 @@ export default function PageData({pageData = {}}) {
         {isLoadingUrls ? <Loader message={"Retrieving URL status codes..."}/>
             : (dataReady ? <div className={"page-data"} xxstyle={{backgroundColor:"grey"}}>
 
-                        {false && viewOptions}
+                        {true && viewOptions}
 
                         <div className={`display-content`}>
 
