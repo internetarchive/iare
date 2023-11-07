@@ -145,6 +145,7 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
     }
 
     const options = {
+        animation: false,
         cutout: "50%",
         responsive: true,
         plugins: {
@@ -174,10 +175,13 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
             //     display: true,
             //     text: 'URL Return Status Code Breakdown'
             // },
-            animation: {
-                animateScale: false,
-                animateRotate: true
-            },
+
+
+            // animation: {
+            //     animateScale: false,
+            //     animateRotate: true
+            // },
+            animation: false,
         },
     }
 
