@@ -15,6 +15,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
     const [isDebug, setDebug] = useState(myDebug);
     const [isShowReferences, setIsShowReferences] = useState(false);
     const [isShowUrlOverview, setIsShowUrlOverview] = useState(false);
+    const [isShowShortcuts, setIsShowShortcuts] = useState(false);
 
     // params settable from from address url
     const [targetPath, setTargetPath] = useState(myPath);
@@ -319,13 +320,21 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
             onClick={() => {
                 setIsShowReferences(prevState => !prevState )
             }
-            } >{isShowReferences ? "Hide" : "Show"} References List</button>&nbsp;
+            } >{isShowReferences ? "Hide" : "Show"} References List</button>
+        &nbsp;
         <button // this is the 'show urls list' button
             className={"utility-button debug-button"}
             onClick={() => {
                 setIsShowUrlOverview(prevState => !prevState )
             }
-            } >{isShowUrlOverview ? "Hide" : "Show"} URLs List</button>
+            } >{isShowUrlOverview ? "Hide" : "Show"} URL Filters</button>
+        &nbsp;
+        <button // this is the 'show shortcuts' button
+            className={"utility-button debug-button"}
+            onClick={() => {
+                setIsShowShortcuts(prevState => !prevState )
+            }
+            } >{isShowShortcuts ? "Hide" : "Show"} Shortcuts</button>
     </div>
 
     // set config for config context
@@ -336,6 +345,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         isDebug: !!isDebug,
         isShowReferences: isShowReferences,
         isShowUrlOverview: isShowUrlOverview,
+        isShowShortcuts: isShowShortcuts,
     }
 
     console.log(`rendering App component:`, {
@@ -363,7 +373,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
                 <PathNameFetch pathInitial={targetPath?.length > 0 ? targetPath : defaultIfEmpty}
                                checkInitial={refreshCheck}
                                placeholder={"Enter a Wikipedia article or PDF url here"}
-                               shortcuts={shortcuts}
+                               shortcuts={isShowShortcuts ? shortcuts : null}
                                handlePathResults={handlePathResults}
                 />
 

@@ -95,7 +95,7 @@ export default function PathNameFetch({
                 ><Checkbox className={"chk-force-refresh"} label={"Force Refresh"} value={checked} onChange={handleCheckChange}/>
             </div>
 
-            {false && shortcuts?.length ?
+            {true && shortcuts?.length ?
                 <div style={{display: "block"}}>
                     &nbsp;
                     { shortcuts.map ( key => {
