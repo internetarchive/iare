@@ -151,7 +151,7 @@ export default function RefOverview ({ refArray, summary, onAction, selectedFilt
             // maintainAspectRatio: false,
             // aspectRatio: .5,
 
-            animation: false,
+            animation: true,
             maintainAspectRatio: false,
 
             indexAxis: "y",
@@ -205,8 +205,8 @@ export default function RefOverview ({ refArray, summary, onAction, selectedFilt
 
             plugins: {
 
-                animation: false,
-                maintainAspectRatio: false,
+                            // animation: false,
+                            // maintainAspectRatio: false,
 
                 legend: false,
 
@@ -282,6 +282,7 @@ export default function RefOverview ({ refArray, summary, onAction, selectedFilt
 
     return <div className={"ref-overview"}>
         <h4>Reference Statistics</h4>
+        <h4 className={"list-instruction"}>Click to filter References List by Reference Category</h4>
         <div className={"ref-overview-wrap"}>
             {overviewDisplay}
         </div>

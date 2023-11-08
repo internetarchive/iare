@@ -145,7 +145,11 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
     }
 
     const options = {
-        animation: true,
+        // animation: true,
+        animation: {
+            animateScale: false,
+            animateRotate: true
+        },
         maintainAspectRatio: false,
 
         cutout: "50%",
@@ -182,7 +186,7 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
 
             // animation: {
             //     animateScale: false,
-            //     animateRotate: true
+            //     animateRotate: false
             // },
             // animation: false,
         },

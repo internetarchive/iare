@@ -68,12 +68,12 @@ export default function FldDisplay({ pageData } ) {
 
     return <>
         <div className={"fld-display section-box"}>
-            <h3>Domains</h3>
+            {false && <h3>Domains</h3>}
             <FldFlock fldArray={fldArray} onAction={handleAction} selectedDomain={selectedDomain} />
         </div>
 
         <div className={"section-box"}>
-            <h3>References</h3>
+            <h3>References List</h3>
             <RefFlock refArray={refArray} refFilterDef={refFilter} onAction={handleAction} />
         </div>
     </>

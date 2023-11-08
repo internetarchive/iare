@@ -54,7 +54,7 @@
 .url-chart-display {
     width:327px;
 }
-.chart-container {
+.url-chart-display .chart-container {
     height:300px;
 }
 

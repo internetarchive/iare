@@ -356,3 +356,8 @@ table.single-detail tr td:not(:first-child) {
 .choice-fetch-item {
     margin-left: .8rem;
 }
+
+.list-instruction {
+font-style:italic;
+font-weight:normal;
+}

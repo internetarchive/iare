@@ -207,6 +207,13 @@
     /*min-width:45rem;*/
     /*height:30rem;*/
 }
+.ref-filter-chart .bar-chart-container {
+    height:360px;
+    width:43rem;
+    padding:.5rem;
+    border:1px solid grey;
+}
+
 .ref-list-tooltip {
     font-size:1.25em;
     font-weight:normal;
