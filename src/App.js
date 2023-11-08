@@ -37,9 +37,10 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
     const shortcuts = env === 'env-production'
         ? ['easterIsland', 'internetArchive', 'pdfCovid',]
         : env === 'env-staging'
+                // default staging shortcuts
             ? ['easterIsland', 'internetArchive', 'short_test', 'pdfOneLink']
 
-              // my developement buttons
+                // my development shortcuts
             : ['marcBolan', 'easterIsland', 'internetArchive', 'karen_bakker', 'short_test', 'pdfDesantis', 'pdfOneLink'];
 
 
@@ -295,8 +296,9 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
     const siteDisplay = ` STAGING SITE `
     const showHideDebugButton = <button // this is the 'show/hide debug' button
         className={"utility-button debug-button small-button"}
-        // onClick={toggleDebug} >{isDebug ? "hide" : "show"} debug</button>
         onClick={toggleDebug} >{isDebug ? <>&#8212;</> : "+"}</button>
+            // onClick={toggleDebug} >{isDebug ? "hide" : "show"} debug</button>
+            // up and down triangles:  onClick={toggleDebug} >{isDebug ? <>&#9650;</> : <>&#9660;</>}</button>
 
     const heading = <div className={"header-contents"}>
         <h1>Internet Archive Reference Explorer</h1>
@@ -344,6 +346,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         config: config,
     })
 
+    const defaultIfEmpty = "https://en.wikipedia.org/wiki/"
 
     return <>
 
@@ -357,9 +360,10 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
                 </div>
 
 
-                <PathNameFetch pathInitial={targetPath} checkInitial={refreshCheck}
+                <PathNameFetch pathInitial={targetPath?.length > 0 ? targetPath : defaultIfEmpty}
+                               checkInitial={refreshCheck}
                                placeholder={"Enter a Wikipedia article or PDF url here"}
-                               shortcuts={false && shortcuts}
+                               shortcuts={shortcuts}
                                handlePathResults={handlePathResults}
                 />
 
