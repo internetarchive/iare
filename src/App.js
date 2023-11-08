@@ -14,6 +14,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
 
     const [isDebug, setDebug] = useState(myDebug);
     const [isShowReferences, setIsShowReferences] = useState(false);
+    const [isShowUrlOverview, setIsShowUrlOverview] = useState(false);
 
     // params settable from from address url
     const [targetPath, setTargetPath] = useState(myPath);
@@ -293,14 +294,14 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
     const versionDisplay = `version ${package_json.version}`
     const siteDisplay = ` STAGING SITE `
     const showHideDebugButton = <button // this is the 'show/hide debug' button
-        className={"utility-button debug-button"}
-        onClick={toggleDebug} >{isDebug ? "hide" : "show"} debug</button>
+        className={"utility-button debug-button small-button"}
+        // onClick={toggleDebug} >{isDebug ? "hide" : "show"} debug</button>
+        onClick={toggleDebug} >{isDebug ? <>&#8212;</> : "+"}</button>
 
     const heading = <div className={"header-contents"}>
         <h1>Internet Archive Reference Explorer</h1>
         <div className={"header-aux1"}>
-            <span className={"non-production"}>{versionDisplay}{siteDisplay
-            }{showHideDebugButton}</span></div>
+            <span className={"non-production"}>{versionDisplay}{siteDisplay}{showHideDebugButton}</span></div>
     </div>
 
     const debug = <div className={"debug-section " + (isDebug ? "debug-on" : "debug-off")}>
@@ -311,12 +312,18 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         <p><span className={'label'}>endpointPath:</span> <MakeLink href={endpointPath}/></p>
         <p><span className={'label'}>inline target URL:</span> {myPath}</p>
         <p><span className={'label'}>Force Refresh:</span> {refreshCheck ? "TRUE" : "false"}</p>
-        <button // this is the 'show refererences' button
-        className={"utility-button debug-button"}
-        onClick={() => {
-            setIsShowReferences(prevState => !prevState )
-        }
-        } >{isShowReferences ? "Hide" : "Show"} References List</button>
+        <button // this is the 'show refereences' button
+            className={"utility-button debug-button"}
+            onClick={() => {
+                setIsShowReferences(prevState => !prevState )
+            }
+            } >{isShowReferences ? "Hide" : "Show"} References List</button>&nbsp;
+        <button // this is the 'show urls list' button
+            className={"utility-button debug-button"}
+            onClick={() => {
+                setIsShowUrlOverview(prevState => !prevState )
+            }
+            } >{isShowUrlOverview ? "Hide" : "Show"} URLs List</button>
     </div>
 
     // set config for config context
@@ -326,6 +333,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         urlStatusMethod: statusMethod,
         isDebug: !!isDebug,
         isShowReferences: isShowReferences,
+        isShowUrlOverview: isShowUrlOverview,
     }
 
     console.log(`rendering App component:`, {

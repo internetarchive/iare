@@ -145,23 +145,22 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
     }
 
     const options = {
-        animation: false,
+        animation: true,
         maintainAspectRatio: false,
 
         cutout: "50%",
         responsive: true,
         plugins: {
-            maintainAspectRatio: false,
 
             datalabels: false,
             legend: {
                 display: true,
                 position: 'top',
                 align: 'start',
-                // title: {
-                //     text: "Legend",
-                //     display: true,
-                // },
+                    // title: {
+                    //     text: "Legend",
+                    //     display: true,
+                    // },
                 labels: {
                     boxWidth: 30,
                     boxHeight: 16,
@@ -171,21 +170,21 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
                 },
                 onClick: onClickLegend,
             },
-            // subtitle: {
-            //     display: true,
-            //     text: 'Custom Chart Subtitle'
-            // },
-            // title: {
-            //     display: true,
-            //     text: 'URL Return Status Code Breakdown'
-            // },
+                // subtitle: {
+                //     display: true,
+                //     text: 'Custom Chart Subtitle'
+                // },
+                // title: {
+                //     display: true,
+                //     text: 'URL Return Status Code Breakdown'
+                // },
 
 
             // animation: {
             //     animateScale: false,
             //     animateRotate: true
             // },
-            animation: false,
+            // animation: false,
         },
     }
 

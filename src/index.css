@@ -99,6 +99,7 @@ body.env-local .iare-view .header h1 {
 }
 
 .header-aux1 {
+    padding-top: 0.65rem;
     font-weight: normal;
     color: grey;
 }
@@ -279,8 +280,6 @@ table.single-detail tr td:not(:first-child) {
 }
 
 
-
-
 .iare-view .path-fetch {
     padding:1rem;
     padding-bottom:0;
@@ -296,7 +295,7 @@ table.single-detail tr td:not(:first-child) {
     margin-bottom: .5rem;
 }
 .path-fetch #pathInput {
-    width:33rem;
+    width:29rem;
     font-size: .9rem;
     padding: 2pt 2pt 2pt 4pt;
     border:1px solid dimgrey;
@@ -345,8 +344,6 @@ table.single-detail tr td:not(:first-child) {
     margin-right: .25rem;
 }
 
-
-
 /* defaults for ChoiceFetch component */
 
 .choice-fetch-items {
@@ -359,35 +356,3 @@ table.single-detail tr td:not(:first-child) {
 .choice-fetch-item {
     margin-left: .8rem;
 }
-
-
-
-/*.status-check-methods {*/
-            /*    display: flex;*/
-            /*    flex-direction: row;*/
-            /*    font-size:.9rem;*/
-            /*    !*padding-bottom:.5rem;*!*/
-            /*    margin-left:2rem;*/
-            /*    margin-top:.45rem;*/
-            /*}*/
-
-            /*-ms-transform: scale(var(--radio-button-magnify)); !* IE 9 *!*/
-            /*-webkit-transform: scale(1.5); !* Chrome, Safari, Opera *!*/
-            /*transform: scale(1.5);*/
-            /*margin-right:.23rem;*/
-
-            /*.status-check-methods input[type="radio"]{*/
-            /*    -ms-transform: scale(var(--radio-button-magnify)); !* IE 9 *!*/
-            /*    -webkit-transform: scale(var(--radio-button-magnify)); !* Chrome, Safari, Opera *!*/
-            /*    transform: scale(var(--radio-button-magnify));*/
-            /*    margin-right:.23rem;*/
-            /*}*/
-            /*.status-check-methods > div {*/
-            /*    margin-left: .8rem;*/
-            /*    !*flex: 0 0 auto;*!*/
-            /*}*/
-            /*.status-check-methods > div:first-child {*/
-            /*    margin-left:0;*/
-            /*}*/
-
-

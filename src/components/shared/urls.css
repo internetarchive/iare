@@ -54,6 +54,9 @@
 .url-chart-display {
     width:327px;
 }
+.chart-container {
+    height:300px;
+}
 
 .url-flock {
     width: var(--width-url-list);

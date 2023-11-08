@@ -320,7 +320,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                       fetchMethod={myConfig.urlStatusMethod} />
         </div>
 
-        {false && <div className={"section-box url-overview-column"}>
+        {myConfig.isShowUrlOverview && <div className={"section-box url-overview-column"}>
             {/*<h3>Filters</h3>*/}
             <UrlOverview pageData={pageData} statistics={urlStatistics} onAction={handleAction}/>
         </div>}
