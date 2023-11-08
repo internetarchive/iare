@@ -15,6 +15,7 @@ export default function PathNameFetch({
         checkInitial= false,
         handlePathResults,
         shortcuts=[],
+        showShortcuts=false,
         placeholder='' }) {
 
     const [pathName, setPathName] = useState(pathInitial); // init with passed in name
@@ -95,7 +96,7 @@ export default function PathNameFetch({
                 ><Checkbox className={"chk-force-refresh"} label={"Force Refresh"} value={checked} onChange={handleCheckChange}/>
             </div>
 
-            {true && shortcuts?.length ?
+            {showShortcuts && shortcuts?.length ?
                 <div style={{display: "block"}}>
                     &nbsp;
                     { shortcuts.map ( key => {

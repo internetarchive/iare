@@ -373,7 +373,8 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
                 <PathNameFetch pathInitial={targetPath?.length > 0 ? targetPath : defaultIfEmpty}
                                checkInitial={refreshCheck}
                                placeholder={"Enter a Wikipedia article or PDF url here"}
-                               shortcuts={isShowShortcuts ? shortcuts : null}
+                               shortcuts={shortcuts}
+                               showShortcuts={isShowShortcuts}
                                handlePathResults={handlePathResults}
                 />
 
