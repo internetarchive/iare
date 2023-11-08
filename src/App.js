@@ -13,12 +13,12 @@ import {ConfigContext} from "./contexts/ConfigContext"
 export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, myDebug}) {
 
     const [isDebug, setDebug] = useState(myDebug);
+    const [isShowReferences, setIsShowReferences] = useState(false);
 
     // params settable from from address url
     const [targetPath, setTargetPath] = useState(myPath);
     const [refreshCheck, setRefreshCheck] = useState(myRefresh);
     const [statusMethod, setStatusMethod] = useState(myMethod);
-    //const [xxiariSourceId, setIariSourceId] = useState(myIariSourceId);
 
     const [endpointPath, setEndpointPath] = useState('');
 
@@ -311,13 +311,21 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         <p><span className={'label'}>endpointPath:</span> <MakeLink href={endpointPath}/></p>
         <p><span className={'label'}>inline target URL:</span> {myPath}</p>
         <p><span className={'label'}>Force Refresh:</span> {refreshCheck ? "TRUE" : "false"}</p>
+        <button // this is the 'show refererences' button
+        className={"utility-button debug-button"}
+        onClick={() => {
+            setIsShowReferences(prevState => !prevState )
+        }
+        } >{isShowReferences ? "Hide" : "Show"} References List</button>
     </div>
 
     // set config for config context
     const config = {
+        environment: env,
         iariSource: IariSources[myIariSourceId]?.proxy,
         urlStatusMethod: statusMethod,
         isDebug: !!isDebug,
+        isShowReferences: isShowReferences,
     }
 
     console.log(`rendering App component:`, {
@@ -325,7 +333,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         refreshCheck: refreshCheck,
         statusMethod: statusMethod,
         iari_source: myIariSourceId,
-        config: config
+        config: config,
     })
 
 

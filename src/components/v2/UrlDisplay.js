@@ -53,8 +53,6 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
     const [openModal, setOpenModal] = useState(false)
     const [refDetails, setRefDetails] = useState(null);
 
-    const [showRefList, setShowRefList] = useState(false);
-
     let myConfig = React.useContext(ConfigContext);
     myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
     const myIariBase = myConfig?.iariSource;
@@ -329,17 +327,11 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
 
         {/* References List is tentative - may go away soon... */}
-        {true && <div className={"section-box"}>
+        {myConfig.isShowReferences && <div className={"section-box"}>
 
-            {false && <button className={"utility-button small-button button-show-ref-list"} style={{display:"inline-block"}}
-                    onClick={() => {setShowRefList(prevState => !prevState)}}
-            ><span>{showRefList ? 'Hide' : 'Show'} Reference List<br/><br/>This is temporary while the interface is being developed</span></button>}
+            <h3 style={{xxdisplay:"inline-block"}}>References List</h3>
+            <RefFlock refArray={refArray} refFilterDef={refFilter} onAction={handleAction} extraCaption={extraRefCaption} />
 
-
-            {showRefList && <>
-                <h3 style={{xxdisplay:"inline-block"}}>References List</h3>
-                <RefFlock refArray={refArray} refFilterDef={refFilter} onAction={handleAction} extraCaption={extraRefCaption} />
-            </>}
         </div>}
 
 

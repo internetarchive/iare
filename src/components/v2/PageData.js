@@ -538,7 +538,7 @@ export default function PageData({pageData = {}}) {
                             value={viewType}
                             checked={selectedViewType === viewType}
                             onChange={handleViewTypeChange}
-                        /> {viewTypes[viewType].caption}
+                        /> <span className={selectedViewType === viewType ? 'selected-choice' : '' }>{viewTypes[viewType].caption}</span>
                     </label>
                 </div>
             })}

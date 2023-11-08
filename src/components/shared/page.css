@@ -47,7 +47,16 @@
     font-size:1rem;
     padding-bottom:.5rem;
     /*border-bottom:1px solid black;*/
+    font-weight: bold;
 }
+.view-options-selection label span {
+    opacity:.5;
+}
+.view-options-selection label span.selected-choice {
+    opacity:1;
+}
+
+
 
 .view-options-selection input[type="radio"]{
     -ms-transform: scale(var(--radio-button-magnify)); /* IE 9 */

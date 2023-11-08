@@ -78,7 +78,7 @@ export const ACTIONABLE_FILTER_MAP = {
         caption: "URL Status BAD, Archive Status BAD (pending)",
         desc: "URL Status BAD, Archive Status BAD",
         tooltip: `<div>Original URL Status is NOT 2XX or 3XX<br/>AND<br/>No Archive exists in Wayback Machine</div>`,
-        fixit: <div>Add Wayback Machine archive for this URL in the citation</div>,
+        fixit: <div>Add Wayback Machine archive URL to the citation</div>,
         filterFunction: () => (d) => {
             return (d.status_code < 200 || d.status_code >= 400)
                 &&

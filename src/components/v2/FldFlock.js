@@ -30,7 +30,7 @@ export default function FldFlock({ fldArray, onAction, selectedDomain = '' }) {
 
     const flds = (!fldArray || !fldArray.length)
         ? <p>No Domains to show!</p>
-        : <div className={'field-list-wrapper'}>
+        : <div className={'fld-list-wrapper'}>
 
             <h4>Click to filter by domain</h4>
 

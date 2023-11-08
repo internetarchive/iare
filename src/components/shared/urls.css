@@ -199,24 +199,19 @@
     background-color: var(--color-list-bg-selected);
 }
 
-.url-list .url-row.url-is-unknown,
-.url-list .url-row.url-is-unknown a{
-    /*color:dimgrey !important;*/
+.url-row.url-is-unknown .url-status {
     color: #a5a5a5 !important;
-    /*background: #c9cbcf; !*dimgrey;*!*/
 }
-.url-list .url-row.url-is-redirect,
-.url-list .url-row.url-is-redirect a{
+.url-row.url-is-redirect .url-status {
     /*color: #b700ff !important;*/
 }
-.url-list .url-row.url-is-notfound,
-.url-list .url-row.url-is-notfound a{
+.url-row.url-is-notfound .url-status {
     color: red !important;
 }
-.url-list .url-row.url-is-error,
-.url-list .url-row.url-is-error a{
+.url-row.url-is-error .url-status {
     color: red !important;
 }
+
 .url-row > div {
     padding:.5rem;
 }

@@ -7,7 +7,13 @@
 /*.fld-display a {*/
 /*    color: #339966;*/
 /*}*/
+:root {
+    --width-fld-list: 17rem;
+    --width-col-1: 14rem;
+
+}
 .fld-flock {
+    /*width: var(--width-fld-list);*/
     padding-right:1.5rem;
 }
 .fld-list {
@@ -17,6 +23,9 @@
     max-height: var(--height-list);
     height: var(--height-list);
     overflow: scroll;
+}
+.fld-list-wrapper {
+    width: var(--width-fld-list);
 }
 
 .fld-list .fld-row,
@@ -44,13 +53,14 @@
 .fld-list .fld-row > div:first-child,
 .fld-list-header .fld-row > div:first-child
 {
-    width:10rem;
+    width:var(--width-col-1);
+    min-width:var(--width-col-1);
+    max-width:var(--width-col-1);
     overflow:scroll;
 }
 .fld-list .fld-row > div:nth-child(2),
 .fld-list-header .fld-row > div:nth-child(2)
 {
-    width:2rem;
     border-left:1px solid black;
 }
 .fld-list .fld-row:hover {

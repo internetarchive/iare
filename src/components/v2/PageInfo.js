@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import ArrayDisplay from "../ArrayDisplay";
 import PureJson from "../utils/PureJson";
 import {convertToCSV, copyToClipboard} from "../../utils/utils";
+import {ConfigContext} from "../../contexts/ConfigContext";
 
 function ClickButton( {buttonCaption=null, buttonText='', handleClick}) {
     const buttonMarkup = buttonCaption ? buttonCaption : <span>{buttonText}</span>
@@ -24,6 +25,9 @@ export default function PageInfo({ pageData }) {
     const ores_score_display = ores_score
         ? `${ores_prediction} ${Number(ores_score).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:0})}`
         : null
+
+    let myConfig = React.useContext(ConfigContext);
+    myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
 
     const handleCopyUrlArray = () => {
         copyToClipboard( JSON.stringify(pageData.urlArray), "URL Data" )
@@ -97,13 +101,15 @@ export default function PageInfo({ pageData }) {
         copyToClipboard( convertToCSV(refData), "Reference Data" )
     }
 
-
+    const oresResults = ores_score_display ? <span className={"ores-display"}>ORES Score: {ores_score_display}</span> : null
+    const buttonMoreDetails = myConfig.environment === "env-local"
+        ? <button onClick={()=>setShowDetail(!showDetail)} className={"more-button"}>{ showDetail ? "less" : "more" } details</button>
+        : null
+    const linkPageSource = <a href={pageData.pathName} target={"_blank"} rel={"noreferrer"}>{pageData.pathName}</a>
 
     return <div className="page-info">
-        <h6>Wiki Page Analyzed: <a href={pageData.pathName} target={"_blank"} rel={"noreferrer"}>{pageData.pathName}</a
-        > {ores_score_display ? false && <span className={"ores-display"}>ORES Score: {ores_score_display}</span> : null}
-            <button onClick={()=>setShowDetail(!showDetail)} className={"more-button"}>{ showDetail ? "less" : "more" } details</button>
-        </h6>
+
+        <h6>Wiki Page Analyzed: {linkPageSource}{false && oresResults}{buttonMoreDetails}</h6>
 
         {pageData
             ? <div className={'detail-section' + (showDetail ? ' detail-show' : ' detail-hide') }>
