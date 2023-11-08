@@ -15,7 +15,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
     const [isDebug, setDebug] = useState(myDebug);
     const [isShowReferences, setIsShowReferences] = useState(false);
     const [isShowUrlOverview, setIsShowUrlOverview] = useState(false);
-    const [isShowShortcuts, setIsShowShortcuts] = useState(false);
+    const [isShowShortcuts, setIsShowShortcuts] = useState(true);
 
     // params settable from from address url
     const [targetPath, setTargetPath] = useState(myPath);
