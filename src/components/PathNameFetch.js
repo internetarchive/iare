@@ -54,7 +54,7 @@ export default function PathNameFetch({
     // const disabled = React.useMemo(() => {
     //     return !data.some( d => d.label === text );
     // }, [text]);
-    
+
     const shortcutData = shortcuts
         ? shortcuts.map( sKey => {
             // shortcut has a .label and a .value props, which is what datalist needs
@@ -89,7 +89,7 @@ export default function PathNameFetch({
             </div>
 
             <div style={{display: "block"}}>
-                <button className={"utility-button"} onClick={myHandlePath.handleSubmit} style={{marginLeft: "10px"}}>
+                <button className={"utility-button"} style={{margin: "0 0 0.2rem 10px"}} onClick={myHandlePath.handleSubmit} >
                     <span>{"Load References"}</span>
                 </button
                 ><Checkbox className={"chk-force-refresh"} label={"Force Refresh"} value={checked} onChange={handleCheckChange}/>
