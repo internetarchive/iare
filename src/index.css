@@ -202,7 +202,13 @@ button.utility-button.small-button {
     text-decoration: underline;
     color:grey;
 }
-
+.more-page-info-button {
+    margin-left:.5rem;
+    color: #b6b4b4;
+}
+.page-details-table {
+    display:none !important;
+}
 
 
 /* choice selections */

@@ -103,13 +103,13 @@ export default function PageInfo({ pageData }) {
 
     const oresResults = ores_score_display ? <span className={"ores-display"}>ORES Score: {ores_score_display}</span> : null
     const buttonMoreDetails = myConfig.environment === "env-local"
-        ? <button onClick={()=>setShowDetail(!showDetail)} className={"more-button"}>{ showDetail ? "less" : "more" } details</button>
+        ? <button onClick={()=>setShowDetail(!showDetail)} className={"more-button more-page-info-button"}>show { showDetail ? "less" : "more" } detail</button>
         : null
     const linkPageSource = <a href={pageData.pathName} target={"_blank"} rel={"noreferrer"}>{pageData.pathName}</a>
 
     return <div className="page-info">
 
-        <h6>Wiki Page Analyzed: {linkPageSource}{false && oresResults}{buttonMoreDetails}</h6>
+        <h6>Wiki Page Analyzed: {linkPageSource}{true && oresResults}{buttonMoreDetails}</h6>
 
         {pageData
             ? <div className={'detail-section' + (showDetail ? ' detail-show' : ' detail-hide') }>
@@ -131,7 +131,7 @@ export default function PageInfo({ pageData }) {
                 <ClickButton buttonText={"Copy UrlArray to clipboard (JSON)"} handleClick={handleCopyUrlArray} />
                 <ClickButton buttonText={"Copy UrlArray to CSV"} handleClick={handleCopyUrlArrayCsv} />
 
-                <div style={{display: "flex", flexDirection: "row"}}>
+                <div className={"page-details-table"} style={{display: "flex", flexDirection: "row"}}>
 
                     <ArrayDisplay arr={[
                         {'IARI JSON version': pageData.version},

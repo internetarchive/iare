@@ -43,6 +43,18 @@ export const URL_STATUS_FILTER_MAP = {
 };
 
 export const ACTIONABLE_FILTER_MAP = {
+
+    /* ideas for more:
+    * source BAD; no archive present
+        - if free reference, then check for webarchive
+        * if source from template, check for archive_url and url_status
+    * source ANY, no archive protection (either through webarchive or template:archive_url
+
+    * other non-actionable ideas:
+    = call the url_status parameter something like "Citation Priority" in user presentation
+
+         */
+
     // all: {
     //     caption: "Show All",
     //     desc: "no filter",
@@ -63,14 +75,75 @@ export const ACTIONABLE_FILTER_MAP = {
     },
     good_not_live: {
         name: "good_not_live",
+        /*
+        if their is an archive_url parameter in the template, there should be an "url_status" parameter as well. This
+        "url_status" parameter, whose value is generally "live" or "dead", indicates whether to show original link first
+        or archive link first in the citation.
+        - if an archive_url exists, then must have a "url_status" parameter
+        - if original link is BAD, then, url_status should not be "live"
+        So,
+        * WITHIN template:
+          if source GOOD, and archive_url exists, and url_status !== "live"
+
+        anomaly example:
+
+        <ref>[http://travel.nationalgeographic.com/travel/world-heritage/easter-island/ Easter Island]
+        {{webarchive|url=https://web.archive.org/web/20140403193826/http://travel.nationalgeographic.com/travel/world-heritage/easter-island/
+        |date=3 April 2014 }}. ''National Geographic''.</ref>
+
+        in this case, our raw ref has source link but is "saved" by {{webarchive}} template.
+        i suppose this could be a case where we have "BAD source" and no protection, whether it be from an archive_url parameter in the
+        reference or an associated {{webarchive}} additional template in the ref that protects the source
+
+         */
         caption: "URL Status GOOD, Citation Status NOT LIVE",
         desc: "URL Status GOOD, Citation Status NOT LIVE",
         tooltip: `<div>Original URL Status IS 2XX or 3XX<br/>AND<br/>Template Parameter "url_status" is NOT set to "live"</div>`,
-        fixit: <div>Set "url-status" parameter in Citation Template to "live"</div>,
+        fixit: <div>Add or change Citation Template Parameter "url-status" to "live"</div>,
+
         filterFunction: () => (d) => {
             return (d.status_code >= 200 && d.status_code < 400)
                 &&
                 (d.reference_info?.statuses?.length && !d.reference_info.statuses.includes('live') );
+
+            /* strategy:
+            for this url object (as d)
+
+            if d.url is GOOD
+                for some refs (as r)
+                    for some template (as t):  // return true as soon as any of the consitions are true, i.e., if at least one template has true conditions
+                        if d.url === t.url, then:
+                            if t.archive_url exists and t.url_status !== live
+                                return TRUE
+                            else return false
+                        else
+                            return false
+
+             else
+                return false
+
+             */
+
+// if (d.status_code >= 200 && d.status_code < 400) {
+//     // source GOOD,  dive deeper
+//     d.refs.some( r => {
+//             r.templates.some( t => {
+//                 // if t.archive_url && t.url_status, etc...
+//                 if (1) {
+//                     return true
+//                 } else {
+//                     return false
+//                 }
+//             })
+//         }
+//
+//     )
+//
+// } else {
+//     return false; // url is OK, dont need to filter (but maybe catch no protection)
+// }
+
+
         },
     },
     dead_link_no_archive: {

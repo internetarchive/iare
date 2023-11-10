@@ -15,7 +15,7 @@ export default function PageInfo({ pageData }) {
 
     return <div className="page-info">
         <h6>PDF Page Analyzed: <a href={pageData.pathName} target={"_blank"} rel={"noreferrer"}>{pageData.pathName}</a
-            > <button onClick={()=>setShowDetail(!showDetail)} className={"more-button"}>{ showDetail ? "less" : "more" } details</button>
+            > <button onClick={()=>setShowDetail(!showDetail)} className={"more-button more-page-info-button"}>show { showDetail ? "less" : "more" } details</button>
         </h6>
 
         {pageData
