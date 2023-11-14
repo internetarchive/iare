@@ -25,11 +25,14 @@ function ActionFilters( {filterSet= null, filterRender, flock = [], onAction, op
         })
     }
 
+    const caption = <>{localized.Actionable}<span
+        className={"inferior"}> - Show Links from Citations that can be improved right now</span></>
+
     return <FilterButtons
         flock={flock}  // flock set to count filters against
         filterMap={filterSet}
         onClick={handleActionable}
-        caption={<>{localized.Actionable}<span className={"inferior"}> - These are the things that can be fixed right now</span></>}
+        caption={caption}
         currentFilterName={currentFilterName}  // sets "pressed" default selection
         className={className}
         tooltipId={tooltipId}

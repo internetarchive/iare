@@ -93,3 +93,4 @@ export const getLinkStatus = (statusCode) => {
         : (statusCode >= 200 && statusCode < 400) ? 'good'
             : 'bad'
 }
+

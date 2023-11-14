@@ -24,7 +24,7 @@ const urlListDef = {
             ttHeader: `<div>URL Status reported by IABot</div>`,
             ttData: `placeholder`,
         },
-        "url-references": {
+        "url-citations": {
             ttHeader: `<div>URL Status as indicated by Citation Template "url-status" Parameter</div>`,
             ttData: '<div>Link Status as indicated in Citation</div>',
         },
@@ -303,7 +303,7 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
                     `<br/>${row.dataset.arch_wbm === "true" ? 'Archived' : 'Not Archived'}</div>`
                 : ''
 
-        } else if (myClassName === "url-references") {
+        } else if (myClassName === "url-citations") {
             // live status from template special handling
             html = row.dataset.live_status && row.dataset.live_status !== '--'
                 ? `<div>Link Status ${'"' + row.dataset.live_status + '"'} as indicated in Citation</div>`
@@ -464,7 +464,7 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
                     </>
                     : null }
 
-                <div className={"url-references"}>{getReferenceInfo(u)}</div>
+                <div className={"url-citations"}>{getReferenceInfo(u)}</div>
                 <div className={"url-templates"}>{getTemplateInfo(u)}</div>
                 <div className={"url-sections"}>{getSectionInfo(u)}</div>
 
@@ -495,7 +495,7 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
                     </>
                     : null }
 
-                <div className={"url-references"}>&nbsp;</div>
+                <div className={"url-citations"}>&nbsp;</div>
                 <div className={"url-templates"}>&nbsp;</div>
                 <div className={"url-sections"}>&nbsp;</div>
 
@@ -578,7 +578,7 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
                         {/*<div className={"url-iabot_status"}>&nbsp;</div>*/}
                     </>
                     : null }
-                <div className={"url-references"}>&nbsp;</div>
+                <div className={"url-citations"}>&nbsp;</div>
                 <div className={"url-templates"}>&nbsp;</div>
                 <div className={"url-sections"}>&nbsp;</div>
             </div>
@@ -588,12 +588,12 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
                 <div className={"url-name"} onClick={() => {
                     handleSortClick("name")
                 }
-                }>URL<br/>Link</div>
+                }><br/>URL Link</div>
 
                 <div className={"url-status"} onClick={() => {
                     handleSortClick("status")
                 }
-                }>URL<br/>Status</div>
+                }>Link<br/>Status</div>
 
                 {/* TODO this should be within IABOT row renderer */}
                 {fetchMethod === UrlStatusCheckMethods.IABOT.key
@@ -612,8 +612,8 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
                     </>
                     : null }
 
-                <div className={"url-references"} onClick={() => { handleSortClick("references"); } }
-                >Citation<br/>Status</div>
+                <div className={"url-citations"} onClick={() => { handleSortClick("references"); } }
+                >Citation<br/>Priority</div>
 
                 <div className={"url-templates"} onClick={() => { handleSortClick("templates"); } }
                 >Template<br/>Type</div>

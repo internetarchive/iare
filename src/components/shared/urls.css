@@ -2,11 +2,11 @@
     --width-url-list: 43.5rem;
     --width-url-name: 20rem;
     --width-url-status: 3.5rem;
-
     --width-url-archive-status: 3rem;
-    --width-url-iabot_status: 5.5rem;
+    --width-url-citations: 5.5rem;
 
-    --width-url-references: 5.5rem;
+    --width-url-iabot_status: 15.5rem;
+
     --width-url-templates: 5.5rem;
     --width-url-sections: 5.5rem;
 
@@ -250,11 +250,11 @@
     width: var(--width-url-iabot_status);
     max-width: var(--width-url-iabot_status);
 }
-.url-row .url-references {
+.url-row .url-citations {
     text-align: left;
     /*border-left: 1px solid black;*/
-    width: var(--width-url-references);
-    max-width: var(--width-url-references);
+    width: var(--width-url-citations);
+    max-width: var(--width-url-citations);
 }
 .url-row .url-templates {
     text-align: left;
@@ -283,7 +283,7 @@
 .url-header-row .url-arch_wbm,
 .url-header-row .url-arch_tmplt,
 .url-header-row .url-iabot_status,
-.url-header-row .url-references,
+.url-header-row .url-citations,
 .url-header-row .url-templates,
 .url-header-row .url-sections
 {

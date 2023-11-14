@@ -47,7 +47,6 @@ const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method=''
                     } else {
                         results.searchurldata_archived = false
                     }
-                    // results.searchurldata_archived = myUrlData.archived ? myUrlData.archived : false
 
                     results.searchurldata_archive = myUrlData.archive
                     results.searchurldata_hasarchive = myUrlData.hasarchive
@@ -63,7 +62,8 @@ const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method=''
 
         } else if (method === UrlStatusCheckMethods.IARI.key) {
             // TODO Deprecate? its nice to have a default status_code value...
-            // TODO maybe have status_code and another status_code_origin, or status_details, etc
+            // TODO maybe have results.status_code, and additional properties such as
+            //  results.status_code_origin or results.status_details, etc
             results.status_code = data.status_code
 
         } else {
@@ -74,6 +74,7 @@ const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method=''
 
         return results
     }
+
 
     // TODO: do we want no-cache, even if no refresh?
     const urlData = await fetch(endpoint, {cache: "no-cache"})
@@ -102,7 +103,7 @@ const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method=''
             }
         })
 
-        .catch( (_) => { // if something really bad happened, still return fake synthesized url object
+        .catch( (_e) => { // if something bad happened, return fake synthesized url object
 
                 console.warn(`utils::fetchStatusUrl: Something went wrong when fetching url: ${url}`)
 
@@ -139,7 +140,6 @@ const fetchUrlsIabot = async (iariBase, urlArray, refresh, timeout) => {
     // assumes all promises successful
     // TODO: error trap this promise call with a .catch
     return await Promise.all(promises);
-
 }
 
 // eslint-disable-next-line no-unused-vars

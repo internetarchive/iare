@@ -1,3 +1,12 @@
+
+const isLinkStatusGood = (statusCode) => {
+    return statusCode >= 200 && statusCode < 400
+}
+
+const isLinkStatusBad = (statusCode) => {
+    return statusCode < 200 && statusCode >= 400
+}
+
 export const URL_STATUS_FILTER_MAP = {
     all: {
         caption: "Show All",
@@ -62,8 +71,8 @@ export const ACTIONABLE_FILTER_MAP = {
     // },
     bad_live: {
         name: "bad_live",
-        caption: "URL Status BAD, Citation Status LIVE",
-        desc: "URL Status BAD, Citation Status LIVE",
+        caption: "Link Status: BAD, Citation Priority: Link",
+        desc: "Link Status: BAD, Citation Priority: Link",
         tooltip: `<div>Original URL Status is NOT 2XX or 3XX<br/>AND<br/>Template Parameter "url_status" is set to "live"</div>`,
         fixit: <div>Set "url-status" parameter in Citation Template to "dead"</div>,
         filterFunction: () => (d) => {
@@ -95,16 +104,68 @@ export const ACTIONABLE_FILTER_MAP = {
         i suppose this could be a case where we have "BAD source" and no protection, whether it be from an archive_url parameter in the
         reference or an associated {{webarchive}} additional template in the ref that protects the source
 
+        suggestion:
+        source-status
+        archive-status (WBM only?)
+        citation-priority - indicated by url-status
+
+        if link GOOD
+        AND (archive exists and citation-priority is ARCHIVE)
+        THEN
+        the citation-priority should be set to SOURCE (url-status => "live")
+
+        title:
+        Source link GOOD, Archive YES, Citation Priority: Archive
+
+        translates to:
+
+        // if link bad, exit with FALSE
+        if (d.status_code < 200 || d.status_code >= 400) return false
+
+        // we check all templates of all references
+        // if ANY of the templates fulfill the conditions, return TRUE
+
+        // fancy ref loop template loop
+        // if (archive-url exists) && (url-status !== live)
          */
-        caption: "URL Status GOOD, Citation Status NOT LIVE",
-        desc: "URL Status GOOD, Citation Status NOT LIVE",
+
+        caption: "Link Status: GOOD, Archive Status: GOOD, Citation Priority: Archive",
+        desc: "Link Status: GOOD, Archive Status: GOOD, Citation Priority: Archive",
         tooltip: `<div>Original URL Status IS 2XX or 3XX<br/>AND<br/>Template Parameter "url_status" is NOT set to "live"</div>`,
         fixit: <div>Add or change Citation Template Parameter "url-status" to "live"</div>,
 
         filterFunction: () => (d) => {
-            return (d.status_code >= 200 && d.status_code < 400)
-                &&
-                (d.reference_info?.statuses?.length && !d.reference_info.statuses.includes('live') );
+                        // return (d.status_code >= 200 && d.status_code < 400)
+                        //     &&
+                        //     (d.reference_info?.statuses?.length && !d.reference_info.statuses.includes('live') );
+
+            // run through refs and templates
+            // if template.url === d.url
+            //   if template.archive_url
+            //      if template.url_status !== "live"
+            //          return TRUE
+            //      else return FALSE
+            //   else return FALSE;
+            // else return FALSE
+
+            if (isLinkStatusGood(d.status_code)) {
+                // source link GOOD, check templates for archive and citation status
+                return d.refs.some(r => {
+                    // if any of the ref's templates return true...
+                    r.templates.some(t => {
+                        // return true if archive_url is there and t.parameters.url_status !== "live"
+                        if (t.parameters && (t.parameters.url === d.url)) {
+                            return (t.parameters.archive_url && (t.parameters.url_status !== "live"))
+                        } else {
+                            return false
+                        }
+                    })
+                })
+            } else {
+                return false
+            }
+
+
 
             /* strategy:
             for this url object (as d)

@@ -39,7 +39,7 @@ export default function RefUrls({ urls }) {
         return <tr key={u.url} className={classes}>
             <td><MakeLink href={u.url} /></td>
             <td><div>{u.status_code}</div></td>
-            <td><div><MakeLink href={endpoint} linkText={"manage"} /></div></td>
+            <td><div><MakeLink href={endpoint} linkText={"details"} /></div></td>
         </tr>
     }
 
