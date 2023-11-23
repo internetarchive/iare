@@ -3,6 +3,7 @@ import FilterButtons from "../FilterButtons";
 import FilterStatusChoices from "../FilterStatusChoices";
 import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "./filters/urlFilterMaps";
 import {REF_LINK_STATUS_FILTERS} from "./filters/refFilterMaps";
+import {ConfigContext} from "../../contexts/ConfigContext";
 import PieChart from "../PieChart";
 import {
     Chart,
@@ -75,6 +76,9 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
             },
         }
     )
+
+    let myConfig = React.useContext(ConfigContext);
+    myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
 
     useEffect( () => {
 
@@ -363,6 +367,103 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
         </div>
     </>
 
+    const templateData = Object.keys(pageData.template_statistics).map( key => {
+        return {
+            label: key,
+            count: pageData.template_statistics[key],
+            link: key
+        }
+    })
+    
+    const templateChartData = {
+
+        labels: templateData.map(d => d.label),
+        datasets: [{
+            label: "Templates",
+            data: templateData.map(d => d.count),
+            links: templateData.map(d => d.link),
+            backgroundColor: [colors.teal, colors.yellow, colors.red, colors.magenta, colors.grey,]
+        }],
+
+        borderColor: "black",
+        borderWidth: 2,
+    }
+
+    const onClickTemplateLegend = (event, legendItem, legend) => {
+        const index = legendItem.index;
+        const ci = legend.chart;
+        const link = ci.data.datasets[0].links[index];
+        // console.log(`legend index: ${index}, link: ${link}`);
+
+        // pass link up to passed in click routine
+        onAction({action: "setTemplateFilter", value: link})
+    }
+    const onClickTemplateChart = (link) => {
+        // console.log("pie chart clicked, link=", link)
+        onAction({action: "setTemplateFilter", value: link})
+    }
+
+    const templateChartOptions = {
+        // animation: true,
+        animation: {
+            animateScale: false,
+            animateRotate: true
+        },
+        maintainAspectRatio: false,
+
+        cutout: "50%",
+        responsive: true,
+        plugins: {
+
+            datalabels: false,
+            legend: {
+                display: true,
+                position: 'top',
+                align: 'start',
+                // title: {
+                //     text: "Legend",
+                //     display: true,
+                // },
+                labels: {
+                    boxWidth: 30,
+                    boxHeight: 16,
+                    font: {
+                        size: 16
+                    },
+                },
+                onClick: onClickTemplateLegend,
+            },
+            // subtitle: {
+            //     display: true,
+            //     text: 'Custom Chart Subtitle'
+            // },
+            // title: {
+            //     display: true,
+            //     text: 'URL Return Status Code Breakdown'
+            // },
+
+
+            // animation: {
+            //     animateScale: false,
+            //     animateRotate: false
+            // },
+            // animation: false,
+        },
+    }
+
+    const templateCaption = <>
+        <h4>Template Occurrences</h4>
+        <h4 style={{fontStyle: "italic", fontWeight: "bold"}}>Click to filter URL and References Lists</h4>
+    </>
+
+    const templateDisplay = <>
+        <div className={"template-chart-display"}>
+            {templateChartData.datasets[0].data.length > 0 ?
+                <PieChart chartData={templateChartData} options={templateChartOptions} onClick={onClickTemplateChart}/>
+                : <p>No Template Pie</p>}
+        </div>
+    </>
+
 
     return <div className={"url-overview"}>
 
@@ -370,6 +471,12 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
             {urlStatusCaption}
             {urlStatusDisplay}
         </div>
+
+        {myConfig.isShowNewFeatures &&
+        <div className={'section-sub'}>
+            {templateCaption}
+            {templateDisplay}
+        </div>}
 
         {false && <div className={'section-sub'}>
             {archiveStatusCaption}

@@ -523,14 +523,14 @@ const fetchUrlsCorentin = async (urlArray, refresh, timeout) => {
 
 // returns a promise, enholding array of urls
 export const fetchUrls = async ({
-                                           iariBase= '',
-                                           urlArray=[],
-                                           refresh=false,
-                                           timeout=10,
-                                           method = UrlStatusCheckMethods.IABOT.key
-                                       } = {}) => {
+                iariBase= '',
+                urlArray=[],
+                refresh=false,
+                timeout=10,
+                method = UrlStatusCheckMethods.IABOT.key
+            } = {}) => {
 
-    console.log(`iariUtils::fetchUrlStatuses: iariBase=${iariBase} method=${method}): refresh = ${refresh}, timeout = ${timeout}`)
+    console.log(`iariUtils::fetchUrls: iariBase=${iariBase} method=${method} refresh=${refresh}, timeout=${timeout}`)
 
     if (!urlArray || !urlArray.length)
     {

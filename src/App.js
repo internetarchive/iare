@@ -14,10 +14,11 @@ import {ConfigContext} from "./contexts/ConfigContext"
 export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, myDebug}) {
 
     const [isDebug, setDebug] = useState(myDebug);
-    const [isShowReferences, setIsShowReferences] = useState(false);
+    const [isShowReferences, setIsShowReferences] = useState(true);
     const [isShowUrlOverview, setIsShowUrlOverview] = useState(true);
     const [isShowShortcuts, setIsShowShortcuts] = useState(true);
     const [isShowExpertMode, setIsShowExpertMode] = useState(true);
+    const [isShowNewFeatures, setIsShowNewFeatures] = useState(true);
 
     // params settable from from address url
     const [targetPath, setTargetPath] = useState(myPath);
@@ -344,6 +345,13 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
                 setIsShowExpertMode(prevState => !prevState )
             }
             } >{isShowExpertMode ? "Hide" : "Show"} Expert Controls</button>
+        &nbsp;
+        <button // this is the 'show New Features' button
+            className={"utility-button debug-button"}
+            onClick={() => {
+                setIsShowNewFeatures(prevState => !prevState )
+            }
+            } >{isShowNewFeatures ? "Hide" : "Show"} New Features</button>
         </>
 
     const debug = <div className={"debug-section " + (isDebug ? "debug-on" : "debug-off")}>
@@ -369,6 +377,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         isShowUrlOverview: isShowUrlOverview,
         isShowShortcuts: isShowShortcuts,
         isShowExpertMode: isShowExpertMode,
+        isShowNewFeatures: isShowNewFeatures,
     }
 
     console.log(`rendering App component:`, {

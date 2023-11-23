@@ -112,7 +112,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             setUrlFilters({ "url_status" : f })
         }
 
-                    // if (action === "setArchiveStatusFilter") {
+                    // else if (action === "setArchiveStatusFilter") {
                     //     // TODO: this will eventually NOT take a filter index name, but rather a filter itself,
                     //     // TODO similar to action "setUrlReferenceFilter"
                     //     // value is filter key name
@@ -121,7 +121,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                     // }
                     //
 
-        if (action === "showRefsForUrl") {
+        else if (action === "showRefsForUrl") {
             // value is url key name
             const myRef = pageData.urlDict[value]?.refs[0] // for now...shall pass entire array soon
             fetchDetail(myRef)
@@ -132,25 +132,25 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             setSelectedUrl(value)
         }
 
-        if (action === "setArchiveStatusFilters") {
+        else if (action === "setArchiveStatusFilters") {
             setUrlFilters({ "archive_status_filter" : value })  // NB: value is filter object
         }
 
 
-        if (action === "setUrlReferenceFilter") {
+        else if (action === "setUrlReferenceFilter") {
             // filter References to those that contain a url specified by the value parameter
             setRefFilter(getUrlRefFilter(value))
             setSelectedUrl(value)
         }
 
-        if (action === "setUrlActionFilter") {
+        else if (action === "setUrlActionFilter") {
             // filter References as determined by action.value as key into actionable filter map
             const f = value ? ACTIONABLE_FILTER_MAP[value] : null
             setUrlFilters( { "action_filter": f } )
             setSelectedUrlActionFilterName(value)
         }
 
-        if (action === "setLinkStatusFilter") {
+        else if (action === "setLinkStatusFilter") {
             // use value as link status to filter references with
 
             const f = value ? REF_LINK_STATUS_FILTERS[value] : null
@@ -159,19 +159,34 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             // TODO: some sort of feedback? selected filter?
         }
 
-        if (action === "removeUrlFilter") {
+        else if (action === "removeUrlFilter") {
             // clear filter (show all) for URL list
             setUrlFilters(null)
             setSelectedUrl(null)
             setSelectedUrlActionFilterName(null)
         }
 
-        if (action === "removeReferenceFilter") {
+        else if (action === "removeReferenceFilter") {
             // clear filter (show all) for references list
             setRefFilter(null)
             setSelectedUrl(null)
         }
 
+        else if (action === "setTemplateFilter") {
+            console.log (`UrlDisplay: handleAction: setting templateFilter for ${value}`);
+            // filter URLs (and references?) if they include template indicated by "value" argument"
+            setUrlFilters({ "url_template_filter" : getUrlTemplateFilter(value) })
+            setSelectedUrl(null)
+
+            // and also do the references
+            setRefFilter(getRefTemplateFilter(value))
+
+        }
+
+        else {
+            console.log(`Action "${action}" not supported.`)
+            alert(`Action "${action}" not supported.`)
+        }
 
         // TODO: Action for setReferenceFilter/ShowReference for filtered URLS
         // i.e. show all refs that contain ANY of the URLS in the filtered URL list
@@ -223,12 +238,70 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
             caption: <span>Contains URL: <br/><span
                 className={'target-url'}><a target={"_blank"} rel={"noreferrer"}
-                href={targetUrl} >{targetUrl}</a
-                ></span></span>,
+                                            href={targetUrl} >{targetUrl}</a
+            ></span></span>,
 
             filterFunction: () => (d) => {
                 // TODO make this use an array of targetUrls
                 return d.urls.includes( targetUrl )
+            },
+        }
+    }
+
+    const getUrlTemplateFilter = (templateName) => {
+
+        if (!templateName || templateName === '') {
+            return null; // no template means all filter
+        }
+
+        // return synthetic filter showing only URLs that have templateName in their associated citation templates
+        return {
+
+            desc: `URLs from References that contain Template "${templateName}"`,
+
+            caption: <span>{`Contains Template "${templateName}"`}</span>,
+
+            filterFunction: () => (url) => {
+                // loop thru refs
+                // if any of those refs contain templateName, return true anf exit
+                if (!templateName?.length) return true  // always let URL in if templateName is empty
+                return url.refs.some(r => {
+                    // if any of the ref's templates contain the target templateName, return true...
+                    if (!r.template_names) return false  // if ref does not have template_mames property...
+                    return r.template_names.includes(templateName)  // return true of templateName represented
+                })
+
+            },
+        }
+    }
+
+    const getRefTemplateFilter = (templateName) => {
+
+        if (!templateName || templateName === '') {
+            return null; // null filter means "select all" - show all if templateName is blank
+        }
+
+        // return synthetic filter showing only URLs that have templateName in their associated citation templates
+        return {
+
+            desc: `References that contain Template "${templateName}"`,
+
+            caption: <span>{`Contains Template "${templateName}"`}</span>,
+
+            filterFunction: () => (ref) => {
+                // loop thru refs
+                // if any of those refs contain templateName, return true anf exit
+                if (!templateName?.length) return true  // always let reference through if templateName is empty
+
+                if (!ref.template_names) return false  // if ref does not have template_mames property...
+                return ref.template_names.includes(templateName)  // return true of templateName represented
+
+                            // return url.refs.some(r => {
+                            //     // if any of the ref's templates contain the target templateName, return true...
+                            //     if (!r.template_names) return false  // if ref does not have template_mames property...
+                            //     return r.template_names.includes(templateName)  // return true of templateName represented
+                            // })
+
             },
         }
     }
@@ -270,49 +343,54 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                                className={"tooltip-actionable"}
     />
 
+    const urlFlockHeadMatter = <>
+        {false && <h3>{localized.url_display_title}</h3>}
+
+        {showChoiceFetch
+            ? <div className={"row"}>
+                <div className={"col-9"}>
+                    <ActionFilters
+                        filterSet={ACTIONABLE_FILTER_MAP}
+                        filterRender={renderUrlActionButton}
+                        flock={pageData.urlArray}
+                        onAction={handleAction}
+                        options ={{}}
+                        currentFilterName={selectedUrlActionFilterName}
+                        className={'url-action-filter-buttons'}
+                        tooltipId={'tooltip-actionable'}
+                    />
+                </div>
+                <div className={"col-3"}>
+                    <ChoiceFetch
+                        choices={citationTypes}
+                        selectedChoice={selectedCitationType}
+                        options={{
+                            caption:<h4>Show Citations from: </h4>,
+                            className:"citation-choices"
+                        }}
+                        onChange={handleCitationTypeChange} />
+                </div>
+            </div>
+
+            : <ActionFilters
+                filterSet={ACTIONABLE_FILTER_MAP}
+                filterRender={renderUrlActionButton}
+                flock={pageData.urlArray}
+                onAction={handleAction}
+                options ={{}}
+                currentFilterName={selectedUrlActionFilterName}
+                className={"url-action-filter-buttons"}
+                tooltipId={'tooltip-actionable'}
+            />
+        }
+        </>
+
     return <>
 
         <div className={"section-box"}>
             {actionableTooltip}
-            {false && <h3>{localized.url_display_title}</h3>}
 
-            {showChoiceFetch
-                ? <div className={"row"}>
-                    <div className={"col-9"}>
-                        <ActionFilters
-                            filterSet={ACTIONABLE_FILTER_MAP}
-                            filterRender={renderUrlActionButton}
-                            flock={pageData.urlArray}
-                            onAction={handleAction}
-                            options ={{}}
-                            currentFilterName={selectedUrlActionFilterName}
-                            className={'url-action-filter-buttons'}
-                            tooltipId={'tooltip-actionable'}
-                        />
-                    </div>
-                        <div className={"col-3"}>
-                            <ChoiceFetch
-                                choices={citationTypes}
-                                selectedChoice={selectedCitationType}
-                                options={{
-                                    caption:<h4>Show Citations from: </h4>,
-                                    className:"citation-choices"
-                                }}
-                                onChange={handleCitationTypeChange} />
-                        </div>
-                    </div>
-
-                : <ActionFilters
-                    filterSet={ACTIONABLE_FILTER_MAP}
-                    filterRender={renderUrlActionButton}
-                    flock={pageData.urlArray}
-                    onAction={handleAction}
-                    options ={{}}
-                    currentFilterName={selectedUrlActionFilterName}
-                    className={"url-action-filter-buttons"}
-                    tooltipId={'tooltip-actionable'}
-                    />
-            }
+            {urlFlockHeadMatter}
 
             <UrlFlock urlArray={pageData.urlArray}
                       urlFilters={urlFilters}

@@ -447,3 +447,7 @@ button.utility-button.disabled {
     padding:.5rem !important;
     opacity: .85;
 }
+
+.template-chart-display .chart-container {
+    height:600px;
+}

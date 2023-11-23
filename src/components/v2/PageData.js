@@ -46,6 +46,7 @@ export default function PageData({pageData = {}}) {
     const [isDataReady, setIsDataReady] = useState(false)
     const [isPageError, setIsPageError] = useState(false)
     const [pageErrorText, setPageErrorText] = useState('')
+    const [urlStatusLoadingMessage, setUrlStatusLoadingMessage] = useState('')
 
     // set up iariBase and statusMethod from global config
     let myConfig = React.useContext(ConfigContext)
@@ -113,11 +114,12 @@ export default function PageData({pageData = {}}) {
 
     const processUrlArchives = useCallback( (pageData, urlArchives) => {
         // assumes urlArchives is array of [ archive props ]
-
+        if (!urlArchives?.length) {
+            // TODO Error here?
+            return
+        }
         // append urlDict data for each returned url
         urlArchives.forEach(u => {
-            console.log("processing urlArchive ", u)
-
             const myUrl = pageData.urlDict[u.data.url]
             if (myUrl) {
                 myUrl.iabot_archive_status = u.data
@@ -337,9 +339,25 @@ export default function PageData({pageData = {}}) {
         // * reduce references with multiple citations into one reference with multiple page referrals
         // * calculate the status of the links in the references by examining the primary and
         //   archived urls in the templates in each reference
+        // * acquire template statistics
         //
-        // TODO: this should be IARI API, not front-end retrieval
+        // TODO: this should be IARI API, not front-end post-retrieval
         //
+
+        const gatherTemplateStatistics = (refArray) => {
+            const templateDict = {}  // stores count of each template
+            if (refArray?.length) {
+                refArray.forEach( ref => {
+                    if (!ref.template_names?.length) return
+                    ref.template_names.forEach(templateName => {
+                        // console.log(`Another Template found for ref id ${ref.id}: ${templateName}`)
+                        if (!templateDict[templateName]) templateDict[templateName] = 0
+                        templateDict[templateName] = templateDict[templateName] + 1
+                    })
+                })
+            }
+            pageData.template_statistics = templateDict
+        }
 
         const anchorRefs = getAnchorReferences(pageData)
 
@@ -351,8 +369,10 @@ export default function PageData({pageData = {}}) {
         // associate citeref data with anchorRefs
         processCiteRefs(anchorRefs, pageData)
 
-        // set achnorRefs as the definitive references property of pageData
+        // set anchorRefs as the definitive references property of pageData
         pageData.references = anchorRefs
+
+        gatherTemplateStatistics(pageData.references)
 
     }, [processReference, processCiteRefs])
 
@@ -465,21 +485,24 @@ export default function PageData({pageData = {}}) {
 
             try {
 
+                setUrlStatusLoadingMessage(`Retrieving URL status codes with ${myStatusCheckMethod} method`)
                 setIsDataReady(false);
                 setIsLoadingUrls(true);
 
-                const myUrls = await fetchPageUrls()
-                // do something with data???
 
+                const myUrls = await fetchPageUrls()
                 const myUrlArchives = await fetchPageUrlArchives()
+                    // NB this extra call for archive info will be unnecessary when IARI includes archive info in url info
 
                 // now we can do something with urls and urlArchives
 
                 processUrls(pageData, myUrls);  // creates pageData.urlDict and pageData.urlArray
-                processUrlArchives(pageData, myUrlArchives)
+                processUrlArchives(pageData, myUrlArchives)  // adds archive data to url definitions
+                    // NB this also will be unnecessary when IARI includes archive info in url info
 
                 processReferences(pageData)  // associates url links with references
                 associateRefsWithLinks(pageData)
+
                 pageData.statusCheckMethod = myStatusCheckMethod;
 
                 setIsDataReady(true);
@@ -539,7 +562,7 @@ export default function PageData({pageData = {}}) {
     return <>
 
         {isLoadingUrls
-            ? <Loader message={"Retrieving URL status codes..."}/>
+            ? <Loader message={urlStatusLoadingMessage}/>
             : <>
                 {isPageError && <div className={"error-display"}>{pageErrorText}</div>}
 
