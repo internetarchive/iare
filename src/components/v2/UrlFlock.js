@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {Tooltip as MyTooltip} from "react-tooltip";
-import {UrlStatusCheckMethods} from "../../constants/endpoints";
+import {ConfigContext} from "../../contexts/ConfigContext";
 import {httpStatusCodes, iabotLiveStatusCodes} from "../../constants/httpStatusCodes"
 import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "./filters/urlFilterMaps";
+import {UrlStatusCheckMethods} from "../../constants/checkMethods";
 import {convertToCSV, copyToClipboard} from "../../utils/utils";
-// import {forEach} from "react-bootstrap/ElementChildren";
 
 const localized = {
     "show_all_button_text":"Show All",
@@ -20,9 +20,9 @@ const urlListDef = {
             ttHeader: `<div>HTTP Status Code of Primary URL</div>`,
             ttData: `<div>{status_code} : {statusDescription}</div>`
         },
-        "url-iabot_status": {
-            ttHeader: `<div>URL Status reported by IABot</div>`,
-            ttData: `placeholder`,
+        "url-archive_status": {
+            ttHeader: `<div>Archive exists in IABot database</div>`,
+            ttData: ``,
         },
         "url-citations": {
             ttHeader: `<div>URL Status as indicated by Citation Template "url-status" Parameter</div>`,
@@ -37,20 +37,10 @@ const urlListDef = {
             ttData: `Section in Wikipedia article where Reference originated`,
         },
 
-        // archive flavors; NB only IABot is used practically
-        "url-arch_wbm": {
-            ttHeader: `<div>Archive exists in IABot database</div>`,
-            ttData: ``,
-        },
-
-        "url-arch-iari": {
-            ttHeader: `<div>Archive found within set of<br/>URLs returned from IARI</div>`,
-            ttData: ``,
-        },
-        "url-arch_tmplt": {
-            ttHeader: `<div>Archive found in "archive_url"<br/>parameter of citation template</div>`,
-            ttData: ``,
-        },
+                    // "url-iabot_status": {
+                    //     ttHeader: `<div>URL Status reported by IABot</div>`,
+                    //     ttData: `placeholder`,
+                    // },
 
     }
 }
@@ -81,15 +71,15 @@ example:
         filterFunction: () => (d) => {return d.type === "general"},
     }
 
-useSort and sort: apply sorting if set to true, use ASC if sortDir is true, DESC otherwise
 
 */
-const urlFlock = React.memo( function UrlFlock({ urlArray,
-                                     urlFilters = {},  // keyed object of filter definitions to apply to urlArray for final url list display
-                                     onAction,
-                                     selectedUrl = '',
-                                     extraCaption = null,
-                                     fetchMethod="" }) {
+const urlFlock = React.memo( function UrlFlock({
+                                urlArray,
+                                urlFilters = {},  // keyed object of filter definitions to apply to urlArray for final url list display
+                                onAction,
+                                selectedUrl = '',
+                                extraCaption = null,
+                                fetchMethod="" }) {
     // TODO maybe should not/don't have to use memo here??
 
     const [urlTooltipHtml, setUrlTooltipHtml] = useState( '<div>ToolTip<br />second line' );
@@ -99,15 +89,15 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
     const [sort, setSort] = useState({
         sorts: {  // holds sort value for all different sort types
             "status": {name: "status", dir: 1},  // dir: 1 is asc, -1 is desc, 0 is do not sort
-            "arch_iari": {name: "arch_iari", dir: 1},
-            "arch_wbm": {name: "arch_wbm", dir: -1},
-            "arch_tmplt": {name: "arch_tmplt", dir: 1},
+            "archive_status": {name: "archive_status", dir: -1},
             "references": {name: "references", dir: -1},
             "templates": {name: "templates", dir: -1},
             "sections": {name: "sections", dir: -1},
         },
-        sortOrder: ["status"]  // which sorts get applied and in what order. NB this is not implemented yet, but will be
+        sortOrder: ["status"]  // array indicating which sorts get applied and in what order. NB this is not implemented yet, but will be
     })
+
+    const myConfig = useContext(ConfigContext);
 
     const handleSortClick = (sortKey) => {
         // toggle sort direction of specified sort and set new sort state with setSort
@@ -153,32 +143,13 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
         return 0;
     }
 
-    const sortByArchIari = (a,b) => {
-        const archiveA = a?.hasArchive ? 1 : 0;
-        const archiveB = b?.hasArchive ? 1 : 0;
+    const sortByArchiveStatus = (a,b) => {
+        const archiveA = a?.iabot_archive_status.hasArchive ? 1 : 0;
+        const archiveB = b?.iabot_archive_status.hasArchive ? 1 : 0;
 
         // respect sortDir
-        if (archiveA < archiveB) return sort.sorts['arch_iari'].dir * -1;
-        if (archiveA > archiveB) return sort.sorts['arch_iari'].dir;
-        return 0;
-    }
-
-    const sortByArchWbm = (a,b) => {
-        const archiveA = a?.searchurldata_archived ? 1 : 0;
-        const archiveB = b?.searchurldata_archived ? 1 : 0;
-
-        // respect sortDir
-        if (archiveA < archiveB) return sort.sorts['arch_wbm'].dir * -1;
-        if (archiveA > archiveB) return sort.sorts['arch_wbm'].dir;
-        return 0;
-    }
-    const sortByArchTmlpt = (a,b) => {
-        const archiveA = a?.hasTemplateArchive ? 1 : 0;
-        const archiveB = b?.hasTemplateArchive ? 1 : 0;
-
-        // respect sortDir
-        if (archiveA < archiveB) return sort.sorts['arch_tmplt'].dir * -1;
-        if (archiveA > archiveB) return sort.sorts['arch_tmplt'].dir;
+        if (archiveA < archiveB) return sort.sorts['archive_status'].dir * -1;
+        if (archiveA > archiveB) return sort.sorts['archive_status'].dir;
         return 0;
     }
 
@@ -212,7 +183,7 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
 
     const sortFunction = (a,b) => {
         // TODO make this recursive to do collection of sort definitions as described in a "sort.sortOrder" array of key names for sort methods
-        // TODO e.g: sort.sortOrder = ["references", "arch_wbm", "name"]
+        // TODO e.g: sort.sortOrder = ["references", "archive_status", "name"]
         if(sort.sortOrder[0] === "name") {
             return sortByName(a,b)
         }
@@ -229,14 +200,8 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
             return sortBySection(a,b)
         }
 
-        else if(sort.sortOrder[0] === "arch_iari") {
-            return sortByArchIari(a,b)
-        }
-        else if(sort.sortOrder[0] === "arch_wbm") {
-            return sortByArchWbm(a,b)
-        }
-        else if(sort.sortOrder[0] === "arch_tmplt") {
-            return sortByArchTmlpt(a,b)
+        else if(sort.sortOrder[0] === "archive_status") {
+            return sortByArchiveStatus(a,b)
         }
         else {
             return 0  //
@@ -296,17 +261,17 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
             const statusDescription = httpStatusCodes[row.dataset.status_code]
             html = `<div>${row.dataset.status_code} : ${statusDescription}</div>`
 
-        } else if (myClassName === "url-arch_wbm") { // TODO: clarify this arch-wbm stuff!!!
+        } else if (myClassName === "url-archive_status") {
             // WBM archive status column special handling
             html = row.dataset.live_state
                 ? `<div>${row.dataset.live_state}: ${iabotLiveStatusCodes[row.dataset.live_state]}` +
-                    `<br/>${row.dataset.arch_wbm === "true" ? 'Archived' : 'Not Archived'}</div>`
+                    `<br/>${row.dataset.archive_status === "true" ? 'Archived' : 'Not Archived'}</div>`
                 : ''
 
         } else if (myClassName === "url-citations") {
             // live status from template special handling
-            html = row.dataset.live_status && row.dataset.live_status !== '--'
-                ? `<div>Link Status ${'"' + row.dataset.live_status + '"'} as indicated in Citation</div>`
+            html = row.dataset.citation_status && row.dataset.citation_status !== '--'
+                ? `<div>Link Status ${'"' + row.dataset.citation_status + '"'} as indicated in Citation</div>`
                 : `<div>No Link Status defined in Citation</div>`
 
         } else {
@@ -347,23 +312,28 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
         const handleCopyClick = () => { // used to copy url list and status
             // TODO Add column heading for cite status
 
-            // get one row per line:
             const urlArrayData = [...filteredUrls].sort(
-                (a, b) => (a.url > b.url) ? 1 : (a.url < b.url) ? -1 : 0
-            ).map( u => {
-                if (fetchMethod === UrlStatusCheckMethods.IABOT.key) {
-                    return [ u.url, u.status_code, u.status_code_error_details, u.searchurldata_status ]
-                } else {
-                    return [ u.url, u.status_code, u.status_code_error_details ]
-                }
+                (a, b) => (a.url > b.url) ? 1 : (a.url < b.url) ? -1 : 0  // sort by url
+
+            ).map( u => {  // get one row per line:
+                return [
+                    u.url,
+                    u.status_code,
+                    u.reference_info?.templates ? u.reference_info?.templates.join(",") : null,
+                    u.status_code_errors?.reason ? u.status_code_errors.reason : null,
+                    u.status_code_errors?.message ? u.status_code_errors.message : null,
+                ]
+                // TODO output archive status and maybe iabot live stuff
             })
 
             // add column labels
-            if (fetchMethod === UrlStatusCheckMethods.IABOT.key) {
-                urlArrayData.unshift( [ 'URL', `${fetchMethod} status`, `error details`, "IABOT searchurlstatus" ] )
-            } else {
-                urlArrayData.unshift( [ 'URL', `${fetchMethod} status`, `error details` ] )
-            }
+            urlArrayData.unshift( [
+                'URL',
+                `${fetchMethod} status`,
+                `Templates`,
+                `Error reason`,
+                `Error message`
+            ] )
 
             copyToClipboard(convertToCSV(urlArrayData))
 
@@ -404,17 +374,14 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
             filteredUrls.sort(sortFunction)
         }
 
-        // TODO this should be within IABOT row renderer
-        // const getArchIariStatus = (u => <span className={u.hasArchive ? "archive-yes" : "archive-no" }></span> )
-        const getArchWbmStatus = (u => <span className={u.searchurldata_archived ? "archive-yes" : "archive-no" }></span> )
-        // const getArchTmpltStatus = (u => <span className={u.hasTemplateArchive ? "archive-yes" : "archive-no" }></span> )
+        const getArchiveStatusInfo = (u => <span className={u.iabot_archive_status?.hasArchive ? "archive-yes" : "archive-no" }></span> )
 
-        const getReferenceInfo = (u => {
+        const getCitationInfo = (u => {
             // for now, returns array of statuses from url's associated references
             return !u.reference_info?.statuses
                 ? null
                 : u.reference_info.statuses.map( (s,i) => {
-                    return <div key={i}>{s}</div>
+                    return <div key={i}>{s.charAt(0).toUpperCase() + s.slice(1)}</div>
                 })
         })
 
@@ -437,34 +404,23 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
 
         const getDataRow = (u, i, classes) => {
 
-            const liveStatus = !u.reference_info?.statuses
+            const citationStatus = !u.reference_info?.statuses?.length
+                // TODO rethink this column - could have a JSON array version
                 ? null
                 : u.reference_info.statuses[0]  // just return first one
 
-            return <div className={classes} key={i} data-url={u.url}
+            return <div className={classes} key={i}
+                        data-url={u.url}
                         data-status_code={u.status_code}
-                        data-live_state={u.searchurldata_status}
-                        data-arch_iari={!!u.hasArchive}
-                        data-arch_wbm={!!u.searchurldata_archived}
-                        data-arch_tmplt={!!u.hasTemplateArchive}
-                        data-live_status={liveStatus}
-                        // data-references={!!u.hasTemplateArchive}
+                        data-archive_status={u.iabot_archive_status?.hasArchive}
+                        data-citation_status={citationStatus}
+                        data-live_state={u.iabot_archive_status?.live_state}
             >
                 <div className={"url-name"}>{u.url}</div>
                 <div className={"url-status"}>{u.status_code}</div>
-                {fetchMethod === UrlStatusCheckMethods.IABOT.key
-                    // we are essentially assuming IABot status for now - if we use corentin, then these wont display!
-                    // TODO if we use corentin, could we just add as a column? add other columns? later...
-                    ? <>
-                        <div className={"url-arch_wbm"}>{getArchWbmStatus(u)}</div>
+                <div className={"url-archive_status"}>{getArchiveStatusInfo(u)}</div>
 
-                        {/*<div className={"url-arch_tmplt"}>{getArchTmpltStatus(u)}</div>*/}
-                        {/*<div className={"url-iabot_status"}>{getIabotStatus(u)}</div>*/}
-
-                    </>
-                    : null }
-
-                <div className={"url-citations"}>{getReferenceInfo(u)}</div>
+                <div className={"url-citations"}>{getCitationInfo(u)}</div>
                 <div className={"url-templates"}>{getTemplateInfo(u)}</div>
                 <div className={"url-sections"}>{getSectionInfo(u)}</div>
 
@@ -476,24 +432,13 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
             return <div className={`url-row url-row-error`} key={i}
                         data-url={u.url}
                         data-err-text={errText}
-                // onMouseOverCapture={handleRowHover}>
+                        // onMouseOverCapture={handleRowHover}>
                         onMouseOver={onHoverErrorRow}
                         onMouseLeave={() => setUrlTooltipHtml('')}
             >
                 <div className={"url-name"}>{u.url ? u.url : `ERROR: No url for index ${i}`}</div>
                 <div className={"url-status"}>{-1}</div>
-
-                {/* TODO this should be within IABOT row renderer */}
-                {fetchMethod === UrlStatusCheckMethods.IABOT.key
-                    ? <>
-                        {/*<div className={"url-arch-iari"}>?</div>*/}
-                        <div className={"url-arch_wbm"}>?</div>
-
-                        {/*<div className={"url-arch_tmplt"}>?</div>*/}
-                        {/*<div className={"url-iabot_status"}>---</div>*/}
-
-                    </>
-                    : null }
+                <div className={"url-archive_status"}>?</div>
 
                 <div className={"url-citations"}>&nbsp;</div>
                 <div className={"url-templates"}>&nbsp;</div>
@@ -508,41 +453,33 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
                 // make sure filter definition is not null
                 // and that this is not the "all" filter,
                 // in which case we disable the "Show All" button
-        const buttonRemove = <button
+        const buttonShowAll = <button
             className={`utility-button small-button${enableShowAllButton ?'':' disabled'}` }
                 onClick={handleRemoveFilter}
                 disabled={!enableShowAllButton}
                 // className={'utility-button button-remove-url-filter'}
             ><span>{localized['show_all_button_text']}</span></button>
 
+        const checkMethodDisplay = UrlStatusCheckMethods[fetchMethod]?.caption
+
         const buttonCopy = <button className={'btn utility-button small-button'} onClick={handleCopyClick} ><span>Copy to Clipboard</span></button>
 
-        const firstLineCaption = filteredUrls.length.toString() + ' ' + (filteredUrls.length === 1 ? 'URL' : 'URLs')
-        const flockCaption = <>
-
-            <h4 className={"url-flock-caption"}>{firstLineCaption}</h4>{buttonRemove}
-
-            <h4><span className={"filter-title"}
-            >{`Applied Filter${filterCaptions.length === 1 ? '' : 's'}:`}<
-            /span> {
-                filterCaptions.length > 0 ? filterCaptions : 'Show All' }</h4>
-
-            {extraCaption}
-        </>
-
+        const firstLineCaption = `${filteredUrls.length.toString()} ${filteredUrls.length === 1 ? 'URL' : 'URLs'}, Status Check Method: ${checkMethodDisplay}`
 
         const flockMetaHeader = <div className={"url-list-meta-header"}>
             <div>
-                <h4 className={"url-flock-caption"}>{firstLineCaption}</h4> {false && buttonCopy}
+                <h4 className={"url-flock-caption"}>{firstLineCaption}</h4>
             </div>
-            <div>{buttonRemove}</div>
+            <div>{myConfig.isShowExpertMode && buttonCopy} {buttonShowAll}</div>
         </div>
 
         // show filter.desc
         // show filter.fixit
 
         const allFilterNames = Object.keys(flockFilters)
-        const oneFilter = allFilterNames?.length > 0 ?  flockFilters[allFilterNames[0]] : {} // first filter only gets "info treatment"
+        const oneFilter = allFilterNames?.length > 0 ?  flockFilters[allFilterNames[0]] : {}
+        // first filter only gets "info treatment"
+        // TODO must handle mul;tiple conditions...
         const flockInfoHeader = <div className={"url-list-info-header"}>
             {oneFilter?.desc
                 ? <div>
@@ -551,7 +488,7 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
                   </div>
                 : <div>
                     <div className={"flock-info-condition condition-calm"}>Condition:</div>
-                    <div>No Conditions applied; All URLs shown.</div>
+                    <div>No Condition applied; All URLs shown.</div>
                   </div>
             }
             {oneFilter?.fixit
@@ -567,17 +504,11 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
             onClick={onClickHeader}
             onMouseOver={onHoverHeaderRow} >
 
-            {/* top row of header - for layout reasons */}
+            {/* top row of header - for layout reasons - blank for now, but may be useful if column-spanning labels are desired */}
             <div className={"url-row url-header-row url-row-top"}>
                 <div className={"url-name"}>&nbsp;</div>
                 <div className={"url-status"}>&nbsp;</div>
-                {fetchMethod === UrlStatusCheckMethods.IABOT.key
-                    ? <>
-                        <div className={"url-arch_wbm"} >&nbsp;</div>
-                        {/*<div className={"url-arch_tmplt"}>&nbsp;</div>*/}
-                        {/*<div className={"url-iabot_status"}>&nbsp;</div>*/}
-                    </>
-                    : null }
+                <div className={"url-archive_status"} >&nbsp;</div>
                 <div className={"url-citations"}>&nbsp;</div>
                 <div className={"url-templates"}>&nbsp;</div>
                 <div className={"url-sections"}>&nbsp;</div>
@@ -593,24 +524,10 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
                 <div className={"url-status"} onClick={() => {
                     handleSortClick("status")
                 }
-                }>Link<br/>Status</div>
+                }>Status<br/>{checkMethodDisplay}</div>
 
-                {/* TODO this should be within IABOT row renderer */}
-                {fetchMethod === UrlStatusCheckMethods.IABOT.key
-                    ? <>
-                        {/*<div className={"url-arch-iari"} onClick={() => { handleSortClick("arch_iari"); } }*/}
-                        {/*>{archiveFilterDefs['iari']._.name}</div>*/}
-                        <div className={"url-arch_wbm"} onClick={() => { handleSortClick("arch_wbm"); } }
-                            >{archiveFilterDefs['iabot']._.name}</div>
-
-                        {/*<div className={"url-arch_tmplt"} onClick={() => { handleSortClick("arch_tmplt"); } }*/}
-                        {/*    >{archiveFilterDefs['template']._.name}</div>*/}
-
-
-                        {/*<div className={"url-iabot_status"}>IABot</div>*/}
-
-                    </>
-                    : null }
+                <div className={"url-archive_status"} onClick={() => { handleSortClick("archive_status"); } }
+                    >{archiveFilterDefs['iabot']._.name}</div>
 
                 <div className={"url-citations"} onClick={() => { handleSortClick("references"); } }
                 >Citation<br/>Priority</div>
@@ -659,8 +576,7 @@ const urlFlock = React.memo( function UrlFlock({ urlArray,
         } )
 
         return <>
-            {false
-                && flockCaption}
+            {/*{false && flockCaption}*/}
             {/* TODO do something akin to "myMethodRenderer.getHeaderRow" */}
             {flockMetaHeader}
             {flockInfoHeader}

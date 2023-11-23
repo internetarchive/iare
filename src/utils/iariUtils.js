@@ -1,6 +1,12 @@
-import {UrlStatusCheckMethods} from "../constants/endpoints";
+import {UrlStatusCheckMethods} from "../constants/checkMethods";
 
-const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method='') => {
+// calls iari check-url endpoint
+//
+// NB for now, this is only valid for iabot.
+// NB soon it will be valid for wayback as well
+//
+// archive status is separately fetched with check-url-archive (in fetchUrlArchive/fetchUrlArchives?)
+const fetchUrl = async (iariBase, url, refresh=false, timeout=0, method='') => {
 
     const endpoint = `${iariBase}/check-url`
         + `?url=${encodeURIComponent(url)}`
@@ -10,66 +16,29 @@ const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method=''
 
     let endpoint_status_code = 0;
 
-
-    const iabot_livestatus_convert = (s => {
-        return s === "404"
-            ? ''
-            : s === "whitelisted"
-                ? 'permalive'
-                : s === "blacklisted"
-                    ? "permadead"
-                    : s
-    })
-
     const resolveResults = (data, method) => {
-        const results = { url: url }
+        // interpret data from iabot's testdeadlink endpoint
+
+        const results = {
+            url: url,
+            status_code_method: method
+        }
 
         if (method === UrlStatusCheckMethods.IABOT.key) {
 
-            // return IABOT testdeadlink results
             results.status_code = data.testdeadlink_status_code
             results.status_code_error_details = data.testdeadlink_error_details
 
-            // return IABOT searchurldata results - error if so
-
-            if (data.searchurldata_results?.hasOwnProperty("requesterror")) {
-                results.searchurldata_status = data.searchurldata_results.requesterror  // return value of request error
-
-            } else if (data.searchurldata_results?.hasOwnProperty("urls")) {
-                const myKeys = Object.keys(data.searchurldata_results.urls)
-                if (myKeys.length > 0) {
-                    // use data from first url in list (assumes only one)
-                    const myUrlData = data.searchurldata_results.urls[myKeys[0]]
-                    results.searchurldata_status = myUrlData.live_state
-
-                    if (myUrlData.archived === "true" || !!myUrlData.archived) { // NB: make sure not null
-                        results.searchurldata_archived = true
-                    } else {
-                        results.searchurldata_archived = false
-                    }
-
-                    results.searchurldata_archive = myUrlData.archive
-                    results.searchurldata_hasarchive = myUrlData.hasarchive
-                } else {
-                    results.searchurldata_status = "missing url"
-                }
-
-            } else {
-                results.searchurldata_status = "unknown"
-            }
-
-            results.searchurldata_status = iabot_livestatus_convert(results.searchurldata_status)
-
-        } else if (method === UrlStatusCheckMethods.IARI.key) {
-            // TODO Deprecate? its nice to have a default status_code value...
-            // TODO maybe have results.status_code, and additional properties such as
-            //  results.status_code_origin or results.status_details, etc
-            results.status_code = data.status_code
+                    // } else if (method === UrlStatusCheckMethods.IARI.key) {
+                    //     // TODO Deprecate? its nice to have a default status_code value...
+                    //     // TODO maybe have results.status_code, and additional properties such as
+                    //     //  results.status_code_origin or results.status_details, etc
+                    //     results.status_code = data.status_code
 
         } else {
             // the method is unhandled
             results.status_code = -1
-            results.status_code_error_details = `Error Fetching status_code (method "${method}" unknown)`
+            results.status_code_error_details = `Unknown Link Status Check method "${method}" )`
         }
 
         return results
@@ -111,6 +80,7 @@ const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method=''
                 return Promise.resolve({
                     url: url,
                     status_code: 0,
+                    status_code_method: method,
                     error_code: -1, // we don't know why this happened
                     error_text: "Failure during check-url", // is there an error message available here?
                 })
@@ -120,26 +90,271 @@ const fetchStatusUrl = async (iariBase, url, refresh=false, timeout=0, method=''
     return { data: urlData, status_code: endpoint_status_code };
 }
 
+/* fetches iabot's archive data from IARI, and returns an object with (* means optional):
+{
+    url              original url to check archive for
+    hasArchive       if true, then archive_url and live_state is set
+    archive_url*     full url of archive
+    live_state*      iabot's "live_state" status - unclear if this is useful or not
+    error_reason*    short reason for error
+    error_details*   longer description if available
+}
+*/
+const fetchUrlArchive = async (iariBase, url) => {
 
-const fetchUrlsIari = async (iariBase, urlArray, refresh, timeout) => {
-    const promises = urlArray.map(url => {
-        return fetchStatusUrl(iariBase, url, refresh, timeout, UrlStatusCheckMethods.IARI.key)
+    const endpoint = `${iariBase}/check-url-archive`
+        + `?url=${encodeURIComponent(url)}`
+
+    let endpoint_status_code = 0;
+
+    const iabot_livestatus_convert = (s => {
+        return s === "whitelisted"
+            ? 'permalive'
+            : s === "blacklisted"
+                ? "permadead"
+                : s
     })
+
+    const resolveData = (data) => {
+
+        /* sample of iabot archive results:
+        iabot_archive_results: {
+            arguments: {
+                wiki: "enwiki",
+                action: "searchurldata",
+                urls: "http://www.citypopulation.de/Pitcairn.html"
+            },
+            urls: {
+                7385206: {
+                    id: "7385206",
+                    url: "http://www.citypopulation.de/Pitcairn.html",
+                    normalizedurl: "http://www.citypopulation.de/Pitcairn.html",
+                    accesstime: "2013-11-08 00:00:00",
+                    hasarchive: true,
+                    live_state: "whitelisted",
+                    state_level: "domain",
+                    lastheartbeat: "2021-11-10 12:08:10",
+                    assumedarchivable: true,
+                    archived: true,
+                    attemptedarchivingerror: null,
+                    reviewed: false,
+                    archive: "https://web.archive.org/web/20200424154123/http://www.citypopulation.de/Pitcairn.html",
+                    snapshottime: "2020-04-24 15:41:23"
+                }
+            },
+            loggedon: false,
+            servetime: 0.25
+            },
+
+            OR, if url not in iabot db:
+
+            iabot_archive_results: {
+                arguments: {
+                    wiki: "enwiki",
+                    action: "searchurldata",
+                    urls: "https://mojomonger.com"
+                },
+                requesterror: "404",
+                errormessage: "The requested query didn't yield any results.  They're may be an issue with the DB or the requested parameters don't yield any values.",
+                loggedon: false,
+                servetime: 0.1918
+            },
+         */
+        const output = {
+            url: url  // TODO use data.url instead? that's the one passed back by the check-url-archive routine
+        }
+
+        if (!data.iabot_archive_results) {
+            output.hasArchive = false
+            output.error = true
+            output.error_details = "Missing iabot_archive_results from archive retrieval data"
+            return output
+        }
+
+        const results = data.iabot_archive_results
+
+        if (results.hasOwnProperty("requesterror")) {
+            // there is no entry for this url in iabot's database
+
+            output.hasArchive = false
+            output.error_reason = "No archive in database"
+            output.error_details = results.errormessage
+
+        } else if (results.hasOwnProperty("urls")) {
+            // there is an entry for this url; process it
+
+            const urlIdKeys = Object.keys(results.urls)
+            if (urlIdKeys.length > 0) {
+                const urlInfo = results.urls[urlIdKeys[0]]
+                    // NB assumes first url in list is the only one we want
+                    // TODO: find cases where this is not true
+
+                output.hasArchive = (urlInfo.archived === "true" || !!urlInfo.archived)  // NB: makes sure not null
+                output.archive_url = urlInfo.archive  // this is the archive link as it is in iabot database - most likely a wayback? but not necessarily?
+                output.live_state = iabot_livestatus_convert(urlInfo.live_state)
+
+            } else {
+                output.hasArchive = false
+                output.error_reason = "Missing URL in archive results"
+            }
+
+        } else {
+            // there is no "urls" or "requesterror" property
+            output.hasArchive = false
+            output.error_reason = "No archive information provided"
+        }
+
+        return output
+    }
+
+
+    const archiveData = await fetch(endpoint, {cache: "no-cache"})
+
+        .then( response => {
+
+            endpoint_status_code = response.status
+
+            if (response.ok) {
+                return response.json().then(data => {
+                    return Promise.resolve(resolveData(data))
+                })
+
+            } else {
+                // we may have a 504 or other erroneous status_code on the check-url-archive call
+                console.warn(`fetchStatusUrl: Error fetching url: ${url}`)
+
+                return Promise.resolve({
+                    url: url,
+                    hasArchive: false,
+                    error_reason: response.status,
+                    error_details: response.statusText ? response.statusText : "error from server",
+                    // TODO: would be nice to use response.statusText, but as of 2023.04.08, response.statusText is empty
+                })
+
+            }
+        })
+
+        .catch( (_e) => { // if something bad happened, return fake synthesized url object
+
+                console.warn(`utils::fetchUrlArchive: Unknown error when fetching url: ${url}`)
+
+                // return fake data object to not break interface
+                return Promise.resolve({
+                    url: url,
+                    hasArchive: false,
+                    error_reason: "unknown",
+                    error_details: "Error during check from server",
+                    // TODO Fill this out with more accurate information from call
+                })
+            }
+        );
+
+    return { data: archiveData, status_code: endpoint_status_code };
+}
+
+// returns a promise containing array of results of checking archive status of urls in irlArray
+export const fetchUrlArchives = async ({
+                                           iariBase= '',
+                                           urlArray=[],
+                                       } = {}) => {
+
+    // return empty array if urlArray is falsey (null, undefined, or 0 length)
+    if (!urlArray?.length) return Promise.resolve([])
+
+    const promises = urlArray.map(urlObj => {
+        return fetchUrlArchive(iariBase, urlObj)
+    })
+
     // assumes all promises successful
     // TODO: error trap this promise call with a .catch
     return await Promise.all(promises);
+
 }
 
 const fetchUrlsIabot = async (iariBase, urlArray, refresh, timeout) => {
 
     console.log(`fetchUrlsIabot: ${iariBase} urlArray:(not shown) refresh:${refresh} timeout:${timeout}`)
     const promises = urlArray.map(urlObj => {
-        return fetchStatusUrl(iariBase, urlObj, refresh, timeout, UrlStatusCheckMethods.IABOT.key)
+        return fetchUrl(iariBase, urlObj, refresh, timeout, UrlStatusCheckMethods.IABOT.key)
     });
+
 
     // assumes all promises successful
     // TODO: error trap this promise call with a .catch
     return await Promise.all(promises);
+}
+
+// this will soon be replaced by IARI::check-url with method pass and caching
+const fetchUrlWayback = async (url) => {
+    const endpoint = UrlStatusCheckMethods.WAYBACK.endpoint
+        + `?impersonate=1&url=${encodeURIComponent(url)}`
+
+    let endpoint_status_code = 0
+
+    const resolveData = (data) => {
+        const results = {
+            url: url,
+            status_code: data.status,
+            status_code_method: UrlStatusCheckMethods.WAYBACK.key
+        }
+        if (data.message || data.status_ext) {
+            results["status_code_errors"] = {
+                message: data.message,
+            }
+            if (data.status_ext) {
+                results["status_code_errors"]["reason"] = data.status_ext
+            }
+        }
+        return results
+    }
+
+    const urlData = await fetch(endpoint, {cache: "no-cache"})
+        .then( response => {
+            endpoint_status_code = response.status
+            if (response.ok) {
+                return response.json().then(data => {
+                    return Promise.resolve(resolveData(data))
+                })
+
+            } else {
+                // we may have a 504 or other erroneous status_code on the check-url call
+                console.warn(`fetchUrlWayback: Error fetching url: ${url}`)
+
+                return Promise.resolve({
+                    url: url,
+                    status_code: 0,
+                    error_code: response.status,
+                    error_text: response.statusText ? response.statusText : "error from server",
+                })
+            }
+        })
+
+        .catch( (_e) => { // if something bad happened, return fake synthesized url object
+
+                console.warn(`utils::fetchUrlWayback: Something went wrong when fetching url: ${url}`)
+
+                // return fake url data object so URL display interface is not broken
+                return Promise.resolve({
+                    url: url,
+                    status_code: 0,
+                    error_code: -1, // we don't know why this happened
+                    error_text: "Failure during check-url", // is there an error message available here?
+                })
+            }
+        );
+
+    return { data: urlData, status_code: endpoint_status_code };
+}
+
+const fetchUrlsWayback = async (urlArray) => {
+
+    const promises = urlArray.map(urlObj => {
+        return fetchUrlWayback(urlObj)
+    })
+
+    // assumes all promises successful
+    // TODO: error trap this promise call with a .catch
+    return await Promise.all(promises)
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -223,7 +438,6 @@ const fetchUrlsIabotBulk = async (iariBase, urlArray, refresh, timeout) => {
                 // return fake url data object so URL display interface is not broken
                 return Promise.resolve({
                     url: "error.url",
-                    ///tags: ['X'],
                     status_code: 0,
                     error_code: -1,
                     error_text: `Error: Unknown error via check-urls endpoint: ${endpoint}`,
@@ -307,38 +521,46 @@ const fetchUrlsCorentin = async (urlArray, refresh, timeout) => {
     return urlData;
 }
 
-export const fetchStatusUrls = async ({
-                                          iariBase= '',
-                                          urlArray=[],
-                                          refresh=false,
-                                          timeout=10,
-                                          method = UrlStatusCheckMethods.IABOT.key
-                                      } = {}) => {
+// returns a promise, enholding array of urls
+export const fetchUrls = async ({
+                                           iariBase= '',
+                                           urlArray=[],
+                                           refresh=false,
+                                           timeout=10,
+                                           method = UrlStatusCheckMethods.IABOT.key
+                                       } = {}) => {
 
-    console.log(`utils::fetchStatusUrls: iariBase=${iariBase} method=${method}): refresh = ${refresh}, timeout = ${timeout}`)
+    console.log(`iariUtils::fetchUrlStatuses: iariBase=${iariBase} method=${method}): refresh = ${refresh}, timeout = ${timeout}`)
 
-    if (!urlArray || !urlArray.length) //return [];
+    if (!urlArray || !urlArray.length)
     {
         return Promise.resolve([])
     }
 
-    // Chrome Developer Tools seems to have a problem showing variables imported at the module level.
-    // By assigning to a local variable, the variable value can be successfully debugged.
+    // NB Chrome Developer Tools seems to have a problem showing variables imported at the module level.
+    // NB By assigning to a local variable, the variable value can be successfully debugged.
     const methods = UrlStatusCheckMethods
 
     let urlData = []
-    if (methods.IARI.key === method) {
-        urlData = fetchUrlsIari(iariBase, urlArray, refresh, timeout)
-
-    } else if (methods.IABOT.key === method) {
+    // if (methods.IARI.key === method) {
+    //     urlData = fetchUrlsIari(iariBase, urlArray, refresh, timeout)
+    //
+    // } else
+    if (methods.IABOT.key === method) {
         urlData = fetchUrlsIabot(iariBase, urlArray, refresh, timeout)
+
+    } else if (methods.WAYBACK.key === method) {
+        urlData = fetchUrlsWayback(urlArray)
 
     } else if (methods.CORENTIN.key === method) {
         urlData = fetchUrlsCorentin(urlArray, refresh, timeout)
+
+    } else {
+        throw new Error(`Unrecognized check method: ${method}`);
     }
-    // TODO: what to do if error or not one of handled methods?
 
     // return urlData.then( results => results )
     return urlData
 
 }
+

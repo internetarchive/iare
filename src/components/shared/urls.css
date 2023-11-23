@@ -1,7 +1,7 @@
 :root {
-    --width-url-list: 43.5rem;
+    --width-url-list: 44rem;
     --width-url-name: 20rem;
-    --width-url-status: 3.5rem;
+    --width-url-status: 4.0rem;
     --width-url-archive-status: 3rem;
     --width-url-citations: 5.5rem;
 
@@ -101,30 +101,10 @@
     padding-top:.25rem;
     height:.55rem;
 }
-                xxx.url-list-header .url-header-row.url-row-top .url-arch_wbm {
-                    padding-top: 0.4rem !important;
-                    padding-left:.75rem !important;
-                }
-                xxx.url-list-header .url-header-row .url-arch-iari,
-                xxx.url-list-header .url-header-row .url-arch_wbm,
-                xxx.url-list-header .url-header-row .url-arch_tmplt {
-                    padding-top: 0.18rem !important;
-                    font-size: 80%;
-                }
-.url-list-header .url-header-row.url-row-top .url-arch_wbm {
+
+.url-list-header .url-header-row.url-row-top .url-archive_status {
     font-size:inherit;
 }
-
-
-                /*.url-list-header .url-header-row .url-arch-iari,*/
-                /*.url-list-header .url-header-row .url-arch_wbm,*/
-                /*.url-list-header .url-header-row .url-arch_tmplt {*/
-                /*    font-size: 80%;*/
-                /*    padding:inherit !important;*/
-                /*}*/
-
-
-
 
 .url-list-header .url-header-row div {
     /*border-top:1px solid black;*/
@@ -212,7 +192,7 @@
     color: red !important;
 }
 .url-row.url-is-error .url-status {
-    color: red !important;
+    color: var(--color-http-error-bg) !important;
 }
 
 .url-row > div {
@@ -232,9 +212,7 @@
     min-width: var(--width-url-status);
     border-right: var(--width-cell-border);
 }
-.url-row .url-arch-iari,
-.url-row .url-arch_wbm,
-.url-row .url-arch_tmplt
+.url-row .url-archive_status
 {
     text-align: center;
     min-width: var(--width-url-archive-status);
@@ -279,9 +257,7 @@
 
 .url-header-row .url-name,
 .url-header-row .url-status,
-.url-header-row .url-arch-iari,
-.url-header-row .url-arch_wbm,
-.url-header-row .url-arch_tmplt,
+.url-header-row .url-archive_status,
 .url-header-row .url-iabot_status,
 .url-header-row .url-citations,
 .url-header-row .url-templates,
@@ -293,6 +269,10 @@
 .url-header-row .url-name,
 .url-list .url-row .url-name {
     text-align:left !important;
+}
+.url-row.url-header-row .url-archive_status
+{
+    padding:inherit !important;
 }
 
 .url-list .archive-yes {

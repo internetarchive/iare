@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.2.23.12",
-  "version_name": "0.2.23.12.path fetch datalist",
+  "version": "0.2.23.13",
+  "version_name": "0.2.23.13.wayback checker",
   "private": true,
   "dependencies": {
     "bootstrap": "^5.3.0-alpha3",

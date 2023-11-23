@@ -3,7 +3,7 @@ import UrlDisplay from "./UrlDisplay";
 import RefDisplay from "./RefDisplay";
 import FldDisplay from "./FldDisplay";
 import Loader from "../Loader";
-import {fetchStatusUrls} from "../../utils/iariUtils.js"
+import {fetchUrlArchives, fetchUrls} from "../../utils/iariUtils.js"
 import {ConfigContext} from "../../contexts/ConfigContext";
 import {
     ARCHIVE_STATUS_FILTER_MAP,
@@ -35,39 +35,51 @@ export default function PageData({pageData = {}}) {
 
         NB: we should use only "references" property, not "dehydrated_references"
         TODO: deprecate "dehydrated_references" and use a "dehydrated" flag instead
+
+        NB TODO we should take all this processing code and place it in a processing module,
+        NB AND, this processing logic should really be in the IARI API backend code, once it
+        NB is established what needs to happen.
     */
 
-    const [selectedViewType, setSelectedViewType] = useState('urls');
-    const [isLoadingUrls, setIsLoadingUrls] = useState(false);
-    const [dataReady, setDataReady] = useState(false);
+    const [selectedViewType, setSelectedViewType] = useState('urls')
+    const [isLoadingUrls, setIsLoadingUrls] = useState(false)
+    const [isDataReady, setIsDataReady] = useState(false)
+    const [isPageError, setIsPageError] = useState(false)
+    const [pageErrorText, setPageErrorText] = useState('')
 
     // set up iariBase and statusMethod from global config
-    let myConfig = React.useContext(ConfigContext);
+    let myConfig = React.useContext(ConfigContext)
     myConfig = myConfig ? myConfig : {} // prevents undefined.<param> errors
-    const myIariBase = myConfig.iariSource;
-    const myStatusCheckMethod = myConfig.urlStatusMethod;
+    const myIariBase = myConfig.iariSource
+    const myStatusCheckMethod = myConfig.urlStatusMethod
+
 
     // called upon useEffect when new url status data received
-    const processUrls = useCallback( (pageData) => {
+    const processUrls = useCallback( (pageData, urls) => {
         // process url results and create urlDict from it
 
         const urlDict = {}
         const regexWayback = new RegExp(/https?:\/\/(?:web\.)archive\.org\/web\/([\d*]+)\/(.*)/);
 
         const sanitizeUrlForWayback = (targetUrl) => {
-                        // // let inputString = 'http://example.com:http://example2.com:some:text:with:colons';
-                        // const regexColon = /:(?!\/\/)/g;  // Regular expression to match colons not followed by "//"
-                        // // const regexEquals = /=/g;  // Regular expression to match equals signs
-                        // let resultUrl
-                        // resultUrl = targetUrl.replace(regexColon, '%3A');  // Replace solo colons with encoded "%3A"
-                        // // resultUrl = resultUrl.replace(regexEquals, '%3D')
-                        // return resultUrl
+                // TODO ongoing, as checking if archive can be trockey
+                // TODO Also must consider other archiving services
+
+                // // let inputString = 'http://example.com:http://example2.com:some:text:with:colons';
+                // const regexColon = /:(?!\/\/)/g;  // Regular expression to match colons not followed by "//"
+                // // const regexEquals = /=/g;  // Regular expression to match equals signs
+                // let resultUrl
+                // resultUrl = targetUrl.replace(regexColon, '%3A');  // Replace solo colons with encoded "%3A"
+                // // resultUrl = resultUrl.replace(regexEquals, '%3D')
+                // return resultUrl
             return targetUrl  // for now - trying to debug and see if it is necessary
         }
 
         const isArchive = (targetUrl) => {
             return !!(sanitizeUrlForWayback(targetUrl).match(regexWayback))
         }
+
+        pageData.urlResults = urls
 
         // create url dict from returned results
         pageData.urlResults && pageData.urlResults.forEach(d => {
@@ -84,71 +96,36 @@ export default function PageData({pageData = {}}) {
             urlDict[myUrl].urlCount++  // increment count to keep track of repeats
         })
 
-        const archiveUrls = Object.keys(urlDict).filter(urlKey => {
-            return (urlDict[urlKey].isArchive)
-        })
         const primaryUrls = Object.keys(urlDict).filter(urlKey => {
             return !(urlDict[urlKey].isArchive)
-        })
-
-        // create sanitizedUrls array of strings.
-        // NB: this is specifically for Wayback Machine link patterns...for now...others may vary
-        // sanitizeToPrimaryDict is a dict crosslinking sanitized links with the primary "original"
-        // ones. It's sort of de-normalizing the wayback rescued url into it's original form.
-        const sanitizeToPrimaryDict = {}
-        const sanitizedPrimaryUrls = primaryUrls.map( u => {
-            let s = sanitizeUrlForWayback(u)
-            sanitizeToPrimaryDict[s] = u
-            return s
-        })
-
-        // test if this archive link rescued one of our primary urls
-        archiveUrls.forEach(archiveUrl => {
-            const results = archiveUrl.match(regexWayback)  // is archiveUrl a possible archive?
-            if (results) {  // if a match, extract pattern parts
-
-                /* must see if rescued url, in wayback encoding, is matchy to ONE of our
-                 * wayback-enhanced primary urls.
-                 */
-                let rescueUrl = results[2]
-
-                if (sanitizedPrimaryUrls.includes(rescueUrl)) {
-                    // ge un-sanitized original primaryUrl from crossRef dict
-                    const primaryUrl = sanitizeToPrimaryDict[rescueUrl]
-                    // and we use the original url to key into the "master" urlDict, saving the archiveUrl with it
-                    urlDict[primaryUrl].hasArchive = archiveUrl
-                }
-
-                // if rescueUrl not found in primaryurls, then try again with protocoal changed in rescue url
-                // for instance, if first-pass rescue url is:
-                // http://www.bbc.co.uk/news/world-latin-america-12378736, and that doesnt match any urls in primaryurls,
-                // then try changing protocol and retesting with:
-                // https://www.bbc.co.uk/news/world-latin-america-12378736
-
-                else {
-                    // if rescue has http://, then change to https://
-                    // if rescue has https://, then change to http://
-                    const rescueUrlMod = rescueUrl.startsWith("http://")
-                        ? rescueUrl.replace(/^http:\/\//i, "https://")
-                        : rescueUrl.replace(/^https:\/\//i, "http://")
-
-                    if (sanitizedPrimaryUrls.includes(rescueUrlMod)) {
-                        // get un-sanitized original primaryUrl from crossRef dict
-                        const primaryUrl = sanitizeToPrimaryDict[rescueUrlMod]
-                        // and we use that to key into the "master" urlDict, saving the archiveUrl as its value
-                        urlDict[primaryUrl].hasArchive = archiveUrl
-                    }
-
-
-                }
-
-            }
         })
 
         // append urlDict and urlArray to pageData
         pageData.urlDict = urlDict
         pageData.urlArray = primaryUrls.map(urlKey => {
             return urlDict[urlKey]
+        })
+
+        // TODO TODO we need to run fetchUrlArchives on primaryUrls, or, pageData.urlArray at this point
+
+
+    }, [])
+
+    const processUrlArchives = useCallback( (pageData, urlArchives) => {
+        // assumes urlArchives is array of [ archive props ]
+
+        // append urlDict data for each returned url
+        urlArchives.forEach(u => {
+            console.log("processing urlArchive ", u)
+
+            const myUrl = pageData.urlDict[u.data.url]
+            if (myUrl) {
+                myUrl.iabot_archive_status = u.data
+            } else {
+                // there was no entry in urlDict for primary url that archive was based on...
+                // TODO how do we indicate this error? urlDict[url].error = true w/ error_details?
+            }
+
         })
 
     }, [])
@@ -159,7 +136,7 @@ export default function PageData({pageData = {}}) {
 
         const newParams = {}
 
-        // Iterate through keys and build normalized retrun param object values
+        // Iterate through keys and build normalized return param object values
         for (let key of Object.keys(oldParams)) {
             // set newParams value
             newParams[key] = oldParams[key].wt
@@ -177,7 +154,7 @@ export default function PageData({pageData = {}}) {
 
             const mwData = cite.raw_data ? JSON.parse(cite.raw_data) : {}
 
-            console.log(`processCiteRefs: mwData[${cite.ref_index}] is `, mwData)
+            // console.log(`processCiteRefs: mwData[${cite.ref_index}] is `, mwData)
 
             // if mwData has parts[0]
                 // if parts[0].template
@@ -216,7 +193,7 @@ export default function PageData({pageData = {}}) {
                 })
 
                 if (foundRef) {
-                    console.log(`Found matching ref for citeRef# ${cite.ref_index}`)
+                    ////console.log(`Found matching ref for citeRef# ${cite.ref_index}`)
                     foundRef.cite_refs = cite.page_refs
                 }
 
@@ -262,13 +239,13 @@ export default function PageData({pageData = {}}) {
             templateUrls[primaryUrl] = true
             templateUrls[archiveUrl] = true
 
-            const primaryLinkStatusCode = urlDict[primaryUrl]?.status_code // need to handle undefined if url not a key in urlDict
-            const archiveLinkStatusCode = urlDict[archiveUrl]?.status_code // need to handle undefined if archive url not a key in urlDict
+            const primaryLinkStatusCode = urlDict[primaryUrl]?.status_code // handles undefined if url not a key in urlDict
+            const archiveLinkStatusCode = urlDict[archiveUrl]?.status_code // handles undefined if archive url not a key in urlDict
 
-            const pureLinkStatus = getLinkStatus(primaryLinkStatusCode)
+            const primaryLinkStatus = getLinkStatus(primaryLinkStatusCode)
             const archiveLinkStatus = getLinkStatus(archiveLinkStatusCode)
 
-            linkStatus.push( pureLinkStatus + '_' + archiveLinkStatus)
+            linkStatus.push( primaryLinkStatus + '_' + archiveLinkStatus )
 
             // if link referenced by archive_url exists and archiveLinkStatus is good,
             // set the hasTemplateArchive property of the primaryUrl to true
@@ -357,11 +334,11 @@ export default function PageData({pageData = {}}) {
     }
 
     const processReferences = useCallback( pageData => {
-        // * reduce any repeated references into one reference with multiple page referrals
-        // * calculate the status of the links in the references by examining the pure and archived
-        //   urls in the templates in each reference
+        // * reduce references with multiple citations into one reference with multiple page referrals
+        // * calculate the status of the links in the references by examining the primary and
+        //   archived urls in the templates in each reference
         //
-        // TODO: this should be done with the IARI API, not here after front-end retrieval
+        // TODO: this should be IARI API, not front-end retrieval
         //
 
         const anchorRefs = getAnchorReferences(pageData)
@@ -466,51 +443,64 @@ export default function PageData({pageData = {}}) {
 
 
     useEffect( () => { // [myIariBase, pageData, processReferences, processUrls, myStatusCheckMethod]
-        const context = 'PageData::useEffect [myIariBase, pageData, processReferences, processUrls, associateRefsWithLinks, myStatusCheckMethod]'
+        // const context = 'PageData::useEffect [myIariBase, pageData, processReferences, processUrls, associateRefsWithLinks, myStatusCheckMethod]'
 
-        const postProcessData = (pageData) => {
-            processUrls(pageData);  // creates urlDict and urlArray
-            processReferences(pageData)  // associates url links with references
-            associateRefsWithLinks(pageData)
-            pageData.statusCheckMethod = myStatusCheckMethod;
+        const fetchPageUrls = () => {
+            return fetchUrls( {
+                iariBase: myIariBase,
+                urlArray: pageData.urls,
+                refresh: pageData.forceRefresh,
+                timeout: 60,
+                method: myStatusCheckMethod
+            })
+        }
+        const fetchPageUrlArchives = () => {
+            return fetchUrlArchives( {
+                iariBase: myIariBase,
+                urlArray: pageData.urls,
+            })
         }
 
-        setIsLoadingUrls(true);
+        const fetchPageData = async () => {
 
-        fetchStatusUrls( {
-            iariBase: myIariBase,
-            urlArray: pageData.urls,
-            refresh: pageData.forceRefresh,
-            timeout: 60,
-            method: myStatusCheckMethod
-            })
+            try {
 
-            .then(urlResults => {
-                console.log(`${context} fetchStatusUrls.then: urlResults has ${urlResults.length} elements`);
+                setIsDataReady(false);
+                setIsLoadingUrls(true);
 
-                // TODO check erroneous results here -
-                pageData.urlResults = urlResults
+                const myUrls = await fetchPageUrls()
+                // do something with data???
 
-                postProcessData(pageData); // creates urlDict and urlArray
+                const myUrlArchives = await fetchPageUrlArchives()
 
-                // let the system know all is ready
-                setDataReady(true);
+                // now we can do something with urls and urlArchives
 
-            })
+                processUrls(pageData, myUrls);  // creates pageData.urlDict and pageData.urlArray
+                processUrlArchives(pageData, myUrlArchives)
 
-            .catch(error => {
-                console.error(`${context} fetchStatusUrls.catch: ${error}`);
-                // TODO: what shall we do for error here?
-            })
+                processReferences(pageData)  // associates url links with references
+                associateRefsWithLinks(pageData)
+                pageData.statusCheckMethod = myStatusCheckMethod;
 
-            .finally(() => {
-                // turn off "Loading" icon
+                setIsDataReady(true);
+
                 setIsLoadingUrls(false);
-            })
 
-        }, [myIariBase, pageData, processReferences, processUrls, associateRefsWithLinks, myStatusCheckMethod]
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                pageData.urlResults = []
+                setPageErrorText(error.message)
+                setIsPageError(true)
 
-    )
+            }
+
+        }
+
+
+        fetchPageData()
+
+        },   [myIariBase, pageData, processReferences, processUrls, processUrlArchives, associateRefsWithLinks, myStatusCheckMethod])
+
 
     const handleViewTypeChange = (event) => {
         setSelectedViewType(event.target.value);
@@ -548,8 +538,15 @@ export default function PageData({pageData = {}}) {
 
     return <>
 
-        {isLoadingUrls ? <Loader message={"Retrieving URL status codes..."}/>
-            : (dataReady ? <div className={"page-data"} xxstyle={{backgroundColor:"grey"}}>
+        {isLoadingUrls
+            ? <Loader message={"Retrieving URL status codes..."}/>
+            : <>
+                {isPageError && <div className={"error-display"}>{pageErrorText}</div>}
+
+                {!isDataReady
+                    ? <p>Data Not Ready</p>
+
+                    : <div className={"page-data"} xxstyle={{backgroundColor:"grey"}}>
 
                         {true && viewOptions}
 
@@ -573,9 +570,8 @@ export default function PageData({pageData = {}}) {
                         </div>
 
                     </div>
-
-                    : <p>Data Not Ready</p>
-            )
+                }
+            </>
         }
     </>
 }

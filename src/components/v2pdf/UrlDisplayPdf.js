@@ -5,7 +5,7 @@ import Loader from "../Loader";
 import '../shared/urls.css';
 import './urls.pdf.css';
 import {ConfigContext} from "../../contexts/ConfigContext";
-import {UrlStatusCheckMethods} from "../../constants/endpoints";
+import {UrlStatusCheckMethods} from "../../constants/checkMethods";
 
 
 /*
@@ -338,7 +338,7 @@ export default function UrlDisplayPdf({flocks = [], options={}, caption = "URLs"
 
 
     // process url array upon iterative fetch completion
-    useEffect( // [flocks, fetchStatusUrls, options.refresh]
+    useEffect( // [flocks, fetchUrls, options.refresh]
         () => {
             // process all URLs described by merged flocks
             // when finished, set the urlArray state,
@@ -374,12 +374,12 @@ export default function UrlDisplayPdf({flocks = [], options={}, caption = "URLs"
                     ]
                  */
                 .then(urlResults => {
-                    // console.log(`fetchStatusUrls.then: urlResults has ${urlResults.length} elements`);
+                    // console.log(`fetchUrls.then: urlResults has ${urlResults.length} elements`);
                     setUrlArray(urlResults);
                 })
 
                 .catch(error => {
-                    // console.error(`fetchStatusUrls.catch: ${error}`);
+                    // console.error(`fetchUrls.catch: ${error}`);
                     // TODO: what shall we do for error here?
                     setUrlArray([])
                 })

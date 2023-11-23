@@ -258,8 +258,7 @@ table td {
 
 .error-display {
     display:block;
-    margin-left:20px;
-    margin-top:1em;
+    margin:1rem 0;
     border:1px solid #c92b2b;
     padding:.5em;
     font-weight: bold;

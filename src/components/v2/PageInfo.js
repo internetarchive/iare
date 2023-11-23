@@ -33,6 +33,10 @@ export default function PageInfo({ pageData }) {
         copyToClipboard( JSON.stringify(pageData.urlArray), "URL Data" )
     }
 
+    const handleCopyPageData = () => {
+        copyToClipboard( JSON.stringify(pageData), "pageData" )
+    }
+
     const handleCopyUrlArrayCsv = () => {
         // copyToClipboard( JSON.stringify(pageData.urlArray), "URL Data" )
 
@@ -128,8 +132,9 @@ export default function PageInfo({ pageData }) {
 
                 <ClickButton buttonText={"Copy CiteRefs to CSV"} handleClick={handleCopyCiteRefs} />
                 <ClickButton buttonText={"Copy Reference Data to CSV"} handleClick={handleCopyRefs} />
-                <ClickButton buttonText={"Copy UrlArray to clipboard (JSON)"} handleClick={handleCopyUrlArray} />
+                <ClickButton buttonText={"Copy UrlArray to Clipboard (JSON)"} handleClick={handleCopyUrlArray} />
                 <ClickButton buttonText={"Copy UrlArray to CSV"} handleClick={handleCopyUrlArrayCsv} />
+                <ClickButton buttonText={"Copy PageData to Clipboard (JSON)"} handleClick={handleCopyPageData} />
 
                 <div className={"page-details-table"} style={{display: "flex", flexDirection: "row"}}>
 

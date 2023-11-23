@@ -1,5 +1,5 @@
 import {createContext} from 'react';
-// import {UrlStatusCheckMethods} from "../constants/endpoints";
+// import {UrlStatusCheckMethods} from "../constants/checkMethods";
 export const UrlStatusCheckContext = createContext('');
 
 //

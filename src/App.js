@@ -6,7 +6,8 @@ import PageDisplay from "./components/PageDisplay";
 import MakeLink from "./components/MakeLink";
 //// import TestRefModal from "./components/vTest/TestRefModal";
 import Dropdown from "./components/Dropdown";
-import {IariSources, UrlStatusCheckMethods} from "./constants/endpoints";
+import {IariSources} from "./constants/endpoints";
+import {UrlStatusCheckMethods} from "./constants/checkMethods";
 import {ConfigContext} from "./contexts/ConfigContext"
 
 
@@ -14,13 +15,14 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
 
     const [isDebug, setDebug] = useState(myDebug);
     const [isShowReferences, setIsShowReferences] = useState(false);
-    const [isShowUrlOverview, setIsShowUrlOverview] = useState(false);
+    const [isShowUrlOverview, setIsShowUrlOverview] = useState(true);
     const [isShowShortcuts, setIsShowShortcuts] = useState(true);
+    const [isShowExpertMode, setIsShowExpertMode] = useState(true);
 
     // params settable from from address url
     const [targetPath, setTargetPath] = useState(myPath);
     const [refreshCheck, setRefreshCheck] = useState(myRefresh);
-    const [statusMethod, setStatusMethod] = useState(myMethod);
+    const [checkMethod, setCheckMethod] = useState(myMethod);
 
     const [endpointPath, setEndpointPath] = useState('');
 
@@ -189,8 +191,11 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
                     setMyError("404 Error finding target page.")
                 } else if (err.message === "502") {
                     setMyError("502 Server problem (no further info available)")
+
                 } else if (err.name === "TypeError" && err.message === "Failed to fetch") {
                     setMyError(err.message + " - Possible IARI service failure.");
+                    // TODO: this happens when filename does not exist!
+
                 } else {
                     // ?? should we extract HTTP status code from string? (1st 3 characters, if number? without number, next?)
                     setMyError(err.message + " - No further info available");
@@ -236,7 +241,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
             + window.location.pathname
             + `?url=${url}`
             + (refresh ? '&refresh=true' : '')
-            + (statusMethod ? `&method=${statusMethod}` : '')
+            + (checkMethod ? `&method=${checkMethod}` : '')
             + (myIariSourceId ? `&iari-source=${iari_source}` : '')
             + (isDebug ? '&debug=true' : '')
 
@@ -267,13 +272,13 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
 
     const handleCheckMethodChange = (methodId) => {
         // console.log(`handleStatusMethodChange: new method is: ${methodId}`)
-        setStatusMethod(methodId);
+        setCheckMethod(methodId);
     };
     const methodChoices = Object.keys(UrlStatusCheckMethods).filter(f => !["IARI", "IABOT_SEARCHURL"].includes(f)).map( key => {
         return { caption: UrlStatusCheckMethods[key].caption, value: UrlStatusCheckMethods[key].key }
     })
     const methodChoiceSelect = <div className={"check-method-wrapper"}>
-        <Dropdown choices={methodChoices} label={'Check Method:'} onSelect={handleCheckMethodChange} defaultChoice={statusMethod}/>
+        <Dropdown choices={methodChoices} label={'Check Method:'} onSelect={handleCheckMethodChange} defaultChoice={checkMethod}/>
     </div>
 
 
@@ -286,9 +291,13 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         })
         // setIariSourceId(sourceId);
     };
-    const iariChoices = Object.keys(IariSources).map( key => {
-        return { caption: IariSources[key].caption, value: IariSources[key].key }
-    })
+    const iariChoices = Object.keys(IariSources)
+        .filter(key => {
+            return env === 'env-staging' ? !(key === "iari_local" || key === "iari") : true
+        })
+        .map( key => {
+            return { caption: IariSources[key].caption, value: IariSources[key].key }
+        })
     const iariChoiceSelect = <div className={"iari-source-wrapper"}>
         <Dropdown choices={iariChoices} label={'Iari Source:'} onSelect={handleIariSourceIdChange} defaultChoice={myIariSourceId}/>
     </div>
@@ -307,14 +316,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
             <span className={"non-production"}>{versionDisplay}{siteDisplay}{showHideDebugButton}</span></div>
     </div>
 
-    const debug = <div className={"debug-section " + (isDebug ? "debug-on" : "debug-off")}>
-        <div className={"choice-wrapper"}>{iariChoiceSelect}{methodChoiceSelect}</div>
-        <p><span className={'label'}>IARI Source:</span> {myIariSourceId} ({IariSources[myIariSourceId]?.proxy})</p>
-        <p><span className={'label'}>Check Method:</span> {statusMethod}</p>
-        <p><span className={'label'}>pathName:</span> <MakeLink href={targetPath}/></p>
-        <p><span className={'label'}>endpointPath:</span> <MakeLink href={endpointPath}/></p>
-        <p><span className={'label'}>inline target URL:</span> {myPath}</p>
-        <p><span className={'label'}>Force Refresh:</span> {refreshCheck ? "TRUE" : "false"}</p>
+    const buttons = <>
         <button // this is the 'show refereences' button
             className={"utility-button debug-button"}
             onClick={() => {
@@ -335,23 +337,44 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
                 setIsShowShortcuts(prevState => !prevState )
             }
             } >{isShowShortcuts ? "Hide" : "Show"} Shortcuts</button>
+        &nbsp;
+        <button // this is the 'show Expert Mode' button
+            className={"utility-button debug-button"}
+            onClick={() => {
+                setIsShowExpertMode(prevState => !prevState )
+            }
+            } >{isShowExpertMode ? "Hide" : "Show"} Expert Controls</button>
+        </>
+
+    const debug = <div className={"debug-section " + (isDebug ? "debug-on" : "debug-off")}>
+        <div style={{marginBottom:".5rem"}}>{iariChoiceSelect} {methodChoiceSelect}</div>
+        <div>{buttons}</div>
+        {/*<div className={"choice-wrapper"}>{iariChoiceSelect}{methodChoiceSelect}</div>*/}
+        <p><span className={'label'}>IARI Source:</span> {myIariSourceId} ({IariSources[myIariSourceId]?.proxy})</p>
+        <p><span className={'label'}>Check Method:</span> {UrlStatusCheckMethods[checkMethod].caption} ({checkMethod})</p>
+        <p><span className={'label'}>URL from address line:</span> {myPath}</p>
+        <p><span className={'label'}>Force Refresh:</span> {refreshCheck ? "TRUE" : "false"}</p>
+        <p><span className={'label'}>pathName:</span> <MakeLink href={targetPath}/></p>
+        <p><span className={'label'}>endpointPath:</span> <MakeLink href={endpointPath}/></p>
+
     </div>
 
     // set config for config context
     const config = {
         environment: env,
         iariSource: IariSources[myIariSourceId]?.proxy,
-        urlStatusMethod: statusMethod,
+        urlStatusMethod: checkMethod,
         isDebug: !!isDebug,
         isShowReferences: isShowReferences,
         isShowUrlOverview: isShowUrlOverview,
         isShowShortcuts: isShowShortcuts,
+        isShowExpertMode: isShowExpertMode,
     }
 
     console.log(`rendering App component:`, {
         path: targetPath,
         refreshCheck: refreshCheck,
-        statusMethod: statusMethod,
+        statusMethod: checkMethod,
         iari_source: myIariSourceId,
         config: config,
     })

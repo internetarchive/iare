@@ -11,7 +11,6 @@ import FilterButtons from "../FilterButtons";
 import ChoiceFetch from "../ChoiceFetch";
 import RefView from "./RefView/RefView";
 import {Tooltip as MyTooltip} from "react-tooltip";
-// import {UrlStatusCheckMethods} from "../../constants/endpoints";
 
 const localized = {
     "url_display_title":"URLs",
@@ -134,7 +133,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         }
 
         if (action === "setArchiveStatusFilters") {
-            setUrlFilters({ "archive_status" : value })  // NB: value is filter object
+            setUrlFilters({ "archive_status_filter" : value })  // NB: value is filter object
         }
 
 

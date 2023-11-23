@@ -33,29 +33,3 @@ export const IariSources = {
     },
 }
 
-export const UrlStatusCheckMethods = {
-    IABOT: {
-        key: 'IABOT',
-        caption: 'IA Bot',
-        endpoint: '',
-    },
-    IARI: {
-        key: 'IARI',
-        caption: 'IARI',
-        endpoint: ''
-    },
-    CORENTIN: {
-        key: 'CORENTIN',
-        caption: 'Corentin',
-        endpoint: 'https://iabot-api.archive.org/undertaker/'
-    },
-
-
-
-    IABOT_SEARCHURL: {
-        key: 'IABOT_SEARCHURL',
-        caption: 'IA Bot SearchUrlData',
-        endpoint: '',
-        hide: true
-    },
-}

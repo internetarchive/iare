@@ -2,10 +2,10 @@
 const isLinkStatusGood = (statusCode) => {
     return statusCode >= 200 && statusCode < 400
 }
-
-const isLinkStatusBad = (statusCode) => {
-    return statusCode < 200 && statusCode >= 400
-}
+//
+// const isLinkStatusBad = (statusCode) => {
+//     return statusCode < 200 && statusCode >= 400
+// }
 
 export const URL_STATUS_FILTER_MAP = {
     all: {
@@ -71,8 +71,8 @@ export const ACTIONABLE_FILTER_MAP = {
     // },
     bad_live: {
         name: "bad_live",
-        caption: "Link Status: BAD, Citation Priority: Link",
-        desc: "Link Status: BAD, Citation Priority: Link",
+        caption: "Link Status: BAD, Citation Priority: Live",
+        desc: "Link Status: BAD, Citation Priority: Live",
         tooltip: `<div>Original URL Status is NOT 2XX or 3XX<br/>AND<br/>Template Parameter "url_status" is set to "live"</div>`,
         fixit: <div>Set "url-status" parameter in Citation Template to "dead"</div>,
         filterFunction: () => (d) => {
@@ -90,9 +90,8 @@ export const ACTIONABLE_FILTER_MAP = {
         or archive link first in the citation.
         - if an archive_url exists, then must have a "url_status" parameter
         - if original link is BAD, then, url_status should not be "live"
-        So,
-        * WITHIN template:
-          if source GOOD, and archive_url exists, and url_status !== "live"
+        So, final condition is:
+        * WITHIN template: if source GOOD, and archive_url exists, and url_status !== "live"
 
         anomaly example:
 
@@ -129,9 +128,9 @@ export const ACTIONABLE_FILTER_MAP = {
         // if (archive-url exists) && (url-status !== live)
          */
 
-        caption: "Link Status: GOOD, Archive Status: GOOD, Citation Priority: Archive",
-        desc: "Link Status: GOOD, Archive Status: GOOD, Citation Priority: Archive",
-        tooltip: `<div>Original URL Status IS 2XX or 3XX<br/>AND<br/>Template Parameter "url_status" is NOT set to "live"</div>`,
+        caption: "Link Status: GOOD, Archive Status: GOOD, Citation Priority: Not Live",
+        desc: "Link Status: GOOD, Archive Status: GOOD, Citation Priority: Not Live",
+        tooltip: `<div>Original URL Status IS 2XX or 3XX<br/>AND<br/>An archive exists<br/>AND<br/>Template Parameter "url_status" is NOT set to "live"</div>`,
         fixit: <div>Add or change Citation Template Parameter "url-status" to "live"</div>,
 
         filterFunction: () => (d) => {
@@ -152,7 +151,7 @@ export const ACTIONABLE_FILTER_MAP = {
                 // source link GOOD, check templates for archive and citation status
                 return d.refs.some(r => {
                     // if any of the ref's templates return true...
-                    r.templates.some(t => {
+                    return r.templates.some(t => {
                         // return true if archive_url is there and t.parameters.url_status !== "live"
                         if (t.parameters && (t.parameters.url === d.url)) {
                             return (t.parameters.archive_url && (t.parameters.url_status !== "live"))
@@ -216,13 +215,15 @@ export const ACTIONABLE_FILTER_MAP = {
         filterFunction: () => (d) => {
             return (d.status_code < 200 || d.status_code >= 400)
                 &&
-                (!d.searchurldata_archived)
+                (!d.iabot_archive_status?.hasArchive)
         },
     },
 };
 
 
 export const ARCHIVE_STATUS_FILTER_MAP = {
+    // TODO: these should be removed...no longer used, i think
+
     iabot: {
         // _: { name: 'IABot'},
         _: { name: <>Archive<br/>Status</>},
@@ -232,7 +233,7 @@ export const ARCHIVE_STATUS_FILTER_MAP = {
             desc: "IABot has archive for URL.",
             default: false,
             filterFunction: () => (url) => {
-                return url.searchurldata_archived
+                return url.iabot_archive_status?.hasArchive
             },
         },
         no: {
@@ -240,7 +241,7 @@ export const ARCHIVE_STATUS_FILTER_MAP = {
             desc: "IABot does not have archive for URL",
             default: false,
             filterFunction: () => (url) => {
-                return !(url.searchurldata_archived)
+                return !(url.iabot_archive_status?.hasArchive)
             },
         },
         all: {

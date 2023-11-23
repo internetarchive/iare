@@ -7,7 +7,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import './custom.scss'; // includes bootstrap.scss
 
 import './index.css';
-import {UrlStatusCheckMethods} from "./constants/endpoints";
+import {UrlStatusCheckMethods} from "./constants/checkMethods";
 import {IariSources} from "./constants/endpoints";
 
 const getEnvironment = () => {

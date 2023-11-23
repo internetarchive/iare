@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useCallback} from "react";
 import MakeLink from "../../MakeLink";
 import {normalizeUrlArray} from "../../../utils/utils";
-import {fetchStatusUrls} from "../../../utils/iariUtils";
+import {fetchUrls} from "../../../utils/iariUtils";
 // import {UrlStatusCheckContext} from "../../../contexts/UrlStatusCheckContext"
 import {ConfigContext} from "../../../contexts/ConfigContext";
 
@@ -69,7 +69,7 @@ export default function RefUrls({ urls }) {
         }
 
         // fetchData(urls)
-        fetchStatusUrls({
+        fetchUrls({
             iariBase: myIariBase,
             urlArray: urls,
             refresh: false,
