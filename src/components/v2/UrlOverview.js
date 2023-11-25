@@ -134,7 +134,7 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
     }
 
 
-    const chartData = {
+    const urlChartData = {
 
         labels: statsWithoutAll.map(d => d.label),
         datasets: [{
@@ -148,7 +148,7 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
         borderWidth: 2,
     }
 
-    const options = {
+    const urlChartOptions = {
         // animation: true,
         animation: {
             animateScale: false,
@@ -361,8 +361,8 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
 
     const urlStatusDisplay = <>
         <div className={"url-chart-display"}>
-            {chartData.datasets[0].data.length > 0 ?
-                <PieChart chartData={chartData} options={options} onClick={myClickChart}/>
+            {urlChartData.datasets[0].data.length > 0 ?
+                <PieChart chartData={urlChartData} options={urlChartOptions} onClick={myClickChart}/>
                 : <p>No Pie</p>}
         </div>
     </>
@@ -373,11 +373,21 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
             count: pageData.template_statistics[key],
             link: key
         }
+    }).sort( (a,b) => {
+        return a.count < b.count
+            ? 1
+            : a.count > b.count
+                ? -1
+                : a.label < b.label
+                    ? 1
+                    : a.label > b.label
+                        ? -1
+                        : 0
     })
-    
+
     const templateChartData = {
 
-        labels: templateData.map(d => d.label),
+        labels: templateData.map(d => `${d.label} [${d.count}]`),
         datasets: [{
             label: "Templates",
             data: templateData.map(d => d.count),
