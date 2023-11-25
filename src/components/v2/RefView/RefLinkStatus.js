@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Tooltip as MyTooltip} from "react-tooltip";
-import {REF_LINK_STATUS_FILTERS as linkDefs} from "../filters/refFilterMaps";
+import {REF_LINK_STATUS_FILTERS as linkDefs} from "../filterMaps/refFilterMaps";
 
 export default function RefLinkStatus( {details = {}, onClick=()=>{} } ) {
 

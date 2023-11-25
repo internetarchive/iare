@@ -8,7 +8,7 @@ import {ConfigContext} from "../../contexts/ConfigContext";
 import {
     ARCHIVE_STATUS_FILTER_MAP,
     URL_STATUS_FILTER_MAP
-} from "./filters/urlFilterMaps";
+} from "./filterMaps/urlFilterMaps";
 import {areObjectsEqual, getLinkStatus} from "../../utils/utils";
 
 /*

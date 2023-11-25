@@ -2,7 +2,7 @@ import React, {useEffect, useState, useContext} from 'react';
 import RefView from "./RefView/RefView";
 import {ConfigContext} from "../../contexts/ConfigContext";
 import {Tooltip as MyTooltip} from "react-tooltip";
-import {REF_LINK_STATUS_FILTERS as linkDefs} from "./filters/refFilterMaps";
+import {REF_LINK_STATUS_FILTERS as linkDefs} from "./filterMaps/refFilterMaps";
 import {convertToCSV, copyToClipboard} from "../../utils/utils";
 
 const baseWikiUrl = "https://en.wikipedia.org/wiki/" // for now TODO get from config or context or pageData

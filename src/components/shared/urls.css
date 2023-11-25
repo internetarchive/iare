@@ -32,6 +32,8 @@
     --choice-fetch-color-bg: inherit; /*#d1d5da;*/
     --choice-fetch-border-radius: .375rem;
 
+    --height-piechart-display: 225px;
+
     --border-default:1px solid black;
 }
 
@@ -449,5 +451,5 @@ button.utility-button.disabled {
 }
 
 .template-chart-display .chart-container {
-    height:600px;
+    height:var(--height-piechart-display);
 }

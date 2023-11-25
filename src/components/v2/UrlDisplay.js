@@ -4,8 +4,8 @@ import RefFlock from "./RefFlock";
 import UrlOverview from "./UrlOverview";
 import '../shared/urls.css';
 import '../shared/filters.css';
-import {REF_LINK_STATUS_FILTERS} from "./filters/refFilterMaps";
-import {ACTIONABLE_FILTER_MAP} from "./filters/urlFilterMaps";
+import {REF_LINK_STATUS_FILTERS} from "./filterMaps/refFilterMaps";
+import {ACTIONABLE_FILTER_MAP} from "./filterMaps/urlFilterMaps";
 import {ConfigContext} from "../../contexts/ConfigContext";
 import FilterButtons from "../FilterButtons";
 import ChoiceFetch from "../ChoiceFetch";
@@ -63,7 +63,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
     // calculate url stats
     useEffect( () => {
 
-        // calc counts for each filter of urlFilterMaps
+        // calc counts for each filter of url status filter maps
         const urlCounts = (!pageData || !pageData.urlArray)
             ? []
             : Object.keys(urlStatusFilterMap).map(key => {

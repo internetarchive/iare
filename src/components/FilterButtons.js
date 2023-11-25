@@ -5,7 +5,7 @@ import FilterButton from "./FilterButton";
 export default function FilterButtons ( {
                 flock,
                 filterMap,
-                filterList = [],  /* array of keys of which filters to include; empty means use all */
+                filterList = [],  /* array of keys of which filter to include; empty means use all */
                 onClick,
                 caption = <>Filters</>,
                 className = null,

@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import FilterButtons from "../FilterButtons";
 import FilterStatusChoices from "../FilterStatusChoices";
-import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "./filters/urlFilterMaps";
-import {REF_LINK_STATUS_FILTERS} from "./filters/refFilterMaps";
+import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "./filterMaps/urlFilterMaps";
+import {REF_LINK_STATUS_FILTERS} from "./filterMaps/refFilterMaps";
 import {ConfigContext} from "../../contexts/ConfigContext";
 import PieChart from "../PieChart";
 import {
@@ -118,7 +118,7 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
         ? statistics.urlCounts.filter(s => s.link !== "all")
         : [];
 
-    const onClickLegend = (event, legendItem, legend) => {
+    const onClickUrlLegend = (event, legendItem, legend) => {
         const index = legendItem.index;
         const ci = legend.chart;
         const link = ci.data.datasets[0].links[index];
@@ -128,7 +128,7 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
         onAction({action: "setUrlStatusFilter", value: link})
     }
 
-    const myClickChart = (link) => {
+    const myClickUrlChart = (link) => {
         // console.log("pie chart clicked, link=", link)
         onAction({action: "setUrlStatusFilter", value: link})
     }
@@ -176,7 +176,7 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
                         size: 16
                     },
                 },
-                onClick: onClickLegend,
+                onClick: onClickUrlLegend,
             },
                 // subtitle: {
                 //     display: true,
@@ -362,10 +362,12 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
     const urlStatusDisplay = <>
         <div className={"url-chart-display"}>
             {urlChartData.datasets[0].data.length > 0 ?
-                <PieChart chartData={urlChartData} options={urlChartOptions} onClick={myClickChart}/>
+                <PieChart chartData={urlChartData} options={urlChartOptions} onClick={myClickUrlChart}/>
                 : <p>No Pie</p>}
         </div>
     </>
+
+    // templates pie chart
 
     const templateData = Object.keys(pageData.template_statistics).map( key => {
         return {
@@ -427,7 +429,7 @@ const UrlOverview = React.memo(({pageData, statistics, onAction}) => {  // React
 
             datalabels: false,
             legend: {
-                display: true,
+                display: false,
                 position: 'top',
                 align: 'start',
                 // title: {

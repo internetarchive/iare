@@ -2,7 +2,7 @@ import React, {useContext, useState} from 'react';
 import {Tooltip as MyTooltip} from "react-tooltip";
 import {ConfigContext} from "../../contexts/ConfigContext";
 import {httpStatusCodes, iabotLiveStatusCodes} from "../../constants/httpStatusCodes"
-import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "./filters/urlFilterMaps";
+import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "./filterMaps/urlFilterMaps";
 import {UrlStatusCheckMethods} from "../../constants/checkMethods";
 import {convertToCSV, copyToClipboard} from "../../utils/utils";
 
