@@ -41,7 +41,6 @@ function ActionFilters( {filterSet= null, filterRender, flock = [], onAction, op
 }
 
 
-
 export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {}, urlArchiveFilterMap = {} } ) {
     // pageData.urlArray displayed with UrlFlock with filter maps applied
 
@@ -57,7 +56,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
     let myConfig = React.useContext(ConfigContext);
     myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
     const myIariBase = myConfig?.iariSource;
-    
+
 
     const fetchReferenceDetail = useCallback( (ref) => {
         // handle null ref

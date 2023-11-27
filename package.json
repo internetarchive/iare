@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.2.24.1",
-  "version_name": "0.2.24.1.template piechart sort",
+  "version": "0.2.24.2",
+  "version_name": "0.2.24.2.piechart components",
   "private": true,
   "dependencies": {
     "bootstrap": "^5.3.0-alpha3",
