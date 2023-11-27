@@ -40,7 +40,7 @@ const colors = {
     magenta: "#f763ff",
 }
 
-const UrlOverview = React.memo(({pageData, onAction}) => {  // React.memo so doesn't re-rerender with param changes
+const UrlOverview = React.memo(({pageData, options, onAction}) => {  // React.memo so doesn't re-rerender with param changes
 
     const [showCitationLinks, setShowCitationLinks] = useState(false)
     const [archiveFilterStatus, setArchiveFilterStatus] = useState(

@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import UrlFlock from "./UrlFlock";
 import RefFlock from "./RefFlock";
 import UrlOverview from "./UrlOverview";
@@ -42,7 +42,7 @@ function ActionFilters( {filterSet= null, filterRender, flock = [], onAction, op
 
 
 
-export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {}, urlArchiveFilterDefs = {} } ) {
+export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {}, urlArchiveFilterMap = {} } ) {
     // pageData.urlArray displayed with UrlFlock with filter maps applied
 
     const [urlFilters, setUrlFilters] = useState( null ); // keyed object of url filters to pass in to UrlFlock  TODO: implement UrlFilter custom objects
@@ -57,29 +57,9 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
     let myConfig = React.useContext(ConfigContext);
     myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
     const myIariBase = myConfig?.iariSource;
+    
 
-
-    // calculate url stats
-    useEffect( () => {
-
-        // calc counts for each filter of url status filter maps
-        const urlCounts = (!pageData || !pageData.urlArray)
-            ? []
-            : Object.keys(urlStatusFilterMap).map(key => {
-                const f = urlStatusFilterMap[key];
-                const count = pageData.urlArray.filter((f.filterFunction)()).length; // Note the self-evaluating filterFunction!
-                return {
-                    label: f.caption + " (" + count + ")",
-                    count: count,
-                    link: key
-                }
-            })
-
-        pageData.urlStatusStatistics = {urlCounts: urlCounts}
-    }, [pageData, urlStatusFilterMap, urlArchiveFilterDefs, ])
-
-
-    const fetchDetail = useCallback( (ref) => {
+    const fetchReferenceDetail = useCallback( (ref) => {
         // handle null ref
         if (!ref) {
             setRefDetails("Trying to fetch invalid reference");
@@ -122,7 +102,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         else if (action === "showRefsForUrl") {
             // value is url key name
             const myRef = pageData.urlDict[value]?.refs[0] // for now...shall pass entire array soon
-            fetchDetail(myRef)
+            fetchReferenceDetail(myRef)
 
             // also set Ref filter
             setRefFilter(getUrlRefFilter(value))
@@ -189,7 +169,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         // TODO: Action for setReferenceFilter/ShowReference for filtered URLS
         // i.e. show all refs that contain ANY of the URLS in the filtered URL list
 
-    }, [urlStatusFilterMap, fetchDetail, pageData.urlDict])
+    }, [urlStatusFilterMap, fetchReferenceDetail, pageData.urlDict])
 
 
     if (!pageData) return null;  /// NB must be put AFTER useEffect and useCallback, as these hooks cannot after conditional statements
@@ -382,6 +362,23 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             />
         }
         </>
+
+    // setup url stats
+
+    // calc counts for each filter of url status filter maps
+    const urlCounts = (!pageData?.urlArray?.length)
+        ? []
+        : Object.keys(urlStatusFilterMap).map(key => {
+            const f = urlStatusFilterMap[key];
+            const count = pageData.urlArray.filter((f.filterFunction)()).length; // Note the self-evaluating filterFunction!
+            return {
+                label: f.caption + " (" + count + ")",
+                count: count,
+                link: key
+            }
+        })
+
+    pageData.url_status_statistics = {urlCounts: urlCounts}
 
     return <>
 

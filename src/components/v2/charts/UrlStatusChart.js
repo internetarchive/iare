@@ -3,7 +3,7 @@ import PieChart from "../../PieChart";
 
 const UrlStatusChart = ({pageData, options, colors, onAction}) => {
 
-    if (!pageData.urlStatusStatistics) {
+    if (!pageData.url_status_statistics) {
         return <div>
             <h4>URLs</h4>
             <p>No Url statistics to show.</p>
@@ -11,8 +11,8 @@ const UrlStatusChart = ({pageData, options, colors, onAction}) => {
     }
 
     // remove "all" entry for pie chart
-    const statsWithoutAll = pageData.urlStatusStatistics.urlCounts
-        ? pageData.urlStatusStatistics.urlCounts.filter(s => s.link !== "all")
+    const statsWithoutAll = pageData.url_status_statistics.urlCounts
+        ? pageData.url_status_statistics.urlCounts.filter(s => s.link !== "all")
         : [];
 
     const onClickUrlLegend = (event, legendItem, legend) => {

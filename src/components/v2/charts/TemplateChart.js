@@ -10,13 +10,6 @@ const TemplateChart = ({pageData, options, colors, onAction}) => {
         <p>No Template statistics to show.</p>
     </div>
 
-    if (!pageData.urlStatusStatistics) {
-        return <div>
-            <h4>URLs</h4>
-            <p>No Url statistics to show.</p>
-        </div>
-    }
-
     const templateData = Object.keys(pageData.template_statistics).map(key => {
         return {
             label: key,
@@ -143,10 +136,9 @@ const TemplateChart = ({pageData, options, colors, onAction}) => {
     // for each data: ';abel box, caption, flex div bl;ah blah blah
     const legend = <div className={"chart-legend-iare chart-legend-templates"} onClick={onClickLegend}>
         {templateData.map( (d, i) => {
-
             const colorIndex = i % colorArray.length
             const myColor = colorArray[colorIndex]
-            return <div className={"legend-entry"} data-template_id={d.label}>
+            return <div className={"legend-entry"} data-template_id={d.label} key={d.label}>
                 <div className={"legend-box"} style={{backgroundColor:myColor}}></div>
                 <div className={"legend-label"}>{`${d.label} [${d.count}]`}</div>
             </div>

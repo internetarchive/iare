@@ -582,7 +582,7 @@ export default function PageData({pageData = {}}) {
                             {selectedViewType === 'urls' &&
                                 <UrlDisplay pageData={pageData} options={{refresh: pageData.forceRefresh}}
                                             urlStatusFilterMap={URL_STATUS_FILTER_MAP}
-                                            urlArchiveFilterDefs={ARCHIVE_STATUS_FILTER_MAP}
+                                            urlArchiveFilterMap={ARCHIVE_STATUS_FILTER_MAP}
 
                                 />
                             }
