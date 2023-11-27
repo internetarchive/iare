@@ -42,6 +42,60 @@ export const getColorFromIndex = (index, startColor, endColor, steps) => {
     return rgbToHex(r,g,b);
 }
 
+// startColor and endColor are #AABBCC hex format
+// returns array of colors that are a fade from start color to end color
+// Example usage:
+//   const startColor = '#ff0000'; // Red
+//   const endColor = '#00ff00'; // Green
+//   const steps = 10; // Number of steps
+//
+//   const colorArray = generateColorFade(startColor, endColor, steps);
+//   console.log(colorArray);
+export const generateColorFade = (startColor, endColor, steps) => {
+    if (steps < 2) return [ startColor ]
+
+    // Convert start and end colors to RGB format
+    const startRGB = hexToRgb(startColor);
+    const endRGB = hexToRgb(endColor);
+
+    // Calculate the step increments for each color channel
+    const stepIncrement = {
+        r: (endRGB.r - startRGB.r) / (steps - 1),
+        g: (endRGB.g - startRGB.g) / (steps - 1),
+        b: (endRGB.b - startRGB.b) / (steps - 1),
+    };
+
+    // Generate the array of color specifications
+    const colorArray = Array.from({ length: steps }, (_, index) => {
+        const currentColor = {
+            r: Math.round(startRGB.r + stepIncrement.r * index),
+            g: Math.round(startRGB.g + stepIncrement.g * index),
+            b: Math.round(startRGB.b + stepIncrement.b * index),
+        };
+        return rgbToHex(currentColor);
+    });
+
+    return colorArray;
+}
+
+// Helper function to convert hex color to RGB
+function hexToRgb(hex) {
+    const bigint = parseInt(hex.slice(1), 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return { r: r, g: g, b: b };
+}
+
+// Helper function to convert RGB color to hex
+function rgbToHex(rgb) {
+    return (
+        '#' +
+        ((1 << 24) + (rgb.r << 16) + (rgb.g << 8) + rgb.b)
+            .toString(16)
+            .slice(1)
+    );
+}
 
 export const convertToCSV = (json) => {
     const rows = json.map((row) => {

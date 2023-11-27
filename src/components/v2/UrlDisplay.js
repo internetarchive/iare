@@ -45,7 +45,6 @@ function ActionFilters( {filterSet= null, filterRender, flock = [], onAction, op
 export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {}, urlArchiveFilterDefs = {} } ) {
     // pageData.urlArray displayed with UrlFlock with filter maps applied
 
-    const [urlStatistics, setUrlStatistics] = useState({});
     const [urlFilters, setUrlFilters] = useState( null ); // keyed object of url filters to pass in to UrlFlock  TODO: implement UrlFilter custom objects
     const [refFilter, setRefFilter] = useState( null ); // filter to pass in to RefFlock
     const [selectedUrl, setSelectedUrl] = useState(''); // currently selected url in url list
@@ -76,8 +75,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                 }
             })
 
-        setUrlStatistics({urlCounts: urlCounts});
-
+        pageData.urlStatusStatistics = {urlCounts: urlCounts}
     }, [pageData, urlStatusFilterMap, urlArchiveFilterDefs, ])
 
 
@@ -402,7 +400,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
         {myConfig.isShowUrlOverview && <div className={"section-box url-overview-column"}>
             {/*<h3>Filters</h3>*/}
-            <UrlOverview pageData={pageData} statistics={urlStatistics} onAction={handleAction}/>
+            <UrlOverview pageData={pageData} options={{}} onAction={handleAction}/>
         </div>}
 
 

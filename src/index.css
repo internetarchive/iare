@@ -185,7 +185,7 @@ button.utility-button.small-button {
 .utility-button.debug-button {
     background-color: #2199e8;
     color: #fefefe;
-    margin: 0 0 .5rem 0rem;
+    margin: 0 0 .5rem 0;
 }
             /*.debug-button, .more-button {*/
             /*    border-radius: 0.75rem;*/
@@ -286,8 +286,7 @@ table.single-detail tr td:not(:first-child) {
 
 
 .iare-view .path-fetch {
-    padding:1rem;
-    padding-bottom:0;
+    padding: 1rem 1rem 0;
     margin-top:.5rem;
     margin-bottom:.25rem;
 
@@ -311,7 +310,7 @@ table.single-detail tr td:not(:first-child) {
 
 .path-input-wrapper {
     marginBottom: .5rem;
-    display:contents;
+    display:contents;  /* NB chatGPT syas display: copntents is not supported by IE */
 }
 
 @media screen and (max-width: 800px) {
