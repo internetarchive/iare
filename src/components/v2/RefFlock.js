@@ -238,7 +238,7 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
 
         const listHeader = <div className={"ref-list-header"} >
             <div className={"list-header-row"}>
-                <div className={"list-name"}>Reference {buttonCopy}</div>
+                <div className={"list-name"}>Reference {myConfig.isShowExpertMode && buttonCopy}</div>
             </div>
         </div>
 

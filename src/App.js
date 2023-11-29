@@ -344,7 +344,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
             onClick={() => {
                 setIsShowExpertMode(prevState => !prevState )
             }
-            } >{isShowExpertMode ? "Hide" : "Show"} Expert Controls</button>
+            } >{isShowExpertMode ? "Hide" : "Show"} Clipboard Controls</button>
         &nbsp;
         <button // this is the 'show New Features' button
             className={"utility-button debug-button"}
