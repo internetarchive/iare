@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.2.24.2",
-  "version_name": "0.2.24.2.piechart components",
+  "version": "0.2.24.3",
+  "version_name": "0.2.24.3.archive status cached retrieval; added references section to section regex",
   "private": true,
   "dependencies": {
     "bootstrap": "^5.3.0-alpha3",

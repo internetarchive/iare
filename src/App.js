@@ -113,7 +113,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
             //  riBase is undefined or otherwise falsey
             console.log(`convertPathToEndpoint: myIariSourceId = ${myIariSourceId}, iariBase = ${iariBase}`)
             if (mediaType === "wiki") {
-                const sectionRegex = '&regex=bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
+                const sectionRegex = '&regex=references|bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
                 const options = '&dehydrate=false'
                 return `${iariBase}/statistics/article?url=${path}${sectionRegex}${options}${refresh ? "&refresh=true" : ''}`;
 

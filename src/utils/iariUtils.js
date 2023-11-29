@@ -100,10 +100,11 @@ const fetchUrl = async (iariBase, url, refresh=false, timeout=0, method='') => {
     error_details*   longer description if available
 }
 */
-const fetchUrlArchive = async (iariBase, url) => {
+const fetchUrlArchive = async (iariBase, url, refresh=false) => {
 
     const endpoint = `${iariBase}/check-url-archive`
-        + `?url=${encodeURIComponent(url)}`
+        + `?refresh=${refresh ? "true" : "false"}`
+        + `&url=${encodeURIComponent(url)}`
 
     let endpoint_status_code = 0;
 
@@ -165,6 +166,8 @@ const fetchUrlArchive = async (iariBase, url) => {
         }
 
         if (!data.iabot_archive_results) {
+            // TODO need to check this more carefully:
+            // if iabot_archive_results but is null, it may be a problem of the archive system...
             output.hasArchive = false
             output.error = true
             output.error_details = "Missing iabot_archive_results from archive retrieval data"
@@ -256,13 +259,14 @@ const fetchUrlArchive = async (iariBase, url) => {
 export const fetchUrlArchives = async ({
                                            iariBase= '',
                                            urlArray=[],
+                                           refresh=false,
                                        } = {}) => {
 
     // return empty array if urlArray is falsey (null, undefined, or 0 length)
     if (!urlArray?.length) return Promise.resolve([])
 
     const promises = urlArray.map(urlObj => {
-        return fetchUrlArchive(iariBase, urlObj)
+        return fetchUrlArchive(iariBase, urlObj, refresh)
     })
 
     // assumes all promises successful

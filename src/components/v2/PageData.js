@@ -478,6 +478,7 @@ export default function PageData({pageData = {}}) {
             return fetchUrlArchives( {
                 iariBase: myIariBase,
                 urlArray: pageData.urls,
+                refresh: pageData.forceRefresh,
             })
         }
 
