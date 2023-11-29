@@ -291,7 +291,9 @@ const fetchUrlsIabot = async (iariBase, urlArray, refresh, timeout) => {
 // this will soon be replaced by IARI::check-url with method pass and caching
 const fetchUrlWayback = async (url) => {
     const endpoint = UrlStatusCheckMethods.WAYBACK.endpoint
-        + `?impersonate=1&url=${encodeURIComponent(url)}`
+        + `?impersonate=1`
+        + `&skip-adblocker=1`
+        + `&url=${encodeURIComponent(url)}`
 
     let endpoint_status_code = 0
 
