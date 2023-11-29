@@ -152,9 +152,14 @@ export const ACTIONABLE_FILTER_MAP = {
                 return d.refs.some(r => {
                     // if any of the ref's templates return true...
                     return r.templates.some(t => {
-                        // return true if archive_url is there and t.parameters.url_status !== "live"
+                        // if d.url matches the url parameter in this template, continue checking...
                         if (t.parameters && (t.parameters.url === d.url)) {
-                            return (t.parameters.archive_url && (t.parameters.url_status !== "live"))
+                            // return true if archive_url is there and t.parameters.url_status !== "live"
+                            return (t.parameters.archive_url && (
+                                (t.parameters.url_status !== undefined)
+                                    &&
+                                (t.parameters.url_status !== "live")
+                            ))
                         } else {
                             return false
                         }

@@ -381,7 +381,10 @@ const urlFlock = React.memo( function UrlFlock({
             return !u.reference_info?.statuses
                 ? null
                 : u.reference_info.statuses.map( (s,i) => {
-                    return <div key={i}>{s.charAt(0).toUpperCase() + s.slice(1)}</div>
+                    const display = s === "--"  // this is what PageData set status to if not there - TODO do this better!
+                        ? ""
+                        : s.charAt(0).toUpperCase() + s.slice(1)
+                    return <div key={i}>{display}</div>
                 })
         })
 
