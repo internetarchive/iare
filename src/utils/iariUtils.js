@@ -90,14 +90,14 @@ const fetchUrl = async (iariBase, url, refresh=false, timeout=0, method='') => {
     return { data: urlData, status_code: endpoint_status_code };
 }
 
-/* fetches iabot's archive data from IARI, and returns an object with (* means optional):
+/* fetches iabot's archive data from IARI for specified url, and returns object as such: (* means optional):
 {
     url              original url to check archive for
     hasArchive       if true, then archive_url and live_state is set
-    archive_url*     full url of archive
-    live_state*      iabot's "live_state" status - unclear if this is useful or not
-    error_reason*    short reason for error
-    error_details*   longer description if available
+    archive_url *    full url of archive
+    live_state *     iabot's "live_state" status - unclear if this is useful or not
+    error_reason *   short reason for error
+    error_details *  longer description if available
 }
 */
 const fetchUrlArchive = async (iariBase, url, refresh=false) => {
@@ -161,17 +161,17 @@ const fetchUrlArchive = async (iariBase, url, refresh=false) => {
                 servetime: 0.1918
             },
          */
-        const output = {
+        const urlInfo = {
             url: url  // TODO use data.url instead? that's the one passed back by the check-url-archive routine
         }
 
         if (!data.iabot_archive_results) {
             // TODO need to check this more carefully:
-            // if iabot_archive_results but is null, it may be a problem of the archive system...
-            output.hasArchive = false
-            output.error = true
-            output.error_details = "Missing iabot_archive_results from archive retrieval data"
-            return output
+            // TODO: if iabot_archive_results property exists but is null, it may be a problem of the archive system...
+            urlInfo.hasArchive = false
+            urlInfo.error = true
+            urlInfo.error_details = "Missing iabot_archive_results from archive retrieval data"
+            return urlInfo
         }
 
         const results = data.iabot_archive_results
@@ -179,9 +179,9 @@ const fetchUrlArchive = async (iariBase, url, refresh=false) => {
         if (results.hasOwnProperty("requesterror")) {
             // there is no entry for this url in iabot's database
 
-            output.hasArchive = false
-            output.error_reason = "No archive in database"
-            output.error_details = results.errormessage
+            urlInfo.hasArchive = false
+            urlInfo.error_reason = "No archive in database"
+            urlInfo.error_details = results.errormessage
 
         } else if (results.hasOwnProperty("urls")) {
             // there is an entry for this url; process it
@@ -192,22 +192,22 @@ const fetchUrlArchive = async (iariBase, url, refresh=false) => {
                     // NB assumes first url in list is the only one we want
                     // TODO: find cases where this is not true
 
-                output.hasArchive = (urlInfo.archived === "true" || !!urlInfo.archived)  // NB: makes sure not null
-                output.archive_url = urlInfo.archive  // this is the archive link as it is in iabot database - most likely a wayback? but not necessarily?
-                output.live_state = iabot_livestatus_convert(urlInfo.live_state)
+                urlInfo.hasArchive = (urlInfo.archived === "true" || !!urlInfo.archived)  // NB: makes sure not null
+                urlInfo.archive_url = urlInfo.archive  // this is the archive link as it is in iabot database - most likely a wayback? but not necessarily?
+                urlInfo.live_state = iabot_livestatus_convert(urlInfo.live_state)
 
             } else {
-                output.hasArchive = false
-                output.error_reason = "Missing URL in archive results"
+                urlInfo.hasArchive = false
+                urlInfo.error_reason = "Missing URL in archive results"
             }
 
         } else {
             // there is no "urls" or "requesterror" property
-            output.hasArchive = false
-            output.error_reason = "No archive information provided"
+            urlInfo.hasArchive = false
+            urlInfo.error_reason = "No archive information provided"
         }
 
-        return output
+        return urlInfo
     }
 
 

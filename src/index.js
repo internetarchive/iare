@@ -29,6 +29,7 @@ const myRefresh = queryParameters.has("refresh") ? queryParameters.get("refresh"
 const myMethod = queryParameters.has("method") ? queryParameters.get("method") : UrlStatusCheckMethods.IABOT.key;
 const myIariSourceId = queryParameters.has("iari-source") ? queryParameters.get("iari-source") : IariSources.iari_stage.key;
     // TODO: will change default to "iari" eventually, when that proxy is stable
+    // TODO set myIariSourceId to iari-prod explicitly if environment is env-production - ignore inline iari-source
 
 root.render(<App env={env} myPath={myPath} myRefresh={myRefresh} myMethod={myMethod} myIariSourceId={myIariSourceId} myDebug={myDebug}/>);
 

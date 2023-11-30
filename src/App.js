@@ -109,8 +109,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         const convertPathToEndpoint = (path = '', mediaType = 'wiki', refresh = false) => {
 
             const iariBase = IariSources[myIariSourceId]?.proxy
-            // TODO: error if ia
-            //  riBase is undefined or otherwise falsey
+            // TODO: error if iariBase is undefined or otherwise falsey
             console.log(`convertPathToEndpoint: myIariSourceId = ${myIariSourceId}, iariBase = ${iariBase}`)
             if (mediaType === "wiki") {
                 const sectionRegex = '&regex=references|bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
@@ -261,7 +260,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
 
         console.log(`APP:::useEffect[myPath, myRefresh]: calling handlePathName: ${myPath}, ${myRefresh}`)
 
-        // set these states only for debugging, essentially
+        // set these states only for debug display, essentially
         setTargetPath(myPath);
         setRefreshCheck(myRefresh);
 

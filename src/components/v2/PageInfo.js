@@ -23,7 +23,8 @@ export default function PageInfo({ pageData }) {
         ? pageData.ores_score.probability[ores_prediction]
         : null;
     const ores_score_display = ores_score
-        ? `${ores_prediction} ${Number(ores_score).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:0})}`
+        // ? `${ores_prediction} ${Number(ores_score).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:0})}`
+        ? `${ores_prediction}`
         : null
 
     let myConfig = React.useContext(ConfigContext);
