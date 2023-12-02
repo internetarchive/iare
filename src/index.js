@@ -35,15 +35,17 @@ const getIariSource = (qParams, targetEnvironment) => {
 }
 
 const getMethod = (qParams, targetEnvironment) => {
+    // const temporaryDefaultKey = UrlStatusCheckMethods.WAYBACK.key
+    const temporaryDefaultKey = UrlStatusCheckMethods.IABOT.key
     // hard-set to WAYBACK for production
-    if (targetEnvironment === 'env-production') return UrlStatusCheckMethods.WAYBACK.key
+    if (targetEnvironment === 'env-production') return temporaryDefaultKey
     // else
-    const methodKey = queryParameters.has("method") ? queryParameters.get("method") : UrlStatusCheckMethods.WAYBACK.key
+    const methodKey = queryParameters.has("method") ? queryParameters.get("method") : temporaryDefaultKey
 
     // if specified mehtod not in our defined choices, default to WAYBACK, and error
     if (!UrlStatusCheckMethods[methodKey]) {
         console.error(`Method ${methodKey} not supported.`)
-        return UrlStatusCheckMethods.WAYBACK.key
+        return temporaryDefaultKey
     }
     return methodKey
 }
