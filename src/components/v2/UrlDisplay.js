@@ -127,14 +127,14 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             setSelectedUrlActionFilterName(value)
         }
 
-        else if (action === "setLinkStatusFilter") {
-            // use value as link status to filter references with
-
-            const f = value ? REF_LINK_STATUS_FILTERS[value] : null
-            setRefFilter(f)
-
-            // TODO: some sort of feedback? selected filter?
-        }
+                    // else if (action === "setLinkStatusFilter") {
+                    //     // use value as link status to filter references with
+                    //
+                    //     const f = value ? REF_LINK_STATUS_FILTERS[value] : null
+                    //     setRefFilter(f)
+                    //
+                    //     // TODO: some sort of feedback? selected filter?
+                    // }
 
         else if (action === "removeUrlFilter") {
             // clear filter (show all) for URL list

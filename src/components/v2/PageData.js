@@ -55,16 +55,16 @@ export default function PageData({pageData = {}}) {
     const myStatusCheckMethod = myConfig.urlStatusMethod
 
 
-    // called upon useEffect when new url status data received
-    const processUrls = useCallback( (pageData, urls) => {
-        // process url results and create urlDict from it
+    // called in useEffect when new url results received
+    const processUrls = useCallback( (pageData, urlResults) => {
+        // create pageData.urlDict and pageData.urlArray from urlResults
 
-        const urlDict = {}
         const regexWayback = new RegExp(/https?:\/\/(?:web\.)archive\.org\/web\/([\d*]+)\/(.*)/);
 
         const sanitizeUrlForWayback = (targetUrl) => {
-                // TODO ongoing, as checking if archive can be trockey
+                // TODO ongoing, as checking if archive can be tricky
                 // TODO Also must consider other archiving services
+                // TODO may use IABot's isArchive function...
 
                 // // let inputString = 'http://example.com:http://example2.com:some:text:with:colons';
                 // const regexColon = /:(?!\/\/)/g;  // Regular expression to match colons not followed by "//"
@@ -80,21 +80,21 @@ export default function PageData({pageData = {}}) {
             return !!(sanitizeUrlForWayback(targetUrl).match(regexWayback))
         }
 
-        pageData.urlResults = urls
-
         // create url dict from returned results
-        pageData.urlResults && pageData.urlResults.forEach(d => {
-            // const myUrl = encodeURI(d.data.url)
-            const myUrl = d.data.url  // try not encoding and see if it still works
-            // console.log(myUrl)
+        const urlDict = {}
+        urlResults && urlResults.forEach(d => {  // results surround url data with a "data" element
+            const myUrl = d.data.url
+
+            // add entry for url if not there yet
             if (!urlDict[myUrl]) {
-                // add entry for url if not there yet
                 urlDict[myUrl] = d.data  // initialize with result data
                 urlDict[myUrl].urlCount = 0
                 urlDict[myUrl].isArchive = isArchive(myUrl)
                 urlDict[myUrl].hasTemplateArchive = false  // TODO: this will be recalculated when processing references
             }
-            urlDict[myUrl].urlCount++  // increment count to keep track of repeats
+
+            // increase usage count of this url by 1; keeps track of repeats
+            urlDict[myUrl].urlCount++
         })
 
         const primaryUrls = Object.keys(urlDict).filter(urlKey => {
@@ -112,20 +112,23 @@ export default function PageData({pageData = {}}) {
 
     }, [])
 
-    const processUrlArchives = useCallback( (pageData, urlArchives) => {
+    const processUrlArchives = useCallback( (pageData, urlArchiveResults) => {
         // assumes urlArchives is array of [ archive props ]
-        if (!urlArchives?.length) {
+        if (!urlArchiveResults?.length) {
             // TODO Error here?
+            console.error(`processUrlArchives: No urlArchiveResults found`)
             return
         }
+
         // append urlDict data for each returned url
-        urlArchives.forEach(u => {
-            const myUrl = pageData.urlDict[u.data.url]
-            if (myUrl) {
-                myUrl.iabot_archive_status = u.data
+        urlArchiveResults.forEach(u => {
+            const urlObj = pageData.urlDict[u.data.url]
+            if (urlObj) {
+                urlObj.iabot_archive_status = u.data
             } else {
                 // there was no entry in urlDict for primary url that archive was based on...
                 // TODO how do we indicate this error? urlDict[url].error = true w/ error_details?
+                console.error(`processUrlArchives: No entry in urlDict found for url: ${u.data.url}`)
             }
 
         })
@@ -209,71 +212,28 @@ export default function PageData({pageData = {}}) {
     }, [])
 
 
-
-    // sets the ref[linkStatus] property to an array containing a list of the status
-    // relationship between the primary and archived links in a reference. These can
-    // be indicated through template parameters, as in the properties "url" and
-    // "archive_url", or, exist in the reference as a "wild" link, not connected to
-    // anything. These are often in special "link collection" segments such as External Links, e.g.
-    //
-    // links represented by the "url" and "archive_url" template parameter values
-    // are checked.
-    //
-    // NB: some other templates (as in not standard...not CS1?) indicate the primary url with
-    // NB  parameter names other than 'url'
-    //
-    // Other url links found outside of a template are deemed "exotemplate", and
-    // can be a primary or archive url. They are checked for "good" or "bad" status
-    //
+// currently only sets the "hasTemplateArchive" property to true if archive_url parameter found in template
     const processReference = useCallback( (ref, urlDict) => {
-
-        const linkStatus = []
-
-        // create linkStatus for every url/archive_url pair in templates
-        // as each url is processed, save in "used_urls" array
 
         const templates = ref?.templates ? ref.templates : []
         const templateUrls = {}
+
         templates.forEach( template => {
 
             const primaryUrl = template.parameters.url
             const archiveUrl = template.parameters.archive_url
+
+            // add urls from template to find exotemplate urls later
             templateUrls[primaryUrl] = true
             templateUrls[archiveUrl] = true
-
-            const primaryLinkStatusCode = urlDict[primaryUrl]?.status_code // handles undefined if url not a key in urlDict
-            const archiveLinkStatusCode = urlDict[archiveUrl]?.status_code // handles undefined if archive url not a key in urlDict
-
-            const primaryLinkStatus = getLinkStatus(primaryLinkStatusCode)
-            const archiveLinkStatus = getLinkStatus(archiveLinkStatusCode)
-
-            linkStatus.push( primaryLinkStatus + '_' + archiveLinkStatus )
 
             // if link referenced by archive_url exists and archiveLinkStatus is good,
             // set the hasTemplateArchive property of the primaryUrl to true
             if (archiveUrl && urlDict[primaryUrl]) {
-                urlDict[primaryUrl].hasTemplateArchive = true
+                urlDict[primaryUrl].hasTemplateArchive = true  // this needs work, as there can be more than one template where this url is used.
+                // TODO maybe this is covered when we attach the addociated reference objects to the URL...
             }
         })
-
-        // check for exotemplate url links in the reference and process.
-        // exotemplate links are links in ref but not in templateUrls array
-        ref.urls.forEach(url => {
-            if (!templateUrls[url]) {
-                const urlStatusCode = urlDict[url]?.status_code
-                const urlLinkStatus = (urlStatusCode === undefined) ? 'exotemplate_bad'
-                    : (urlStatusCode >= 200 && urlStatusCode < 400) ? 'exotemplate_good'
-                        : 'exotemplate_bad'
-                linkStatus.push(urlLinkStatus)
-            }
-        })
-
-        // if linkStatus still empty, we have no links at all in this citation
-        if (linkStatus.length < 1) {
-           linkStatus.push('missing')
-        }
-
-        ref.link_status = linkStatus
 
     }, [])
 
@@ -490,13 +450,11 @@ export default function PageData({pageData = {}}) {
                 setIsDataReady(false);
                 setIsLoadingUrls(true);
 
-
+                // fetch url and archive info and wair for results before continuing
                 const myUrls = await fetchPageUrls()
-                const myUrlArchives = await fetchPageUrlArchives()
-                    // NB this extra call for archive info will be unnecessary when IARI includes archive info in url info
+                const myUrlArchives = await fetchPageUrlArchives()  // NB this extra call for archive info will be unnecessary when IARI includes archive info in url info
 
-                // now we can do something with urls and urlArchives
-
+                // process received data
                 processUrls(pageData, myUrls);  // creates pageData.urlDict and pageData.urlArray
                 processUrlArchives(pageData, myUrlArchives)  // adds archive data to url definitions
                     // NB this also will be unnecessary when IARI includes archive info in url info

@@ -161,17 +161,17 @@ const fetchUrlArchive = async (iariBase, url, refresh=false) => {
                 servetime: 0.1918
             },
          */
-        const urlInfo = {
+        const output = {
             url: url  // TODO use data.url instead? that's the one passed back by the check-url-archive routine
         }
 
         if (!data.iabot_archive_results) {
             // TODO need to check this more carefully:
             // TODO: if iabot_archive_results property exists but is null, it may be a problem of the archive system...
-            urlInfo.hasArchive = false
-            urlInfo.error = true
-            urlInfo.error_details = "Missing iabot_archive_results from archive retrieval data"
-            return urlInfo
+            output.hasArchive = false
+            output.error = true
+            output.error_details = "Missing iabot_archive_results from archive retrieval data"
+            return output
         }
 
         const results = data.iabot_archive_results
@@ -179,9 +179,9 @@ const fetchUrlArchive = async (iariBase, url, refresh=false) => {
         if (results.hasOwnProperty("requesterror")) {
             // there is no entry for this url in iabot's database
 
-            urlInfo.hasArchive = false
-            urlInfo.error_reason = "No archive in database"
-            urlInfo.error_details = results.errormessage
+            output.hasArchive = false
+            output.error_reason = "No archive in database"
+            output.error_details = results.errormessage
 
         } else if (results.hasOwnProperty("urls")) {
             // there is an entry for this url; process it
@@ -192,22 +192,22 @@ const fetchUrlArchive = async (iariBase, url, refresh=false) => {
                     // NB assumes first url in list is the only one we want
                     // TODO: find cases where this is not true
 
-                urlInfo.hasArchive = (urlInfo.archived === "true" || !!urlInfo.archived)  // NB: makes sure not null
-                urlInfo.archive_url = urlInfo.archive  // this is the archive link as it is in iabot database - most likely a wayback? but not necessarily?
-                urlInfo.live_state = iabot_livestatus_convert(urlInfo.live_state)
+                output.hasArchive = (urlInfo.archived === "true" || !!urlInfo.archived)  // NB: makes sure not null
+                output.archive_url = urlInfo.archive  // this is the archive link as it is in iabot database - most likely a wayback? but not necessarily?
+                output.live_state = iabot_livestatus_convert(urlInfo.live_state)
 
             } else {
-                urlInfo.hasArchive = false
-                urlInfo.error_reason = "Missing URL in archive results"
+                output.hasArchive = false
+                output.error_reason = "Missing URL in archive results"
             }
 
         } else {
             // there is no "urls" or "requesterror" property
-            urlInfo.hasArchive = false
-            urlInfo.error_reason = "No archive information provided"
+            output.hasArchive = false
+            output.error_reason = "No archive information provided"
         }
 
-        return urlInfo
+        return output
     }
 
 

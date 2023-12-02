@@ -143,8 +143,10 @@ export const areObjectsEqual = (objA, objB) => {
 }
 
 export const getLinkStatus = (statusCode) => {
-    return (statusCode === undefined) ? 'none'
-        : (statusCode >= 200 && statusCode < 400) ? 'good'
+    return (statusCode === undefined)
+        ? 'none'
+        : (statusCode >= 200 && statusCode < 400)
+            ? 'good'
             : 'bad'
 }
 
