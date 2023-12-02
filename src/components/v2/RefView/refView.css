@@ -200,7 +200,7 @@
     padding-left:.25rem;
     text-align:center;
 }
-.ref-view-urls th.url-iabot-status {
+.ref-view-urls th.url-iabot_status {
     width:var(--width-col-iabot-status);
     max-width:var(--width-col-iabot-status);
     padding-left:.25rem;
@@ -264,6 +264,14 @@
     background-color: var(--color-http-error-bg);
 }
 
+/* ref view link status */
+.ref-view-link-status .ref-link-status-wrapper .ref-link-status {
+    width:2.25rem;
+    height:2.25rem;
+    display:inline;
+    cursor: pointer;
+}
+
 
 /* Footer of ref view details*/
 
@@ -319,4 +327,14 @@
     font-size:1.25em;
     padding:.5rem;
     border-radius: .5rem;
+}
+
+.link-status-tooltip {
+    font-size:1.25em;
+    font-weight:normal;
+    z-index: 999;
+}
+
+.row.ref-view-actions {
+    margin-top:1rem;
 }

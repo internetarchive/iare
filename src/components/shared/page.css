@@ -2,12 +2,20 @@
     margin-top: 0.5rem;
     margin-bottom: 0.75rem;
 }
+.page-info .page-stats-header {
+    display:flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+    justify-content: space-between;
+}
 
 .page-data {
     /*display:flex;*/
     /*flex-direction: row;*/
-    border-top:1px solid black;
-    padding-top:.5rem;
+
+    /*border-top:1px solid black;*/
+    /*padding-top:.5rem;*/
+    padding-top:.25rem;
 }
 .page-data .display-content {
     margin-top:.5rem;
@@ -36,28 +44,37 @@
     margin-bottom: 1.5rem;
 }
 /********************
- for choosing Domains. urls or Reference Types
+ for choosing View type: Domains. urls or Reference Types
  ******************* */
 
-.ref-filter-types {
+.view-options-selection {
     display: flex;
     flex-direction: row;
     font-size:1rem;
     padding-bottom:.5rem;
-    border-bottom:1px solid black;
+    /*border-bottom:1px solid black;*/
+    font-weight: bold;
+}
+.view-options-selection label span {
+    opacity:.5;
+}
+.view-options-selection label span.selected-choice {
+    opacity:1;
 }
 
-.ref-filter-types input[type="radio"]{
+
+
+.view-options-selection input[type="radio"]{
     -ms-transform: scale(var(--radio-button-magnify)); /* IE 9 */
     -webkit-transform: scale(var(--radio-button-magnify)); /* Chrome, Safari, Opera */
     transform: scale(var(--radio-button-magnify));
     margin-right:.23rem;
 }
-.ref-filter-types > div {
+.view-options-selection > div {
     margin-left: 1.25rem;
     /*flex: 0 0 auto;*/
 }
-.ref-filter-types > div:first-child {
+.view-options-selection > div:first-child {
     margin-left:0;
 }
 
@@ -69,4 +86,21 @@
 .ores-display {
     /*color:red;*/
     padding:0 .65rem;
+}
+.filter-title {
+    color: #ababab;
+    /*font-size:80%;*/
+    /*font-style: italic;*/
+}
+
+button.no-left-margin {
+    margin-left: 0 !important;
+}
+button.shortcut-button {
+    color:black !important;
+    background-color: lightgrey !important;
+}
+button.shortcut-button:hover {
+    color:black !important;
+    background-color: #b9b5b5 !important;
 }

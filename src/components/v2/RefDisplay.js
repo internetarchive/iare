@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import RefFlock from "./RefFlock";
 import RefOverview from "./RefOverview";
-import {REF_FILTER_DEFS, REF_FILTER_TYPES} from "./filters/refFilterMaps";
+import {REF_FILTER_DEFS, REF_FILTER_TYPES} from "./filterMaps/refFilterMaps";
 import './refs.css';
+import '../shared/filters.css';
 
 export default function RefDisplay ({ pageData, options } ) {
 
@@ -54,7 +55,7 @@ export default function RefDisplay ({ pageData, options } ) {
     return <>
         <div className={"ref-display section-box"}>
 
-            <h3>References</h3>
+            {false && <h3>References</h3>}
 
             <RefOverview refArray={refArray}
                          summary={
@@ -71,7 +72,7 @@ export default function RefDisplay ({ pageData, options } ) {
         </div>
 
         <div className={"section-box"}>
-            <h3>Filtered References</h3>
+            <h3>References List</h3>
             <RefFlock refArray={refArray} refFilterDef={refFilter} onAction={handleAction} />
         </div>
 

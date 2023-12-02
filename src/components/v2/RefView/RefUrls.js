@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useCallback} from "react";
 import MakeLink from "../../MakeLink";
-import {convertUrlArray} from "../../../utils/utils";
-import {fetchStatusUrls} from "../../../utils/iariUtils";
+import {normalizeUrlArray} from "../../../utils/utils";
+import {fetchUrls} from "../../../utils/iariUtils";
 // import {UrlStatusCheckContext} from "../../../contexts/UrlStatusCheckContext"
 import {ConfigContext} from "../../../contexts/ConfigContext";
 
@@ -20,9 +20,9 @@ export default function RefUrls({ urls }) {
     const endpointIabot = 'https://iabot.wmcloud.org/index.php?page=manageurlsingle'
 
     const headerRow = <tr>
-        <th className={'url-name'}><h3 className={"urls-header"}>Urls</h3></th>
+        <th className={'url-name'}><h3 className={"urls-header"}>URLs</h3></th>
         <th className={'url-status'}>Status</th>
-        <th className={'url-iabot-status'}>IABot</th>
+        <th className={'url-iabot_status'}>IABot</th>
     </tr>
 
     const getDataRow = (u) => {
@@ -39,7 +39,7 @@ export default function RefUrls({ urls }) {
         return <tr key={u.url} className={classes}>
             <td><MakeLink href={u.url} /></td>
             <td><div>{u.status_code}</div></td>
-            <td><div><MakeLink href={endpoint} linkText={"manage"} /></div></td>
+            <td><div><MakeLink href={endpoint} linkText={"details"} /></div></td>
         </tr>
     }
 
@@ -69,7 +69,7 @@ export default function RefUrls({ urls }) {
         }
 
         // fetchData(urls)
-        fetchStatusUrls({
+        fetchUrls({
             iariBase: myIariBase,
             urlArray: urls,
             refresh: false,
@@ -78,7 +78,7 @@ export default function RefUrls({ urls }) {
             })
 
             .then( results => {
-                const bareUrls = convertUrlArray(results) // currently results come "decorated" with surrounding "data : {...}"
+                const bareUrls = normalizeUrlArray(results) // currently results come "decorated" with surrounding "data : {...}"
                 setUrlArray(bareUrls)
                 }
             )

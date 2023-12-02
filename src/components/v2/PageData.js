@@ -3,12 +3,13 @@ import UrlDisplay from "./UrlDisplay";
 import RefDisplay from "./RefDisplay";
 import FldDisplay from "./FldDisplay";
 import Loader from "../Loader";
-import {fetchStatusUrls} from "../../utils/iariUtils.js"
+import {fetchUrlArchives, fetchUrls} from "../../utils/iariUtils.js"
 import {ConfigContext} from "../../contexts/ConfigContext";
 import {
     ARCHIVE_STATUS_FILTER_MAP,
     URL_STATUS_FILTER_MAP
-} from "./filters/urlFilterMaps";
+} from "./filterMaps/urlFilterMaps";
+import {areObjectsEqual} from "../../utils/utils";
 
 /*
 When this component is rendered, it must "process" the pageData. This involves:
@@ -16,55 +17,63 @@ When this component is rendered, it must "process" the pageData. This involves:
 - process the urls into urlArray
 - process the references
   - reduce reference array by coalescing all named refs together
-  - calculate link status of all urls within reference to allow filtering
+  - assign reference to url items that are "owned" by reference
 */
 
-/*
-when we get to this component, we have raw pageData from the
-article fetch call, with a few minor decorations added at receive time.
-
-we immediately fetch the URL details for each URL in pageData.urls, creating
-urlDict, which is a url-keyed javascript object with the info for each url.
-we have a urlArray as well, with each entry of the array pointing to a url
-object in urlDict.
-
-we then flatten the Reference list, making only one entry for each multiply-
-referenced URL with the number of times reference added as a reference property.
-
-using UrlDict we can check the status of the urls in each reference, appending
-each reference array object in pageData.references.
-    NB: we should use only "references" property, not "dehydrated_references"
-    TODO: deprecate "dehydrated_references" and use a "dehydrated" flag instead
-*/
 
 export default function PageData({pageData = {}}) {
+    /*
+    pageData arrives with the data from the /article endpoint fetch call,
+    with a few minor decoration properties added for convenience.
 
-    const [selectedViewType, setSelectedViewType] = useState('urls');
-    const [isLoadingUrls, setIsLoadingUrls] = useState(false);
-    const [dataReady, setDataReady] = useState(false);
+    we immediately fetch the URL details for each URL in pageData.urls, which
+    creates urlDict (a url-keyed javascript object with the info for each url).
+    urlArray is created as well, with each entry pointing to a urlDict object.
+
+    we then flatten the Reference list, making only one entry for each multiply-
+    referenced URL with the number of times reference added as a reference property.
+
+        NB: we should use only "references" property, not "dehydrated_references"
+        TODO: deprecate "dehydrated_references" and use a "dehydrated" flag instead
+
+        NB TODO we should take all this processing code and place it in a processing module,
+        NB AND, this processing logic should really be in the IARI API backend code, once it
+        NB is established what needs to happen.
+    */
+
+    const [selectedViewType, setSelectedViewType] = useState('urls')
+    const [isLoadingUrls, setIsLoadingUrls] = useState(false)
+    const [isDataReady, setIsDataReady] = useState(false)
+    const [isPageError, setIsPageError] = useState(false)
+    const [pageErrorText, setPageErrorText] = useState('')
+    const [urlStatusLoadingMessage, setUrlStatusLoadingMessage] = useState('')
 
     // set up iariBase and statusMethod from global config
-    let myConfig = React.useContext(ConfigContext);
+    let myConfig = React.useContext(ConfigContext)
     myConfig = myConfig ? myConfig : {} // prevents undefined.<param> errors
-    const myIariBase = myConfig.iariSource;
-    const myStatusCheckMethod = myConfig.urlStatusMethod;
+    const myIariBase = myConfig.iariSource
+    const myStatusCheckMethod = myConfig.urlStatusMethod
 
-    // process url results and create a urlDict from it
-    //
-    // called upon useEffect of new url status data
-    const processUrls = useCallback( (pageData) => {
 
-        const urlDict = {}
+    // called in useEffect when new url results received
+    const processUrls = useCallback( (pageData, urlResults) => {
+        // create pageData.urlDict and pageData.urlArray from urlResults
+
         const regexWayback = new RegExp(/https?:\/\/(?:web\.)archive\.org\/web\/([\d*]+)\/(.*)/);
 
         const sanitizeUrlForWayback = (targetUrl) => {
-            // let inputString = 'http://example.com:http://example2.com:some:text:with:colons';
-            const regexColon = /:(?!\/\/)/g;  // Regular expression to match colons not followed by "//"
-            // const regexEquals = /=/g;  // Regular expression to match equals signs
-            let resultUrl
-            resultUrl = targetUrl.replace(regexColon, '%3A');  // Replace solo colons with encoded "%3A"
-            // resultUrl = resultUrl.replace(regexEquals, '%3D')
-            return resultUrl
+                // TODO ongoing, as checking if archive can be tricky
+                // TODO Also must consider other archiving services
+                // TODO may use IABot's isArchive function...
+
+                // // let inputString = 'http://example.com:http://example2.com:some:text:with:colons';
+                // const regexColon = /:(?!\/\/)/g;  // Regular expression to match colons not followed by "//"
+                // // const regexEquals = /=/g;  // Regular expression to match equals signs
+                // let resultUrl
+                // resultUrl = targetUrl.replace(regexColon, '%3A');  // Replace solo colons with encoded "%3A"
+                // // resultUrl = resultUrl.replace(regexEquals, '%3D')
+                // return resultUrl
+            return targetUrl  // for now - trying to debug and see if it is necessary
         }
 
         const isArchive = (targetUrl) => {
@@ -72,79 +81,24 @@ export default function PageData({pageData = {}}) {
         }
 
         // create url dict from returned results
-        pageData.urlResults && pageData.urlResults.forEach(d => {
-            const myUrl = encodeURI(d.data.url)
-            // const myUrl = encodeURI(d.data.url)
-            // console.log(myUrl)
+        const urlDict = {}
+        urlResults && urlResults.forEach(d => {  // results surround url data with a "data" element
+            const myUrl = d.data.url
+
+            // add entry for url if not there yet
             if (!urlDict[myUrl]) {
-                // add entry for url if not there yet
                 urlDict[myUrl] = d.data  // initialize with result data
                 urlDict[myUrl].urlCount = 0
                 urlDict[myUrl].isArchive = isArchive(myUrl)
                 urlDict[myUrl].hasTemplateArchive = false  // TODO: this will be recalculated when processing references
             }
-            urlDict[myUrl].urlCount++  // increment count to keep track of repeats
+
+            // increase usage count of this url by 1; keeps track of repeats
+            urlDict[myUrl].urlCount++
         })
 
-        const archiveUrls = Object.keys(urlDict).filter(urlKey => {
-            return (urlDict[urlKey].isArchive)
-        })
         const primaryUrls = Object.keys(urlDict).filter(urlKey => {
             return !(urlDict[urlKey].isArchive)
-        })
-
-        // create sanitizedUrls array of strings.
-        // NB: this is specifically for Wayback Machine link patterns...for now...others may vary
-        // sanitizeToPrimaryDict is a dict crosslinking sanitized links with the primary "original"
-        // ones. It's sort of de-normalizing the wayback rescued url into it's original form.
-        const sanitizeToPrimaryDict = {}
-        const sanitizedPrimaryUrls = primaryUrls.map( u => {
-            let s = sanitizeUrlForWayback(u)
-            sanitizeToPrimaryDict[s] = u
-            return s
-        })
-
-        // test if this archive link rescues(d) one of our primary urls
-        archiveUrls.forEach(archiveUrl => {
-            const results = archiveUrl.match(regexWayback)  // is archiveUrl a possible archive?
-            if (results) {  // if a match, extract pattern parts
-
-                /* must see if rescued url, in wayback encoding, is matchy to ONE of our
-                 * wayback-enhanced primary urls.
-                 */
-                let rescueUrl = results[2]
-
-                if (sanitizedPrimaryUrls.includes(rescueUrl)) {
-                    // ge un-sanitized original primaryUrl from crossRef dict
-                    const primaryUrl = sanitizeToPrimaryDict[rescueUrl]
-                    // and we use the original url to key into the "master" urlDict, saving the archiveUrl with it
-                    urlDict[primaryUrl].hasArchive = archiveUrl
-                }
-
-                // if rescueUrl not found in primaryurls, then try again with protocoal changed in rescue url
-                // for instance, if first-pass rescue url is:
-                // http://www.bbc.co.uk/news/world-latin-america-12378736, and that doesnt match any urls in primaryurls,
-                // then try changing protocol and retesting with:
-                // https://www.bbc.co.uk/news/world-latin-america-12378736
-
-                else {
-                    // if rescue has http://, then change to https://
-                    // if rescue has https://, then change to http://
-                    const rescueUrlMod = rescueUrl.startsWith("http://")
-                        ? rescueUrl.replace(/^http:\/\//i, "https://")
-                        : rescueUrl.replace(/^https:\/\//i, "http://")
-
-                    if (sanitizedPrimaryUrls.includes(rescueUrlMod)) {
-                        // get un-sanitized original primaryUrl from crossRef dict
-                        const primaryUrl = sanitizeToPrimaryDict[rescueUrlMod]
-                        // and we use that to key into the "master" urlDict, saving the archiveUrl as its value
-                        urlDict[primaryUrl].hasArchive = archiveUrl
-                    }
-
-
-                }
-
-            }
         })
 
         // append urlDict and urlArray to pageData
@@ -153,122 +107,181 @@ export default function PageData({pageData = {}}) {
             return urlDict[urlKey]
         })
 
+        // TODO TODO we need to run fetchUrlArchives on primaryUrls, or, pageData.urlArray at this point
+
+
+    }, [])
+
+    const processUrlArchives = useCallback( (pageData, urlArchiveResults) => {
+        // assumes urlArchives is array of [ archive props ]
+        if (!urlArchiveResults?.length) {
+            // TODO Error here?
+            console.error(`processUrlArchives: No urlArchiveResults found`)
+            return
+        }
+
+        // append urlDict data for each returned url
+        urlArchiveResults.forEach(u => {
+            const urlObj = pageData.urlDict[u.data.url]
+            if (urlObj) {
+                urlObj.iabot_archive_status = u.data  // TODO consider changing to just archive_status, with a "archive_source"" prop
+            } else {
+                // there was no entry in urlDict for primary url that archive was based on...
+                // TODO how do we indicate this error? urlDict[url].error = true w/ error_details?
+                console.error(`processUrlArchives: No entry in urlDict found for url: ${u.data.url}`)
+            }
+
+        })
+
     }, [])
 
 
-    // sets the ref[linkStatus] property to an array containing a list of the status
-    // relationship between the primary and archived links in a reference. These can
-    // be indicated through template parameters, as in the properties "url" and
-    // "archive_url", or, exist in the reference as a "wild" link, not connected to
-    // anything. These are often in special "link collection" segments such as External Links, e.g.
-    //
-    // The status of the links found represented with the "url" template parameter are checked,
-    // and the status of the links indicated by the "archive_url" parameter are also checked.
-    //
-    // NB: some other templates (as in not standard...not CS1?) indicate the primary url with
-    // NB  parameter names other than 'url'
-    //
-    // All other urls (non-template) are checked for "good"ness or "bad"ness, regardless of
-    // whether it is an archive link or not.
-    //
+    // take the wt:value and put it straight to value:<value>
+    const normalizeMediaWikiParams = (oldParams) => {
+
+        const newParams = {}
+
+        // Iterate through keys and build normalized return param object values
+        for (let key of Object.keys(oldParams)) {
+            // set newParams value
+            newParams[key] = oldParams[key].wt
+        }
+
+        return newParams;
+    }
+
+
+    const processCiteRefs = useCallback( (refsArray, pageData) => {
+
+        const citeRefs = pageData?.cite_refs ? pageData.cite_refs : []
+
+        citeRefs.forEach( cite => {
+
+            const mwData = cite.raw_data ? JSON.parse(cite.raw_data) : {}
+
+            // console.log(`processCiteRefs: mwData[${cite.ref_index}] is `, mwData)
+
+            // if mwData has parts[0]
+                // if parts[0].template
+
+                // save template.target in target_type for citeref
+
+                // for each ref in uniqueRef
+                    // if ref.isAssigned then skip
+                    // else
+                        // if match cite.template.params
+                            // attach citeref to that reference
+                            // tag that reference as "assigned"
+
+            if (mwData.parts && mwData.parts[0].template) {
+
+                const template = mwData.parts[0].template
+
+                // mark citation as having template type
+                cite.template_target = template.target?.wt
+
+                const citeParams = normalizeMediaWikiParams(template.params)
+
+                // see if template.params matches any wikiText ref params; returns undefined if no mathcing ref element found
+                const foundRef = refsArray.find( _ref => {  // NB cannot use "ref" as a variable name as "ref" is a keyword in React
+                    if (!(_ref.templates && _ref.templates[0])) return false
+                    // TODO skip if not a footnote ref
+                    // TODO skip if type===footnote and footnote_subtype === named
+
+                    // remove "template_name" parameter from object
+                        // TODO this is an IARI bug - should not be adding template_name to wikitext parameters!!
+                        // TODO when fixed, must also change RefView parameter display logic
+                    const refParams = {..._ref.templates[0].parameters}
+                    delete refParams.template_name
+
+                    return areObjectsEqual(refParams, citeParams)
+                })
+
+                if (foundRef) {
+                    ////console.log(`Found matching ref for citeRef# ${cite.ref_index}`)
+                    foundRef.cite_refs = cite.page_refs
+                }
+
+            } else {
+                // we do not have parts[0].templates - what should we do?
+            }
+
+        })
+
+        // end result : anchor refs are assigned with citeref
+    }, [])
+
+
+// currently only sets the "hasTemplateArchive" property to true if archive_url parameter found in template
     const processReference = useCallback( (ref, urlDict) => {
 
-        const linkStatus = []
-
-        // create linkStatus for every url/archive_url pair in templates
-        // as each url is processed, save in "used_urls" array
         const templates = ref?.templates ? ref.templates : []
         const templateUrls = {}
+
         templates.forEach( template => {
 
             const primaryUrl = template.parameters.url
             const archiveUrl = template.parameters.archive_url
+
+            // add urls from template to find exotemplate urls later
             templateUrls[primaryUrl] = true
             templateUrls[archiveUrl] = true
 
-            const primaryLinkStatusCode = urlDict[primaryUrl]?.status_code // need to handle undefined if url not a key in urlDict
-            const archiveLinkStatusCode = urlDict[archiveUrl]?.status_code // need to handle undefined if archive url not a key in urlDict
-
-            const pureLinkStatus = (primaryLinkStatusCode === undefined) ? 'none'
-                : (primaryLinkStatusCode >= 200 && primaryLinkStatusCode < 400) ? 'good'
-                    : 'bad'
-
-            const archiveLinkStatus = (archiveLinkStatusCode === undefined) ? 'none'
-                : (archiveLinkStatusCode >= 200 && archiveLinkStatusCode < 400) ? 'good'
-                    : 'bad'
-
-            linkStatus.push( pureLinkStatus + '_' + archiveLinkStatus)
-
-            // if archived url exists and archiveLinkStatus is good,
+            // if link referenced by archive_url exists and archiveLinkStatus is good,
             // set the hasTemplateArchive property of the primaryUrl to true
             if (archiveUrl && urlDict[primaryUrl]) {
-                urlDict[primaryUrl].hasTemplateArchive = true
+                urlDict[primaryUrl].hasTemplateArchive = true  // this needs work, as there can be more than one template where this url is used.
+                // TODO maybe this is covered when we attach the addociated reference objects to the URL...
             }
         })
-
-        // now go thru the ref.urls, and if there are any that are not in the
-        // templateUrls list, process that url
-
-        ref.urls.forEach(url => {
-            if (!templateUrls[url]) {
-                const urlStatusCode = urlDict[url]?.status_code
-                const urlLinkStatus = (urlStatusCode === undefined) ? 'exotemplate_bad'
-                    : (urlStatusCode >= 200 && urlStatusCode < 400) ? 'exotemplate_good'
-                        : 'exotemplate_bad'
-                linkStatus.push(urlLinkStatus)
-            }
-        })
-
-        // if linkStatus still empty, we have no links at all in this citation
-        if (linkStatus.length < 1) {
-           linkStatus.push('no_links')
-        }
-
-        ref.link_status = linkStatus
 
     }, [])
 
 
-    // * reduce any repeated references into one reference with multiple page referrals
-    // * calculate the status of the links in the references by examining the pure and archived
-    //   urls in the templates in each reference
-    //
-    // TODO: this should be done with the IARI API, not here after front-end retrieval
-    //
-    const processReferences = useCallback( pageData => {
-
-        // Process the "named" refs by looping thru each reference
-        // if named, make an entry in named_refs or increment already entry
-        // if named with no content, pull that reference info, and add it to named_ref entry
-        //      - its like an array of links to where in article a reference is referred to
-        const namedRefs = {} // collect 'em as we find 'em
-        const uniqueRefs = []
+    const getAnchorReferences = (pageData) => {
+        // reduce references by eliminating repeats and collecting ref referrals
 
         // for refs, if dehydrated=true, use pageData.dehydrated_references, else use pageData.references
         const refs = (pageData?.dehydrated_references?.length)
             ? pageData.dehydrated_references
             : (pageData?.references?.length) ? pageData.references
-            : []
+                : []
 
-        // reduce references by eliminating repeats and collecting page referrals
+        const namedRefs = {}
+        const anchorRefs = []
+
+        // Process the "named" refs by looping thru each reference
+        // if named
+        //      - increment reference count for namedRef[name]
+        //      - if no content, assume its a reference to an anchor reference
         refs.forEach(ref => {
-            // "named" references point to another "anchor" reference
-            // handle named ref by making entry into namedRef dict
+
             if (ref.name) {
-                // initialize if first time
-                if (!namedRefs[ref.name]) namedRefs[ref.name] = { count : 0 }
-                // increment count
-                namedRefs[ref.name].count++
-                // if named ref is anchor (footnote subtype === content), save it in our namedRefs dict
+                // "named" references point to another "anchor" reference with the same name
+                // namedRef[fef.name] hold the reference count of this name
+
+                if (!namedRefs[ref.name]) namedRefs[ref.name] = {
+                    count : 0,
+                    anchor : {}
+                }  // if first time, create
+
+                namedRefs[ref.name].count++  // increment "how many times this reference is referenced by name"
+
+                // if this definition of the reference is the "anchor" one, i.e., the citation which
+                // defines the reference that is to be referenced by name by other citations, then,
+                // save a pointer to this reference in the namedRef[<this ref>].anchor property
+
                 if (ref.type ==='footnote' && ref.footnote_subtype === 'content') {
-                    namedRefs[ref.name].origin = ref
+                    // an "anchor" reference is one labeled as footnote with a subtype of 'content'
+                    namedRefs[ref.name].anchor = ref
+                    // TODO: bug: if a "named ref" does not contain an "anchor" citation, there is a problem.
                 }
             }
 
-            // carry over refs that are NOT indirect "named" references
+            // if this ref is a non-footnote ref, or, is a footnote-anchor (subtype != named) ref, save it in anchorRefs
             if (!(ref.type === 'footnote' && ref.footnote_subtype === 'named')) {
                 ref.reference_count = 1 // will replace counts of multiply referenced refs in next loop
-                uniqueRefs.push( ref )
+                anchorRefs.push( ref )
             }
         })
 
@@ -276,68 +289,200 @@ export default function PageData({pageData = {}}) {
         // TODO when we get the cite_refs in the reference data, we can save those, too for each named reference
         Object.keys(namedRefs).forEach( refName => {
             const nr = namedRefs[refName]
-            nr.origin.reference_count = nr.count
+            nr.anchor.reference_count = nr.count
         })
 
+        return anchorRefs
+    }
+
+    const processReferences = useCallback( pageData => {
+        // * reduce references with multiple citations into one reference with multiple page referrals
+        // * calculate the status of the links in the references by examining the primary and
+        //   archived urls in the templates in each reference
+        // * acquire template statistics
+        //
+        // TODO: this should be IARI API, not front-end post-retrieval
+        //
+
+        const gatherTemplateStatistics = (refArray) => {
+            const templateDict = {}  // stores count of each template
+            if (refArray?.length) {
+                refArray.forEach( ref => {
+                    if (!ref.template_names?.length) return
+                    ref.template_names.forEach(templateName => {
+                        // console.log(`Another Template found for ref id ${ref.id}: ${templateName}`)
+                        if (!templateDict[templateName]) templateDict[templateName] = 0
+                        templateDict[templateName] = templateDict[templateName] + 1
+                    })
+                })
+            }
+            pageData.template_statistics = templateDict
+        }
+
+        const anchorRefs = getAnchorReferences(pageData)
+
         // process all anchor references
-        uniqueRefs.forEach( ref => {
-            // ref.link_status = processReference(ref, pageData.urlDict)
+        anchorRefs.forEach( ref => {
             processReference(ref, pageData.urlDict)
         })
 
-        // TODO while processing refs, set template archive property for primary url of template
+        // associate citeref data with anchorRefs
+        processCiteRefs(anchorRefs, pageData)
 
-        // and append to pageData
-        pageData.references = uniqueRefs
+        // set anchorRefs as the definitive references property of pageData
+        pageData.references = anchorRefs
 
-    }, [processReference])
+        gatherTemplateStatistics(pageData.references)
+
+    }, [processReference, processCiteRefs])
+
+
+
+    const associateRefsWithLinks = useCallback( pageData => {
+        // for each reference in pageData.references
+        //  - for each url link
+        //      - add ref to url's refs list
+
+        if (!pageData?.references) return
+
+        pageData.references.forEach(ref => {
+            // process each url link
+            ref.urls.forEach(url => {
+                const myUrl = pageData.urlDict[url]
+                // TODO what to do if url not in urlDict?
+                // TODO we should send and display a notice...shouldnt happen
+                // TODO add to test case: associateRefsWithLinks w/ bad urlDict
+
+                // create refs and ref_ids array properties if not there
+                if (!(myUrl["ref_ids"])) myUrl["ref_ids"] = []
+                if (!(myUrl["refs"])) myUrl["refs"] = []
+
+                // if url does not have current reference in it's associated reference list, add it now
+                // TODO check and debug here if ref.id will be reliable
+                // TODO it might change over time, and then havoc may be iontroduced
+                // TODO but maybe not, as it is unique to each wikitext
+                if (!myUrl["ref_ids"].includes(ref.id)) {
+                    myUrl["ref_ids"].push(ref.id)
+                    myUrl["refs"].push(ref)
+                }
+
+            })
+        })
+
+
+        // for each url, reduce various reference info into the url's reference_info property
+        // for now, reference_info contains:
+        // - url status from templates
+        // - template names
+        // - sections where reference came from
+
+        Object.keys(pageData.urlDict).forEach( link => {
+            const myUrl = pageData.urlDict[link]
+            const statuses = []
+            const templates = []
+            const sections = []
+            myUrl.refs.forEach( r => {  // traverse each reference this url is involved in
+
+                // process url_status's
+                if (r.templates) {
+                    r.templates.forEach(t => {
+                        statuses.push(t.parameters["url_status"]
+                            ? t.parameters["url_status"]
+                            : "--")
+                    })
+                } else {
+                    statuses.push("no templates")  // only one entry
+                }
+
+                // process template names
+                if (r.template_names) {
+                    r.template_names.forEach(tn => {
+                        if (!templates.includes(tn)) {
+                            templates.push(tn)
+                        }
+                    })
+                }
+
+                // process sections
+                if (r.section) {
+                    const hybridSection = (r.type === "general" ? 'General: ' : '') + r.section
+                    if (!sections.includes(hybridSection)) {
+                        sections.push(hybridSection)
+                    }
+                }
+
+            })
+            myUrl["reference_info"] = {
+                "statuses" : statuses,
+                "templates" : templates,
+                "sections" : sections,
+            }
+        })
+
+    }, [])
 
 
     useEffect( () => { // [myIariBase, pageData, processReferences, processUrls, myStatusCheckMethod]
-        const context = 'PageData::useEffect [pageData]'
+        // const context = 'PageData::useEffect [myIariBase, pageData, processReferences, processUrls, associateRefsWithLinks, myStatusCheckMethod]'
 
-        const postProcessData = (pageData) => {
-            processUrls(pageData); // creates urlDict and urlArray
-            processReferences(pageData)
-            pageData.statusCheckMethod = myStatusCheckMethod;
+        const fetchPageUrls = () => {
+            return fetchUrls( {
+                iariBase: myIariBase,
+                urlArray: pageData.urls,
+                refresh: pageData.forceRefresh,
+                timeout: 60,
+                method: myStatusCheckMethod
+            })
+        }
+        const fetchPageUrlArchives = () => {
+            return fetchUrlArchives( {
+                iariBase: myIariBase,
+                urlArray: pageData.urls,
+                refresh: pageData.forceRefresh,
+            })
         }
 
-        setIsLoadingUrls(true);
+        const fetchPageData = async () => {
 
-        fetchStatusUrls( {
-            iariBase: myIariBase,
-            urlArray: pageData.urls,
-            refresh: pageData.forceRefresh,
-            timeout: 60,
-            method: myStatusCheckMethod
-            })
+            try {
 
-            .then(urlResults => {
-                console.log(`${context} fetchStatusUrls.then: urlResults has ${urlResults.length} elements`);
+                setUrlStatusLoadingMessage(`Retrieving URL status codes with ${myStatusCheckMethod} method`)
+                setIsDataReady(false);
+                setIsLoadingUrls(true);
 
-                // TODO check erroneous results here -
-                pageData.urlResults = urlResults
+                // fetch url and archive info and wair for results before continuing
+                const myUrls = await fetchPageUrls()
+                const myUrlArchives = await fetchPageUrlArchives()  // NB this extra call for archive info will be unnecessary when IARI includes archive info in url info
 
-                postProcessData(pageData); // creates urlDict and urlArray
+                // process received data
+                processUrls(pageData, myUrls);  // creates pageData.urlDict and pageData.urlArray
+                processUrlArchives(pageData, myUrlArchives)  // adds archive data to url definitions
+                    // NB this also will be unnecessary when IARI includes archive info in url info
 
-                // let the system know all is ready
-                setDataReady(true);
+                processReferences(pageData)  // associates url links with references
+                associateRefsWithLinks(pageData)
 
-            })
+                pageData.statusCheckMethod = myStatusCheckMethod;
 
-            .catch(error => {
-                console.error(`${context} fetchStatusUrls.catch: ${error}`);
-                // TODO: what shall we do for error here?
-            })
+                setIsDataReady(true);
 
-            .finally(() => {
-                // turn off "Loading" icon
                 setIsLoadingUrls(false);
-            })
 
-        }, [myIariBase, pageData, processReferences, processUrls, myStatusCheckMethod]
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                pageData.urlResults = []
+                setPageErrorText(error.message)
+                setIsPageError(true)
 
-    )
+            }
+
+        }
+
+
+        fetchPageData()
+
+        },   [myIariBase, pageData, processReferences, processUrls, processUrlArchives, associateRefsWithLinks, myStatusCheckMethod])
+
 
     const handleViewTypeChange = (event) => {
         setSelectedViewType(event.target.value);
@@ -355,34 +500,40 @@ export default function PageData({pageData = {}}) {
         },
     }
 
-    const viewOptions = Object.keys(viewTypes).map(viewType => {
-        return <div key={viewType} >
-            <label>
-                <input
-                    type="radio"
-                    value={viewType}
-                    checked={selectedViewType === viewType}
-                    onChange={handleViewTypeChange}
-                /> {viewTypes[viewType].caption}
-            </label>
+    const viewOptions = <div className={"view-options-selection"}>
+        {/*<div>View by</div>{Object.keys(viewTypes).map(viewType => {*/}
+            {Object.keys(viewTypes).map(viewType => {
+                return <div key={viewType} >
+                    <label>
+                        <input
+                            type="radio"
+                            value={viewType}
+                            checked={selectedViewType === viewType}
+                            onChange={handleViewTypeChange}
+                        /> <span className={selectedViewType === viewType ? 'selected-choice' : '' }>{viewTypes[viewType].caption}</span>
+                    </label>
+                </div>
+            })}
         </div>
-    })
-
 
     if (!pageData) return null;
 
-
     return <>
 
-        {isLoadingUrls ? <Loader message={"Retrieving URL status codes..."}/>
-            : (dataReady ? <div className={"page-data"}>
+        {isLoadingUrls
+            ? <Loader message={urlStatusLoadingMessage}/>
+            : <>
+                {isPageError && <div className={"error-display"}>{pageErrorText}</div>}
 
-                        <div className={"ref-filter-types"}>
-                            <div>View References by</div>
-                            {viewOptions}
-                        </div>
+                {!isDataReady
+                    ? <p>Data Not Ready</p>
+
+                    : <div className={"page-data"} xxstyle={{backgroundColor:"grey"}}>
+
+                        {true && viewOptions}
 
                         <div className={`display-content`}>
+
                             {selectedViewType === 'domains' &&
                                 <FldDisplay pageData={pageData}/>
                             }
@@ -390,7 +541,8 @@ export default function PageData({pageData = {}}) {
                             {selectedViewType === 'urls' &&
                                 <UrlDisplay pageData={pageData} options={{refresh: pageData.forceRefresh}}
                                             urlStatusFilterMap={URL_STATUS_FILTER_MAP}
-                                            urlArchiveFilterDefs={ARCHIVE_STATUS_FILTER_MAP}
+                                            urlArchiveFilterMap={ARCHIVE_STATUS_FILTER_MAP}
+
                                 />
                             }
 
@@ -400,8 +552,8 @@ export default function PageData({pageData = {}}) {
                         </div>
 
                     </div>
-                    : <p>Data Not Ready</p>
-            )
+                }
+            </>
         }
     </>
 }

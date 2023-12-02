@@ -141,23 +141,23 @@ export const REF_FILTER_TYPES = {
 export const REF_LINK_STATUS_FILTERS = {
     good_good: {
         caption: "Link Status: Good, Good",
-        desc: "Citation link is OK, and archived link is OK.",
-        lines: ['Original link is OK', 'Archive link is OK'],
+        desc: "Template 'url' and 'archive_url' links are OK.",
+        lines: ["Original link is OK", "Archive link is OK"],
         filterFunction: () => (d) => {
             return d.link_status && d.link_status.includes('good_good')
         },
     },
     good_bad: {
         caption: "Link Status: Good, Bad",
-        desc: "Citation link is OK, and archived link is NOT OK.",
-        lines: ['Original link is OK', 'Archive link is NOT OK'],
+        desc: "Template 'url' link is OK, 'archive_url' link is not OK.",
+        lines: ["Original link is OK", "Archive link is NOT OK"],
         filterFunction: () => (d) => {
             return d.link_status && d.link_status.includes('good_bad')
         },
     },
     good_none: {
         caption: "Link Status: Good, None",
-        desc: "Citation link is OK, and no archive link is supplied.",
+        desc: "Template 'url' link is OK, 'archive_url' is missing.",
         lines: ['Original link is OK', 'Archive link is missing'],
         filterFunction: () => (d) => {
             return d.link_status && d.link_status.includes('good_none')
@@ -165,7 +165,7 @@ export const REF_LINK_STATUS_FILTERS = {
     },
     bad_good: {
         caption: "Link Status: Bad, Good",
-        desc: "Citation link is NOT OK, and archived link is OK.",
+        desc: "Template 'url' link is not OK, 'archive_url' link is OK.",
         lines: ['Original link is NOT OK', 'Archive link is OK'],
         filterFunction: () => (d) => {
             return d.link_status && d.link_status.includes('bad_good')
@@ -173,7 +173,7 @@ export const REF_LINK_STATUS_FILTERS = {
     },
     bad_bad: {
         caption: "Link Status: Bad, Bad",
-        desc: "Citation link is NOT OK, and archived link is NOT OK.",
+        desc: "Template 'url' link is not OK, 'archive_url' link is not OK.",
         lines: ['Original link is NOT OK', 'Archive link is NOT OK'],
         filterFunction: () => (d) => {
             return d.link_status && d.link_status.includes('bad_bad')
@@ -181,7 +181,7 @@ export const REF_LINK_STATUS_FILTERS = {
     },
     bad_none: {
         caption: "Link Status: Bad, None",
-        desc: "Citation link is NOT OK, and no archive link is supplied.",
+        desc: "Template 'url' link is not OK, 'archive_url' link is missing.",
         lines: ['Original link is NOT OK', 'Archive link is missing'],
         filterFunction: () => (d) => {
             return d.link_status && d.link_status.includes('bad_none')
@@ -190,37 +190,37 @@ export const REF_LINK_STATUS_FILTERS = {
 
     none_none: {
         caption: "Link Status: None, None",
-        desc: "Citation uses a template, but no links are present.",
-        lines: ['Citation has no link', 'No Archive link is present'],
+        desc: "Template contains no 'url' or 'archive_url' parameters.",
+        lines: ['Original link is missing', 'Archive link is missing'],
         filterFunction: () => (d) => {
             return d.link_status && d.link_status.includes('none_none')
         },
     },
 
-    no_links: {
-        caption: "Link Status: Missing",
-        desc: "Citation does NOT have a link and no archive link is supplied.",
-        lines: ['No templates; No links', 'No Archive links'],
+    exotemplate_good: {
+        caption: "Link Status: No Template, Good link",
+        desc: "Non-template link is OK.",
+        lines: ["Link found outside of template", 'Link is OK'],
         filterFunction: () => (d) => {
-            return d.link_status && d.link_status.includes('no_links')
+            return d.link_status && d.link_status.includes('exotemplate_good')
         },
     },
 
     exotemplate_bad: {
         caption: "Link Status: No Template, Bad link",
-        desc: "Link found outside of template, and it is bad.",
-        lines: ['Link outside of template', 'Link is bad'],
+        desc: "Non-template link is not OK.",
+        lines: ['Link found outside of template', 'Link is bad'],
         filterFunction: () => (d) => {
             return d.link_status && d.link_status.includes('exotemplate_bad')
         },
     },
 
-    exotemplate_good: {
-        caption: "Link Status: No Template, Good link",
-        desc: "Link found outside of template, and it is good.",
-        lines: ['Link outside of template', 'Link is good'],
+    missing: {
+        caption: "Link Status: Missing",
+        desc: "Citation contains no links.",
+        lines: ['Citation has no templates', 'Citation has no links'],
         filterFunction: () => (d) => {
-            return d.link_status && d.link_status.includes('exotemplate_good')
+            return d.link_status && d.link_status.includes('missing')
         },
     },
 

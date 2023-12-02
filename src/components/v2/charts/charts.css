@@ -1,0 +1,28 @@
+.chart-legend-iare {
+    display:flex;
+    /*flex-direction: row;*/
+    flex-flow: row wrap;
+    cursor: pointer;
+}
+.chart-legend-iare .legend-entry {
+    /*display: inline-block;*/
+    margin-right:.65rem;
+    margin-bottom:.25rem;
+    /*cursor: pointer;*/
+    font-size: 16px;
+    color:#666666;
+}
+.chart-legend-iare .legend-box,
+.chart-legend-iare .legend-label {
+    display: inline-block;
+    /*cursor: pointer;*/
+}
+.chart-legend-iare .legend-box {
+    content: none;
+    position:relative;
+    width:28px;
+    height:14px;
+    margin-right:3px;
+    top:3px;
+}
+

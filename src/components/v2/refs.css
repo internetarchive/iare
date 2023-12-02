@@ -63,6 +63,7 @@
     top:.15rem;
     right:.2rem;
     display:block;
+    text-align: right;
 }
 .ref-button .ref-link-status {
     width:1.25rem;
@@ -96,8 +97,8 @@
 .link-status-exotemplate_good {
     content: url('../../images/exotemplate_good.png');
 }
-.link-status-no_links {
-    content: url('../../images/no_links.png');
+.link-status-missing {
+    content: url('../../images/missing.png');
 }
 
 /***********************
@@ -135,45 +136,6 @@
     background-color: var(--color-ref-bg-header);
 }
 
-/***********************
- filter buttons
- ***********************/
-
-.filter-box {
-    /*margin-left:1rem;*/
-}
-.filter-box.ref-filters-0 {
-    margin-left:0;
-}
-.filter-box h4 {
-    margin-bottom:.5rem;
-}
-
-.filter-buttons {
-    display:flex;
-    flex-direction: column;
-}
-.filter-buttons button {
-    cursor: pointer;
-
-    background-color: #d1d5da; /*#8191a4;*/
-    border:1px solid black;
-    padding:.5rem;
-    min-width:11.5rem;
-    max-width:16.8rem;
-}
-.filter-buttons button.btn-pressed {
-    background-color: #b9cbc3;
-}
-.filter-buttons .btn-description {
-    font-style: italic;
-    font-size: smaller;
-    font-weight: normal;
-    padding-left:1em;
-}
-.filter-buttons .lolite {
-    color: #888888;
-}
 
 /* specialized filter buttons */
 
@@ -213,6 +175,13 @@
     margin-top:.175rem;
 }
 
+.ref-view-wrapper .link-status {
+    width:2.85rem;
+    height:2.85rem;
+    display:block;
+    margin-top:.375rem;
+}
+
 /* deprecated? */
             .ref-filters {
                 display:flex;
@@ -237,4 +206,24 @@
     width:60rem;
     /*min-width:45rem;*/
     /*height:30rem;*/
+}
+.ref-filter-chart .bar-chart-container {
+    height:360px;
+    width:43rem;
+    padding:.5rem;
+    border:1px solid grey;
+}
+
+.ref-list-tooltip {
+    font-size:1.25em;
+    font-weight:normal;
+    z-index: 999;
+}
+
+/* citation ref jump links in Reference button caption */
+.cite-ref-jump-link {
+    content: url('../../images/link-external-small-ltr-progressive.svg');
+    width:1.25rem;
+    height:1.25rem;
+    display:inline;
 }

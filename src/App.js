@@ -6,19 +6,24 @@ import PageDisplay from "./components/PageDisplay";
 import MakeLink from "./components/MakeLink";
 //// import TestRefModal from "./components/vTest/TestRefModal";
 import Dropdown from "./components/Dropdown";
-import {IariSources, UrlStatusCheckMethods} from "./constants/endpoints";
+import {IariSources} from "./constants/endpoints";
+import {UrlStatusCheckMethods} from "./constants/checkMethods";
 import {ConfigContext} from "./contexts/ConfigContext"
 
 
 export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, myDebug}) {
 
     const [isDebug, setDebug] = useState(myDebug);
+    const [isShowReferences, setIsShowReferences] = useState(true);
+    const [isShowUrlOverview, setIsShowUrlOverview] = useState(true);
+    const [isShowShortcuts, setIsShowShortcuts] = useState(true);
+    const [isShowExpertMode, setIsShowExpertMode] = useState(true);
+    const [isShowNewFeatures, setIsShowNewFeatures] = useState(true);
 
     // params settable from from address url
     const [targetPath, setTargetPath] = useState(myPath);
     const [refreshCheck, setRefreshCheck] = useState(myRefresh);
-    const [statusMethod, setStatusMethod] = useState(myMethod);
-    //const [xxiariSourceId, setIariSourceId] = useState(myIariSourceId);
+    const [checkMethod, setCheckMethod] = useState(myMethod);
 
     const [endpointPath, setEndpointPath] = useState('');
 
@@ -30,10 +35,17 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         setDebug(!isDebug);
     }
 
-    // production mode shows limited shortcuts, vs. staging which allows for more testing
+    // production mode shows limited shortcuts
+    // staging shows a little more for testing
+    // everything else (my dev env, e.g.) shows lots more
     const shortcuts = env === 'env-production'
-        ? ['easterIslandFilename', 'internetArchiveFilename', 'pdfCovid',]
-        : ['easterIslandFilename', 'internetArchiveFilename', 'karen_bakker', 'lindsay_lohan', 'pdfDesantis', 'pdfOneLink'];
+        ? ['easterIsland', 'internetArchive', 'pdfCovid',]
+        : env === 'env-staging'
+                // default staging shortcuts
+            ? ['easterIsland', 'internetArchive', 'short_test', 'pdfOneLink']
+
+                // my development shortcuts
+            : ['marcBolan', 'easterIsland', 'internetArchive', 'karen_bakker', 'short_test', 'pdfDesantis', 'pdfOneLink'];
 
 
     // add class to body to indicate environment
@@ -100,7 +112,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
             // TODO: error if iariBase is undefined or otherwise falsey
             console.log(`convertPathToEndpoint: myIariSourceId = ${myIariSourceId}, iariBase = ${iariBase}`)
             if (mediaType === "wiki") {
-                const sectionRegex = '&regex=bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
+                const sectionRegex = '&regex=references|bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
                 const options = '&dehydrate=false'
                 return `${iariBase}/statistics/article?url=${path}${sectionRegex}${options}${refresh ? "&refresh=true" : ''}`;
 
@@ -179,8 +191,11 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
                     setMyError("404 Error finding target page.")
                 } else if (err.message === "502") {
                     setMyError("502 Server problem (no further info available)")
+
                 } else if (err.name === "TypeError" && err.message === "Failed to fetch") {
                     setMyError(err.message + " - Possible IARI service failure.");
+                    // TODO: this happens when filename does not exist!
+
                 } else {
                     // ?? should we extract HTTP status code from string? (1st 3 characters, if number? without number, next?)
                     setMyError(err.message + " - No further info available");
@@ -226,7 +241,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
             + window.location.pathname
             + `?url=${url}`
             + (refresh ? '&refresh=true' : '')
-            + (statusMethod ? `&method=${statusMethod}` : '')
+            + (checkMethod ? `&method=${checkMethod}` : '')
             + (myIariSourceId ? `&iari-source=${iari_source}` : '')
             + (isDebug ? '&debug=true' : '')
 
@@ -245,7 +260,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
 
         console.log(`APP:::useEffect[myPath, myRefresh]: calling handlePathName: ${myPath}, ${myRefresh}`)
 
-        // set these states only for debugging, essentially
+        // set these states only for debug display, essentially
         setTargetPath(myPath);
         setRefreshCheck(myRefresh);
 
@@ -257,13 +272,13 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
 
     const handleCheckMethodChange = (methodId) => {
         // console.log(`handleStatusMethodChange: new method is: ${methodId}`)
-        setStatusMethod(methodId);
+        setCheckMethod(methodId);
     };
     const methodChoices = Object.keys(UrlStatusCheckMethods).filter(f => !["IARI", "IABOT_SEARCHURL"].includes(f)).map( key => {
         return { caption: UrlStatusCheckMethods[key].caption, value: UrlStatusCheckMethods[key].key }
     })
     const methodChoiceSelect = <div className={"check-method-wrapper"}>
-        <Dropdown choices={methodChoices} label={'Check Method:'} onSelect={handleCheckMethodChange} defaultChoice={statusMethod}/>
+        <Dropdown choices={methodChoices} label={'Check Method:'} onSelect={handleCheckMethodChange} defaultChoice={checkMethod}/>
     </div>
 
 
@@ -276,48 +291,103 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         })
         // setIariSourceId(sourceId);
     };
-    const iariChoices = Object.keys(IariSources).map( key => {
-        return { caption: IariSources[key].caption, value: IariSources[key].key }
-    })
+    const iariChoices = Object.keys(IariSources)
+        .filter(key => {
+            return env === 'env-staging' ? !(key === "iari_local" || key === "iari") : true
+        })
+        .map( key => {
+            return { caption: IariSources[key].caption, value: IariSources[key].key }
+        })
     const iariChoiceSelect = <div className={"iari-source-wrapper"}>
         <Dropdown choices={iariChoices} label={'Iari Source:'} onSelect={handleIariSourceIdChange} defaultChoice={myIariSourceId}/>
     </div>
 
+    const versionDisplay = `version ${package_json.version}`
+    const siteDisplay = ` STAGING SITE `
+    const showHideDebugButton = <button // this is the 'show/hide debug' button
+        className={"utility-button debug-button small-button"}
+        onClick={toggleDebug} >{isDebug ? <>&#8212;</> : "+"}</button>
+            // onClick={toggleDebug} >{isDebug ? "hide" : "show"} debug</button>
+            // up and down triangles:  onClick={toggleDebug} >{isDebug ? <>&#9650;</> : <>&#9660;</>}</button>
 
     const heading = <div className={"header-contents"}>
-        <h1>Internet Archive Reference Explorer <span
-            className={"version-display"}> version {package_json.version}
-            <span className={"non-production"}
-            > STAGING SITE <
-                button onClick={toggleDebug} className={"utility-button debug-button"}
-            >{isDebug ? "hide" : "show"} debug</button
-            ></span></span>{iariChoiceSelect}{methodChoiceSelect}</h1>
+        <h1>Internet Archive Reference Explorer</h1>
+        <div className={"header-aux1"}>
+            <span className={"non-production"}>{versionDisplay}{siteDisplay}{showHideDebugButton}</span></div>
     </div>
 
-    const debug = <div className={isDebug ? "debug-on" : "debug-off"}>
+    const buttons = <>
+        <button // this is the 'show refereences' button
+            className={"utility-button debug-button"}
+            onClick={() => {
+                setIsShowReferences(prevState => !prevState )
+            }
+            } >{isShowReferences ? "Hide" : "Show"} References List</button>
+        &nbsp;
+        <button // this is the 'show urls list' button
+            className={"utility-button debug-button"}
+            onClick={() => {
+                setIsShowUrlOverview(prevState => !prevState )
+            }
+            } >{isShowUrlOverview ? "Hide" : "Show"} URL Filters</button>
+        &nbsp;
+        <button // this is the 'show shortcuts' button
+            className={"utility-button debug-button"}
+            onClick={() => {
+                setIsShowShortcuts(prevState => !prevState )
+            }
+            } >{isShowShortcuts ? "Hide" : "Show"} Shortcuts</button>
+        &nbsp;
+        <button // this is the 'show Expert Mode' button
+            className={"utility-button debug-button"}
+            onClick={() => {
+                setIsShowExpertMode(prevState => !prevState )
+            }
+            } >{isShowExpertMode ? "Hide" : "Show"} Clipboard Controls</button>
+        &nbsp;
+        <button // this is the 'show New Features' button
+            className={"utility-button debug-button"}
+            onClick={() => {
+                setIsShowNewFeatures(prevState => !prevState )
+            }
+            } >{isShowNewFeatures ? "Hide" : "Show"} New Features</button>
+        </>
+
+    const debug = <div className={"debug-section " + (isDebug ? "debug-on" : "debug-off")}>
+        <div style={{marginBottom:".5rem"}}>{iariChoiceSelect} {methodChoiceSelect}</div>
+        <div>{buttons}</div>
+        {/*<div className={"choice-wrapper"}>{iariChoiceSelect}{methodChoiceSelect}</div>*/}
         <p><span className={'label'}>IARI Source:</span> {myIariSourceId} ({IariSources[myIariSourceId]?.proxy})</p>
-        <p><span className={'label'}>Check Method:</span> {statusMethod}</p>
+        <p><span className={'label'}>Check Method:</span> {UrlStatusCheckMethods[checkMethod].caption} ({checkMethod})</p>
+        <p><span className={'label'}>URL from address line:</span> {myPath}</p>
+        <p><span className={'label'}>Force Refresh:</span> {refreshCheck ? "TRUE" : "false"}</p>
         <p><span className={'label'}>pathName:</span> <MakeLink href={targetPath}/></p>
         <p><span className={'label'}>endpointPath:</span> <MakeLink href={endpointPath}/></p>
-        <p><span className={'label'}>inline target URL:</span> {myPath}</p>
-        <p><span className={'label'}>Force Refresh:</span> {refreshCheck ? "TRUE" : "false"}</p>
+
     </div>
 
     // set config for config context
     const config = {
+        environment: env,
         iariSource: IariSources[myIariSourceId]?.proxy,
-        urlStatusMethod: statusMethod,
+        urlStatusMethod: checkMethod,
         isDebug: !!isDebug,
+        isShowReferences: isShowReferences,
+        isShowUrlOverview: isShowUrlOverview,
+        isShowShortcuts: isShowShortcuts,
+        isShowExpertMode: isShowExpertMode,
+        isShowNewFeatures: isShowNewFeatures,
     }
 
     console.log(`rendering App component:`, {
         path: targetPath,
         refreshCheck: refreshCheck,
-        statusMethod: statusMethod,
+        statusMethod: checkMethod,
         iari_source: myIariSourceId,
-        config: config
+        config: config,
     })
 
+    const defaultIfEmpty = "https://en.wikipedia.org/wiki/"
 
     return <>
 
@@ -331,9 +401,11 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
                 </div>
 
 
-                <PathNameFetch pathInitial={targetPath} checkInitial={refreshCheck}
+                <PathNameFetch pathInitial={targetPath?.length > 0 ? targetPath : defaultIfEmpty}
+                               checkInitial={refreshCheck}
                                placeholder={"Enter a Wikipedia article or PDF url here"}
                                shortcuts={shortcuts}
+                               showShortcuts={isShowShortcuts}
                                handlePathResults={handlePathResults}
                 />
 

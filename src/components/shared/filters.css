@@ -1,0 +1,77 @@
+:root {
+    --color-btn-filter: black;
+    --color-btn-filter-lolite: #888888;
+
+    --color-btn-filter-bg: #d1d5da;
+    --color-btn-filter-hover-bg: #dddee2;
+    --color-btn-filter-pressed-bg: #afb4b8;
+}
+
+/* generic filter buttons */
+
+.filter-group {
+    margin-bottom: 1rem;
+}
+
+.filter-buttons {
+    display:flex;
+    flex-direction: column;
+    color: var(--color-btn-filter);
+}
+
+.filter-buttons button.btn {
+    cursor: pointer;
+    background-color: #d1d5da; /*#8191a4;*/
+    border:1px solid #888888;
+    padding:.5rem;
+    /*max-width:16.8rem;*/
+    margin-bottom: .35rem;
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.filter-buttons button.btn:hover {
+    background-color: var(--color-btn-filter-hover-bg);
+    box-shadow: inset 0px 0px 5px #333333;/*min-width:11.5rem;*/
+    border: 1px solid black;
+}
+.filter-buttons button.btn-pressed {
+    background-color: var(--color-btn-filter-pressed-bg);
+    /*box-shadow: none;*/
+    box-shadow: inset 0px 0px 5px #333333;/*min-width:11.5rem;*/
+}
+.filter-buttons .btn-description {
+    font-style: italic;
+    font-size: smaller;
+    font-weight: normal;
+    padding-left:1em;
+}
+.filter-buttons .lolite {
+    color: var(--color-btn-filter-lolite);
+}
+
+.filter-buttons .filter-count {
+    float: right;
+    /*position:absolute;*/
+    /*top:.4rem;*/
+    /*right:3.5rem;*/
+    /*display:block;*/
+    /*font-weight:bold;*/
+    /*font-size:120%;*/
+}
+
+
+                /***********************
+                 filter buttons
+                 ***********************/
+
+                /*.filter-box {*/
+                /*    !*margin-left:1rem;*!*/
+                /*}*/
+                /*.filter-box.ref-filter-0 {*/
+                /*    margin-left:0;*/
+                /*}*/
+                /*.filter-box h4 {*/
+                /*    margin-bottom:.5rem;*/
+                /*}*/
+

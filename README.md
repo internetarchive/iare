@@ -49,6 +49,10 @@ Open the application in a web browser at http://localhost:3000
 
 ## Under the Hood
 
+### General Coding Notes
+
+Throughout the code you may see "NB ..." in a comment. NB stands for "Nota Bene", meaning "note well" in latin, and is 
+used to call out certain aspects in the code worth calling out. See https://en.wikipedia.org/wiki/Nota_bene.
 
 ### External components used
 
@@ -116,3 +120,4 @@ TBD
 
 ### GitHub Issues
 
+https://github.com/internetarchive/iare/issues
