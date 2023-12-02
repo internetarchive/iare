@@ -4,7 +4,6 @@ import RefFlock from "./RefFlock";
 import UrlOverview from "./UrlOverview";
 import '../shared/urls.css';
 import '../shared/filters.css';
-import {REF_LINK_STATUS_FILTERS} from "./filterMaps/refFilterMaps";
 import {ACTIONABLE_FILTER_MAP} from "./filterMaps/urlFilterMaps";
 import {ConfigContext} from "../../contexts/ConfigContext";
 import FilterButtons from "../FilterButtons";

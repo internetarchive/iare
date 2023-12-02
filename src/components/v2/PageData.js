@@ -9,7 +9,7 @@ import {
     ARCHIVE_STATUS_FILTER_MAP,
     URL_STATUS_FILTER_MAP
 } from "./filterMaps/urlFilterMaps";
-import {areObjectsEqual, getLinkStatus} from "../../utils/utils";
+import {areObjectsEqual} from "../../utils/utils";
 
 /*
 When this component is rendered, it must "process" the pageData. This involves:
@@ -124,7 +124,7 @@ export default function PageData({pageData = {}}) {
         urlArchiveResults.forEach(u => {
             const urlObj = pageData.urlDict[u.data.url]
             if (urlObj) {
-                urlObj.iabot_archive_status = u.data
+                urlObj.iabot_archive_status = u.data  // TODO consider changing to just archive_status, with a "archive_source"" prop
             } else {
                 // there was no entry in urlDict for primary url that archive was based on...
                 // TODO how do we indicate this error? urlDict[url].error = true w/ error_details?

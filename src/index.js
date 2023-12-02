@@ -18,6 +18,36 @@ const getEnvironment = () => {
     return "env-other"
 }
 
+const getIariSource = (qParams, targetEnvironment) => {
+    // TODO: will change default to "iari" eventually, when that proxy is stable
+
+    // hard-set to iari_prod for production
+    if (targetEnvironment === 'env-production') return IariSources.iari_prod.key
+    // else default to stage if not specified
+    const sourceKey = queryParameters.has("iari-source") ? queryParameters.get("iari-source") : IariSources.iari_stage.key
+
+    // if specified source not in our defined choices, default to stage, and error
+    if (!IariSources[sourceKey]) {
+        console.error(`IARI Source ${sourceKey} not supported.`)
+        return IariSources.iari_stage.key
+    }
+    return sourceKey
+}
+
+const getMethod = (qParams, targetEnvironment) => {
+    // hard-set to WAYBACK for production
+    if (targetEnvironment === 'env-production') return UrlStatusCheckMethods.WAYBACK.key
+    // else
+    const methodKey = queryParameters.has("method") ? queryParameters.get("method") : UrlStatusCheckMethods.WAYBACK.key
+
+    // if specified mehtod not in our defined choices, default to WAYBACK, and error
+    if (!UrlStatusCheckMethods[methodKey]) {
+        console.error(`Method ${methodKey} not supported.`)
+        return UrlStatusCheckMethods.WAYBACK.key
+    }
+    return methodKey
+}
+
 // ========================================
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -26,10 +56,8 @@ const env = getEnvironment();
 const myDebug = queryParameters.has("debug") ? queryParameters.get("debug").toLowerCase() === 'true' : false;
 const myPath = queryParameters.has("url") ? queryParameters.get("url") : '';
 const myRefresh = queryParameters.has("refresh") ? queryParameters.get("refresh").toLowerCase() === 'true' : false;
-const myMethod = queryParameters.has("method") ? queryParameters.get("method") : UrlStatusCheckMethods.IABOT.key;
-const myIariSourceId = queryParameters.has("iari-source") ? queryParameters.get("iari-source") : IariSources.iari_stage.key;
-    // TODO: will change default to "iari" eventually, when that proxy is stable
-    // TODO set myIariSourceId to iari-prod explicitly if environment is env-production - ignore inline iari-source
+const myIariSourceId = getIariSource(queryParameters, env);
+const myMethod = getMethod(queryParameters, env);
 
 root.render(<App env={env} myPath={myPath} myRefresh={myRefresh} myMethod={myMethod} myIariSourceId={myIariSourceId} myDebug={myDebug}/>);
 

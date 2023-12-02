@@ -107,14 +107,14 @@ export default function PageInfo({ pageData }) {
     }
 
     const oresResults = ores_score_display ? <span className={"ores-display"}>ORES Score: {ores_score_display}</span> : null
-    const buttonMoreDetails = myConfig.environment === "env-local"
-        ? <button onClick={()=>setShowDetail(!showDetail)} className={"more-button more-page-info-button"}>show { showDetail ? "less" : "more" } detail</button>
+    const buttonMoreDetails = myConfig.environment !== "env-production"
+        ? <button onClick={()=>setShowDetail(!showDetail)} className={"more-button more-page-info-button"}>{ showDetail ? "less" : "more" } detail</button>
         : null
     const linkPageSource = <a href={pageData.pathName} target={"_blank"} rel={"noreferrer"}>{pageData.pathName}</a>
 
     return <div className="page-info">
 
-        <h6>Wiki Page Analyzed: {linkPageSource}{true && oresResults}{buttonMoreDetails}</h6>
+        <h6 class={"page-stats-header"}><div>Wiki Page Analyzed: {linkPageSource}{true && oresResults}</div><div>{buttonMoreDetails}</div></h6>
 
         {pageData
             ? <div className={'detail-section' + (showDetail ? ' detail-show' : ' detail-hide') }>

@@ -2,6 +2,12 @@
     margin-top: 0.5rem;
     margin-bottom: 0.75rem;
 }
+.page-info .page-stats-header {
+    display:flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+    justify-content: space-between;
+}
 
 .page-data {
     /*display:flex;*/
