@@ -17,6 +17,7 @@ import {
     SubTitle,
     Colors,
 } from 'chart.js'
+import PerennialChart from "./charts/PerennialChart";
 
 Chart.register(
     LinearScale,
@@ -271,7 +272,13 @@ const UrlOverview = React.memo(({pageData, options, onAction}) => {  // React.me
 
         {myConfig.isShowNewFeatures &&
             <div className={'section-sub'}>
-                <TemplateChart pageData={pageData} options={{}} colors={colors} onAction={onAction} />
+                <PerennialChart pageData={pageData} options={{}} onAction={onAction} />
+            </div>
+        }
+
+        {myConfig.isShowNewFeatures &&
+            <div className={'section-sub'}>
+                <TemplateChart pageData={pageData} options={{}} onAction={onAction} />
             </div>
         }
 

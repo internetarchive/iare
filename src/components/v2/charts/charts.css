@@ -1,3 +1,8 @@
+.chart-instruction {
+    font-style: italic;
+    font-weight: bold;
+}
+
 .chart-legend-iare {
     display:flex;
     /*flex-direction: row;*/

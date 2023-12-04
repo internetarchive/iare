@@ -3,13 +3,14 @@ import UrlDisplay from "./UrlDisplay";
 import RefDisplay from "./RefDisplay";
 import FldDisplay from "./FldDisplay";
 import Loader from "../Loader";
-import {fetchUrlArchives, fetchUrls} from "../../utils/iariUtils.js"
+import {fetchUrlArchives, fetchUrls, processForIari} from "../../utils/iariUtils.js"
 import {ConfigContext} from "../../contexts/ConfigContext";
 import {
     ARCHIVE_STATUS_FILTER_MAP,
     URL_STATUS_FILTER_MAP
 } from "./filterMaps/urlFilterMaps";
 import {areObjectsEqual} from "../../utils/utils";
+import {categorizedDomains, rspMap} from "../../constants/perennialList";
 
 /*
 When this component is rendered, it must "process" the pageData. This involves:
@@ -54,31 +55,13 @@ export default function PageData({pageData = {}}) {
     const myIariBase = myConfig.iariSource
     const myStatusCheckMethod = myConfig.urlStatusMethod
 
+    const rspDomains = categorizedDomains
 
     // called in useEffect when new url results received
     const processUrls = useCallback( (pageData, urlResults) => {
         // create pageData.urlDict and pageData.urlArray from urlResults
 
-        const regexWayback = new RegExp(/https?:\/\/(?:web\.)archive\.org\/web\/([\d*]+)\/(.*)/);
 
-        const sanitizeUrlForWayback = (targetUrl) => {
-                // TODO ongoing, as checking if archive can be tricky
-                // TODO Also must consider other archiving services
-                // TODO may use IABot's isArchive function...
-
-                // // let inputString = 'http://example.com:http://example2.com:some:text:with:colons';
-                // const regexColon = /:(?!\/\/)/g;  // Regular expression to match colons not followed by "//"
-                // // const regexEquals = /=/g;  // Regular expression to match equals signs
-                // let resultUrl
-                // resultUrl = targetUrl.replace(regexColon, '%3A');  // Replace solo colons with encoded "%3A"
-                // // resultUrl = resultUrl.replace(regexEquals, '%3D')
-                // return resultUrl
-            return targetUrl  // for now - trying to debug and see if it is necessary
-        }
-
-        const isArchive = (targetUrl) => {
-            return !!(sanitizeUrlForWayback(targetUrl).match(regexWayback))
-        }
 
         // create url dict from returned results
         const urlDict = {}
@@ -89,9 +72,9 @@ export default function PageData({pageData = {}}) {
             if (!urlDict[myUrl]) {
                 urlDict[myUrl] = d.data  // initialize with result data
                 urlDict[myUrl].urlCount = 0
-                urlDict[myUrl].isArchive = isArchive(myUrl)
-                urlDict[myUrl].hasTemplateArchive = false  // TODO: this will be recalculated when processing references
             }
+
+            processForIari(urlDict[myUrl])
 
             // increase usage count of this url by 1; keeps track of repeats
             urlDict[myUrl].urlCount++
@@ -421,6 +404,51 @@ export default function PageData({pageData = {}}) {
 
     }, [])
 
+    const processRspData = useCallback( pageData => {
+        // for each url in pageData.urlArray, set rsp[] property of urlDict entry
+        // at the same time, keep track of rsp count
+
+        if (!pageData?.urlArray) return
+
+        // create rspStats with nitial counts of 0
+        const rspStats = {}
+        const rspMapKeys = Object.keys(rspMap)
+        rspMapKeys.forEach( key => {
+            rspStats[key] = 0
+        })
+
+        pageData.urlArray.forEach(urlObj => {
+            // if sld of url is in rsp category:
+            // - pull that category into url object's rsp[] property
+            // - increment rsp category count in rspStats
+
+            urlObj.rsp = []  // Reliable Source / Perennial
+
+            rspMapKeys.forEach(rspKey => {
+                const rspCategoryKey = rspMap[rspKey].rspKey
+
+                // if current url.sld part of this rsp's collection, modify urlDict and rspStats
+
+                if (!rspDomains[rspCategoryKey]) {
+                    console.error(`rsp domain ${rspCategoryKey} not found.`)
+                    return
+                }
+
+                if (rspDomains[rspCategoryKey].includes(urlObj.sld)
+                    ||
+                    rspDomains[rspCategoryKey].includes(urlObj._3ld)) {
+                    urlObj.rsp.push( rspKey )  // add this rsp to this url
+                    rspStats[rspKey] = rspStats[rspKey] + 1
+                }
+
+            })
+
+        })
+
+        pageData.rsp_statistics = rspStats
+
+    }, [rspDomains])
+
 
     useEffect( () => { // [myIariBase, pageData, processReferences, processUrls, myStatusCheckMethod]
         // const context = 'PageData::useEffect [myIariBase, pageData, processReferences, processUrls, associateRefsWithLinks, myStatusCheckMethod]'
@@ -461,6 +489,7 @@ export default function PageData({pageData = {}}) {
 
                 processReferences(pageData)  // associates url links with references
                 associateRefsWithLinks(pageData)
+                processRspData(pageData)
 
                 pageData.statusCheckMethod = myStatusCheckMethod;
 
@@ -481,7 +510,7 @@ export default function PageData({pageData = {}}) {
 
         fetchPageData()
 
-        },   [myIariBase, pageData, processReferences, processUrls, processUrlArchives, associateRefsWithLinks, myStatusCheckMethod])
+        },   [myIariBase, pageData, processReferences, processUrls, processUrlArchives, associateRefsWithLinks, myStatusCheckMethod, processRspData])
 
 
     const handleViewTypeChange = (event) => {

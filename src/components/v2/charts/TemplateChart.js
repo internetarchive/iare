@@ -3,7 +3,7 @@ import PieChart from "../../PieChart";
 import './charts.css';
 import {generateColorFade} from "../../../utils/utils";
 
-const TemplateChart = ({pageData, options, colors, onAction}) => {
+const TemplateChart = ({pageData, options, onAction}) => {
 
     if (!pageData?.template_statistics) return <div>
         <h4>URLs</h4>

@@ -143,7 +143,7 @@ export default function RefView({ open, onClose, details }) {
                         <RefViewFooter details={details} />
                     </div>
 
-                    {true && <div className="col-3">
+                    {false && <div className="col-3">
                         <RefActions details={details} onAction={handleRefViewAction} />
                         <RefStats details={details} />
                     </div>}
