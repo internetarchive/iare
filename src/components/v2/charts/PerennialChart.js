@@ -1,7 +1,7 @@
 import React from 'react';
 import PieChart from "../../PieChart";
 import './charts.css';
-import {generateColorFade} from "../../../utils/utils";
+// import {generateColorFade} from "../../../utils/utils";
 import {rspMap} from "../../../constants/perennialList";
 
 /*
