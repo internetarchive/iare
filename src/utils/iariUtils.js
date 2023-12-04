@@ -586,9 +586,9 @@ export const processForIari = (urlObj) => {
             const sld = hostnameParts[hostnameParts.length - 2];
             const tld = hostnameParts[hostnameParts.length - 1];
             const _3ld = hostnameParts[hostnameParts.length - 3];
-            return { sld, tld };
+            return { sld, tld, _3ld };
         } else {
-            return { sld: null, tld: null };
+            return { sld: null, tld: null, _3ld: null };
         }
     }
 
