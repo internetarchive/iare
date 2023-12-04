@@ -29,27 +29,33 @@ const PerennialChart = ({pageData, options, onAction}) => {
         white: "#FFFFFF"
     }
 
+    // const barColors = ["magenta", "purple", "blue", "teal","yellow","orange","red"]
+
     const myRspMap = rspMap
 
     const perennialData = Object.keys(pageData.rsp_statistics).map(key => {
         return {
             label: myRspMap[key].caption,
             count: pageData.rsp_statistics[key],
-            link: key
+            link: key,
+            color: myRspMap[key]?.color
         }
-    }).sort((a, b) => {
-        return a.count < b.count
-            ? 1
-            : a.count > b.count
-                ? -1
-                : a.label > b.label
-                    ? 1
-                    : a.label < b.label
-                        ? -1
-                        : 0
     })
+    // // do not sort, for now...
+    //     .sort((a, b) => {
+    //     return a.count < b.count
+    //         ? 1
+    //         : a.count > b.count
+    //             ? -1
+    //             : a.label > b.label
+    //                 ? 1
+    //                 : a.label < b.label
+    //                     ? -1
+    //                     : 0
+    // })
 
-    const colorArray = generateColorFade(myColors.orange, myColors.green, perennialData.length )
+    //    const colorArray = generateColorFade(myColors.orange, myColors.green, perennialData.length )
+    const colorArray = perennialData.map(d => myColors[d.color])
 
     const perennialChartData = {
 
