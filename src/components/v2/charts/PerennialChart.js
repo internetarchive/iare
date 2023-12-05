@@ -3,6 +3,7 @@ import PieChart from "../../PieChart";
 import './charts.css';
 // import {generateColorFade} from "../../../utils/utils";
 import {rspMap} from "../../../constants/perennialList";
+import ChartLegend from "./ChartLegend";
 
 /*
 shows piechart, for now, of links associated with perennial categories
@@ -122,25 +123,10 @@ const PerennialChart = ({pageData, options, onAction}) => {
         onAction({action: "setPerennialFilter", value: perennial})
     }
 
-    // for each data: ';abel box, caption, flex div bl;ah blah blah
-    const legend = <div className={"chart-legend-iare chart-legend-perennial"} onClick={onClickLegend}>
-        {perennialData.map( (d, i) => {
-            const myColor = colorArray[i % colorArray.length]
-            return <div className={"legend-entry"}
-                        key={d.link}
-                        data-link={d.link} >
-                <div className={"legend-box"} style={{backgroundColor:myColor}}></div>
-                <div className={"legend-label"}>{`${d.label} [${d.count}]`}</div>
-            </div>
-        })}
-    </div>
-
     return <>
         <h4>Reliability Statistics</h4>
-        {/*<h4 className={"chart-instruction"}>Click to filter URL and References Lists</h4>*/}
         <h4 className={"chart-instruction"}>Click to filter URL List</h4>
-
-        {legend}
+        <ChartLegend data={perennialData} onClick={onClickLegend} colors={colorArray} className={"chart-legend-perennial"} />
 
         <div className={"perennial-chart-display"}>
             {perennialChartData.datasets[0].data.length > 0 ?

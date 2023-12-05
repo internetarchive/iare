@@ -2,6 +2,7 @@ import React from 'react';
 import PieChart from "../../PieChart";
 import './charts.css';
 import {generateColorFade} from "../../../utils/utils";
+import ChartLegend from "./ChartLegend";
 
 const TemplateChart = ({pageData, options, onAction}) => {
 
@@ -133,23 +134,11 @@ const TemplateChart = ({pageData, options, onAction}) => {
         onAction({action: "setTemplateFilter", value: template})
     }
 
-    // for each data: ';abel box, caption, flex div bl;ah blah blah
-    const legend = <div className={"chart-legend-iare chart-legend-templates"} onClick={onClickLegend}>
-        {templateData.map( (d, i) => {
-            const colorIndex = i % colorArray.length
-            const myColor = colorArray[colorIndex]
-            return <div className={"legend-entry"} data-template_id={d.label} key={d.label}>
-                <div className={"legend-box"} style={{backgroundColor:myColor}}></div>
-                <div className={"legend-label"}>{`${d.label} [${d.count}]`}</div>
-            </div>
-        })}
-    </div>
-
     return <>
         <h4>Template Occurrences</h4>
         <h4 style={{fontStyle: "italic", fontWeight: "bold"}}>Click to filter URL and References Lists</h4>
 
-        {legend}
+        <ChartLegend data={templateData} onClick={onClickLegend} colors={colorArray} className={"chart-legend-templates"} />
 
         <div className={"template-chart-display"}>
             {templateChartData.datasets[0].data.length > 0 ?

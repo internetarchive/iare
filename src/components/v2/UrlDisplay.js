@@ -431,7 +431,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             const f = urlStatusFilterMap[key];
             const count = pageData.urlArray.filter((f.filterFunction)()).length; // Note the self-evaluating filterFunction!
             return {
-                label: f.caption + " (" + count + ")",
+                label: f.caption,
                 count: count,
                 link: key
             }

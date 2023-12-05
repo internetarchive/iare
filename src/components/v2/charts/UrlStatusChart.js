@@ -1,5 +1,6 @@
 import React from 'react';
 import PieChart from "../../PieChart";
+import ChartLegend from "./ChartLegend";
 
 const UrlStatusChart = ({pageData, options, colors, onAction}) => {
 
@@ -10,8 +11,9 @@ const UrlStatusChart = ({pageData, options, colors, onAction}) => {
         </div>
     }
 
-    // remove "all" entry for pie chart
-    const statsWithoutAll = pageData.url_status_statistics.urlCounts
+    // assumes url_status_statistics.urlCounts is array of {label:, count:,link:} objects
+    // remove "all" entry from data
+    const urlStatsData = pageData.url_status_statistics.urlCounts
         ? pageData.url_status_statistics.urlCounts.filter(s => s.link !== "all")
         : [];
 
@@ -25,27 +27,34 @@ const UrlStatusChart = ({pageData, options, colors, onAction}) => {
         onAction({action: "setUrlStatusFilter", value: link})
     }
 
+    const onClickLegend = e => {
+        const link = e.target.closest('.legend-entry').dataset['link'];
+        onAction({action: "setUrlStatusFilter", value: link})
+    }
+
+
     const myClickUrlChart = (link) => {
         // console.log("pie chart clicked, link=", link)
         onAction({action: "setUrlStatusFilter", value: link})
     }
 
+    const colorArray = [colors.teal, colors.yellow, colors.red, colors.magenta, colors.grey,]
 
-    const urlChartData = {
+    const urlStatsChartData = {
 
-        labels: statsWithoutAll.map(d => d.label),
+        labels: urlStatsData.map(d => d.label),
         datasets: [{
             label: "URLs",
-            data: statsWithoutAll.map(d => d.count),
-            links: statsWithoutAll.map(d => d.link),
-            backgroundColor: [colors.teal, colors.yellow, colors.red, colors.magenta, colors.grey,]
+            data: urlStatsData.map(d => d.count),
+            links: urlStatsData.map(d => d.link),
+            backgroundColor: colorArray
         }],
 
         borderColor: "black",
         borderWidth: 2,
     }
 
-    const urlChartOptions = {
+    const urlStatsChartOptions = {
         // animation: true,
         animation: {
             animateScale: false,
@@ -59,7 +68,7 @@ const UrlStatusChart = ({pageData, options, colors, onAction}) => {
 
             datalabels: false,
             legend: {
-                display: true,
+                display: false,
                 position: 'top',
                 align: 'start',
                 // title: {
@@ -99,9 +108,11 @@ const UrlStatusChart = ({pageData, options, colors, onAction}) => {
         <h4>URL Status Codes</h4>
         <h4 style={{fontStyle: "italic", fontWeight: "bold"}}>Click to filter URL List</h4>
 
+        <ChartLegend data={urlStatsData} onClick={onClickLegend} colors={colorArray} className={"chart-legend-url_status"} />
+
         <div className={"url-chart-display"}>
-            {urlChartData.datasets[0].data.length > 0 ?
-                <PieChart chartData={urlChartData} options={urlChartOptions} onClick={myClickUrlChart}/>
+            {urlStatsChartData.datasets[0].data.length > 0 ?
+                <PieChart chartData={urlStatsChartData} options={urlStatsChartOptions} onClick={myClickUrlChart}/>
                 : <p>No Pie</p>}
         </div>
     </>

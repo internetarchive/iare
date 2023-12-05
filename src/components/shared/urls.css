@@ -33,7 +33,7 @@
     --choice-fetch-color-bg: inherit; /*#d1d5da;*/
     --choice-fetch-border-radius: .375rem;
 
-    --height-piechart-display: 225px;
+    --height-piechart-display: 210px;
 
     --border-default:1px solid black;
 }
@@ -452,9 +452,7 @@ button.utility-button.disabled {
     opacity: .85;
 }
 
-.template-chart-display .chart-container {
-    height:var(--height-piechart-display);
-}
-.perennial-chart-display .chart-container {
+/* pie charts for overview all have same size */
+.url-overview .pie-chart-container {
     height:var(--height-piechart-display);
 }

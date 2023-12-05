@@ -65,7 +65,7 @@ export default function PieChart({ chartData, options, onClick }) {
     console.log("loading pie chart");
 
     return (
-        <div className="chart-container">
+        <div className="chart-container pie-chart-container">
             <Pie
                 data = {chartData}
                 options = {options}

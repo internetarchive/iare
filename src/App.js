@@ -293,27 +293,29 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
     };
     const iariChoices = Object.keys(IariSources)
         .filter(key => {
-            return env === 'env-staging' ? !(key === "iari_local" || key === "iari") : true
+            return env === 'env-staging'
+                ? !(key === "iari_local" || key === "iari")  // do not allow iari_local and iari on Staging
+                : true
         })
         .map( key => {
             return { caption: IariSources[key].caption, value: IariSources[key].key }
         })
+
     const iariChoiceSelect = <div className={"iari-source-wrapper"}>
         <Dropdown choices={iariChoices} label={'Iari Source:'} onSelect={handleIariSourceIdChange} defaultChoice={myIariSourceId}/>
     </div>
 
     const versionDisplay = `version ${package_json.version}`
-    const siteDisplay = ` STAGING SITE `
-    const showHideDebugButton = <button // this is the 'show/hide debug' button
-        className={"utility-button debug-button small-button"}
-        onClick={toggleDebug} >{isDebug ? <>&#8212;</> : "+"}</button>
-            // onClick={toggleDebug} >{isDebug ? "hide" : "show"} debug</button>
+    const siteDisplay = (env !== 'env-production') ? ` STAGING SITE ` : ''
+    const showHideDebugButton = (env !== 'env-production') && <button className={"utility-button debug-button small-button"}
+            onClick={toggleDebug} >{
+                isDebug ? <>&#8212;</> : "+"  // dash and plus sign
+            }</button>
             // up and down triangles:  onClick={toggleDebug} >{isDebug ? <>&#9650;</> : <>&#9660;</>}</button>
 
     const heading = <div className={"header-contents"}>
         <h1>Internet Archive Reference Explorer</h1>
-        <div className={"header-aux1"}>
-            <span className={"non-production"}>{versionDisplay}{siteDisplay}{showHideDebugButton}</span></div>
+        <div className={"header-aux1"}>{versionDisplay}{siteDisplay}{showHideDebugButton}</div>
     </div>
 
     const buttons = <>
