@@ -1,14 +1,13 @@
 :root {
-    --width-url-list: 44rem;
+    --width-url-list: 47rem;
+
     --width-url-name: 20rem;
     --width-url-status: 4.0rem;
     --width-url-archive-status: 3rem;
-    --width-url-citations: 5.5rem;
-
-    --width-url-iabot_status: 15.5rem;
-
-    --width-url-templates: 5.5rem;
-    --width-url-sections: 5.5rem;
+    --width-url-citations: 5.0rem;
+    --width-url-templates: 5.0rem;
+    --width-url-sections: 5.0rem;
+    --width-url-perennial: 5.0rem;
 
     --width-col-url-overview: 327px;
     /*--width-cell-border: 1pt solid black;*/
@@ -28,6 +27,8 @@
     --width-filter-choice: 2rem;
 
     /* deprecated? */
+    --width-url-iabotdb_status: 15.5rem;
+
     /*--extent-archive-icon: 1.75rem;  !* size of check / x icons in Status Filter Chooser *!*/
     --choice-fetch-color-bg: inherit; /*#d1d5da;*/
     --choice-fetch-border-radius: .375rem;
@@ -263,7 +264,8 @@
 .url-header-row .url-iabot_status,
 .url-header-row .url-citations,
 .url-header-row .url-templates,
-.url-header-row .url-sections
+.url-header-row .url-sections,
+.url-header-row .url-perennial
 {
     cursor: pointer;
     text-align:center;
@@ -451,5 +453,8 @@ button.utility-button.disabled {
 }
 
 .template-chart-display .chart-container {
+    height:var(--height-piechart-display);
+}
+.perennial-chart-display .chart-container {
     height:var(--height-piechart-display);
 }

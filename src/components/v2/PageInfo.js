@@ -114,7 +114,7 @@ export default function PageInfo({ pageData }) {
 
     return <div className="page-info">
 
-        <h6 class={"page-stats-header"}><div>Wiki Page Analyzed: {linkPageSource}{true && oresResults}</div><div>{buttonMoreDetails}</div></h6>
+        <h6 className={"page-stats-header"}><div>Wiki Page Analyzed: {linkPageSource}{true && oresResults}</div><div>{buttonMoreDetails}</div></h6>
 
         {pageData
             ? <div className={'detail-section' + (showDetail ? ' detail-show' : ' detail-hide') }>

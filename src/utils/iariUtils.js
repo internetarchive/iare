@@ -570,3 +570,55 @@ export const fetchUrls = async ({
 
 }
 
+
+export const processForIari = (urlObj) => {
+
+    if (!urlObj?.url) return  // undefined urlObj or url property
+
+    const regexWayback = new RegExp(/https?:\/\/(?:web\.)archive\.org\/web\/([\d*]+)\/(.*)/);
+
+    const getDomainStats = (url) => {
+        // top-level-domain (TLD) and second-level-domain (SLD) extraction
+        const parsedUrl = new URL(url);
+        const hostnameParts = parsedUrl.hostname.split('.');
+
+        if (hostnameParts.length >= 2) {
+            const sld = hostnameParts[hostnameParts.length - 2];
+            const tld = hostnameParts[hostnameParts.length - 1];
+            const _3ld = hostnameParts[hostnameParts.length - 3];
+            return { sld, tld, _3ld };
+        } else {
+            return { sld: null, tld: null, _3ld: null };
+        }
+    }
+
+
+    const sanitizeUrlForWayback = (targetUrl) => {
+        // TODO ongoing, as checking if archive can be tricky
+        // TODO Also must consider other archiving services
+        // TODO may use IABot's isArchive function...
+
+        // // let inputString = 'http://example.com:http://example2.com:some:text:with:colons';
+        // const regexColon = /:(?!\/\/)/g;  // Regular expression to match colons not followed by "//"
+        // // const regexEquals = /=/g;  // Regular expression to match equals signs
+        // let resultUrl
+        // resultUrl = targetUrl.replace(regexColon, '%3A');  // Replace solo colons with encoded "%3A"
+        // // resultUrl = resultUrl.replace(regexEquals, '%3D')
+        // return resultUrl
+        return targetUrl  // for now - trying to debug and see if it is necessary
+    }
+
+    const isArchive = (targetUrl) => {
+        return !!(sanitizeUrlForWayback(targetUrl).match(regexWayback))
+    }
+
+    urlObj.isArchive = isArchive(urlObj.url)
+    urlObj.hasTemplateArchive = false  // TODO: this will be recalculated when processing references
+
+    // these should have been parsed by iari, but since wayback is not included in iari yet, we have to do it post-process
+    const stats = getDomainStats(urlObj.url)
+    urlObj.tld = `${stats.tld ? stats.tld : ''}`
+    urlObj.sld = `${stats.sld ? stats.sld : ''}.${stats.tld ? stats.tld : ''}`
+    urlObj._3ld = `${stats._3ld ? stats._3ld : ''}.${stats.sld ? stats.sld : ''}.${stats.tld ? stats.tld : ''}`
+}
+

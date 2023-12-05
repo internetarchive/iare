@@ -22,7 +22,7 @@ export default function RefUrls({ urls }) {
     const headerRow = <tr>
         <th className={'url-name'}><h3 className={"urls-header"}>URLs</h3></th>
         <th className={'url-status'}>Status</th>
-        <th className={'url-iabot_status'}>IABot</th>
+        <th className={'url-iabotdb_status'}>IABot</th>
     </tr>
 
     const getDataRow = (u) => {

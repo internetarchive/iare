@@ -7,7 +7,7 @@
     /*--width-col-status: 25rem;*/
     --width-col-url: 27.5rem;
     --width-col-status: 4.5rem;
-    --width-col-iabot-status: 6rem;
+    --width-col-iabotdb-status: 6rem;
 
     --spacing-heading-top: 1rem;
     --color-hilite: var(--bs-primary-rgb)
@@ -200,9 +200,9 @@
     padding-left:.25rem;
     text-align:center;
 }
-.ref-view-urls th.url-iabot_status {
-    width:var(--width-col-iabot-status);
-    max-width:var(--width-col-iabot-status);
+.ref-view-urls th.url-iabotdb_status {
+    width:var(--width-col-iabotdb-status);
+    max-width:var(--width-col-iabotdb-status);
     padding-left:.25rem;
     text-align:center;
 }
@@ -236,7 +236,7 @@
     padding: 0.3rem 0;
 }
 
-/* 3rd column (iabot-status) */
+/* 3rd column (iabotdb-status) */
 .ref-view-urls tr td:nth-child(3) div {
     text-align: center;
     padding: 0;

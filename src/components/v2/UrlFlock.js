@@ -5,6 +5,7 @@ import {httpStatusCodes, iabotLiveStatusCodes} from "../../constants/httpStatusC
 import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "./filterMaps/urlFilterMaps";
 import {UrlStatusCheckMethods} from "../../constants/checkMethods";
 import {convertToCSV, copyToClipboard} from "../../utils/utils";
+import {rspMap} from "../../constants/perennialList";
 
 const localized = {
     "show_all_button_text":"Show All",
@@ -35,6 +36,10 @@ const urlListDef = {
         "url-sections": {
             ttHeader: `<div>Section in Wikipedia article where Citation is defined</div>`,
             ttData: `Section in Wikipedia article where Reference originated`,
+        },
+        "url-perennial": {
+            ttHeader: `<div>Reliability Rating of URL, according to Wikipedia Reliable Sources</div>`,
+            ttData: `Reliability Rating`,
         },
 
                     // "url-iabot_status": {
@@ -93,6 +98,7 @@ const urlFlock = React.memo( function UrlFlock({
             "references": {name: "references", dir: -1},
             "templates": {name: "templates", dir: -1},
             "sections": {name: "sections", dir: -1},
+            "perennial": {name: "perennial", dir: -1},
         },
         sortOrder: ["status"]  // array indicating which sorts get applied and in what order. NB this is not implemented yet, but will be
     })
@@ -170,6 +176,17 @@ const urlFlock = React.memo( function UrlFlock({
         return 0;
     }
 
+    const sortByPerennial = (a,b) => {
+
+        const nameA = a.rsp?.length ? a.rsp[0] : ''
+        const nameB = b.rsp?.length ? b.rsp[0] : ''
+
+        // respect sortDir
+        if (nameA < nameB) return sort.sorts['perennial'].dir * -1;
+        if (nameA > nameB) return sort.sorts['perennial'].dir;
+        return 0;
+    }
+
     const sortBySection = (a,b) => {
 
         const sectionA = a.reference_info?.sections?.length ? a.reference_info.sections[0] : ''
@@ -198,6 +215,9 @@ const urlFlock = React.memo( function UrlFlock({
         }
         else if(sort.sortOrder[0] === "sections") {
             return sortBySection(a,b)
+        }
+        else if(sort.sortOrder[0] === "perennial") {
+            return sortByPerennial(a,b)
         }
 
         else if(sort.sortOrder[0] === "archive_status") {
@@ -405,6 +425,15 @@ const urlFlock = React.memo( function UrlFlock({
                 })
         })
 
+        const getPerennialInfo = (u => {
+            return !u.rsp
+                ? null
+                // rsp contains keys into rspMap
+                : u.rsp.map( (s,i) => {
+                    return <div key={i}>{rspMap[s]?.shortCaption ? rspMap[s].shortCaption : ''}</div>
+                })
+        })
+
         const getDataRow = (u, i, classes) => {
 
             const citationStatus = !u.reference_info?.statuses?.length
@@ -418,6 +447,7 @@ const urlFlock = React.memo( function UrlFlock({
                         data-archive_status={u.iabot_archive_status?.hasArchive}
                         data-citation_status={citationStatus}
                         data-live_state={u.iabot_archive_status?.live_state}
+                        data-perennial={u.rsp ? u.rsp[0] : null}  // just return first perennial if found for now...dont deal with > 1
             >
                 <div className={"url-name"}>{u.url}</div>
                 <div className={"url-status"}>{u.status_code}</div>
@@ -426,6 +456,7 @@ const urlFlock = React.memo( function UrlFlock({
                 <div className={"url-citations"}>{getCitationInfo(u)}</div>
                 <div className={"url-templates"}>{getTemplateInfo(u)}</div>
                 <div className={"url-sections"}>{getSectionInfo(u)}</div>
+                <div className={"url-perennial"}>{getPerennialInfo(u)}</div>
 
             </div>
 
@@ -446,6 +477,7 @@ const urlFlock = React.memo( function UrlFlock({
                 <div className={"url-citations"}>&nbsp;</div>
                 <div className={"url-templates"}>&nbsp;</div>
                 <div className={"url-sections"}>&nbsp;</div>
+                <div className={"url-perennial"}>&nbsp;</div>
 
             </div>
         }
@@ -515,6 +547,7 @@ const urlFlock = React.memo( function UrlFlock({
                 <div className={"url-citations"}>&nbsp;</div>
                 <div className={"url-templates"}>&nbsp;</div>
                 <div className={"url-sections"}>&nbsp;</div>
+                <div className={"url-perennial"}>&nbsp;</div>
             </div>
 
             {/* second header row - contains column labels */}
@@ -540,6 +573,9 @@ const urlFlock = React.memo( function UrlFlock({
 
                 <div className={"url-sections"} onClick={() => { handleSortClick("sections"); } }
                 >Origin<br/>Section</div>
+
+                <div className={"url-perennial"} onClick={() => { handleSortClick("perennial"); } }
+                >Reliability<br/>Rating</div>
 
             </div>
 

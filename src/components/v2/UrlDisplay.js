@@ -159,6 +159,17 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
         }
 
+        else if (action === "setPerennialFilter") {
+            console.log (`UrlDisplay: handleAction: setting perennialFilter for ${value}`);
+            // filter URLs (and references?) if they include perennial indicated by "value" argument"
+            setUrlFilters({ "url_perennial_filter" : getUrlPerennialFilter(value) })
+            setSelectedUrl(null)
+
+            // and also do the references
+            // setRefFilter(getRefPerennialFilter(value))
+
+        }
+
         else {
             console.log(`Action "${action}" not supported.`)
             alert(`Action "${action}" not supported.`)
@@ -249,6 +260,56 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
             },
         }
+    }
+
+    const getUrlPerennialFilter = (perennialKey) => {
+        if (!perennialKey || perennialKey === '') {
+            return null; // null means "all" filter
+        }
+        // return synthetic filter showing only URLs that have perennialKey in their rsp array
+        return {
+            desc: `URLs that contain Perennial "${perennialKey}"`,
+            caption: <span>{`Contains Perennial "${perennialKey}"`}</span>,
+            filterFunction: () => (url) => {
+                // loop thru refs
+                // if any of those refs contain templateName, return true anf exit
+                if (!perennialKey?.length) return true  // always let URL in if templateName is empty
+                if (!url.rsp) return true  // let it through if there is no rsp list
+                return url.rsp.includes(perennialKey)
+            }
+        }
+    }
+
+    // eslint-disable-next-line no-unused-vars
+    const getRefPerennialFilter = (perennialKey) => {
+        if (!perennialKey || perennialKey === '') {
+            return null; // null means "all" filter
+        }
+
+        return null  // for now, until we settle down with Ref objects
+
+                    // // return synthetic filter showing only Refs that have urls that are associated with perennialKey
+                    // return {
+                    //
+                    //     desc: `References that contain URLs with perennial "${perennialKey}"`,
+                    //
+                    //     caption: <span>{`Contains URLs with perennial "${perennialKey}"`}</span>,
+                    //
+                    //     filterFunction: () => (ref) => {
+                    //         // loop thru refs
+                    //         // if any of those refs contain templateName, return true anf exit
+                    //         if (!perennialKey?.length) return true  // always let reference through if templateName is empty
+                    //
+                    //         // return true if ANY (.some) of the urls include the perennialKey in their rsp array
+                    //
+                    //         return ref.urlObjs.some(url => {
+                    //             // if any of the ref's templates contain the target templateName, return true...
+                    //             if (!url.rsp) return true  // let it through if there is no rsp list
+                    //             return url.rsp.includes(perennialKey)
+                    //         })
+                    //
+                    //     },
+                    // }
     }
 
     const getRefTemplateFilter = (templateName) => {
