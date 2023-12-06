@@ -284,9 +284,10 @@ const urlFlock = React.memo( function UrlFlock({
         } else if (myClassName === "url-archive_status") {
             // WBM archive status column special handling
             html = row.dataset.live_state
-                ? `<div>${row.dataset.live_state}: ${iabotLiveStatusCodes[row.dataset.live_state]}` +
-                    `<br/>${row.dataset.archive_status === "true" ? 'Archived' : 'Not Archived'}</div>`
-                : ''
+                ? `<div>IABot live_state value: ${row.dataset.live_state} - ${iabotLiveStatusCodes[row.dataset.live_state]}` +
+                  `<br/>` +
+                  `${row.dataset.archive_status === "true" ? 'Archived' : 'Not Archived'}</div>`
+               : `archive_status = ${row.dataset.archive_status}, live_state = ${row.dataset.live_state}`
 
         } else if (myClassName === "url-citations") {
             // live status from template special handling
@@ -608,8 +609,9 @@ const urlFlock = React.memo( function UrlFlock({
                             : u.status_code >= 500 && u.status_code < 600 ? ' url-is-error'
                                 : '')
                 + (u.url === selectedUrl ? ' url-selected' : '')
+                + (u.rsp ? ` url-rating-${u.rsp[0]}` : '')
 
-            // TODO do something akin to "myMethodRenderer.getRowData"
+        // TODO do something akin to "myCheckMethod.renderRowData"
             return getDataRow(u, i, classes)
 
         } )

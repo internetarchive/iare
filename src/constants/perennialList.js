@@ -37,7 +37,7 @@ export const categorizedDomains = {
 };
 
 
-export const rspMap = {
+export const rspMap = {  // rsp stands for Reliable Sources / Perennial Sources
     blacklist: {
         key: "blacklist",
         rspKey: "rspBlacklisted",

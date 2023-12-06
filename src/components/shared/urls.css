@@ -18,7 +18,15 @@
     --width-check-icon-list: 1.5rem;     /* size of check / x icons in list */
     --height-check-icon-list: 1.5rem;
 
-    /* archive status filter */
+    /* perennial ratings colors */
+    --color-rating-blacklist: hsl(347.31deg 100% 88%);
+    --color-rating-unreliable: hsl(296.92deg 100% 88%);
+    --color-rating-reliableMarginally: hsl(29.84deg 100% 88%);
+    --color-rating-reliable: hsl(104.21deg 54.29% 88%);
+    --color-rating-deprecated: hsl(180deg 48.15% 88%);
+    --color-rating-multi: hsl(204.07deg 81.98% 88%);
+
+    /* archive status filter */ /* deprecated? */
     --width-filter-icon: 1.5rem;     /* size of check / x icons in list */
     --height-filter-icon: 1.5rem;
     --width-filter-caption: 4rem;
@@ -455,3 +463,12 @@ button.utility-button.disabled {
 .url-overview .pie-chart-container {
     height:var(--height-piechart-display);
 }
+
+/* for shading of url rows according to rating status */
+
+/*.url-rating-blacklist {background-color: var(--color-rating-blacklist);}*/
+/*.url-rating-unreliable {background-color: var(--color-rating-unreliable);}*/
+/*.url-rating-reliableMarginally {background-color: var(--color-rating-reliableMarginally);}*/
+/*.url-rating-reliable {background-color: var(--color-rating-reliable);}*/
+/*.url-rating-deprecated {background-color: var(--color-rating-deprecated);}*/
+/*.url-rating-multi {background-color: var(--color-rating-multi);}*/
