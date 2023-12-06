@@ -6,6 +6,8 @@ import {REF_LINK_STATUS_FILTERS} from "./filterMaps/refFilterMaps";
 import {ConfigContext} from "../../contexts/ConfigContext";
 import UrlStatusChart from "./charts/UrlStatusChart";
 import TemplateChart from "./charts/TemplateChart";
+import PerennialChart from "./charts/PerennialChart";
+import TldChart from "./charts/TldChart";
 import {
     Chart,
     LinearScale,
@@ -17,8 +19,6 @@ import {
     SubTitle,
     Colors,
 } from 'chart.js'
-import PerennialChart from "./charts/PerennialChart";
-import TldChart from "./charts/TldChart";
 
 Chart.register(
     LinearScale,
