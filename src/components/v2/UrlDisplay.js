@@ -126,15 +126,6 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             setSelectedUrlActionFilterName(value)
         }
 
-                    // else if (action === "setLinkStatusFilter") {
-                    //     // use value as link status to filter references with
-                    //
-                    //     const f = value ? REF_LINK_STATUS_FILTERS[value] : null
-                    //     setRefFilter(f)
-                    //
-                    //     // TODO: some sort of feedback? selected filter?
-                    // }
-
         else if (action === "removeUrlFilter") {
             // clear filter (show all) for URL list
             setUrlFilters(null)
@@ -157,6 +148,13 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             // and also do the references
             setRefFilter(getRefTemplateFilter(value))
 
+        }
+
+        else if (action === "setTldFilter") {
+            console.log (`UrlDisplay: handleAction: setting tld filter for ${value}`);
+            // only filter urls (for now)
+            setUrlFilters({ "url_tld_filter" : getUrlTldFilter(value) })
+            setSelectedUrl(null)
         }
 
         else if (action === "setPerennialFilter") {
@@ -258,6 +256,22 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                     return r.template_names.includes(templateName)  // return true of templateName represented
                 })
 
+            },
+        }
+    }
+
+    const getUrlTldFilter = (tld) => {
+
+        if (!tld || tld === '') {
+            return null; // no template means all filter
+        }
+
+        // return synthetic filter showing only URLs that have specified tld
+        return {
+            desc: `URLs with Top Level Domain of "${tld}"`,
+            caption: <span>{`Contains Top Level Domain "${tld}"`}</span>,
+            filterFunction: () => (url) => {
+                return url.tld === tld
             },
         }
     }

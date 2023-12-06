@@ -106,7 +106,7 @@ const UrlStatusChart = ({pageData, options, colors, onAction}) => {
 
     return <>
         <h4>URL Status Codes</h4>
-        <h4 style={{fontStyle: "italic", fontWeight: "bold"}}>Click to filter URL List</h4>
+        <h4 className={"chart-instruction"}>Click to filter URL List</h4>
 
         <ChartLegend data={urlStatsData} onClick={onClickLegend} colors={colorArray} className={"chart-legend-url_status"} />
 

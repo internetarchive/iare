@@ -57,11 +57,27 @@ export default function PageData({pageData = {}}) {
 
     const rspDomains = categorizedDomains
 
+    // create pageData.urlDict and pageData.urlArray from urlResults
     // called in useEffect when new url results received
     const processUrls = useCallback( (pageData, urlResults) => {
-        // create pageData.urlDict and pageData.urlArray from urlResults
 
+        const gatherStats = (urlArray) => {
+            const tldDict = {}  // stores count of each tld
+            if (urlArray?.length) {
+                urlArray.forEach( urlObj => {
+                    if (!tldDict[urlObj.tld]) tldDict[urlObj.tld] = 0
+                    tldDict[urlObj.tld] = tldDict[urlObj.tld] + 1
 
+                    // if (!ref.template_names?.length) return
+                    // ref.template_names.forEach(templateName => {
+                    //     // console.log(`Another Template found for ref id ${ref.id}: ${templateName}`)
+                    //     if (!templateDict[templateName]) templateDict[templateName] = 0
+                    //     templateDict[templateName] = templateDict[templateName] + 1
+                    // })
+                })
+            }
+            pageData.tld_statistics = tldDict
+        }
 
         // create url dict from returned results
         const urlDict = {}
@@ -80,6 +96,7 @@ export default function PageData({pageData = {}}) {
             urlDict[myUrl].urlCount++
         })
 
+        // primary urls are all those urls that are NOT archive links
         const primaryUrls = Object.keys(urlDict).filter(urlKey => {
             return !(urlDict[urlKey].isArchive)
         })
@@ -90,8 +107,7 @@ export default function PageData({pageData = {}}) {
             return urlDict[urlKey]
         })
 
-        // TODO TODO we need to run fetchUrlArchives on primaryUrls, or, pageData.urlArray at this point
-
+        gatherStats(pageData.urlArray)
 
     }, [])
 

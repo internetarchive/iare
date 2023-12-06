@@ -4,7 +4,7 @@ import React from 'react';
 shows chart legend derived from data.
 data is assumed to be an array of { label, count } objects
  */
-const ChartLegend = ({data, colors, className = "", onClick}) => {
+export default function ChartLegend ({data, colors, className = "", onClick}) {
 
     if (!data?.length) return <div className={`chart-legend${className ? ' ' + className : ''}`}>No data for legend.</div>
     
@@ -21,5 +21,3 @@ const ChartLegend = ({data, colors, className = "", onClick}) => {
     </div>
 
 }
-
-export default ChartLegend

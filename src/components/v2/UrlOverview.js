@@ -18,6 +18,7 @@ import {
     Colors,
 } from 'chart.js'
 import PerennialChart from "./charts/PerennialChart";
+import TldChart from "./charts/TldChart";
 
 Chart.register(
     LinearScale,
@@ -266,21 +267,36 @@ const UrlOverview = React.memo(({pageData, options, onAction}) => {  // React.me
 
     return <div className={"url-overview"}>
 
-        <div className={'section-sub'}>
-            <UrlStatusChart pageData={pageData} options={{}} colors={colors} onAction={onAction} />
+        <div className={"row"}>
+
+            <div className={"col col-6"}>
+                <div className={'section-sub'}>
+                    <UrlStatusChart pageData={pageData} options={{}} colors={colors} onAction={onAction} />
+                </div>
+
+                {myConfig.isShowNewFeatures &&
+                    <div className={'section-sub'}>
+                        <TldChart pageData={pageData} options={{}} onAction={onAction} />
+                    </div>
+                }
+            </div>
+
+            <div className={"col col-6"}>
+                {myConfig.isShowNewFeatures &&
+                    <div className={'section-sub'}>
+                        <PerennialChart pageData={pageData} options={{}} onAction={onAction} />
+                    </div>
+                }
+
+                {myConfig.isShowNewFeatures &&
+                    <div className={'section-sub'}>
+                        <TemplateChart pageData={pageData} options={{}} onAction={onAction} />
+                    </div>
+                }
+            </div>
+
         </div>
 
-        {myConfig.isShowNewFeatures &&
-            <div className={'section-sub'}>
-                <PerennialChart pageData={pageData} options={{}} onAction={onAction} />
-            </div>
-        }
-
-        {myConfig.isShowNewFeatures &&
-            <div className={'section-sub'}>
-                <TemplateChart pageData={pageData} options={{}} onAction={onAction} />
-            </div>
-        }
 
         {false && <div className={'section-sub'}>
             {archiveStatusCaption}

@@ -15,8 +15,6 @@
     /*--color-cell-border: grey;*/
     --color-cell-border: inherit;
 
-    /*--width-check-icon-list: 1.25rem;     !* size of check / x icons in list *!*/
-    /*--height-check-icon-list: 1.25rem;*/
     --width-check-icon-list: 1.5rem;     /* size of check / x icons in list */
     --height-check-icon-list: 1.5rem;
 
@@ -28,14 +26,16 @@
 
     /* deprecated? */
     --width-url-iabotdb_status: 15.5rem;
-
     /*--extent-archive-icon: 1.75rem;  !* size of check / x icons in Status Filter Chooser *!*/
+
     --choice-fetch-color-bg: inherit; /*#d1d5da;*/
     --choice-fetch-border-radius: .375rem;
 
     --height-piechart-display: 210px;
 
     --border-default:1px solid black;
+
+    --width-overview-column: 673px;
 }
 
 #my-url-tooltip {
@@ -45,10 +45,9 @@
 }
 
 .url-overview-column {
-    overflow: auto;
-    width: 327px;
-    min-width: 327px;
-    /*flex:0 0 317px;*/
+    overflow: hidden;
+    width: var(--width-overview-column);
+    min-width: var(--width-overview-column);
 }
 .url-overview > h4 {
     color: grey;

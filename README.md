@@ -79,7 +79,7 @@ Within the PageData component, the data is massaged and decorated with anything 
 - fetching the status code of all the URLs
 - transforming the references so that they can be filtered and displayed in a more comfortable manner.
 
-The PageData component:
+#### The PageData component
 ```
 <Loader/> // displays while data is being fetched
 
@@ -90,21 +90,26 @@ One of the following views is displayed, showing the information in different wa
     <RefDisplay pageData={pageData} <options> />
 ```
 
-For UrlDisplay:
+#### UrlDisplay
 ```
 <UrlDisplay>
     <UrlOverview>
     <UrlFlock>
     <RefFlock>
 ```
-For FldDisplay
+
+#### UrlOverview
+
+Contains the graphs and charts depicting URL statistics. Clicking on these charts produces a filter upon the URL List (represented by UrlFlock)
+
+#### FldDisplay
 _(Fld is the legacy moniker for "First Level Domain". It just means the Domains view)_:
 ```
 <FldDisplay>
     <FldFlock>
     <RefFlock>
 ```
-For RefDisplay:
+#### RefDisplay
 ```
 <RefDisplay>
     <RefOverview>
