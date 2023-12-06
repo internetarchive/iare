@@ -129,7 +129,7 @@ const TemplateChart = ({pageData, options, onAction}) => {
 
     const onClickLegend = e => {
 
-        const template = e.target.closest('.legend-entry').dataset['template_id'];
+        const template = e.target.closest('.legend-entry').dataset['link'];
         // alert(`onCLickLegend: ${template}`)
         onAction({action: "setTemplateFilter", value: template})
     }
