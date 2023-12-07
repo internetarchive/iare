@@ -50,7 +50,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
 
     // add class to body to indicate environment
     useEffect(() => {
-        console.log('APP: useEffect[env]: app name: ' + package_json.name, 'version: ' + package_json.version)
+        console.log('APP: useEffect[env]: app name: ' + package_json.name, ', version: ' + package_json.version)
         document.body.classList.add(env);
     }, [env])
 
@@ -359,6 +359,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         <div style={{marginBottom:".5rem"}}>{iariChoiceSelect} {methodChoiceSelect}</div>
         <div>{buttons}</div>
         {/*<div className={"choice-wrapper"}>{iariChoiceSelect}{methodChoiceSelect}</div>*/}
+        <p><span className={'label'}>IARE version:</span> {package_json.version}</p>
         <p><span className={'label'}>IARI Source:</span> {myIariSourceId} ({IariSources[myIariSourceId]?.proxy})</p>
         <p><span className={'label'}>Check Method:</span> {UrlStatusCheckMethods[checkMethod].caption} ({checkMethod})</p>
         <p><span className={'label'}>URL from address line:</span> {myPath}</p>
@@ -381,13 +382,13 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         isShowNewFeatures: isShowNewFeatures,
     }
 
-    console.log(`rendering App component:`, {
+    console.log(`rendering App component:`, JSON.stringify({
         path: targetPath,
         refreshCheck: refreshCheck,
         statusMethod: checkMethod,
         iari_source: myIariSourceId,
         config: config,
-    })
+    }))
 
     const defaultIfEmpty = "https://en.wikipedia.org/wiki/"
 

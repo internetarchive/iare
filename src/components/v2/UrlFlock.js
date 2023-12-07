@@ -284,10 +284,10 @@ const urlFlock = React.memo( function UrlFlock({
         } else if (myClassName === "url-archive_status") {
             // WBM archive status column special handling
             html = row.dataset.live_state
-                ? `<div>IABot live_state value: ${row.dataset.live_state} - ${iabotLiveStatusCodes[row.dataset.live_state]}` +
+                ? `<div>${row.dataset.archive_status === "true" ? 'Archived' : 'Not Archived'}` +
                   `<br/>` +
-                  `${row.dataset.archive_status === "true" ? 'Archived' : 'Not Archived'}</div>`
-               : `archive_status = ${row.dataset.archive_status}, live_state = ${row.dataset.live_state}`
+                  `IABot live_state: ${row.dataset.live_state} - ${iabotLiveStatusCodes[row.dataset.live_state]}</div>`
+               : `IABot archive_status = ${row.dataset.archive_status}<br/>IABot live_state = ${row.dataset.live_state}`
 
         } else if (myClassName === "url-citations") {
             // live status from template special handling
