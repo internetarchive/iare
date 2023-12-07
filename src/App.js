@@ -358,7 +358,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
     const debug = <div className={"debug-section " + (isDebug ? "debug-on" : "debug-off")}>
         <div style={{marginBottom:".5rem"}}>{iariChoiceSelect} {methodChoiceSelect}</div>
         <div>{buttons}</div>
-        {/*<div className={"choice-wrapper"}>{iariChoiceSelect}{methodChoiceSelect}</div>*/}
+        <p><span className={'label'}>Environment:</span> {env}, ({window.location.host})</p>
         <p><span className={'label'}>IARE version:</span> {package_json.version}</p>
         <p><span className={'label'}>IARI Source:</span> {myIariSourceId} ({IariSources[myIariSourceId]?.proxy})</p>
         <p><span className={'label'}>Check Method:</span> {UrlStatusCheckMethods[checkMethod].caption} ({checkMethod})</p>

@@ -127,6 +127,9 @@ body.env-other .header-aux1-display span.non-production {
 .debug-section.debug-off {
     display: none;
 }
+.debug-section > p {
+    margin-bottom: .67rem;
+}
 .debug-section a {
     color:lightskyblue;
 }
