@@ -562,8 +562,10 @@ const urlFlock = React.memo( function UrlFlock({
             {/* second header row - contains column labels */}
             <div className={"url-row url-header-row"}>
 
+                {/*<div className={"url-name"} onClick={() => {handleSortClick("name")}}*/}
+                {/*><span className={"pull-right"} sxxtyle={{float:"right"}}>Method used to Check Status: {checkMethodDisplay}</span><br/>URL Link</div>*/}
                 <div className={"url-name"} onClick={() => {handleSortClick("name")}}
-                ><span className={"pull-right"} style={{float:"right"}}>Method used to Check Status: {checkMethodDisplay}</span><br/>URL Link</div>
+                ><br/>URL Link</div>
 
                 <div className={"url-status"} onClick={() => {handleSortClick("status")}}
                 >Link<br/>Status</div>
