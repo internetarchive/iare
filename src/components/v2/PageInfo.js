@@ -3,7 +3,7 @@ import ArrayDisplay from "../ArrayDisplay";
 import PureJson from "../utils/PureJson";
 import {convertToCSV, copyToClipboard} from "../../utils/utils";
 import {ConfigContext} from "../../contexts/ConfigContext";
-import {UrlStatusCheckMethods} from "../../constants/checkMethods";
+// import {UrlStatusCheckMethods} from "../../constants/checkMethods";
 
 function ClickButton( {buttonCaption=null, buttonText='', handleClick}) {
     const buttonMarkup = buttonCaption ? buttonCaption : <span>{buttonText}</span>
