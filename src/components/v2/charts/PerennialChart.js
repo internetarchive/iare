@@ -124,7 +124,7 @@ const PerennialChart = ({pageData, options, onAction}) => {
     }
 
     return <>
-        <h4>Reliability Statistics</h4>
+        <h4 className={`chart-title${options?.captionClass ? ` ${options.captionClass}`: ''}`}>Reliability Statistics</h4>
         <h4 className={"chart-instruction"}>Click to filter URL List</h4>
         <ChartLegend data={perennialData} onClick={onClickLegend} colors={colorArray} className={"chart-legend-perennial"} />
 

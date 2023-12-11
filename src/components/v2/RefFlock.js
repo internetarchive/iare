@@ -104,7 +104,7 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
         setRefDetails(data);  // use reference data direct from page data, rather than fetching it again fresh from source
         setOpenModal(true)
 
-        // // TODO: we do NOT do a force refresh of ref data here; instead we get it from ref list that cae with article page data
+        // // TODO: we do NOT do a force refresh of ref data here; instead we get it from ref list that came with article page data
         // // TODO: do we want to use refresh here? respect a refresh flag?
         // const myEndpoint = `${myIariBase}/statistics/reference/${ref.id}`;
         //

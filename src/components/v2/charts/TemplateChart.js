@@ -135,7 +135,7 @@ const TemplateChart = ({pageData, options, onAction}) => {
     }
 
     return <>
-        <h4>Template Occurrences</h4>
+        <h4 className={`chart-title${options?.captionClass ? ` ${options.captionClass}`: ''}`}>Template Occurrences</h4>
         <h4 className={"chart-instruction"}>Click to filter URL and References Lists</h4>
 
         <ChartLegend data={templateData} onClick={onClickLegend} colors={colorArray} className={"chart-legend-templates"} />

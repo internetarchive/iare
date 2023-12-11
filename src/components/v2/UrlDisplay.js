@@ -14,6 +14,7 @@ import {Tooltip as MyTooltip} from "react-tooltip";
 const localized = {
     "url_display_title":"URLs",
     "Actionable": "Actionable",
+    "show_links": " - Show Links from Citations that can be improved right now"
 }
 
 function ActionFilters( {filterSet= null, filterRender, flock = [], onAction, options = {}, currentFilterName = '', tooltipId='', className = null}) {
@@ -23,14 +24,12 @@ function ActionFilters( {filterSet= null, filterRender, flock = [], onAction, op
         })
     }
 
-    const caption = <>{localized.Actionable}<span
-        className={"inferior"}> - Show Links from Citations that can be improved right now</span></>
 
     return <FilterButtons
         flock={flock}  // flock set to count filters against
         filterMap={filterSet}
         onClick={handleActionable}
-        caption={caption}
+        caption={null}
         currentFilterName={currentFilterName}  // sets "pressed" default selection
         className={className}
         tooltipId={tooltipId}
@@ -394,6 +393,8 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                                className={"tooltip-actionable"}
     />
 
+    const actionables = <h4 className={"box-caption"}>{localized.Actionable}<span className={"inferior"}>{localized.show_links}</span></h4>
+
     const urlFlockHeadMatter = <>
         {false && <h3>{localized.url_display_title}</h3>}
 
@@ -455,8 +456,15 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
     return <>
 
+        {myConfig.isShowUrlOverview && <div className={"section-box url-overview-column"}>
+            <UrlOverview pageData={pageData} options={{}} onAction={handleAction}/>
+        </div>}
+
+
         <div className={"section-box"}>
             {actionableTooltip}
+
+            {actionables}
 
             {urlFlockHeadMatter}
 
@@ -468,18 +476,11 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                       fetchMethod={myConfig.urlStatusMethod} />
         </div>
 
-        {myConfig.isShowUrlOverview && <div className={"section-box url-overview-column"}>
-            {/*<h3>Filters</h3>*/}
-            <UrlOverview pageData={pageData} options={{}} onAction={handleAction}/>
-        </div>}
 
-
-        {/* References List is tentative - may go away soon... */}
-        {myConfig.isShowReferences && <div className={"section-box"}>
-
-            <h3 style={{xxdisplay:"inline-block"}}>References List</h3>
+        {myConfig.isShowReferences && /* References List is tentative - may go away soon... */
+        <div className={"section-box"}>
+            <h4 className={"box-caption"}>References List</h4>
             <RefFlock refArray={refArray} refFilterDef={refFilter} onAction={handleAction} extraCaption={extraRefCaption} />
-
         </div>}
 
 

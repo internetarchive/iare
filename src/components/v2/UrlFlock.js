@@ -11,11 +11,15 @@ const localized = {
     "show_all_button_text":"Show All",
 }
 
-const urlListDef = {
+const urlListDef = {  // keys match class names
     columns : {
         "url-name": {
             ttHeader: `<div>URL Link Text</div>`,
-            ttData: `<div>Link Text of URL</div>`
+            ttData: `<div>Link Text of URL</div>`,
+            tooltip: {
+                header: `<div>URL Link Text</div>`,
+                rows: `<div>Link Text of URL</div>`,
+            }
         },
         "url-status": {
             ttHeader: `<div>HTTP Status Code of Primary URL</div>`,
@@ -281,7 +285,8 @@ const urlFlock = React.memo( function UrlFlock({
             const statusDescription = httpStatusCodes[row.dataset.status_code]
             html = `<div>${row.dataset.status_code} : ${statusDescription}</div>`
 
-        } else if (myClassName === "url-archive_status") {
+        } else
+            if (myClassName === "url-archive_status") {
             // WBM archive status column special handling
             html = row.dataset.live_state
                 ? `<div>${row.dataset.archive_status === "true" ? 'Archived' : 'Not Archived'}` +
@@ -289,7 +294,8 @@ const urlFlock = React.memo( function UrlFlock({
                   `IABot live_state: ${row.dataset.live_state} - ${iabotLiveStatusCodes[row.dataset.live_state]}</div>`
                : `IABot archive_status = ${row.dataset.archive_status}<br/>IABot live_state = ${row.dataset.live_state}`
 
-        } else if (myClassName === "url-citations") {
+        } else
+            if (myClassName === "url-citations") {
             // live status from template special handling
             html = row.dataset.citation_status && row.dataset.citation_status !== '--'
                 ? `<div>Link Status ${'"' + row.dataset.citation_status + '"'} as indicated in Citation</div>`
@@ -500,7 +506,9 @@ const urlFlock = React.memo( function UrlFlock({
 
         const buttonCopy = <button className={'btn utility-button small-button'} onClick={handleCopyClick} ><span>Copy to Clipboard</span></button>
 
-        const firstLineCaption = `${filteredUrls.length.toString()} ${filteredUrls.length === 1 ? 'URL' : 'URLs'}, Status Check Method: ${checkMethodDisplay}`
+        const firstLineCaption = `${filteredUrls.length.toString()} ${filteredUrls.length === 1 
+            ? 'URL' 
+            : 'URLs'}, Status Check Method: ${checkMethodDisplay}`
 
         const flockMetaHeader = <div className={"url-list-meta-header"}>
             <div>
@@ -553,15 +561,16 @@ const urlFlock = React.memo( function UrlFlock({
 
             {/* second header row - contains column labels */}
             <div className={"url-row url-header-row"}>
-                <div className={"url-name"} onClick={() => {
-                    handleSortClick("name")
-                }
-                }><br/>URL Link</div>
 
-                <div className={"url-status"} onClick={() => {
-                    handleSortClick("status")
-                }
-                }>Status<br/>{checkMethodDisplay}</div>
+                <div className={"url-name"} onClick={() => {handleSortClick("name")}}
+                ><span className={"pull-right"} style={{float:"right"}}>Method used to Check Status: {checkMethodDisplay}</span><br/>URL Link</div>
+
+                <div className={"url-status"} onClick={() => {handleSortClick("status")}}
+                >Link<br/>Status</div>
+
+
+                {/*<div className={"url-status"} onClick={() => {handleSortClick("status")}}*/}
+                {/*>Status<br/>{checkMethodDisplay}</div>*/}
 
                 <div className={"url-archive_status"} onClick={() => { handleSortClick("archive_status"); } }
                     >{archiveFilterDefs['iabot']._.name}</div>
@@ -632,7 +641,7 @@ const urlFlock = React.memo( function UrlFlock({
     }
     
 
-    const tooltip = <MyTooltip id="my-url-tooltip"
+    const tooltipFlock = <MyTooltip id="my-url-tooltip"
                                float={true}
                                closeOnEsc={true}
                                delayShow={420}
@@ -647,13 +656,11 @@ const urlFlock = React.memo( function UrlFlock({
     return <>
         <div className={"url-flock"}
              data-tooltip-id="my-url-tooltip"
-             // data-tooltip-content={urlTooltipText}
              data-tooltip-html={urlTooltipHtml}
              onMouseOver={onHoverUrlFlock}
-            >
-            {urls}
-        </div>
-        {tooltip}
+            >{urls}</div>
+
+        {tooltipFlock}
     </>
 })
 

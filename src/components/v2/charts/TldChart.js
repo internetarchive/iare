@@ -116,7 +116,7 @@ const TldChart = ({pageData, options, onAction}) => {
     }
 
     return <>
-        <h4>Top Level Domains</h4>
+        <h4 className={`chart-title${options?.captionClass ? ` ${options.captionClass}`: ''}`}>Top Level Domains</h4>
         <h4 className={"chart-instruction"}>Click to filter URL List</h4>
         <ChartLegend data={tldData} onClick={onClickLegend} colors={colorArray} className={"chart-legend-tld"} />
 

@@ -361,3 +361,11 @@ table.single-detail tr td:not(:first-child) {
 font-style:italic;
 font-weight:normal;
 }
+
+.box-caption {
+    border: 2px solid #2585cc !important;
+    border-radius: 0.3rem;
+    padding: 0.2rem 0.35rem 0.3rem !important;
+    background-color: #2299e8;
+    color: white !important;
+}
