@@ -1,5 +1,8 @@
 # Changelog of IARE
 
+## v0.2.24.14
+- Chart captions and section headings consistent markup
+
 ## v0.2.24.13
 - Uses regex to determine production environment
 
