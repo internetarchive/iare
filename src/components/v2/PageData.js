@@ -444,6 +444,32 @@ export default function PageData({pageData = {}}) {
 
     }, [rspDomains])
 
+    const processBooksData = useCallback( pageData => {
+        // come up with books data for URL
+
+        if (!pageData?.urlArray) return
+
+        const bookStats = {}
+
+        pageData.urlArray.forEach(urlObj => {
+            /* for each url:
+            if templates contains "cite book", then
+            - add or increment entry for bookStats[netloc]
+             */
+            if (!urlObj.reference_info?.templates) return
+            if (!urlObj.reference_info.templates.includes("cite book")) return
+            if (!urlObj.netloc) return
+
+            const netloc = urlObj.netloc
+            if (!bookStats[netloc]) bookStats[netloc] = 0
+            bookStats[netloc] = bookStats[netloc] + 1
+        })
+
+        if (!pageData["stats"]) pageData["stats"] = {}
+        pageData.stats["books"] = bookStats
+
+    }, [])
+
 
     useEffect( () => { // [myIariBase, pageData, processReferences, processUrls, myStatusCheckMethod]
 
@@ -473,6 +499,7 @@ export default function PageData({pageData = {}}) {
                 processReferences(pageData)  // associates url links with references
                 associateRefsWithLinks(pageData)
                 processRspData(pageData)
+                processBooksData(pageData)
 
                 // decorate pageData a little
                 pageData.statusCheckMethod = myStatusCheckMethod;
@@ -493,7 +520,16 @@ export default function PageData({pageData = {}}) {
 
         fetchPageData()
 
-        },   [myIariBase, pageData, processReferences, processUrls, associateRefsWithLinks, myStatusCheckMethod, processRspData])
+        },   [
+            myIariBase,
+            pageData,
+            processReferences,
+            processUrls,
+            associateRefsWithLinks,
+            myStatusCheckMethod,
+            processRspData,
+            processBooksData,
+        ])
 
 
     const handleViewTypeChange = (event) => {

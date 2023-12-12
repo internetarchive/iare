@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.2.24.15",
-  "version_name": "0.2.24.14.better_archives",
+  "version": "0.2.24.16",
+  "version_name": "0.2.24.16.books references chart",
   "private": true,
   "dependencies": {
     "bootstrap": "^5.3.0-alpha3",

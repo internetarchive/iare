@@ -116,9 +116,10 @@ const fetchUrl = async ({iariBase, url, refresh=false, timeout=0, method=''}) =>
     let endpoint_status_code = 0;
 
     const resolveStatusResults = (data) => {
-        // interprets data from iari check-url endpoint
+        // "data" includes all url fields from iari check-url endpoint
         const results = {
             url: url,
+            netloc: data.netloc,
             status_code_method: data.status_code_method,
             status_code: data.status_code,
             status_code_error_details: data.status_code_error_details,
