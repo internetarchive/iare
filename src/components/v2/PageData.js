@@ -3,7 +3,8 @@ import UrlDisplay from "./UrlDisplay";
 import RefDisplay from "./RefDisplay";
 import FldDisplay from "./FldDisplay";
 import Loader from "../Loader";
-import {fetchUrlArchives, fetchUrls, processForIari} from "../../utils/iariUtils.js"
+// import {fetchUrlArchives, fetchUrls, processForIari} from "../../utils/iariUtils.js"
+import {fetchUrls, processForIari} from "../../utils/iariUtils.js"
 import {ConfigContext} from "../../contexts/ConfigContext";
 import {
     ARCHIVE_STATUS_FILTER_MAP,
@@ -61,19 +62,12 @@ export default function PageData({pageData = {}}) {
     // called in useEffect when new url results received
     const processUrls = useCallback( (pageData, urlResults) => {
 
-        const gatherStats = (urlArray) => {
+        const gatherTldStats = (urlArray) => {
             const tldDict = {}  // stores count of each tld
             if (urlArray?.length) {
                 urlArray.forEach( urlObj => {
                     if (!tldDict[urlObj.tld]) tldDict[urlObj.tld] = 0
                     tldDict[urlObj.tld] = tldDict[urlObj.tld] + 1
-
-                    // if (!ref.template_names?.length) return
-                    // ref.template_names.forEach(templateName => {
-                    //     // console.log(`Another Template found for ref id ${ref.id}: ${templateName}`)
-                    //     if (!templateDict[templateName]) templateDict[templateName] = 0
-                    //     templateDict[templateName] = templateDict[templateName] + 1
-                    // })
                 })
             }
             pageData.tld_statistics = tldDict
@@ -107,30 +101,7 @@ export default function PageData({pageData = {}}) {
             return urlDict[urlKey]
         })
 
-        gatherStats(pageData.urlArray)
-
-    }, [])
-
-    const processUrlArchives = useCallback( (pageData, urlArchiveResults) => {
-        // assumes urlArchives is array of [ archive props ]
-        if (!urlArchiveResults?.length) {
-            // TODO Error here?
-            console.error(`processUrlArchives: No urlArchiveResults found`)
-            return
-        }
-
-        // append urlDict data for each returned url
-        urlArchiveResults.forEach(u => {
-            const urlObj = pageData.urlDict[u.data.url]
-            if (urlObj) {
-                urlObj.iabot_archive_status = u.data  // TODO consider changing to just archive_status, with a "archive_source"" prop
-            } else {
-                // there was no entry in urlDict for primary url that archive was based on...
-                // TODO how do we indicate this error? urlDict[url].error = true w/ error_details?
-                console.error(`processUrlArchives: No entry in urlDict found for url: ${u.data.url}`)
-            }
-
-        })
+        gatherTldStats(pageData.urlArray)
 
     }, [])
 
@@ -434,31 +405,39 @@ export default function PageData({pageData = {}}) {
         })
 
         pageData.urlArray.forEach(urlObj => {
-            // if sld of url is in rsp category:
-            // - pull that category into url object's rsp[] property
-            // - increment rsp category count in rspStats
+            // for each original url:
+            //      if sld or _3ld is in rsp category:
+            //          - pull that category into url object's rsp[] property
+            //          - increment rsp category count in rspStats
 
             urlObj.rsp = []  // Reliable Source / Perennial
 
-            rspMapKeys.forEach(rspKey => {
-                const rspCategoryKey = rspMap[rspKey].rspKey
+            // check each rsp to see if this url is included in any of 'em
 
-                // if current url.sld part of this rsp's collection, modify urlDict and rspStats
+            rspMapKeys.forEach(key => {
+                const rspKey = rspMap[key].rspKey
 
-                if (!rspDomains[rspCategoryKey]) {
-                    console.error(`rsp domain ${rspCategoryKey} not found.`)
+                if (!rspDomains[rspKey]) {
+                    // skip unhandled categories
+                    if (rspKey !== "__unassigned") console.error(`rsp domain ${rspKey} not found.`)
                     return
                 }
 
-                if (rspDomains[rspCategoryKey].includes(urlObj.sld)
+                // if url's .sld or ._3ld included in this rsp's collection, modify urlObj and rspStats
+
+                if (rspDomains[rspKey].includes(urlObj.sld)
                     ||
-                    rspDomains[rspCategoryKey].includes(urlObj._3ld)) {
-                    urlObj.rsp.push( rspKey )  // add this rsp to this url
-                    rspStats[rspKey] = rspStats[rspKey] + 1
+                    rspDomains[rspKey].includes(urlObj._3ld)) {
+                    urlObj.rsp.push( key )  // add this rsp to this url
+                    rspStats[key] = rspStats[key] + 1
                 }
 
             })
-
+            // if not found in any rsp category, assign to "__unassigned"
+            if (urlObj.rsp.length === 0) {
+                urlObj.rsp.push( "__unassigned" )  // add this rsp to this url
+                rspStats["__unassigned"] = rspStats["__unassigned"] + 1
+            }
         })
 
         pageData.rsp_statistics = rspStats
@@ -467,7 +446,6 @@ export default function PageData({pageData = {}}) {
 
 
     useEffect( () => { // [myIariBase, pageData, processReferences, processUrls, myStatusCheckMethod]
-        // const context = 'PageData::useEffect [myIariBase, pageData, processReferences, processUrls, associateRefsWithLinks, myStatusCheckMethod]'
 
         const fetchPageUrls = () => {
             return fetchUrls( {
@@ -476,13 +454,6 @@ export default function PageData({pageData = {}}) {
                 refresh: pageData.forceRefresh,
                 timeout: 60,
                 method: myStatusCheckMethod
-            })
-        }
-        const fetchPageUrlArchives = () => {
-            return fetchUrlArchives( {
-                iariBase: myIariBase,
-                urlArray: pageData.urls,
-                refresh: pageData.forceRefresh,
             })
         }
 
@@ -494,23 +465,20 @@ export default function PageData({pageData = {}}) {
                 setIsDataReady(false);
                 setIsLoadingUrls(true);
 
-                // fetch url and archive info and wair for results before continuing
+                // fetch info for each url and wait for results before continuing
                 const myUrls = await fetchPageUrls()
-                const myUrlArchives = await fetchPageUrlArchives()  // NB this extra call for archive info will be unnecessary when IARI includes archive info in url info
 
-                // process received data
+                // process received data - TODO this should eventually be done in IARI
                 processUrls(pageData, myUrls);  // creates pageData.urlDict and pageData.urlArray
-                processUrlArchives(pageData, myUrlArchives)  // adds archive data to url definitions
-                    // NB this also will be unnecessary when IARI includes archive info in url info
-
                 processReferences(pageData)  // associates url links with references
                 associateRefsWithLinks(pageData)
                 processRspData(pageData)
 
+                // decorate pageData a little
                 pageData.statusCheckMethod = myStatusCheckMethod;
 
+                // announce to UI all is ready
                 setIsDataReady(true);
-
                 setIsLoadingUrls(false);
 
             } catch (error) {
@@ -523,10 +491,9 @@ export default function PageData({pageData = {}}) {
 
         }
 
-
         fetchPageData()
 
-        },   [myIariBase, pageData, processReferences, processUrls, processUrlArchives, associateRefsWithLinks, myStatusCheckMethod, processRspData])
+        },   [myIariBase, pageData, processReferences, processUrls, associateRefsWithLinks, myStatusCheckMethod, processRspData])
 
 
     const handleViewTypeChange = (event) => {
@@ -546,7 +513,6 @@ export default function PageData({pageData = {}}) {
     }
 
     const viewOptions = <div className={"view-options-selection"}>
-        {/*<div>View by</div>{Object.keys(viewTypes).map(viewType => {*/}
             {Object.keys(viewTypes).map(viewType => {
                 return <div key={viewType} >
                     <label>

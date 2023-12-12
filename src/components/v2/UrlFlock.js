@@ -154,8 +154,8 @@ const urlFlock = React.memo( function UrlFlock({
     }
 
     const sortByArchiveStatus = (a,b) => {
-        const archiveA = a?.iabot_archive_status.hasArchive ? 1 : 0;
-        const archiveB = b?.iabot_archive_status.hasArchive ? 1 : 0;
+        const archiveA = a?.archive_status.hasArchive ? 1 : 0;
+        const archiveB = b?.archive_status.hasArchive ? 1 : 0;
 
         // respect sortDir
         if (archiveA < archiveB) return sort.sorts['archive_status'].dir * -1;
@@ -401,7 +401,7 @@ const urlFlock = React.memo( function UrlFlock({
             filteredUrls.sort(sortFunction)
         }
 
-        const getArchiveStatusInfo = (u => <span className={u.iabot_archive_status?.hasArchive ? "archive-yes" : "archive-no" }></span> )
+        const getArchiveStatusInfo = (u => <span className={u.archive_status?.hasArchive ? "archive-yes" : "archive-no" }></span> )
 
         const getCitationInfo = (u => {
             // for now, returns array of statuses from url's associated references
@@ -451,9 +451,9 @@ const urlFlock = React.memo( function UrlFlock({
             return <div className={classes} key={i}
                         data-url={u.url}
                         data-status_code={u.status_code}
-                        data-archive_status={u.iabot_archive_status?.hasArchive}
+                        data-archive_status={u.archive_status?.hasArchive}
                         data-citation_status={citationStatus}
-                        data-live_state={u.iabot_archive_status?.live_state}
+                        data-live_state={u.archive_status?.live_state}
                         data-perennial={u.rsp ? u.rsp[0] : null}  // just return first perennial if found for now...dont deal with > 1
             >
                 <div className={"url-name"}>{u.url}</div>

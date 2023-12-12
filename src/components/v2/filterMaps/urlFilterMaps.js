@@ -220,7 +220,7 @@ export const ACTIONABLE_FILTER_MAP = {
         filterFunction: () => (d) => {
             return (d.status_code < 200 || d.status_code >= 400)
                 &&
-                (!d.iabot_archive_status?.hasArchive)
+                (!d.archive_status?.hasArchive)
         },
     },
 };
@@ -238,7 +238,7 @@ export const ARCHIVE_STATUS_FILTER_MAP = {
             desc: "IABot has archive for URL.",
             default: false,
             filterFunction: () => (url) => {
-                return url.iabot_archive_status?.hasArchive
+                return url.archive_status?.hasArchive
             },
         },
         no: {
@@ -246,7 +246,7 @@ export const ARCHIVE_STATUS_FILTER_MAP = {
             desc: "IABot does not have archive for URL",
             default: false,
             filterFunction: () => (url) => {
-                return !(url.iabot_archive_status?.hasArchive)
+                return !(url.archive_status?.hasArchive)
             },
         },
         all: {
