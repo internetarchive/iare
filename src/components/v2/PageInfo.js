@@ -3,6 +3,7 @@ import ArrayDisplay from "../ArrayDisplay";
 import PureJson from "../utils/PureJson";
 import {convertToCSV, copyToClipboard} from "../../utils/utils";
 import {ConfigContext} from "../../contexts/ConfigContext";
+// import {UrlStatusCheckMethods} from "../../constants/checkMethods";
 
 function ClickButton( {buttonCaption=null, buttonText='', handleClick}) {
     const buttonMarkup = buttonCaption ? buttonCaption : <span>{buttonText}</span>
@@ -120,6 +121,8 @@ export default function PageInfo({ pageData }) {
             ? <div className={'detail-section' + (showDetail ? ' detail-show' : ' detail-hide') }>
 
                 <p>media type: {pageData.mediaType}</p>
+
+                <p>Check Method: {myConfig.urlStatusMethod}</p>
 
                 {ores_score_display
                     ? <>

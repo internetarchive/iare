@@ -271,11 +271,11 @@ const UrlOverview = React.memo(({pageData, options, onAction}) => {  // React.me
 
             <div className={"col col-6"}>
                 <div className={'section-sub'}>
-                    <UrlStatusChart pageData={pageData} options={{}} colors={colors} onAction={onAction} />
+                    <UrlStatusChart pageData={pageData} options={{captionClass:"box-caption"}} colors={colors} onAction={onAction} />
                 </div>
 
                 <div className={'section-sub'}>
-                    <PerennialChart pageData={pageData} options={{}} onAction={onAction} />
+                    <PerennialChart pageData={pageData} options={{captionClass:"box-caption"}} onAction={onAction} />
                 </div>
 
             </div>
@@ -284,13 +284,13 @@ const UrlOverview = React.memo(({pageData, options, onAction}) => {  // React.me
             <div className={"col col-6"}>
                 {myConfig.isShowNewFeatures &&
                     <div className={'section-sub'}>
-                        <TldChart pageData={pageData} options={{}} onAction={onAction} />
+                        <TldChart pageData={pageData} options={{captionClass:"box-caption"}} onAction={onAction} />
                     </div>
                 }
 
                 {myConfig.isShowNewFeatures &&
                     <div className={'section-sub'}>
-                        <TemplateChart pageData={pageData} options={{}} onAction={onAction} />
+                        <TemplateChart pageData={pageData} options={{captionClass:"box-caption"}} onAction={onAction} />
                     </div>
                 }
             </div>
