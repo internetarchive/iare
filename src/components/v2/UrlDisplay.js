@@ -149,6 +149,16 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
         }
 
+        else if (action === "setBooksFilter") {
+            console.log (`UrlDisplay: handleAction: setting booksFilter for ${value}`);
+            setUrlFilters({ "url_book_filter" : getUrlBooksFilter(value) })
+            setSelectedUrl(null)
+
+            // // and also do the references
+            // setRefFilter(getRefTemplateFilter(value))
+
+        }
+
         else if (action === "setTldFilter") {
             console.log (`UrlDisplay: handleAction: setting tld filter for ${value}`);
             // only filter urls (for now)
@@ -255,6 +265,29 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                     return r.template_names.includes(templateName)  // return true of templateName represented
                 })
 
+            },
+        }
+    }
+
+    const getUrlBooksFilter = (bookDomain) => {
+
+        if (!bookDomain || bookDomain === '') {
+            return null; // no bookDomain means all filter
+        }
+
+        // return synthetic filter showing only URLs that have bookDomain as their netloc if contains cite book template
+        return {
+
+            desc: `URLs from References that contain "${bookDomain}" in a Cite Book template"`,
+
+            caption: <span>{`Contains Books from "${bookDomain}"`}</span>,
+
+            filterFunction: () => (url) => {
+                // if url.refs.templates include cite book...
+                if (!(url.reference_info.templates.includes("cite book"))) return false
+
+                // and this url's netloc matches the bookDomain
+                return (url.netloc === bookDomain)
             },
         }
     }

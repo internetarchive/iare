@@ -3,7 +3,7 @@ import UrlDisplay from "./UrlDisplay";
 import RefDisplay from "./RefDisplay";
 import FldDisplay from "./FldDisplay";
 import Loader from "../Loader";
-import {fetchUrlArchives, fetchUrls, processForIari} from "../../utils/iariUtils.js"
+import {fetchUrls, iariPostProcessUrl} from "../../utils/iariUtils.js"
 import {ConfigContext} from "../../contexts/ConfigContext";
 import {
     ARCHIVE_STATUS_FILTER_MAP,
@@ -11,6 +11,7 @@ import {
 } from "./filterMaps/urlFilterMaps";
 import {areObjectsEqual} from "../../utils/utils";
 import {categorizedDomains, rspMap} from "../../constants/perennialList";
+import {UrlStatusCheckMethods} from "../../constants/checkMethods";
 
 /*
 When this component is rendered, it must "process" the pageData. This involves:
@@ -45,35 +46,33 @@ export default function PageData({pageData = {}}) {
     const [selectedViewType, setSelectedViewType] = useState('urls')
     const [isLoadingUrls, setIsLoadingUrls] = useState(false)
     const [isDataReady, setIsDataReady] = useState(false)
-    const [isPageError, setIsPageError] = useState(false)
-    const [pageErrorText, setPageErrorText] = useState('')
+    const [pageErrors, setPageErrors] = useState('')
     const [urlStatusLoadingMessage, setUrlStatusLoadingMessage] = useState('')
 
-    // set up iariBase and statusMethod from global config
     let myConfig = React.useContext(ConfigContext)
-    myConfig = myConfig ? myConfig : {} // prevents undefined.<param> errors
+    myConfig = myConfig ? myConfig : {} // prevents undefined myConfig.<param> errors
     const myIariBase = myConfig.iariSource
     const myStatusCheckMethod = myConfig.urlStatusMethod
 
+    // google dev tools does not handle module level imports well, but assigning to a local var makes things work
     const rspDomains = categorizedDomains
+
+
+    const addProcessError = (pageData, newError) => {
+        if (!pageData.process_errors) pageData.process_errors = []
+        pageData.process_errors.push( newError )
+    }
 
     // create pageData.urlDict and pageData.urlArray from urlResults
     // called in useEffect when new url results received
     const processUrls = useCallback( (pageData, urlResults) => {
 
-        const gatherStats = (urlArray) => {
+        const gatherTldStats = (urlArray) => {
             const tldDict = {}  // stores count of each tld
             if (urlArray?.length) {
                 urlArray.forEach( urlObj => {
                     if (!tldDict[urlObj.tld]) tldDict[urlObj.tld] = 0
                     tldDict[urlObj.tld] = tldDict[urlObj.tld] + 1
-
-                    // if (!ref.template_names?.length) return
-                    // ref.template_names.forEach(templateName => {
-                    //     // console.log(`Another Template found for ref id ${ref.id}: ${templateName}`)
-                    //     if (!templateDict[templateName]) templateDict[templateName] = 0
-                    //     templateDict[templateName] = templateDict[templateName] + 1
-                    // })
                 })
             }
             pageData.tld_statistics = tldDict
@@ -81,7 +80,10 @@ export default function PageData({pageData = {}}) {
 
         // create url dict from returned results
         const urlDict = {}
-        urlResults && urlResults.forEach(d => {  // results surround url data with a "data" element
+        urlResults && urlResults.forEach(d => {
+            // results come in with url data surrounded with a "data" element
+            // we remove that level of indirection here
+
             const myUrl = d.data.url
 
             // add entry for url if not there yet
@@ -90,7 +92,15 @@ export default function PageData({pageData = {}}) {
                 urlDict[myUrl].urlCount = 0
             }
 
-            processForIari(urlDict[myUrl])
+            try {
+                iariPostProcessUrl(urlDict[myUrl])  // sets tld, sld, _3ld, and isArchive
+            } catch (error) {
+                console.error(`Error processing URL: ${myUrl} (${error.message})`);
+                console.error(error.stack);
+                addProcessError(pageData, `Error processing URL: ${myUrl} (${error.message})`)
+                // try to fix this urlDict entry?
+                urlDict[myUrl].error = error.message
+            }
 
             // increase usage count of this url by 1; keeps track of repeats
             urlDict[myUrl].urlCount++
@@ -107,30 +117,7 @@ export default function PageData({pageData = {}}) {
             return urlDict[urlKey]
         })
 
-        gatherStats(pageData.urlArray)
-
-    }, [])
-
-    const processUrlArchives = useCallback( (pageData, urlArchiveResults) => {
-        // assumes urlArchives is array of [ archive props ]
-        if (!urlArchiveResults?.length) {
-            // TODO Error here?
-            console.error(`processUrlArchives: No urlArchiveResults found`)
-            return
-        }
-
-        // append urlDict data for each returned url
-        urlArchiveResults.forEach(u => {
-            const urlObj = pageData.urlDict[u.data.url]
-            if (urlObj) {
-                urlObj.iabot_archive_status = u.data  // TODO consider changing to just archive_status, with a "archive_source"" prop
-            } else {
-                // there was no entry in urlDict for primary url that archive was based on...
-                // TODO how do we indicate this error? urlDict[url].error = true w/ error_details?
-                console.error(`processUrlArchives: No entry in urlDict found for url: ${u.data.url}`)
-            }
-
-        })
+        gatherTldStats(pageData.urlArray)
 
     }, [])
 
@@ -211,7 +198,7 @@ export default function PageData({pageData = {}}) {
     }, [])
 
 
-// currently only sets the "hasTemplateArchive" property to true if archive_url parameter found in template
+    // currently only sets the "hasTemplateArchive" property to true if archive_url parameter found in template
     const processReference = useCallback( (ref, urlDict) => {
 
         const templates = ref?.templates ? ref.templates : []
@@ -230,7 +217,7 @@ export default function PageData({pageData = {}}) {
             // set the hasTemplateArchive property of the primaryUrl to true
             if (archiveUrl && urlDict[primaryUrl]) {
                 urlDict[primaryUrl].hasTemplateArchive = true  // this needs work, as there can be more than one template where this url is used.
-                // TODO maybe this is covered when we attach the addociated reference objects to the URL...
+                // TODO maybe this is covered when we attach the associated reference objects to the URL...
             }
         })
 
@@ -434,40 +421,82 @@ export default function PageData({pageData = {}}) {
         })
 
         pageData.urlArray.forEach(urlObj => {
-            // if sld of url is in rsp category:
-            // - pull that category into url object's rsp[] property
-            // - increment rsp category count in rspStats
+            // for each original url:
+            //      if sld or _3ld is in rsp category:
+            //          - pull that category into url object's rsp[] property
+            //          - increment rsp category count in rspStats
 
             urlObj.rsp = []  // Reliable Source / Perennial
 
-            rspMapKeys.forEach(rspKey => {
-                const rspCategoryKey = rspMap[rspKey].rspKey
+            // check each rsp to see if this url is included in any of 'em
 
-                // if current url.sld part of this rsp's collection, modify urlDict and rspStats
+            rspMapKeys.forEach(key => {
+                const rspKey = rspMap[key].rspKey
 
-                if (!rspDomains[rspCategoryKey]) {
-                    console.error(`rsp domain ${rspCategoryKey} not found.`)
+                if (!rspDomains[rspKey]) {
+                    // skip unhandled categories
+                    if (rspKey !== "__unassigned") console.error(`rsp domain ${rspKey} not found.`)
                     return
                 }
 
-                if (rspDomains[rspCategoryKey].includes(urlObj.sld)
+                // if url's .sld or ._3ld included in this rsp's collection, modify urlObj and rspStats
+
+                if (rspDomains[rspKey].includes(urlObj.sld)
                     ||
-                    rspDomains[rspCategoryKey].includes(urlObj._3ld)) {
-                    urlObj.rsp.push( rspKey )  // add this rsp to this url
-                    rspStats[rspKey] = rspStats[rspKey] + 1
+                    rspDomains[rspKey].includes(urlObj._3ld)) {
+                    urlObj.rsp.push( key )  // add this rsp to this url
+                    rspStats[key] = rspStats[key] + 1
                 }
 
             })
-
+            // if not found in any rsp category, assign to "__unassigned"
+            if (urlObj.rsp.length === 0) {
+                urlObj.rsp.push( "__unassigned" )  // add this rsp to this url
+                rspStats["__unassigned"] = rspStats["__unassigned"] + 1
+            }
         })
 
         pageData.rsp_statistics = rspStats
 
     }, [rspDomains])
 
+    const processBooksData = useCallback( pageData => {
+        // come up with books data for URL
+
+        /*
+        from stephen:
+
+        Any URL at books.google.com ...
+         harder to tell for archive.org/details since it can be anything besides a book.
+          Anything at gutenberg.org
+
+         */
+
+        if (!pageData?.urlArray) return
+
+        const bookStats = {}
+
+        pageData.urlArray.forEach(urlObj => {
+            /* for each url:
+            if templates contains "cite book", then
+            - add or increment entry for bookStats[netloc]
+             */
+            if (!urlObj.reference_info?.templates) return
+            if (!urlObj.reference_info.templates.includes("cite book")) return
+            if (!urlObj.netloc) return
+
+            const netloc = urlObj.netloc
+            if (!bookStats[netloc]) bookStats[netloc] = 0
+            bookStats[netloc] = bookStats[netloc] + 1
+        })
+
+        if (!pageData["stats"]) pageData["stats"] = {}
+        pageData.stats["books"] = bookStats
+
+    }, [])
+
 
     useEffect( () => { // [myIariBase, pageData, processReferences, processUrls, myStatusCheckMethod]
-        // const context = 'PageData::useEffect [myIariBase, pageData, processReferences, processUrls, associateRefsWithLinks, myStatusCheckMethod]'
 
         const fetchPageUrls = () => {
             return fetchUrls( {
@@ -478,55 +507,58 @@ export default function PageData({pageData = {}}) {
                 method: myStatusCheckMethod
             })
         }
-        const fetchPageUrlArchives = () => {
-            return fetchUrlArchives( {
-                iariBase: myIariBase,
-                urlArray: pageData.urls,
-                refresh: pageData.forceRefresh,
-            })
-        }
 
         const fetchPageData = async () => {
 
             try {
 
-                setUrlStatusLoadingMessage(`Retrieving URL status codes with ${myStatusCheckMethod} method`)
+                setUrlStatusLoadingMessage(`Retrieving URL status codes with ${UrlStatusCheckMethods[myStatusCheckMethod].caption} method`)
                 setIsDataReady(false);
                 setIsLoadingUrls(true);
 
-                // fetch url and archive info and wair for results before continuing
+                // decorate pageData a little
+                pageData.statusCheckMethod = myStatusCheckMethod;
+
+                // fetch info for each url and wait for results before continuing
                 const myUrls = await fetchPageUrls()
-                const myUrlArchives = await fetchPageUrlArchives()  // NB this extra call for archive info will be unnecessary when IARI includes archive info in url info
 
-                // process received data
-                processUrls(pageData, myUrls);  // creates pageData.urlDict and pageData.urlArray
-                processUrlArchives(pageData, myUrlArchives)  // adds archive data to url definitions
-                    // NB this also will be unnecessary when IARI includes archive info in url info
-
+                // process received data - TODO this should eventually be done in IARI
+                processUrls(pageData, myUrls);  // creates pageData.urlDict and pageData.urlArray; loads pageData.errors
                 processReferences(pageData)  // associates url links with references
                 associateRefsWithLinks(pageData)
                 processRspData(pageData)
+                processBooksData(pageData)
 
-                pageData.statusCheckMethod = myStatusCheckMethod;
+                // if any errors, display
+                if (pageData.process_errors?.length > 0) setPageErrors(pageData.process_errors)
 
+                // announce to UI all is ready
                 setIsDataReady(true);
-
                 setIsLoadingUrls(false);
 
             } catch (error) {
-                console.error('Error fetching data:', error);
+                console.error('Error fetching data:', error.message);
+                console.error(error.stack);
                 pageData.urlResults = []
-                setPageErrorText(error.message)
-                setIsPageError(true)
 
+                setPageErrors(error.message)
+                setIsLoadingUrls(false);
             }
 
         }
 
-
         fetchPageData()
 
-        },   [myIariBase, pageData, processReferences, processUrls, processUrlArchives, associateRefsWithLinks, myStatusCheckMethod, processRspData])
+        },   [
+            myIariBase,
+            pageData,
+            processReferences,
+            processUrls,
+            associateRefsWithLinks,
+            myStatusCheckMethod,
+            processRspData,
+            processBooksData,
+        ])
 
 
     const handleViewTypeChange = (event) => {
@@ -546,7 +578,6 @@ export default function PageData({pageData = {}}) {
     }
 
     const viewOptions = <div className={"view-options-selection"}>
-        {/*<div>View by</div>{Object.keys(viewTypes).map(viewType => {*/}
             {Object.keys(viewTypes).map(viewType => {
                 return <div key={viewType} >
                     <label>
@@ -563,12 +594,36 @@ export default function PageData({pageData = {}}) {
 
     if (!pageData) return null;
 
+    const getErrorDisplay = (errors) => {
+        if (!errors) return null
+
+        if (typeof errors === "string") {
+            return (errors.length > 1) ? <div className={"error-display"}>{errors}</div> : null
+        }
+        if (Array.isArray(errors)) {
+            return <div className={"error-display error-display-many"}>
+                {(errors.length === 1)
+                    ? errors[0]
+                    : <>
+                        <div className={"title"}>Errors:</div>
+                        {errors.map((s,i) => {
+                            return <div key={i}>{i + 1}: {s}</div>
+                        })}
+                        </>
+                }
+            </div>
+        }
+        return null
+    }
+
+    const errorDisplay = getErrorDisplay(pageErrors)
+
     return <>
 
         {isLoadingUrls
             ? <Loader message={urlStatusLoadingMessage}/>
             : <>
-                {isPageError && <div className={"error-display"}>{pageErrorText}</div>}
+                {errorDisplay}
 
                 {!isDataReady
                     ? <p>Data Not Ready</p>

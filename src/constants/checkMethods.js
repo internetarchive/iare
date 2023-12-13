@@ -7,7 +7,7 @@ export const UrlStatusCheckMethods = {
 
     WAYBACK: {
         key: 'WAYBACK',
-        caption: 'Wayback',
+        caption: 'Live Web Check',
         endpoint: 'https://iabot-api.archive.org/livewebcheck',
         // must use parameters in the form: ...?url=archive.org
         // don't forget to URL encode the url param value

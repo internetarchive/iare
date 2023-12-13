@@ -1,5 +1,16 @@
 # Changelog of IARE
 
+
+## v0.2.24.17
+- Displays errors if errors encountered while processing data
+
+## v0.2.24.16
+- Book References Chart
+
+## v0.2.24.15
+- uses IARI v 4.2.2
+- WAYBACK link status now cached
+
 ## v0.2.24.14
 - Chart captions and section headings consistent markup
 

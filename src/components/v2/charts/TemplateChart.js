@@ -7,7 +7,6 @@ import ChartLegend from "./ChartLegend";
 const TemplateChart = ({pageData, options, onAction}) => {
 
     if (!pageData?.template_statistics) return <div>
-        <h4>URLs</h4>
         <p>No Template statistics to show.</p>
     </div>
 

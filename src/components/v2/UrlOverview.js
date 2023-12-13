@@ -19,6 +19,7 @@ import {
     SubTitle,
     Colors,
 } from 'chart.js'
+import BooksChart from "./charts/BooksChart";
 
 Chart.register(
     LinearScale,
@@ -69,39 +70,6 @@ const UrlOverview = React.memo(({pageData, options, onAction}) => {  // React.me
     let myConfig = React.useContext(ConfigContext);
     myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
 
-                // useEffect( () => {
-                //
-                //     console.log('filterStatus changed to:', archiveFilterStatus)
-                //
-                //     // create filters array based on archive status values
-                //     let myFilters = []
-                //     Object.keys(archiveFilterStatus).forEach( archiveSource => {
-                //         Object.keys(archiveFilterStatus[archiveSource]).forEach( archiveStatus => {
-                //             if (archiveFilterStatus[archiveSource][archiveStatus]) {
-                //                 myFilters.push(archiveFilterDefs[archiveSource][archiveStatus])
-                //             }
-                //         })
-                //     })
-                //
-                //     // activate the filters
-                //     onAction({
-                //         action: "setArchiveStatusFilters",
-                //         value: {
-                //             caption: "Unused Caption for multi filters",
-                //             filterFunction: myFilters,
-                //         },
-                //     })
-                //
-                // }, [ archiveFilterStatus, onAction ])
-
-
-
-                // // debug display for chartData
-                // return <div>
-                //     <h4>Urls</h4>
-                //     <RawJson obj={chartData} />
-                // </div>
-
     const handleLinkAction = (linkStatus) => {
         onAction({
             action: "setLinkStatusFilter", value: linkStatus,
@@ -138,50 +106,6 @@ const UrlOverview = React.memo(({pageData, options, onAction}) => {  // React.me
             />
         </div>
     </>
-
-
-                // (deprecated) Link Status buttons
-
-                // //
-                // DO NOT DELETE - may recover this code and filter buttons later...
-                // //
-                // const handleArchiveStatusAction = (archiveStatus) => {
-                //     // alert(`handleArchiveStatusAction: action is ${archiveStatus}`)
-                //     onAction({
-                //         action: "setArchiveStatusFilter", value: archiveStatus,
-                //     })
-                // }
-                // // callback for button render function of <FilterButton>
-                // // NB: props.filter.name is magically set to object key name of filter
-                // // NB: props.filter.count is magically set to count of number of items resulting from filter
-                // // TODO: this should be made into a class, or something that takes a standard interface
-                // const renderArchiveStatusButton = (props) => {
-                //     return <>
-                //         <div>{props.filter.caption}</div>
-                //         <div className={`filter-archive-status-wrapper`}>
-                //             <span className={`archive-status archive-status-${props.filter.name}`} />
-                //         </div>
-                //         <div className={'filter-count'}>{props.filter.count}</div>
-                //     </>
-                // }
-                // const makeArchiveStatusFilters = () => {
-                //     return (<>
-                //         <FilterButtons
-                //             flock={pageData.urlArray}
-                //             filterMap={URL_ARCHIVE_STATUS_FILTER_MAP}
-                //             filterList={[]}
-                //             onClick={(e) => {
-                //                 handleArchiveStatusAction(e)
-                //             }}
-                //             caption=''
-                //             className="archive-status-filter-buttons"
-                //             currentFilterName=''
-                //             onRender={renderArchiveStatusButton}
-                //         />
-                //     </>)
-                // }
-
-    // Link Status filter
 
     const buttonShowHideLinkStats = <button
         onClick={() => setShowCitationLinks(!showCitationLinks)} className={"utility-button"}
@@ -260,10 +184,20 @@ const UrlOverview = React.memo(({pageData, options, onAction}) => {  // React.me
         </div>
     </>
 
-
-
-
-
+    const myColors = {
+        blue: "#35a2eb",
+        darkBlue: "#1169a5",
+        red: "#ff6384",
+        teal: "#4bc0c0",
+        orange: "#ff9f40",
+        purple: "#9866ff",
+        yellow: "#ffcd57",
+        green: "#5bbd38",
+        grey: "#c9cbcf",
+        magenta: "#f763ff",
+        black: "#000000",
+        white: "#FFFFFF"
+    }
 
     return <div className={"url-overview"}>
 
@@ -290,9 +224,16 @@ const UrlOverview = React.memo(({pageData, options, onAction}) => {  // React.me
 
                 {myConfig.isShowNewFeatures &&
                     <div className={'section-sub'}>
+                        <BooksChart pageData={pageData} options={{captionClass:"box-caption", colors:myColors}} onAction={onAction} />
+                    </div>
+                }
+
+                {myConfig.isShowNewFeatures &&
+                    <div className={'section-sub'}>
                         <TemplateChart pageData={pageData} options={{captionClass:"box-caption"}} onAction={onAction} />
                     </div>
                 }
+
             </div>
 
         </div>
