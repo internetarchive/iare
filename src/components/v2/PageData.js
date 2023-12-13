@@ -11,6 +11,7 @@ import {
 } from "./filterMaps/urlFilterMaps";
 import {areObjectsEqual} from "../../utils/utils";
 import {categorizedDomains, rspMap} from "../../constants/perennialList";
+import {UrlStatusCheckMethods} from "../../constants/checkMethods";
 
 /*
 When this component is rendered, it must "process" the pageData. This involves:
@@ -511,7 +512,7 @@ export default function PageData({pageData = {}}) {
 
             try {
 
-                setUrlStatusLoadingMessage(`Retrieving URL status codes with ${myStatusCheckMethod} method`)
+                setUrlStatusLoadingMessage(`Retrieving URL status codes with ${UrlStatusCheckMethods[myStatusCheckMethod].caption} method`)
                 setIsDataReady(false);
                 setIsLoadingUrls(true);
 
@@ -529,7 +530,7 @@ export default function PageData({pageData = {}}) {
                 processBooksData(pageData)
 
                 // if any errors, display
-                if (pageData.process_errors.length > 0) setPageErrors(pageData.process_errors)
+                if (pageData.process_errors?.length > 0) setPageErrors(pageData.process_errors)
 
                 // announce to UI all is ready
                 setIsDataReady(true);
