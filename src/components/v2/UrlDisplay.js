@@ -154,8 +154,8 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             setUrlFilters({ "url_book_filter" : getUrlBooksFilter(value) })
             setSelectedUrl(null)
 
-            // and also do the references
-            setRefFilter(getRefTemplateFilter(value))
+            // // and also do the references
+            // setRefFilter(getRefTemplateFilter(value))
 
         }
 
