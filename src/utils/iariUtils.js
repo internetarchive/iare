@@ -449,7 +449,7 @@ export const fetchUrls = async ({
 }
 
 
-export const processForIari = (urlObj) => {
+export const iariPostProcessUrl = (urlObj) => {
     /* does things that IARI should have already done for us but doesn't
         urlObj.isArchive
         urlObj.hasTemplateArchive
@@ -463,8 +463,9 @@ export const processForIari = (urlObj) => {
     const regexWayback = new RegExp(/https?:\/\/(?:web\.)archive\.org\/web\/([\d*]+)\/(.*)/);
     const regexArchiveToday = new RegExp(/https?:\/\/archive\.today\/([\d*]+)\/(.*)/);
 
-    const getDomainStats = (url) => {  // should be done in IARI
+    const getDomainParts = (url) => {  // TODO should be done in IARI
         // top-level-domain (TLD) and second-level-domain (SLD) extraction
+        console.log(`getDomainStats for: ${url}`)
         const parsedUrl = new URL(url);
         const hostnameParts = parsedUrl.hostname.split('.');
 
@@ -504,9 +505,9 @@ export const processForIari = (urlObj) => {
     urlObj.hasTemplateArchive = false  // TODO: this will be recalculated when processing references
 
     // these should have been parsed by iari, but since wayback is not included in iari yet, we have to do it post-process
-    const stats = getDomainStats(urlObj.url)
-    urlObj.tld = `${stats.tld ? stats.tld : ''}`
-    urlObj.sld = `${stats.sld ? stats.sld : ''}.${stats.tld ? stats.tld : ''}`
-    urlObj._3ld = `${stats._3ld ? stats._3ld : ''}.${stats.sld ? stats.sld : ''}.${stats.tld ? stats.tld : ''}`
+    const parts = getDomainParts(urlObj.url)
+    urlObj.tld = `${parts.tld ? parts.tld : ''}`
+    urlObj.sld = `${parts.sld ? parts.sld : ''}.${parts.tld ? parts.tld : ''}`
+    urlObj._3ld = `${parts._3ld ? parts._3ld : ''}.${parts.sld ? parts.sld : ''}.${parts.tld ? parts.tld : ''}`
 }
 

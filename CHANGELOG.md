@@ -1,5 +1,9 @@
 # Changelog of IARE
 
+
+## v0.2.24.17
+- Displays errors if errors encountered while processing data
+
 ## v0.2.24.16
 - Book References Chart
 

@@ -255,7 +255,7 @@ table td {
 .error-display {
     display:block;
     margin:1rem 0;
-    border:1px solid #c92b2b;
+    border:2pt solid #c92b2b;
     padding:.5em;
     font-weight: bold;
     font-size:1.2rem;
@@ -264,14 +264,13 @@ table td {
 .error-display-none {
     display:none;
 }
-.error-viz{
-    border:1px solid #c92b2b;
-    padding:.5em;
-    font-weight: bold;
-    font-size:1.2rem;
-    color: #c92b2b;
+.error-display-many {
+    font-size:1rem;
+    font-weight:normal;
 }
-
+.error-display-many .title {
+    font-weight:bold;
+}
 table.single-detail {
     table-layout: fixed;
     width:24rem;
