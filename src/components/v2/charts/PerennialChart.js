@@ -11,7 +11,6 @@ shows piechart, for now, of links associated with perennial categories
 const PerennialChart = ({pageData, options, onAction}) => {
 
     if (!pageData?.rsp_statistics) return <div>
-        <h4>Perennial Source Statistics</h4>
         <p>No Perennial Source statistics to show.</p>
     </div>
 
@@ -124,7 +123,6 @@ const PerennialChart = ({pageData, options, onAction}) => {
     }
 
     return <>
-        <h4 className={`chart-title${options?.captionClass ? ` ${options.captionClass}`: ''}`}>Reliability Statistics</h4>
         <h4 className={"chart-instruction"}>Click to filter URL List</h4>
         <ChartLegend data={perennialData} onClick={onClickLegend} colors={colorArray} className={"chart-legend-perennial"} />
 

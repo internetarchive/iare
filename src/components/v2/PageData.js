@@ -8,7 +8,7 @@ import {ConfigContext} from "../../contexts/ConfigContext";
 import {
     ARCHIVE_STATUS_FILTER_MAP,
     URL_STATUS_FILTER_MAP
-} from "./filterMaps/urlFilterMaps";
+} from "../../constants/urlFilterMaps";
 import {areObjectsEqual} from "../../utils/utils";
 import {categorizedDomains, rspMap} from "../../constants/perennialList";
 import {UrlStatusCheckMethods} from "../../constants/checkMethods";
@@ -302,7 +302,9 @@ export default function PageData({pageData = {}}) {
                     })
                 })
             }
-            pageData.template_statistics = templateDict
+
+            if (!pageData["stats"]) pageData["stats"] = {}
+            pageData.stats["templates"] = templateDict
         }
 
         const anchorRefs = getAnchorReferences(pageData)

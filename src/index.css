@@ -40,6 +40,9 @@
 
     --radio-button-magnify:1.35;
 
+    --border-filter-box: 2px solid #2585cc !important;
+    --border-filter-box-light: 2px solid #b4b4b7 !important;
+    --border-radius-filter-box:0.33rem;
 }
 
 body {
@@ -361,10 +364,46 @@ font-style:italic;
 font-weight:normal;
 }
 
-.box-caption {
-    border: 2px solid #2585cc !important;
-    border-radius: 0.3rem;
+/* filter boxes - charts in overview on left side */
+
+.filter-box {
+    margin-bottom:.35rem;
+    z-index: 1000;
+}
+
+.section-caption,
+.filter-box-caption {
+    border: var(--border-filter-box);
+    border-radius: var(--border-radius-filter-box);
     padding: 0.2rem 0.35rem 0.3rem !important;
     background-color: #2299e8;
     color: white !important;
+    font-size: 0.85rem;
+    font-weight: bold;
+    line-height:1.2;
+}
+
+.filter-box-contents {
+    display:block;
+    margin-top:0;
+    padding:.33rem;
+    padding-bottom: .56rem;
+    border: var(--border-filter-box-light);
+    border-radius: var(--border-radius-filter-box);
+    background-color: hsl(228 23% 97% / 1);
+}
+.filter-box-show {
+    float:right;
+    font-weight:normal;
+    xheight: 1rem;
+    width:1.5rem;
+}
+.filter-box-show.open {
+    content: url('./images/eye_open.svg');
+}
+.filter-box-show.closed {
+    content: url('./images/eye_closed.svg');
+}
+.eye-fill {
+    fill: #bb2d3b;
 }

@@ -6,14 +6,14 @@ import ChartLegend from "./ChartLegend";
 
 const TemplateChart = ({pageData, options, onAction}) => {
 
-    if (!pageData?.template_statistics) return <div>
+    if (!pageData?.stats?.templates) return <div>
         <p>No Template statistics to show.</p>
     </div>
 
-    const templateData = Object.keys(pageData.template_statistics).map(key => {
+    const templateData = Object.keys(pageData.stats.templates).map(key => {
         return {
             label: key,
-            count: pageData.template_statistics[key],
+            count: pageData.stats.templates[key],
             link: key
         }
     }).sort((a, b) => {
@@ -134,7 +134,6 @@ const TemplateChart = ({pageData, options, onAction}) => {
     }
 
     return <>
-        <h4 className={`chart-title${options?.captionClass ? ` ${options.captionClass}`: ''}`}>Template Occurrences</h4>
         <h4 className={"chart-instruction"}>Click to filter URL and References Lists</h4>
 
         <ChartLegend data={templateData} onClick={onClickLegend} colors={colorArray} className={"chart-legend-templates"} />

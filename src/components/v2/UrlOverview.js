@@ -1,9 +1,9 @@
 import React, {useState} from 'react'
 import FilterButtons from "../FilterButtons";
 import FilterStatusChoices from "../FilterStatusChoices";
-import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "./filterMaps/urlFilterMaps";
-import {REF_LINK_STATUS_FILTERS} from "./filterMaps/refFilterMaps";
-import {ConfigContext} from "../../contexts/ConfigContext";
+import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../constants/urlFilterMaps";
+import {REF_LINK_STATUS_FILTERS} from "../../constants/refFilterMaps";
+// import {ConfigContext} from "../../contexts/ConfigContext";
 import UrlStatusChart from "./charts/UrlStatusChart";
 import TemplateChart from "./charts/TemplateChart";
 import PerennialChart from "./charts/PerennialChart";
@@ -20,6 +20,7 @@ import {
     Colors,
 } from 'chart.js'
 import BooksChart from "./charts/BooksChart";
+import FilterBox from "../FilterBox";
 
 Chart.register(
     LinearScale,
@@ -67,8 +68,8 @@ const UrlOverview = React.memo(({pageData, options, onAction}) => {  // React.me
         }
     )
 
-    let myConfig = React.useContext(ConfigContext);
-    myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
+                // let myConfig = React.useContext(ConfigContext);
+                // myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
 
     const handleLinkAction = (linkStatus) => {
         onAction({
@@ -203,36 +204,27 @@ const UrlOverview = React.memo(({pageData, options, onAction}) => {  // React.me
 
         <div className={"row"}>
 
-            <div className={"col col-6"}>
-                <div className={'section-sub'}>
-                    <UrlStatusChart pageData={pageData} options={{captionClass:"box-caption"}} colors={colors} onAction={onAction} />
-                </div>
+            <div className={"col col-12"}>
 
-                <div className={'section-sub'}>
-                    <PerennialChart pageData={pageData} options={{captionClass:"box-caption"}} onAction={onAction} />
-                </div>
+                <FilterBox caption="URL Status Codes" defaultShow={true}>
+                    <UrlStatusChart pageData={pageData} colors={colors} onAction={onAction} />
+                </FilterBox>
 
-            </div>
+                <FilterBox caption="Reliability Statistics">
+                    <PerennialChart pageData={pageData} onAction={onAction} />
+                </FilterBox>
 
+                <FilterBox caption="Top Level Domains">
+                    <TldChart pageData={pageData} onAction={onAction} />
+                </FilterBox>
 
-            <div className={"col col-6"}>
-                {myConfig.isShowNewFeatures &&
-                    <div className={'section-sub'}>
-                        <TldChart pageData={pageData} options={{captionClass:"box-caption"}} onAction={onAction} />
-                    </div>
-                }
+                <FilterBox caption="Links to Books">
+                    <BooksChart pageData={pageData} options={{colors:myColors}} onAction={onAction} />
+                </FilterBox>
 
-                {myConfig.isShowNewFeatures &&
-                    <div className={'section-sub'}>
-                        <BooksChart pageData={pageData} options={{captionClass:"box-caption", colors:myColors}} onAction={onAction} />
-                    </div>
-                }
-
-                {myConfig.isShowNewFeatures &&
-                    <div className={'section-sub'}>
-                        <TemplateChart pageData={pageData} options={{captionClass:"box-caption"}} onAction={onAction} />
-                    </div>
-                }
+                <FilterBox caption="Template Occurrences">
+                    <TemplateChart pageData={pageData} onAction={onAction} />
+                </FilterBox>
 
             </div>
 

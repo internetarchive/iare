@@ -4,43 +4,34 @@ import './charts.css';
 import {generateColorFade} from "../../../utils/utils";
 import ChartLegend from "./ChartLegend";
 
-const BooksChart = ({pageData, options, onAction}) => {
+const DoiChart = ({pageData, options, onAction}) => {
 
-    if (!pageData?.stats?.books) return <div>
-        <p>No Books statistics to show.</p>
+    const rawData = pageData?.stats?.doi  // key-valued object of integer counts
+
+    if (!rawData) return <div>
+        <p>No Doi Statistics in Page Data.</p>
     </div>
 
-    const booksData = Object.keys(pageData.stats.books).map(key => {
+    const dataRows = Object.keys(rawData).map(key => {
         return {
             label: key,
-            count: pageData.stats.books[key],
+            count: rawData[key],
             link: key
         }
-    }).sort((a, b) => {
-        return a.count < b.count
-            ? 1
-            : a.count > b.count
-                ? -1
-                : a.label < b.label
-                    ? 1
-                    : a.label > b.label
-                        ? -1
-                        : 0
+    }).sort((a, b) => {  // sort by count then by label
+        return a.count < b.count ? 1 : a.count > b.count ? -1 : a.label < b.label ? 1 : a.label > b.label ? -1 : 0
     })
 
-    const myColors = (options?.colors ? options.colors : {})
+    const myColors = (options?.colors ? options.colors : {})  // TOD: use default colors
+    const colorArray = generateColorFade(myColors.green, myColors.yellow, dataRows.length )
 
-    // const colorArray = generateColorFade(myColors.red, myColors.orange, booksData.length )
-    const colorArray = generateColorFade(myColors.green, myColors.yellow, booksData.length )
-
-    const booksChartData = {
-
-        labels: booksData.map(d => `${d.label} [${d.count}]`),
+    const myChartData = {
+        labels: dataRows.map(d => `${d.label} [${d.count}]`),
         datasets: [
             {
                 label: "Books",
-                data: booksData.map(d => d.count),
-                links: booksData.map(d => d.link),
+                data: dataRows.map(d => d.count),
+                links: dataRows.map(d => d.link),
                 backgroundColor: colorArray,
             }
         ],
@@ -62,13 +53,13 @@ const BooksChart = ({pageData, options, onAction}) => {
         // console.log("pie chart clicked, link=", link)
         onAction({action: "setBooksFilter", value: link})
     }
-    const onClickLegend = e => {
+    const onClickLegend = e => {  // HTML elements legend
         const link = e.target.closest('.legend-entry').dataset['link'];
         // alert(`onCLickLegend: ${link}`)
         onAction({action: "setBooksFilter", value: link})
     }
 
-    const booksChartOptions = {
+    const doiChartOptions = {
         // animation: true,
         animation: {
             animateScale: false,
@@ -97,18 +88,20 @@ const BooksChart = ({pageData, options, onAction}) => {
 
     return <>
 
-        {booksChartData.datasets[0].data.length > 0
+        {myChartData.datasets[0].data.length > 0
             ? <>
                 <h4 className={"chart-instruction"}>Click to filter URL List</h4>
 
-                <ChartLegend data={booksData} onClick={onClickLegend} colors={colorArray} className={"chart-legend-books"} />
+                <ChartLegend data={dataRows} onClick={onClickLegend}
+                             colors={colorArray}
+                             className={"chart-legend-doi"} />
 
-                <div className={"books-chart-display"}>
-                    <PieChart chartData={booksChartData} options={booksChartOptions} onClick={onClickChart}/>
+                <div className={"doi-chart-display"}>
+                    <PieChart chartData={myChartData} options={doiChartOptions} onClick={onClickChart}/>
                 </div>
             </>
             : <p>No Books to show.</p>}
 
     </>
 }
-export default BooksChart;
+export default DoiChart;

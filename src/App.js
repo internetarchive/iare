@@ -45,7 +45,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
             ? ['easterIsland', 'internetArchive', 'short_test', 'pdfOneLink']
 
                 // my development shortcuts
-            : ['marcBolan', 'easterIsland', 'internetArchive', 'karen_bakker', 'short_test', 'pdfDesantis', 'pdfOneLink'];
+            : ['marcBolan', 'easterIsland', 'mlk', 'internetArchive', 'karen_bakker', 'short_test', 'pdfDesantis', 'pdfOneLink'];
 
 
     // add class to body to indicate environment

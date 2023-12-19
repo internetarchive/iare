@@ -6,6 +6,7 @@ import RefActions from "./RefActions";
 import RefStats from "./RefStats";
 import RefUrls from "./RefUrls";
 import {copyToClipboard} from "../../../utils/utils";
+import Draggable from 'react-draggable';
 
 /*
 idea details:
@@ -31,7 +32,7 @@ function RefViewHeader({ details, onClose }) {
         <div className="col-9">
             <div className={"row"}>
 
-                <div className="col-6">
+                <div className="col-6 no-padding">
                     <h2 className={`text-primary ${details?.test_data ? 'test-display' : ''}`}
                     >Reference View{details?.test_data ? " (test reference viewer)" : ''}</h2>
                 </div>
@@ -60,16 +61,16 @@ function RefViewFooter({ details }) {
     const rawText = details ? details.wikitext : 'No raw wikitext provided' ;
 
     return <div className="row ref-view-footer">
-        <div className="col-8">
+        <div className="col-12">
             <h4>wikitext:<span><button onClick={() => {copyToClipboard(rawText, 'wikitext')} } className={'utility-button'}
                      style={{position: "relative", top: "0"}}
         ><span>Copy to clipboard</span></button></span></h4>
             <p className={"raw-wikitext"}>{rawText}</p>
         </div>
-        <div className="col-4">
-            <h4>raw json:</h4>
-            <pre className={"raw-json-detail"}>{JSON.stringify(details, null, 2)}</pre>
-        </div>
+        {/*<div className="col-4">*/}
+        {/*    <h4>raw json:</h4>*/}
+        {/*    <pre className={"raw-json-detail"}>{JSON.stringify(details, null, 2)}</pre>*/}
+        {/*</div>*/}
     </div>
 }
 
@@ -120,40 +121,53 @@ export default function RefView({ open, onClose, details }) {
     if (!open || !details) return null;
 
     return <div className='ref-modal-overlay' onClick={onClose} >
+        <Draggable
+            handle={".ref-view-title-bar"}
+            // defaultPosition={{x: 100, y: 100}}
+            position={null}
+            // grid={[25, 25]}
+            scale={1}
+            // accepts strings, like `{x: '10%', y: '10%'}`.
+            // positionOffset={{ x: "10%", y: "5%"}}
+            positionOffset={{ x: '-50%', y: '-50%' }}
 
-        <div className={"ref-modal-container ref-view"}
-             onClick={(e) => {e.stopPropagation()}}
-             onMouseMove={(e) => {e.stopPropagation()}}
-             onScroll={(e) => {e.stopPropagation()}}
-             onScrollCapture={(e) => {e.stopPropagation()}}
         >
 
-            <div>
+            <div className={"ref-modal-container ref-view"}
+                 onClick={(e) => {e.stopPropagation()}}
+                 onMouseMove={(e) => {e.stopPropagation()}}
+                 onScroll={(e) => {e.stopPropagation()}}
+                 onScrollCapture={(e) => {e.stopPropagation()}}
+            >
 
-                <RefViewHeader details={details} onClose={onClose}/>
+                <div className="ref-view-title-bar" />
 
-                <div className="row no-gutters">
+                <div className="ref-view-contents">
 
-                    <div className="xxx.col-9">
-                        <div className={'ref-view-content'}>
-                            <RefTemplates templates={details.templates} />
-                            <RefUrls urls={details.urls} />
-                            {/*<RefLinkStatus linkStatus={details.link_status} />*/}
+                    <RefViewHeader details={details} onClose={onClose}/>
+
+                    <div className="row no-gutters">
+
+                        <div className="xxx.col-9">
+                            <div className={'ref-view-content'}>
+                                <RefTemplates templates={details.templates} />
+                                <RefUrls urls={details.urls} />
+                                {/*<RefLinkStatus linkStatus={details.link_status} />*/}
+                            </div>
+                            <RefViewFooter details={details} />
                         </div>
-                        <RefViewFooter details={details} />
-                    </div>
 
-                    {false && <div className="col-3">
-                        <RefActions details={details} onAction={handleRefViewAction} />
-                        <RefStats details={details} />
-                    </div>}
+                        {false && <div className="col-3">
+                            <RefActions details={details} onAction={handleRefViewAction} />
+                            <RefStats details={details} />
+                        </div>}
+
+                    </div>
 
                 </div>
 
             </div>
-
-        </div>
-
+        </Draggable>
     </div>
 
 }
