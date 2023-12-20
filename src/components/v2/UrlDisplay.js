@@ -5,6 +5,7 @@ import UrlOverview from "./UrlOverview";
 import '../shared/urls.css';
 import '../shared/filters.css';
 import {ACTIONABLE_FILTER_MAP} from "../../constants/actionableMap";
+import {REF_FILTER_DEFS} from "../../constants/refFilterMaps";
 import {ConfigContext} from "../../contexts/ConfigContext";
 import FilterButtons from "../FilterButtons";
 import ChoiceFetch from "../ChoiceFetch";
@@ -95,6 +96,12 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                     //     setUrlFilters({ "archive_status" : f })
                     // }
                     //
+
+        else if (action === "setPapersFilter") {
+            // value is filter key name
+            const f = value ? REF_FILTER_DEFS[value] : null
+            setRefFilter(f)
+        }
 
         else if (action === "showRefsForUrl") {
             // value is url key name

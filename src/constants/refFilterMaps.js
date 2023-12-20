@@ -64,7 +64,7 @@ export const REF_FILTER_DEFS = {
         caption: "Books linked to archive.org",
         desc: "Citations containing a link to a book hosted at archive.org",
         filterFunction: () => (d) => {
-            return !!d.urls.find((url) => url.includes("https://archive.org/details/"))
+            return !!d.urls.find(url => url.includes("https://archive.org/details/"))
         }
     },
 
@@ -72,7 +72,7 @@ export const REF_FILTER_DEFS = {
         caption: "Books linked to Google Books",
         desc: "Citations containing a link to a book hosted at googlebooks",
         filterFunction: () => (d) => {
-            return !!d.urls.find((url) => url.includes("https://books.google.com/"))
+            return !!d.urls.find(url => url.includes("https://books.google.com/"))
         }
     },
 
@@ -85,7 +85,17 @@ export const REF_FILTER_DEFS = {
         }
     },
 
-    ManyUrls: {
+    hasDoi: {
+        caption: "Reference contains DOI link",
+        desc: "Reference has a DOI link",
+        filterFunction: () => (ref) => {
+            return ref.templates.find(tmplt => {
+                return !!tmplt.parameters?.doi
+            })
+        }
+    },
+
+    manyUrls: {
         caption: "More than 2 URLs",
         desc: 'Citations containing more than 2 URLs',
         filterFunction: () => (d) => {return d.urls.length > 2},

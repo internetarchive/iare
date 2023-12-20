@@ -21,6 +21,7 @@ import {
 } from 'chart.js'
 import BooksChart from "./charts/BooksChart";
 import FilterBox from "../FilterBox";
+import PapersChart from "./charts/PapersChart";
 
 Chart.register(
     LinearScale,
@@ -208,6 +209,10 @@ const UrlOverview = React.memo(({pageData, options, onAction}) => {  // React.me
 
                 <FilterBox caption="URL Status Codes" defaultShow={true}>
                     <UrlStatusChart pageData={pageData} colors={colors} onAction={onAction} />
+                </FilterBox>
+
+                <FilterBox caption="Papers and DOIs" defaultShow={true}>
+                    <PapersChart pageData={pageData} onAction={onAction} />
                 </FilterBox>
 
                 <FilterBox caption="Reliability Statistics">

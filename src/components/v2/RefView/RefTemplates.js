@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
+import MakeLink from "../../MakeLink";
 
 /*
 shows tabs of template params if there; 1 tab for each template
@@ -12,6 +13,15 @@ export default function RefTemplates({ templates }) {
     function Parameters({parameters}) {
         if (!parameters) {
             return <p>No parameters for Template!</p>
+        }
+
+
+        const displayParameterValue= (key) => {
+            if (key == "doi") {
+                const href = `https://doi.org/${encodeURIComponent(parameters.doi)}`
+                return <MakeLink href={href} linkText={`${parameters.doi}`}/>
+            }
+            return parameters[key]
         }
 
         const keyNames = Object.keys(parameters).filter(name => name !== "template_name")
@@ -27,6 +37,7 @@ export default function RefTemplates({ templates }) {
             if (keyA === "url" || keyB === "url") return (keyA === "url" ? -1 : 1)
             if (keyA === "archive_url" || keyB === "archive_url") return (keyA === "archive_url" ? -1 : 1)
             if (keyA === "url_status" || keyB === "url_status") return (keyA === "url_status" ? -1 : 1)
+            if (keyA === "doi" || keyB === "doi") return (keyA === "doi" ? -1 : 1)
 
             // ensure template_name always places last
             if (keyA === "template_name" || keyB === "template_name") return (keyA === "template_name" ? 1 : -1)
@@ -40,7 +51,7 @@ export default function RefTemplates({ templates }) {
             // show with styling for param name and value
             return <div className={`param-row`} key={i}>
                 <div className={"col-3 param-name"}>{key}</div>
-                <div className={"col-9 param-value"}>{parameters[key]}</div>
+                <div className={"col-9 param-value"}>{displayParameterValue(key)}</div>
             </div>
         })
 

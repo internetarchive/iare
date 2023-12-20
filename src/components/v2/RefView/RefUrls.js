@@ -45,13 +45,13 @@ export default function RefUrls({ urls }) {
 
     // create display components (table, tr, and td) for array of url objects
     const urlsToRows = useCallback( (urlObjects=[]) => {
-        return urlObjects
+        return urlObjects?.length
             ? urlObjects.map( u => getDataRow(u) )
 
             // if urlObjects is undefined...
             // TODO this NOT a good way to present errors to the user!
             : <tr>
-                <td>URL data undefined</td>
+                <td>No URLs in reference</td>
                 <td>-</td>
             </tr>
 
@@ -92,7 +92,7 @@ export default function RefUrls({ urls }) {
                 }
             )
 
-    }, [myIariBase, urls, myStatusMethod])
+    }, [urls, myStatusMethod, myIariBase])
 
 
     const urlsDisplay =

@@ -1,12 +1,12 @@
 :root {
-    --width-url-list: 47rem;
+    --width-url-list: 43rem;
 
     --width-url-name: 20rem;
-    --width-url-status: 4.0rem;
+    --width-url-status: 2.0rem;
     --width-url-archive-status: 3rem;
-    --width-url-citations: 5.0rem;
-    --width-url-templates: 5.0rem;
-    --width-url-sections: 5.0rem;
+    --width-url-citations: 3.5rem;
+    --width-url-templates: 4.0rem;
+    --width-url-sections: 5.5rem;
     --width-url-perennial: 5.0rem;
 
     --width-col-url-overview: 327px;
@@ -44,6 +44,8 @@
     --border-default:1px solid black;
 
     --width-overview-column: 335px;
+
+    --padding-url-column: .5rem;
 }
 
 #my-url-tooltip {
@@ -206,7 +208,7 @@
 }
 
 .url-row > div {
-    padding:.5rem;
+    padding:var(--padding-url-column);
 }
 .url-row .url-name {
     width: var(--width-url-name);
@@ -256,6 +258,12 @@
     width: var(--width-url-sections);
     max-width: var(--width-url-sections);
 }
+.url-row .url-perennial {
+    text-align: center;
+    /*border-left: 1px solid black;*/
+    width: var(--width-url-perennial);
+    max-width: var(--width-url-perennial);
+}
 
 .url-list a, .url-list .url-name {
     overflow-wrap: break-word;
@@ -276,6 +284,11 @@
 {
     cursor: pointer;
     text-align:center;
+    padding:0 0 .5rem 0;
+}
+.url-header-row .url-name
+{
+    padding-left: var(--padding-url-column);
 }
 .url-header-row .url-name,
 .url-list .url-row .url-name {
