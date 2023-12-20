@@ -17,7 +17,7 @@ export default function RefTemplates({ templates }) {
 
 
         const displayParameterValue= (key) => {
-            if (key == "doi") {
+            if (key === "doi") {
                 const href = `https://doi.org/${encodeURIComponent(parameters.doi)}`
                 return <MakeLink href={href} linkText={`${parameters.doi}`}/>
             }
