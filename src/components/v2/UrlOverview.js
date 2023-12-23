@@ -207,11 +207,11 @@ const UrlOverview = React.memo(({pageData, options, onAction}) => {  // React.me
 
             <div className={"col col-12"}>
 
-                <FilterBox caption="URL Status Codes" defaultShow={true}>
+                <FilterBox caption="URL Status Codes" showContents={true}>
                     <UrlStatusChart pageData={pageData} colors={colors} onAction={onAction} />
                 </FilterBox>
 
-                <FilterBox caption="Papers and DOIs" defaultShow={true}>
+                <FilterBox caption="Papers and DOIs" showContents={true}>
                     <PapersChart pageData={pageData} onAction={onAction} />
                 </FilterBox>
 

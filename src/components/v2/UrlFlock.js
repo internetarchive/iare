@@ -584,7 +584,7 @@ const urlFlock = React.memo( function UrlFlock({
                 >Template<br/>Type</div>
 
                 <div className={"url-sections"} onClick={() => { handleSortClick("sections"); } }
-                >Origin<br/>Section</div>
+                >Section<br/>of Origin</div>
 
                 <div className={"url-perennial"} onClick={() => { handleSortClick("perennial"); } }
                 >Reliability<br/>Rating</div>

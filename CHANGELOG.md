@@ -1,5 +1,15 @@
 # Changelog of IARE
 
+## v0.2.24.19
+- Reference View popup is now draggable
+
+## v0.2.24.18
+- Charts on left side
+  - All are collapsable and expandable
+  - All in one column
+- New Chart: Papers and DOIs
+- References in Reference List have "hot" DOI links
+- DOI links are "hot" in Reference View popup
 
 ## v0.2.24.17
 - Displays errors if errors encountered while processing data

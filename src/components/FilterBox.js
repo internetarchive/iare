@@ -7,26 +7,26 @@ expected props:
  */
 export default function FilterBox({
                           caption='',
-                        defaultShow=false,
+                        showContents = true,
                             children
                            }) {
 
-    const [showContents, setShowContents] = useState(defaultShow)
+    const [expanded, setExpanded] = useState(showContents)
 
-    const handleShow = () => {
-        setShowContents( prevState => !prevState )
+    const handleExpand = () => {
+        setExpanded( prevState => !prevState )
     }
 
     return <>
-        {/*<Draggable>*/}
+        {/*<Draggable>*/ /* Not sure about this yet */}
 
             <div className={"filter-box"}>
 
-                <div className={"filter-box-caption"} onClick={handleShow}>{caption}
-                    <div className={`filter-box-show ${showContents ? "closed" : "open" }`}
-                        >{showContents ? "hide" : "show"}</div>
+                <div className={"filter-box-caption"} onClick={handleExpand}>{caption}
+                    <div className={`filter-box-show ${expanded ? "closed" : "open" }`}
+                        >{expanded ? "hide" : "show"}</div>
                 </div>
-                {showContents && <div className={"filter-box-contents"}>{children}</div>}
+                {expanded && <div className={"filter-box-contents"}>{children}</div>}
 
             </div>
         {/*</Draggable>*/}
