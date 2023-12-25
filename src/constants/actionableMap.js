@@ -85,19 +85,6 @@ export const ACTIONABLE_FILTER_MAP = {
 
         filterFunction: () => (d) => {
 
-            // const isLinkStatusGood = (statusCode) => {
-            //     return statusCode >= 200 && statusCode < 400
-            // }
-            //
-            // const isLinkStatusBad = (statusCode) => {
-            //     return statusCode < 200 && statusCode >= 400
-            // }
-
-
-                        // return (d.status_code >= 200 && d.status_code < 400)
-                        //     &&
-                        //     (d.reference_info?.statuses?.length && !d.reference_info.statuses.includes('live') );
-
             // run through refs and templates
             // if template.url === d.url
             //   if template.archive_url
@@ -149,24 +136,6 @@ export const ACTIONABLE_FILTER_MAP = {
 
              */
 
-// if (d.status_code >= 200 && d.status_code < 400) {
-//     // source GOOD,  dive deeper
-//     d.refs.some( r => {
-//             r.templates.some( t => {
-//                 // if t.archive_url && t.url_status, etc...
-//                 if (1) {
-//                     return true
-//                 } else {
-//                     return false
-//                 }
-//             })
-//         }
-//
-//     )
-//
-// } else {
-//     return false; // url is OK, dont need to filter (but maybe catch no protection)
-// }
 
 
         },

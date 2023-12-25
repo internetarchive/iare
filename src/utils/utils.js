@@ -3,6 +3,10 @@ export const isLinkStatusGood = (statusCode) => {
     return statusCode >= 200 && statusCode < 400
 }
 
+export const isLinkStatusBad = (statusCode) => {
+    return statusCode < 200 || statusCode >= 400
+}
+
 export const normalizeUrlArray = (urlArray=[]) => {
     // transform urlArray, which is an array of url objects wrapped in a "data" property,
     // returns array of bare url objects extracted from "data" wrapper

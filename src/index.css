@@ -397,6 +397,7 @@ font-weight:normal;
     font-weight:normal;
     xheight: 1rem;
     width:1.5rem;
+    cursor: pointer;
 }
 .filter-box-show.open {
     content: url('./images/eye_open.svg');

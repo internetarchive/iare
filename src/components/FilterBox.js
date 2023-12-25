@@ -6,10 +6,11 @@ expected props:
 
  */
 export default function FilterBox({
-                          caption='',
-                        showContents = true,
-                            children
-                           }) {
+                                      caption = '',
+                                      tooltip = '',
+                                      showContents = true,
+                                      children
+                                  }) {
 
     const [expanded, setExpanded] = useState(showContents)
 

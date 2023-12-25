@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.2.24.19",
-  "version_name": "0.2.24.19.RefView title bar",
+  "version": "0.2.24.20",
+  "version_name": "0.2.24.20.Link Status Chart",
   "private": true,
   "dependencies": {
     "bootstrap": "^5.3.0-alpha3",

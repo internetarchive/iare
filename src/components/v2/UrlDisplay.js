@@ -4,6 +4,7 @@ import RefFlock from "./RefFlock";
 import UrlOverview from "./UrlOverview";
 import '../shared/urls.css';
 import '../shared/filters.css';
+import {LINK_STATUS_MAP} from "../../constants/linkStatusMap";
 import {ACTIONABLE_FILTER_MAP} from "../../constants/actionableMap";
 import {REF_FILTER_DEFS} from "../../constants/refFilterMaps";
 import {ConfigContext} from "../../contexts/ConfigContext";
@@ -88,14 +89,11 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             setUrlFilters({ "url_status" : f })
         }
 
-                    // else if (action === "setArchiveStatusFilter") {
-                    //     // TODO: this will eventually NOT take a filter index name, but rather a filter itself,
-                    //     // TODO similar to action "setUrlReferenceFilter"
-                    //     // value is filter key name
-                    //     const f = value ? urlArchiveFilterMap[value] : null
-                    //     setUrlFilters({ "archive_status" : f })
-                    // }
-                    //
+        else if (action === "setLinkStatusFilter") {
+            // value is filter key name
+            const f = value ? LINK_STATUS_MAP[value] : null
+            setUrlFilters({ "link_status" : f })
+        }
 
         else if (action === "setPapersFilter") {
             // value is filter key name
@@ -179,7 +177,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             setUrlFilters({ "url_perennial_filter" : getUrlPerennialFilter(value) })
             setSelectedUrl(null)
 
-            // and also do the references
+            // TODO: and also do the references
             // setRefFilter(getRefPerennialFilter(value))
 
         }

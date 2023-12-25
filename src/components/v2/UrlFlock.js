@@ -346,6 +346,7 @@ const urlFlock = React.memo( function UrlFlock({
                 return [
                     u.url,
                     u.status_code,
+                    u.archive_status?.hasArchive,
                     u.reference_info?.templates ? u.reference_info?.templates.join(",") : null,
                     u.status_code_errors?.reason ? u.status_code_errors.reason : null,
                     u.status_code_errors?.message ? u.status_code_errors.message : null,
@@ -357,6 +358,7 @@ const urlFlock = React.memo( function UrlFlock({
             urlArrayData.unshift( [
                 'URL',
                 `${fetchMethod} status`,
+                `Has Archive`,
                 `Templates`,
                 `Error reason`,
                 `Error message`
