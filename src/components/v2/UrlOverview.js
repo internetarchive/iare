@@ -4,7 +4,7 @@ import FilterStatusChoices from "../FilterStatusChoices";
 import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../constants/urlFilterMaps";
 import {REF_LINK_STATUS_FILTERS} from "../../constants/refFilterMaps";
 // import {ConfigContext} from "../../contexts/ConfigContext";
-import UrlStatusChart from "./charts/UrlStatusChart";
+// import UrlStatusChart from "./charts/UrlStatusChart";
 import TemplateChart from "./charts/TemplateChart";
 import PerennialChart from "./charts/PerennialChart";
 import TldChart from "./charts/TldChart";
@@ -35,16 +35,16 @@ Chart.register(
     Colors,
 );
 
-const colors = {
-    blue: "#35a2eb",
-    red: "#ff6384",
-    teal: "#4bc0c0",
-    orange: "#ff9f40",
-    purple: "#9866ff",
-    yellow: "#ffcd57",
-    grey: "#c9cbcf",
-    magenta: "#f763ff",
-}
+// const colors = {
+//     blue: "#35a2eb",
+//     red: "#ff6384",
+//     teal: "#4bc0c0",
+//     orange: "#ff9f40",
+//     purple: "#9866ff",
+//     yellow: "#ffcd57",
+//     grey: "#c9cbcf",
+//     magenta: "#f763ff",
+// }
 
 const UrlOverview = React.memo(({pageData, options, onAction}) => {  // React.memo so doesn't re-rerender with param changes
 
