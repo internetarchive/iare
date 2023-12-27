@@ -2,8 +2,9 @@ import React, {useEffect, useState, useContext} from 'react';
 import RefView from "./RefView/RefView";
 import {ConfigContext} from "../../contexts/ConfigContext";
 import {Tooltip as MyTooltip} from "react-tooltip";
-import {REF_LINK_STATUS_FILTERS as linkDefs} from "./filterMaps/refFilterMaps";
+import {REF_LINK_STATUS_FILTERS as linkDefs} from "../../constants/refFilterMaps";
 import {convertToCSV, copyToClipboard} from "../../utils/utils";
+import MakeLink from "../MakeLink";
 
 const baseWikiUrl = "https://en.wikipedia.org/wiki/" // for now TODO get from config or context or pageData
 
@@ -26,6 +27,16 @@ function getReferenceCaption(ref) {
             </>
         })
         : null // <div>No Citation Refs!</div>
+
+    const doiLinks = []
+    // for each template, if there is a "doi" parameter, add it to the display
+    ref.templates.forEach(t => {
+        if (t.parameters?.doi) {
+            hasContent = true
+            const href = `https://doi.org/${encodeURIComponent(t.parameters.doi)}`
+            doiLinks.push(<MakeLink href={href} linkText={`DOI: ${t.parameters.doi}`}/> )
+        }
+    })
 
     const markup = <>
 
@@ -51,7 +62,8 @@ function getReferenceCaption(ref) {
                 </>
             : null}
 
-        {citeRefLinks}
+        {false && citeRefLinks}
+        {doiLinks}
 
         {/*{ !hasContent ? <span>ref id: {ref.id}</span> : null }*/}
         { !hasContent ? <span>{ref.wikitext}</span> : null }

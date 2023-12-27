@@ -30,7 +30,8 @@ const BooksChart = ({pageData, options, onAction}) => {
 
     const myColors = (options?.colors ? options.colors : {})
 
-    const colorArray = generateColorFade(myColors.red, myColors.orange, booksData.length )
+    // const colorArray = generateColorFade(myColors.red, myColors.orange, booksData.length )
+    const colorArray = generateColorFade(myColors.green, myColors.yellow, booksData.length )
 
     const booksChartData = {
 
@@ -62,9 +63,9 @@ const BooksChart = ({pageData, options, onAction}) => {
         onAction({action: "setBooksFilter", value: link})
     }
     const onClickLegend = e => {
-        const template = e.target.closest('.legend-entry').dataset['link'];
-        // alert(`onCLickLegend: ${template}`)
-        onAction({action: "setBooksFilter", value: template})
+        const link = e.target.closest('.legend-entry').dataset['link'];
+        // alert(`onCLickLegend: ${link}`)
+        onAction({action: "setBooksFilter", value: link})
     }
 
     const booksChartOptions = {
@@ -95,17 +96,19 @@ const BooksChart = ({pageData, options, onAction}) => {
     }
 
     return <>
-        <h4 className={`chart-title${options?.captionClass ? ` ${options.captionClass}`: ''}`}>Book References</h4>
-        <h4 className={"chart-instruction"}>Click to filter URL List</h4>
 
-        <ChartLegend data={booksData} onClick={onClickLegend} colors={colorArray} className={"chart-legend-books"} />
+        {booksChartData.datasets[0].data.length > 0
+            ? <>
+                <h4 className={"chart-instruction"}>Click to filter URL List</h4>
 
-        <div className={"books-chart-display"}>
-            {booksChartData.datasets[0].data.length > 0 ?
-                <PieChart chartData={booksChartData} options={booksChartOptions} onClick={onClickChart}/>
-                : <p>No Books to show.</p>}
-        </div>
+                <ChartLegend data={booksData} onClick={onClickLegend} colors={colorArray} className={"chart-legend-books"} />
+
+                <div className={"books-chart-display"}>
+                    <PieChart chartData={booksChartData} options={booksChartOptions} onClick={onClickChart}/>
+                </div>
+            </>
+            : <p>No Books to show.</p>}
+
     </>
 }
-
 export default BooksChart;

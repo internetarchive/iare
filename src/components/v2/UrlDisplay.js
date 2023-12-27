@@ -4,7 +4,9 @@ import RefFlock from "./RefFlock";
 import UrlOverview from "./UrlOverview";
 import '../shared/urls.css';
 import '../shared/filters.css';
-import {ACTIONABLE_FILTER_MAP} from "./filterMaps/urlFilterMaps";
+import {LINK_STATUS_MAP} from "../../constants/linkStatusMap";
+import {ACTIONABLE_FILTER_MAP} from "../../constants/actionableMap";
+import {REF_FILTER_DEFS} from "../../constants/refFilterMaps";
 import {ConfigContext} from "../../contexts/ConfigContext";
 import FilterButtons from "../FilterButtons";
 import ChoiceFetch from "../ChoiceFetch";
@@ -13,8 +15,8 @@ import {Tooltip as MyTooltip} from "react-tooltip";
 
 const localized = {
     "url_display_title":"URLs",
-    "Actionable": "Actionable",
-    "show_links": " - Show Links from Citations that can be improved right now"
+    "actionable": "Actionable",
+    "actionable_subtitle": " - Show Links from Citations that can be improved right now"
 }
 
 function ActionFilters( {filterSet= null, filterRender, flock = [], onAction, options = {}, currentFilterName = '', tooltipId='', className = null}) {
@@ -87,14 +89,17 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             setUrlFilters({ "url_status" : f })
         }
 
-                    // else if (action === "setArchiveStatusFilter") {
-                    //     // TODO: this will eventually NOT take a filter index name, but rather a filter itself,
-                    //     // TODO similar to action "setUrlReferenceFilter"
-                    //     // value is filter key name
-                    //     const f = value ? urlArchiveFilterMap[value] : null
-                    //     setUrlFilters({ "archive_status" : f })
-                    // }
-                    //
+        else if (action === "setLinkStatusFilter") {
+            // value is filter key name
+            const f = value ? LINK_STATUS_MAP[value] : null
+            setUrlFilters({ "link_status" : f })
+        }
+
+        else if (action === "setPapersFilter") {
+            // value is filter key name
+            const f = value ? REF_FILTER_DEFS[value] : null
+            setRefFilter(f)
+        }
 
         else if (action === "showRefsForUrl") {
             // value is url key name
@@ -172,7 +177,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             setUrlFilters({ "url_perennial_filter" : getUrlPerennialFilter(value) })
             setSelectedUrl(null)
 
-            // and also do the references
+            // TODO: and also do the references
             // setRefFilter(getRefPerennialFilter(value))
 
         }
@@ -414,7 +419,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
     console.log("UrlDisplay: render");
 
-    const showChoiceFetch = false;
+    const showChoiceFetch = false; // turns on/off diaply of "footnotes: conte/nqmed/all user/patron query
 
     const actionableTooltip = <MyTooltip id="tooltip-actionable"
                                float={true}
@@ -426,25 +431,23 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                                className={"tooltip-actionable"}
     />
 
-    const actionables = <h4 className={"box-caption"}>{localized.Actionable}<span className={"inferior"}>{localized.show_links}</span></h4>
+    const actionables = <>
+        <h4 className={"section-caption"}>{localized.actionable}<span className={"inferior"}>{localized.actionable_subtitle}</span></h4>
 
-    const urlFlockHeadMatter = <>
-        {false && <h3>{localized.url_display_title}</h3>}
-
-        {showChoiceFetch
-            ? <div className={"row"}>
-                <div className={"col-9"}>
-                    <ActionFilters
-                        filterSet={ACTIONABLE_FILTER_MAP}
-                        filterRender={renderUrlActionButton}
-                        flock={pageData.urlArray}
-                        onAction={handleAction}
-                        options ={{}}
-                        currentFilterName={selectedUrlActionFilterName}
-                        className={'url-action-filter-buttons'}
-                        tooltipId={'tooltip-actionable'}
-                    />
-                </div>
+        <div className={"row"}>
+            <div className={showChoiceFetch ? "col-9" : "col-12" }>
+                <ActionFilters
+                    filterSet={ACTIONABLE_FILTER_MAP}
+                    filterRender={renderUrlActionButton}
+                    flock={pageData.urlArray}
+                    onAction={handleAction}
+                    options ={{}}
+                    currentFilterName={selectedUrlActionFilterName}
+                    className={'url-action-filter-buttons'}
+                    tooltipId={'tooltip-actionable'}
+                />
+            </div>
+            {showChoiceFetch &&
                 <div className={"col-3"}>
                     <ChoiceFetch
                         choices={citationTypes}
@@ -455,20 +458,9 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                         }}
                         onChange={handleCitationTypeChange} />
                 </div>
-            </div>
-
-            : <ActionFilters
-                filterSet={ACTIONABLE_FILTER_MAP}
-                filterRender={renderUrlActionButton}
-                flock={pageData.urlArray}
-                onAction={handleAction}
-                options ={{}}
-                currentFilterName={selectedUrlActionFilterName}
-                className={"url-action-filter-buttons"}
-                tooltipId={'tooltip-actionable'}
-            />
-        }
-        </>
+            }
+        </div>
+    </>
 
     // setup url stats
 
@@ -489,17 +481,17 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
     return <>
 
-        {myConfig.isShowUrlOverview && <div className={"section-box url-overview-column"}>
-            <UrlOverview pageData={pageData} options={{}} onAction={handleAction}/>
-        </div>}
+        {myConfig.isShowUrlOverview &&
+            <div className={"section-box url-overview-column"}>
+                <UrlOverview pageData={pageData} options={{}} onAction={handleAction}/>
+            </div>
+        }
 
 
         <div className={"section-box"}>
             {actionableTooltip}
-
+            {false && <h3>{localized.url_display_title}</h3>}
             {actionables}
-
-            {urlFlockHeadMatter}
 
             <UrlFlock urlArray={pageData.urlArray}
                       urlFilters={urlFilters}

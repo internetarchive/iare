@@ -1,11 +1,11 @@
 import React, {useCallback, useEffect} from "react";
-import MakeLink from "../../MakeLink";
 import "./refView.css"
 import RefTemplates from "./RefTemplates";
 import RefActions from "./RefActions";
 import RefStats from "./RefStats";
 import RefUrls from "./RefUrls";
 import {copyToClipboard} from "../../../utils/utils";
+import Draggable from 'react-draggable';
 
 /*
 idea details:
@@ -25,57 +25,30 @@ idea details:
 
  */
 
-function RefViewHeader({ details, onClose }) {
-    return  <div className="row header no-gutters ref-view-header">
-
-        <div className="col-9">
-            <div className={"row"}>
-
-                <div className="col-6">
-                    <h2 className={`text-primary ${details?.test_data ? 'test-display' : ''}`}
-                    >Reference View{details?.test_data ? " (test reference viewer)" : ''}</h2>
-                </div>
-
-                <div className="col-6 text-end"><span
-                    className={"ref-origin-link"}> archive.org reference id: {
-                    details.endpoint
-                        ? <MakeLink href={details.endpoint} linkText={details.id}/>
-                        : ''
-                }</span>
-                </div>
-            </div>
-        </div>
-
-        <div className="col-3">
-
-            <div className="modalRight">
-                <p onClick={onClose} className="closeBtn">X Close</p>
-            </div>
-        </div>
-
-    </div>
-}
-
 function RefViewFooter({ details }) {
-    const rawText = details ? details.wikitext : 'No raw wikitext provided' ;
+    const rawText = details ? details.wikitext : 'No raw wikitext provided'
+
+    const copyClip = <span>
+        <button onClick={() => {copyToClipboard(rawText, 'wikitext')} }
+                className={'utility-button'}
+                style={{position: "relative", top: "0"}}
+        ><span>Copy to clipboard</span></button></span>
 
     return <div className="row ref-view-footer">
-        <div className="col-8">
-            <h4>wikitext:<span><button onClick={() => {copyToClipboard(rawText, 'wikitext')} } className={'utility-button'}
-                     style={{position: "relative", top: "0"}}
-        ><span>Copy to clipboard</span></button></span></h4>
+        <div className="col-12">
+            <h4>wikitext:{false && copyClip}</h4>
             <p className={"raw-wikitext"}>{rawText}</p>
         </div>
-        <div className="col-4">
-            <h4>raw json:</h4>
-            <pre className={"raw-json-detail"}>{JSON.stringify(details, null, 2)}</pre>
-        </div>
+        {/*<div className="col-4">*/}
+        {/*    <h4>raw json:</h4>*/}
+        {/*    <pre className={"raw-json-detail"}>{JSON.stringify(details, null, 2)}</pre>*/}
+        {/*</div>*/}
     </div>
 }
 
 export default function RefView({ open, onClose, details }) {
 
-    // add "Escape Key closes modal" feature
+    // adds "Escape Key closes modal" feature
     useEffect(() => {
         const handleKeyDown = (event) => {
             if (event.key === 'Escape') {
@@ -106,54 +79,61 @@ export default function RefView({ open, onClose, details }) {
 
     }, [])
 
-                // const onClickLinkStatus = (e) => {
-                //     // "jump" to selected linkStatus (which is a template, or an exotemplate url
-                //
-                //     // TODO: we need a sub-citation item id here, which will refer to an item that contains URLs
-                //
-                //     // const linkStatus = e.target.dataset['linkStatus']
-                //     console.log("will jump to section containing this link")
-                // }
-
 
     // close modal if not in open state
     if (!open || !details) return null;
 
     return <div className='ref-modal-overlay' onClick={onClose} >
+        <Draggable
+            handle={".ref-view-title-bar"}
+            // defaultPosition={{x: 100, y: 100}}
+            position={null}
+            // grid={[25, 25]}
+            scale={1}
+            // accepts strings, like `{x: '10%', y: '10%'}`.
+            // positionOffset={{ x: "10%", y: "5%"}}
+            positionOffset={{ x: '-50%', y: '-50%' }}
 
-        <div className={"ref-modal-container ref-view"}
-             onClick={(e) => {e.stopPropagation()}}
-             onMouseMove={(e) => {e.stopPropagation()}}
-             onScroll={(e) => {e.stopPropagation()}}
-             onScrollCapture={(e) => {e.stopPropagation()}}
         >
 
-            <div>
+            <div className={"ref-modal-container ref-view"}
+                 onClick={(e) => {e.stopPropagation()}}
+                 onMouseMove={(e) => {e.stopPropagation()}}
+                 onScroll={(e) => {e.stopPropagation()}}
+                 onScrollCapture={(e) => {e.stopPropagation()}}
+            >
 
-                <RefViewHeader details={details} onClose={onClose}/>
-
-                <div className="row no-gutters">
-
-                    <div className="xxx.col-9">
-                        <div className={'ref-view-content'}>
-                            <RefTemplates templates={details.templates} />
-                            <RefUrls urls={details.urls} />
-                            {/*<RefLinkStatus linkStatus={details.link_status} />*/}
-                        </div>
-                        <RefViewFooter details={details} />
+                <div className="ref-view-title-bar">
+                    <h2>Reference View</h2>
+                    <div className="modalRight">
+                        <p onClick={onClose} className="closeBtn">X Close</p>
                     </div>
+                </div>
 
-                    {false && <div className="col-3">
-                        <RefActions details={details} onAction={handleRefViewAction} />
-                        <RefStats details={details} />
-                    </div>}
+                <div className="ref-view-contents">
+
+                    <div className="row no-gutters">
+
+                        <div className="xxx.col-9">
+                            <div className={'ref-view-upper-part'}>
+                                <RefTemplates templates={details.templates} />
+                                <RefUrls urls={details.urls} />
+                                {/*<RefLinkStatus linkStatus={details.link_status} />*/}
+                            </div>
+                            <RefViewFooter details={details} />
+                        </div>
+
+                        {false && <div className="col-3">
+                            <RefActions details={details} onAction={handleRefViewAction} />
+                            <RefStats details={details} />
+                        </div>}
+
+                    </div>
 
                 </div>
 
             </div>
-
-        </div>
-
+        </Draggable>
     </div>
 
 }

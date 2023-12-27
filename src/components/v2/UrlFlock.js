@@ -2,7 +2,7 @@ import React, {useContext, useState} from 'react';
 import {Tooltip as MyTooltip} from "react-tooltip";
 import {ConfigContext} from "../../contexts/ConfigContext";
 import {httpStatusCodes, iabotLiveStatusCodes} from "../../constants/httpStatusCodes"
-import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "./filterMaps/urlFilterMaps";
+import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../constants/urlFilterMaps";
 import {UrlStatusCheckMethods} from "../../constants/checkMethods";
 import {convertToCSV, copyToClipboard} from "../../utils/utils";
 import {rspMap} from "../../constants/perennialList";
@@ -346,6 +346,7 @@ const urlFlock = React.memo( function UrlFlock({
                 return [
                     u.url,
                     u.status_code,
+                    u.archive_status?.hasArchive,
                     u.reference_info?.templates ? u.reference_info?.templates.join(",") : null,
                     u.status_code_errors?.reason ? u.status_code_errors.reason : null,
                     u.status_code_errors?.message ? u.status_code_errors.message : null,
@@ -357,6 +358,7 @@ const urlFlock = React.memo( function UrlFlock({
             urlArrayData.unshift( [
                 'URL',
                 `${fetchMethod} status`,
+                `Has Archive`,
                 `Templates`,
                 `Error reason`,
                 `Error message`
@@ -584,7 +586,7 @@ const urlFlock = React.memo( function UrlFlock({
                 >Template<br/>Type</div>
 
                 <div className={"url-sections"} onClick={() => { handleSortClick("sections"); } }
-                >Origin<br/>Section</div>
+                >Section<br/>of Origin</div>
 
                 <div className={"url-perennial"} onClick={() => { handleSortClick("perennial"); } }
                 >Reliability<br/>Rating</div>

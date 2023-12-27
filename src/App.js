@@ -45,7 +45,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
             ? ['easterIsland', 'internetArchive', 'short_test', 'pdfOneLink']
 
                 // my development shortcuts
-            : ['marcBolan', 'easterIsland', 'internetArchive', 'karen_bakker', 'short_test', 'pdfDesantis', 'pdfOneLink'];
+            : ['marcBolan', 'easterIsland', 'mlk', 'internetArchive', 'karen_bakker', 'short_test', 'pdfDesantis', 'pdfOneLink'];
 
 
     // add class to body to indicate environment
@@ -358,7 +358,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
     const debug = <div className={"debug-section " + (isDebug ? "debug-on" : "debug-off")}>
         <div style={{marginBottom:".5rem"}}>{iariChoiceSelect} {methodChoiceSelect}</div>
         <div>{buttons}</div>
-        <p><span className={'label'}>Environment:</span> {env}, ({window.location.host})</p>
+        <p><span className={'label'}>Environment:</span> {env} (host: {window.location.host})</p>
         <p><span className={'label'}>IARE version:</span> {package_json.version}</p>
         <p><span className={'label'}>IARI Source:</span> {myIariSourceId} ({IariSources[myIariSourceId]?.proxy})</p>
         <p><span className={'label'}>Check Method:</span> {UrlStatusCheckMethods[checkMethod].caption} ({checkMethod})</p>

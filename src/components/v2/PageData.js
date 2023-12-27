@@ -8,7 +8,8 @@ import {ConfigContext} from "../../contexts/ConfigContext";
 import {
     ARCHIVE_STATUS_FILTER_MAP,
     URL_STATUS_FILTER_MAP
-} from "./filterMaps/urlFilterMaps";
+} from "../../constants/urlFilterMaps";
+import {REF_FILTER_DEFS} from "../../constants/refFilterMaps";
 import {areObjectsEqual} from "../../utils/utils";
 import {categorizedDomains, rspMap} from "../../constants/perennialList";
 import {UrlStatusCheckMethods} from "../../constants/checkMethods";
@@ -302,8 +303,27 @@ export default function PageData({pageData = {}}) {
                     })
                 })
             }
-            pageData.template_statistics = templateDict
+
+            if (!pageData["stats"]) pageData["stats"] = {}
+            pageData.stats["templates"] = templateDict
         }
+
+        const gatherPapersStatistics = (refArray) => {
+            // use filter def from references filter def
+            const papersStats = ["hasDoi"].map(key => {
+                const f = REF_FILTER_DEFS[key];
+                const count = pageData.references.filter((f.filterFunction)()).length; // Note the self-evaluating filterFunction!
+                return {
+                    label: f.caption,
+                    count: count,
+                    link: key
+                }
+            })
+
+            if (!pageData["stats"]) pageData["stats"] = {}
+            pageData.stats["papers"] = papersStats
+        }
+
 
         const anchorRefs = getAnchorReferences(pageData)
 
@@ -319,6 +339,7 @@ export default function PageData({pageData = {}}) {
         pageData.references = anchorRefs
 
         gatherTemplateStatistics(pageData.references)
+        gatherPapersStatistics(pageData.references)
 
     }, [processReference, processCiteRefs])
 

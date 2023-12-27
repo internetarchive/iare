@@ -1,7 +1,10 @@
 :root {
+    --titlebar-height: 1.5rem;
+    --titlebar-font-size: 1rem;
+
     /*--grid-color-light: var(--bs-gray);*/
     --grid-color-light: #c1c1c1;
-    --height-raw-display: 6rem;
+    --height-raw-display: 7rem;
 
     /*--width-col-url: 25rem;*/
     /*--width-col-status: 25rem;*/
@@ -29,11 +32,12 @@
     width:100%;
     height:100%;
     position:fixed;
+
     top: 50%;
     left:50%;
-    transform: translate( -50%, -50%);
-    /*background-color: #f1eaea;*/
-    /*background-color: #e8edfc;*/
+
+    /*transform: translate( -50%, -50%);*/
+
     background-color: #ffffff;
 
     box-shadow: 0px 0px 18px 0px rgba(0,0,0,0.75);
@@ -48,64 +52,48 @@
     width:100%;
 }
 
-.closeBtn {
+
+.ref-view {
+}
+
+.ref-view-title-bar {
+    /*background-color: #565e64;*/
+    /*background-color: #c54ba5;*/
+    min-height:var(--titlebar-height);
+    max-height:var(--titlebar-height);
+    cursor:move;
+    /*background: linear-gradient(to right, #00274c, #00a5e0);*/
+    /*background: linear-gradient(to right, #00519c, #00a5e0);*/
+    background: linear-gradient(to right, #005db1, #00a5e0);
+}
+.ref-view-title-bar h2 {
+    color:white;
+    font-weight:bold;
+    font-size: var(--titlebar-font-size);
+    padding: .1rem 0 .3rem .85rem;
+}
+.ref-view-title-bar .closeBtn {
     position:fixed;
-    top:.85rem;
+    top:.15rem;
     right:.85rem;
     cursor: pointer;
 
-    /*background-color: deepskyblue;*/
+    background-color: rgba(255, 255, 255, 0.67);
     border:1px solid black;
-    padding: 0.3rem 0.4rem;
+    padding: 0.05rem 0.3rem;
 }
-.closeBtn:hover {
+.ref-view-title-bar .closeBtn:hover {
     color:red;
 }
 
-.ref-view {
-    padding:.85rem;
+.ref-view-contents {
+    overflow:scroll;
+    padding:0.5rem .85rem .85rem .85rem;
     color:black;
 }
 
-.ref-view .ref-view-header {
-    border-bottom:4px solid var(--color-hilite)
-}
-
-.ref-view .ref-view-header h2 {
-    font-weight:bold;
-}
-.ref-view .ref-view-header.test-display h2 {
-    color:red !important;
-}
-
-.ref-view .ref-origin-link {
-    font-size:.85rem;
-    color:darkgrey;
-    position:relative;
-    top:.36rem;
-}
-.ref-view .ref-origin-link a {
-    color:darkgrey;
-}
-
-.ref-view-actions {
-    /*background-color: darkcyan;*/
-
-}
-.ref-view-actions button {
-    width: 100%;
-    padding:.75rem 0;
-    margin-bottom:.5rem;
-    /*font-size:1rem;*/
-    /*background-color: var(--button-color-blue)*/
-}
-.ref-view-stats {
-    margin-top:2rem;
-}
-
-
-.ref-view-content {
-    min-height: 21rem;
+.ref-view-upper-part {
+    min-height: 18rem;
 }
 
 /* Templates section of ref view details */
@@ -287,12 +275,14 @@
 }
 
 .ref-view .raw-wikitext {
+    font-size: .85rem;
     color: #808080;
     background-color: #d6e3d2;
     overflow-wrap: break-word;
     overflow: scroll;
     height: var(--height-raw-display);
     margin-bottom:0;
+    padding:.18rem .25rem;
 }
 
 /*.ref-view .row.footer  {*/
@@ -337,4 +327,28 @@
 
 .row.ref-view-actions {
     margin-top:1rem;
+}
+
+.no-padding {
+    padding-left:0 !important;
+    padding-right:0 !important;
+}
+
+
+/*** boneyard (things that dont seem to be used - could delete eventually ***/
+
+
+.ref-view-actions {
+    /*background-color: darkcyan;*/
+
+}
+.ref-view-actions button {
+    width: 100%;
+    padding:.75rem 0;
+    margin-bottom:.5rem;
+    /*font-size:1rem;*/
+    /*background-color: var(--button-color-blue)*/
+}
+.ref-view-stats {
+    margin-top:2rem;
 }

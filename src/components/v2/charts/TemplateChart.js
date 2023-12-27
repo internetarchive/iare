@@ -6,14 +6,14 @@ import ChartLegend from "./ChartLegend";
 
 const TemplateChart = ({pageData, options, onAction}) => {
 
-    if (!pageData?.template_statistics) return <div>
+    if (!pageData?.stats?.templates) return <div>
         <p>No Template statistics to show.</p>
     </div>
 
-    const templateData = Object.keys(pageData.template_statistics).map(key => {
+    const templateData = Object.keys(pageData.stats.templates).map(key => {
         return {
             label: key,
-            count: pageData.template_statistics[key],
+            count: pageData.stats.templates[key],
             link: key
         }
     }).sort((a, b) => {
@@ -28,20 +28,7 @@ const TemplateChart = ({pageData, options, onAction}) => {
                         : 0
     })
 
-    const myColors = {
-        blue: "#35a2eb",
-        darkBlue: "#1169a5",
-        red: "#ff6384",
-        teal: "#4bc0c0",
-        orange: "#ff9f40",
-        purple: "#9866ff",
-        yellow: "#ffcd57",
-        green: "#5bbd38",
-        grey: "#c9cbcf",
-        magenta: "#f763ff",
-        black: "#000000",
-        white: "#FFFFFF"
-    }
+    const myColors = {blue: "#35a2eb", darkBlue: "#1169a5", red: "#ff6384", teal: "#4bc0c0", orange: "#ff9f40", purple: "#9866ff", yellow: "#ffcd57", green: "#5bbd38", grey: "#c9cbcf", magenta: "#f763ff", black: "#000000", white: "#FFFFFF"}
 
     // const colorArray = [colors.teal, colors.yellow, colors.red, colors.magenta, colors.grey,]
     // const colorArray = [colors.teal, colors.yellow]
@@ -134,7 +121,6 @@ const TemplateChart = ({pageData, options, onAction}) => {
     }
 
     return <>
-        <h4 className={`chart-title${options?.captionClass ? ` ${options.captionClass}`: ''}`}>Template Occurrences</h4>
         <h4 className={"chart-instruction"}>Click to filter URL and References Lists</h4>
 
         <ChartLegend data={templateData} onClick={onClickLegend} colors={colorArray} className={"chart-legend-templates"} />

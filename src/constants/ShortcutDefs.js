@@ -1,4 +1,8 @@
 const ShortcutDefs = {
+    "mlk"  : {
+        label : "MLK",
+        value : "https://en.wikipedia.org/wiki/Martin_Luther_King_Jr."
+    },
     "karen_bakker"  : {
         label : "Karen Bakker",
         value : "https://en.wikipedia.org/wiki/Karen_Bakker"

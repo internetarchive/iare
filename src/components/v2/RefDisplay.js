@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import RefFlock from "./RefFlock";
 import RefOverview from "./RefOverview";
-import {REF_FILTER_DEFS, REF_FILTER_TYPES} from "./filterMaps/refFilterMaps";
+import {REF_FILTER_DEFS, REF_FILTER_TYPES} from "../../constants/refFilterMaps";
 import './refs.css';
 import '../shared/filters.css';
 
