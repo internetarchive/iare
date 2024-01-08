@@ -195,7 +195,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
                 } else if (err.name === "TypeError" && err.message === "Failed to fetch") {
                     setMyError(err.message + " - Possible IARI service failure.");
                     // TODO: this happens when filename does not exist!
-
+                    // or when CORS error encountered
                 } else {
                     // ?? should we extract HTTP status code from string? (1st 3 characters, if number? without number, next?)
                     setMyError(err.message + " - No further info available");

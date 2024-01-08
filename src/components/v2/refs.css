@@ -102,7 +102,7 @@
 }
 
 /***********************
- flock / list formatting
+ ref flock / list formatting
  ***********************/
 .ref-flock {
     width: var(--width-ref-list);
@@ -110,18 +110,17 @@
 }
 .ref-list-wrapper {
     display:block;
-    flex: 0 0 100%;
+    flex: 0 0 100%;  /* Three values: flex-grow | flex-shrink | flex-basis */
 }
-.ref-list-wrapper h4 {
-    overflow-wrap: break-word;
-}
-.ref-list-wrapper .target-url {
-    font-weight: normal; color:red;
-}
+                /*.ref-list-wrapper h4 {*/
+                /*    overflow-wrap: break-word;*/
+                /*}*/
+                /*.ref-list-wrapper .target-url {*/
+                /*    font-weight: normal; color:red;*/
+                /*}*/
 
 .ref-list {
     /*max-width:19.5rem;*/
-
     max-height: calc(var(--height-list) + 2rem);
     height: calc(var(--height-list)+ 2rem);
     overflow-x: hidden;
@@ -129,7 +128,7 @@
 }
 
 .ref-list-header {
-    width: var(--width-ref-list);
+    /*width: var(--width-ref-list);*/
     max-width: var(--width-ref-list);
     padding: 0.5rem 0.5rem;
     border: 1px solid black;

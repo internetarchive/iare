@@ -21,7 +21,7 @@ export const ACTIONABLE_FILTER_MAP = {
     // },
     bad_live: {
         name: "bad_live",
-        caption: "Link Status: BAD, Citation Priority: Live",
+        caption: <div>Link Status: BAD,<br/>Citation Priority: Live</div>,
         desc: "Link Status: BAD, Citation Priority: Live",
         tooltip: `<div>Original URL Status is NOT 2XX or 3XX<br/>AND<br/>Template Parameter "url_status" is set to "live"</div>`,
         fixit: <div>Set "url-status" parameter in Citation Template to "dead"</div>,
@@ -78,7 +78,7 @@ export const ACTIONABLE_FILTER_MAP = {
         // if (archive-url exists) && (url-status !== live)
          */
 
-        caption: "Link Status: GOOD, Archive Status: GOOD, Citation Priority: Not Live",
+        caption: <div>Link Status: GOOD,<br/>Archive Status: GOOD,<br/>Citation Priority: Not Live</div>,
         desc: "Link Status: GOOD, Archive Status: GOOD, Citation Priority: Not Live",
         tooltip: `<div>Original URL Status IS 2XX or 3XX<br/>AND<br/>An archive exists<br/>AND<br/>Template Parameter "url_status" is NOT set to "live"</div>`,
         fixit: <div>Add or change Citation Template Parameter "url-status" to "live"</div>,
@@ -142,7 +142,7 @@ export const ACTIONABLE_FILTER_MAP = {
     },
     dead_link_no_archive: {
         name: "dead_link_no_archive",
-        caption: "Link Status BAD, Archive Status BAD",
+        caption: <div>Link Status BAD,<br/>Archive Status BAD</div>,
         desc: "Link Status BAD, Archive Status BAD",
         tooltip: `<div>Original URL Status is NOT 2XX or 3XX<br/>AND<br/>No Archive exists in Wayback Machine</div>`,
         fixit: <div>Add Wayback Machine archive URL to the citation</div>,

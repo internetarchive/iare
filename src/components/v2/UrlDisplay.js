@@ -3,42 +3,14 @@ import UrlFlock from "./UrlFlock";
 import RefFlock from "./RefFlock";
 import UrlOverview from "./UrlOverview";
 import '../shared/urls.css';
-import '../shared/filters.css';
+import '../shared/components.css';
 import {LINK_STATUS_MAP} from "../../constants/linkStatusMap";
 import {ACTIONABLE_FILTER_MAP} from "../../constants/actionableMap";
 import {REF_FILTER_DEFS} from "../../constants/refFilterMaps";
 import {ConfigContext} from "../../contexts/ConfigContext";
-import FilterButtons from "../FilterButtons";
-import ChoiceFetch from "../ChoiceFetch";
 import RefView from "./RefView/RefView";
-import {Tooltip as MyTooltip} from "react-tooltip";
-
-const localized = {
-    "url_display_title":"URLs",
-    "actionable": "Actionable",
-    "actionable_subtitle": " - Show Links from Citations that can be improved right now"
-}
-
-function ActionFilters( {filterSet= null, filterRender, flock = [], onAction, options = {}, currentFilterName = '', tooltipId='', className = null}) {
-    const handleActionable = (actionable) => {
-        onAction({
-            action: "setUrlActionFilter", value: actionable,
-        })
-    }
-
-
-    return <FilterButtons
-        flock={flock}  // flock set to count filters against
-        filterMap={filterSet}
-        onClick={handleActionable}
-        caption={null}
-        currentFilterName={currentFilterName}  // sets "pressed" default selection
-        className={className}
-        tooltipId={tooltipId}
-        onRender={filterRender}  // how to render each button
-    />
-
-}
+// import {Tooltip as MyTooltip} from "react-tooltip";
+import ControlBox from "../ControlBox";
 
 
 export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {}, urlArchiveFilterMap = {} } ) {
@@ -47,8 +19,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
     const [urlFilters, setUrlFilters] = useState( null ); // keyed object of url filters to pass in to UrlFlock  TODO: implement UrlFilter custom objects
     const [refFilter, setRefFilter] = useState( null ); // filter to pass in to RefFlock
     const [selectedUrl, setSelectedUrl] = useState(''); // currently selected url in url list
-    const [selectedUrlActionFilterName, setSelectedUrlActionFilterName] = useState('')
-    const [selectedCitationType, setSelectedCitationType] = useState('')
+    const [currentState, setCurrentState] = useState({"actionables" : null})
 
     const [openModal, setOpenModal] = useState(false)
     const [refDetails, setRefDetails] = useState(null);
@@ -83,14 +54,14 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         const {action, value} = result;
         console.log (`UrlDisplay: handleAction: action=${action}, value=${value}`);
 
-        if (action === "setUrlStatusFilter") {
+        if (action === "setUrlStatusFilter") {  // soon to be deprecated
             // value is filter key name
             const f = value ? urlStatusFilterMap[value] : null
             setUrlFilters({ "url_status" : f })
         }
 
         else if (action === "setLinkStatusFilter") {
-            // value is filter key name
+            // value is key into LINK_STATUS_MAP
             const f = value ? LINK_STATUS_MAP[value] : null
             setUrlFilters({ "link_status" : f })
         }
@@ -118,23 +89,35 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
 
         else if (action === "setUrlReferenceFilter") {
-            // filter References to those that contain a url specified by the value parameter
+            // value parameter specifies url to filter References by
             setRefFilter(getUrlRefFilter(value))
             setSelectedUrl(value)
         }
 
-        else if (action === "setUrlActionFilter") {
-            // filter References as determined by action.value as key into actionable filter map
+        else if (action === "setActionableFilter") {
+            // filter URL List by actionable filter determined by action.value as key
             const f = value ? ACTIONABLE_FILTER_MAP[value] : null
-            setUrlFilters( { "action_filter": f } )
-            setSelectedUrlActionFilterName(value)
+            setUrlFilters({"action_filter": f})
+
+            // set visual feedback state of Actionables filter box
+            setCurrentState(prevState => {
+                return {
+                    ...prevState,
+                    "actionables": value
+                }
+            })
         }
 
         else if (action === "removeUrlFilter") {
             // clear filter (show all) for URL list
             setUrlFilters(null)
             setSelectedUrl(null)
-            setSelectedUrlActionFilterName(null)
+            setCurrentState(prevState => {
+                return {
+                    ...prevState,
+                    "actionables": null
+                }
+            })
         }
 
         else if (action === "removeReferenceFilter") {
@@ -193,33 +176,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
     }, [urlStatusFilterMap, fetchReferenceDetail, pageData.urlDict])
 
 
-    if (!pageData) return null;  /// NB must be put AFTER useEffect and useCallback, as these hooks cannot after conditional statements
-
-
-    const handleCitationTypeChange = (e) => {
-        const citationType = e.target.value
-        console.log("Citation type changed to: " + citationType + ", take appropriate filter action")
-        setSelectedCitationType(citationType)
-    }
-
-
-
-    const renderUrlActionButton = (props) => {
-        /*
-        callback for button render function of <FilterButton>
-        expects:
-            props.filter.caption
-            props.filter.count
-        */
-
-        // TODO put in some element data for tooltip, like filter.desc
-        // TODO Question: where does tool tip come from? is it generic tooltip for the page?
-        return <>
-            <div>{props.filter?.caption}</div>
-            <div className={'filter-count'}>{props.filter?.count} items</div>
-        </>
-    }
-
+    if (!pageData) return null;  /// NB must be put AFTER useEffect and useCallback, as these hooks cannot exist after conditional statements
 
 
     // TODO candidate for external shared function
@@ -288,10 +245,10 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             caption: <span>{`Contains Books from "${bookDomain}"`}</span>,
 
             filterFunction: () => (url) => {
-                // if url.refs.templates include cite book...
+                // if url.refs.templates does NOT include cite book, bail
                 if (!(url.reference_info.templates.includes("cite book"))) return false
 
-                // and this url's netloc matches the bookDomain
+                // return true if this url's netloc matches the bookDomain
                 return (url.netloc === bookDomain)
             },
         }
@@ -394,73 +351,11 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         }
     }
 
-    const citationTypes = {
-        "footnotes": {
-            caption: "Footnotes",
-            value: "footnotes"
-        },
-        "sections": {
-            caption: "Other Sections",
-            value: "sections"
-        },
-        "all": {
-            caption: "All",
-            value: "all"
-        },
-    }
 
     const refArray = (pageData.references)
 
-    // const copyButton = <button onClick={handleCopyClick} className={'utility-button'} ><span>Copy to Clipboard</span></button>
-
-    // const urlListCaption = <h3>URL List{myConfig.isDebug ? copyButton : null }</h3>
-    const extraUrlCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click a URL row to show References using that URL</h4>
-    const extraRefCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click on Reference to view details</h4>
-
     console.log("UrlDisplay: render");
 
-    const showChoiceFetch = false; // turns on/off diaply of "footnotes: conte/nqmed/all user/patron query
-
-    const actionableTooltip = <MyTooltip id="tooltip-actionable"
-                               float={true}
-                               closeOnEsc={true}
-                               delayShow={420}
-                               variant={"info"}
-                               noArrow={true}
-                               offset={5}
-                               className={"tooltip-actionable"}
-    />
-
-    const actionables = <>
-        <h4 className={"section-caption"}>{localized.actionable}<span className={"inferior"}>{localized.actionable_subtitle}</span></h4>
-
-        <div className={"row"}>
-            <div className={showChoiceFetch ? "col-9" : "col-12" }>
-                <ActionFilters
-                    filterSet={ACTIONABLE_FILTER_MAP}
-                    filterRender={renderUrlActionButton}
-                    flock={pageData.urlArray}
-                    onAction={handleAction}
-                    options ={{}}
-                    currentFilterName={selectedUrlActionFilterName}
-                    className={'url-action-filter-buttons'}
-                    tooltipId={'tooltip-actionable'}
-                />
-            </div>
-            {showChoiceFetch &&
-                <div className={"col-3"}>
-                    <ChoiceFetch
-                        choices={citationTypes}
-                        selectedChoice={selectedCitationType}
-                        options={{
-                            caption:<h4>Show Citations from: </h4>,
-                            className:"citation-choices"
-                        }}
-                        onChange={handleCitationTypeChange} />
-                </div>
-            }
-        </div>
-    </>
 
     // setup url stats
 
@@ -479,36 +374,37 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
     pageData.url_status_statistics = {urlCounts: urlCounts}
 
+    // const actionableCaption = <>{localized.actionable}<span className={"inferior"}>{localized.actionable_subtitle}</span></>
+    //
     return <>
 
         {myConfig.isShowUrlOverview &&
             <div className={"section-box url-overview-column"}>
-                <UrlOverview pageData={pageData} options={{}} onAction={handleAction}/>
+                <UrlOverview pageData={pageData} options={{}} onAction={handleAction} currentState={currentState}/>
             </div>
         }
 
 
         <div className={"section-box"}>
-            {actionableTooltip}
-            {false && <h3>{localized.url_display_title}</h3>}
-            {actionables}
+
+            <ControlBox>Conditions
+            <div>Filter defs go here, with fixits if so</div>
+            </ControlBox>
 
             <UrlFlock urlArray={pageData.urlArray}
                       urlFilters={urlFilters}
                       onAction={handleAction}
                       selectedUrl={selectedUrl}
-                      extraCaption={extraUrlCaption}
                       fetchMethod={myConfig.urlStatusMethod} />
         </div>
 
+        {myConfig.isShowReferences && /* References List may go away soon... */
+            <div className={"section-box"}>
+                <RefFlock refArray={refArray} refFilters={refFilter} onAction={handleAction} />
+            </div>
+        }
 
-        {myConfig.isShowReferences && /* References List is tentative - may go away soon... */
-        <div className={"section-box"}>
-            <h4 className={"box-caption"}>References List</h4>
-            <RefFlock refArray={refArray} refFilterDef={refFilter} onAction={handleAction} extraCaption={extraRefCaption} />
-        </div>}
-
-
+        {/* this is the popup Reference Viewer component */}
         <RefView details={refDetails} open={openModal} onClose={() => setOpenModal(false)} />
 
     </>

@@ -74,7 +74,7 @@ export default function FldDisplay({ pageData } ) {
 
         <div className={"section-box"}>
             <h3>References List</h3>
-            <RefFlock refArray={refArray} refFilterDef={refFilter} onAction={handleAction} />
+            <RefFlock refArray={refArray} refFilters={refFilter} onAction={handleAction} />
         </div>
     </>
 }

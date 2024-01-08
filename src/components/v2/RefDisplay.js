@@ -3,7 +3,7 @@ import RefFlock from "./RefFlock";
 import RefOverview from "./RefOverview";
 import {REF_FILTER_DEFS, REF_FILTER_TYPES} from "../../constants/refFilterMaps";
 import './refs.css';
-import '../shared/filters.css';
+import '../shared/components.css';
 
 export default function RefDisplay ({ pageData, options } ) {
 
@@ -73,7 +73,7 @@ export default function RefDisplay ({ pageData, options } ) {
 
         <div className={"section-box"}>
             <h3>References List</h3>
-            <RefFlock refArray={refArray} refFilterDef={refFilter} onAction={handleAction} />
+            <RefFlock refArray={refArray} refFilters={refFilter} onAction={handleAction} />
         </div>
 
     </>

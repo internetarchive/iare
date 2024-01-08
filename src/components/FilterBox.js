@@ -1,12 +1,18 @@
 import React, { useState } from "react";
+import './shared/components.css';
 // import Draggable from "react-draggable";
 
-/*
+/* FilterBox component
+
+- surrounds the children elements with a "filter-box" treatment, which currently includes:
+    - stylized mini titlebar with open/close icon
+    - (maybe in future:) draggable box
+
 expected props:
 
  */
 export default function FilterBox({
-                                      caption = '',
+                                      caption = null,
                                       tooltip = '',
                                       showContents = true,
                                       children
