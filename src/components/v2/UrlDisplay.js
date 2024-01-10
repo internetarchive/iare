@@ -19,7 +19,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
     const [urlFilters, setUrlFilters] = useState( null ); // keyed object of url filters to pass in to UrlFlock  TODO: implement UrlFilter custom objects
     const [refFilter, setRefFilter] = useState( null ); // filter to pass in to RefFlock
     const [selectedUrl, setSelectedUrl] = useState(''); // currently selected url in url list
-    const [currentState, setCurrentState] = useState({"actionables" : null})
+    const [currentState, setCurrentState] = useState({})
 
     const [openModal, setOpenModal] = useState(false)
     const [refDetails, setRefDetails] = useState(null);
@@ -178,7 +178,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             setRefFilter(getRefTemplateFilter(value))
             setSelectedUrl(null)
             setCondition({category: "Template", desc: `Utilizes template "${value}"`})
-            setFilterState("template", value)
+            setFilterState(filters.templates, value)
         }
 
 

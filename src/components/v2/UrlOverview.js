@@ -147,7 +147,7 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState}) => 
                 </FilterBox>
 
                 <FilterBox name={"templates"} caption="Template Occurrences" showContents={expand.templates} onToggle={onToggleShow}>
-                    <TemplateChart pageData={pageData} onAction={onAction} currentState={currentState?.template } />
+                    <TemplateChart pageData={pageData} onAction={onAction} currentState={currentState?.templates } />
                 </FilterBox>
 
             </div>
