@@ -68,12 +68,13 @@ export default function RefDisplay ({ pageData, options } ) {
                          }
                          onAction={handleAction}
                          selectedFilter={selectedFilter}
+                         pageData={pageData}
             />
         </div>
 
         <div className={"section-box"}>
             <h3>References List</h3>
-            <RefFlock refArray={refArray} refFilters={refFilter} onAction={handleAction} />
+            <RefFlock refArray={refArray} refFilter={refFilter} onAction={handleAction} />
         </div>
 
     </>

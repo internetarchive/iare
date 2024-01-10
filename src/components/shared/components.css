@@ -4,6 +4,7 @@
     --border-box-radius:0.33rem;
 
     --margin-box-bottom: .35rem;
+    --margin-box-left: .35rem;
 
     --color-filter-box-caption: #FFFFFF;
     --color-filter-box-caption-bg: #2299e8;
@@ -18,12 +19,23 @@
 
     --color-filter-btn-bg: #d1d5da;
     --color-filter-btn-hover-bg: #dddee2;
-    --color-filter-btn-pressed-bg: #afb4b8;
+    --color-filter-btn-pressed-bg: #c8cad0;
+
+    --color-condition: black;
+    --color-condition-box: #d1d5da;
+
+    --color-actionable-bg: hsl(205 71% 87% / 1);
+
+    --color-button-dark-bg: #2199e8;
+    --color-button-dark: #fefefe;
+
+    --width-category-column: 7.5rem;
 }
 
-/* Control Box */  /* mau move these to better file location */
+/* Control Box */  /* may move these to better file location */
 
 .control-box {
+    background-color: var(--color-condition-box);
     border-radius: var(--border-box-radius);
     border: var(--border-box-light);
     margin-bottom:var(--margin-box-bottom);
@@ -31,13 +43,82 @@
 }
 
 .control-box-caption {
+    padding: 0.0rem 0.0rem 0.3rem !important;
+    color: var(--color-condition) !important;
+    font-size: 0.85rem;
+    font-weight: bold;
+    line-height:1.2;
+    margin-bottom: 0 !important;
 }
 
 .control-box-caption .sub-caption {
 }
-
-.control-box-contents {
+.control-box-contents .category-row {
+    line-height:1.8;
 }
+.control-box .button-row {
+    margin-top:.375rem;
+}
+.control-box .button-row .utility-button {
+    background-color: var(--color-button-dark-bg) !important;
+    color: var(--color-button-dark) !important;
+    padding-left:.5rem;
+    padding-right:.5rem;
+    margin-right:.25rem;
+}
+.control-box .button-row .utility-button:first-of-type {
+    margin-left:0;
+}
+
+/* Condition Box */
+
+.conditions-box {
+    background-color: var(--color-condition-box);
+    border-radius: var(--border-box-radius);
+    border: var(--border-box-light);
+    margin-bottom:var(--margin-box-bottom);
+    padding:.35rem;
+}
+
+.conditions-box-caption {
+    padding: 0.0rem 0.0rem 0.3rem !important;
+    color: var(--color-condition) !important;
+    font-size: 0.85rem;
+    font-weight: bold;
+    line-height:1.2;
+    margin-bottom: 0 !important;
+}
+.conditions-box button.inline-conditions {
+    position: relative !important;
+    top: 0.1rem !important;
+    margin-left: 2.5rem !important;
+    background-color: var(--color-button-dark-bg) !important;
+    color: var(--color-button-dark) !important;
+}
+
+
+.conditions-box-caption .sub-caption {
+}
+
+.conditions-box-contents {
+}
+
+.condition-box .category-row,
+.condition-box .fixit-row {
+    display:flex;
+    flex-direction: row;
+    line-height: 1.8;
+}
+.condition-box .cond-category {
+    min-width:var(--width-category-column);
+    max-width:var(--width-category-column);
+    font-weight: bold;
+}
+.condition-box .cond-data {
+    /*min-width:15rem;*/
+    /*max-width:5rem;*/
+}
+
 
 /* filter boxes - charts in overview on left side */
 
@@ -91,7 +172,11 @@
 
 .flock-box {
     margin-bottom:var(--margin-box-bottom);
+    margin-left:var(--margin-box-left);
     z-index: 1000;
+}
+.flock-box:first-of-type {
+    margin-left:0;
 }
 
 .flock-box-caption {
@@ -149,7 +234,7 @@
 
 .filter-buttons button.btn {
     cursor: pointer;
-    background-color: #d1d5da; /*#8191a4;*/
+    background-color: var(--color-filter-btn-bg);
     border:1px solid #888888;
     padding:.5rem;
     /*max-width:16.8rem;*/
@@ -193,11 +278,46 @@
     /*font-size:120%;*/
 }
 
-/* special case buttons */
+
+/* actionable filter buttons - should be in custom css, not this general component css */
 .url-actionable-buttons button {
     text-align: center;
     font-size: .85rem;
+    background-color: var(--color-actionable-bg) !important;
+    box-shadow: inset 0px 0px 2px #333333;/*min-width:11.5rem;*/
+    border: 1px solid black;
 }
 .url-actionable-buttons button div:first-of-type {
-    text-align: left;
+    text-align: left;  /* left aligns main text, keeping "count info"  centered */
+}
+.url-actionable-buttons button.btn:hover {
+    background-color: var(--color-filter-btn-hover-bg) !important;
+    box-shadow: inset 0px 0px 5px #333333;/*min-width:11.5rem;*/
+    border: 1px solid black;
+}
+.url-actionable-buttons button.btn-pressed {
+    background-color: var(--color-filter-btn-pressed-bg) !important;
+    box-shadow: inset 0px 0px 5px #333333;/*min-width:11.5rem;*/
+    border: 1px solid black;
+    /*border:1px solid blue;*/
+}
+
+/* special case buttons */
+
+.condition-control-box {
+    border: none !important;
+    padding-left:0;
+}
+.condition-control-box .control-box-contents {
+    display: flex;
+    flex-direction: row;
+    justify-content: normal;
+    padding-top:1pt;
+}
+.condition-control-box button {
+    margin:0;
+    padding:0;
+}
+.condition-control-box button:first-of-type {
+    margin-left:0 !important;
 }

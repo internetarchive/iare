@@ -17,6 +17,7 @@ const handleCiteRefClick = (e) => {
 function getReferenceCaption(ref, i) {
 
     let hasContent = false;
+    let spanCount = 0
 
     const citeRefLinks = ref.cite_refs
         ? ref.cite_refs.map( cr => {
@@ -30,46 +31,51 @@ function getReferenceCaption(ref, i) {
         : null // <div>No Citation Refs!</div>
 
     const doiLinks = []
-    // for each template, if there is a "doi" parameter, add it to the display
-    ref.templates.forEach(t => {
+    ref.templates.forEach( (t, ti) => {
+        // for each template, if there is a "doi" parameter, add it to the display
         if (t.parameters?.doi) {
             hasContent = true
             const href = `https://doi.org/${encodeURIComponent(t.parameters.doi)}`
-            doiLinks.push(<MakeLink href={href} linkText={`DOI: ${t.parameters.doi}`}/> )
+            doiLinks.push(<MakeLink href={href} linkText={`DOI: ${t.parameters.doi}`} key={`${ti}-${t.parameters.doi}`}/> )
         }
     })
+
+    const setSpan = () => {
+        hasContent = true
+        spanCount++
+    }
 
     const markup = <>
 
         {ref.titles
-            ? ref.titles.map( (t,i) => {
-                hasContent = true
-                return <span className={'ref-line ref-title'} style={{fontWeight: "bold"}}>{t}</span>
+            ? ref.titles.map( (t) => {
+                setSpan()
+                return <span className={'ref-line ref-title'} key={spanCount} >{t}</span>
             }) : null }
 
         {ref.name
             ? <>
-                {hasContent = true}
-                <span className={'ref-line ref-name'}>Reference Name: <span style={{fontWeight: "bold"}}>{ref.name}</span></span>
+                {setSpan()}
+                <span className={'ref-line ref-name'} key={spanCount}><span className={'caption'}>Reference Name:</span> {ref.name}</span>
               </>
             : null }
 
-        {ref.template_names && ref.template_names.length
+        {ref.template_names?.length
             ? <>
-                {hasContent = true}
                 {ref.template_names.map( tn => {
-                return <span className={'ref-line ref-template'}>Template: <span style={{fontWeight: "bold"}}>{tn}</span></span>
+                    setSpan()
+                    return <span className={'ref-line ref-template'} key={spanCount}><span className={'caption'}>Template:</span> {tn}</span>
             })}
                 </>
             : null}
 
         {false && citeRefLinks}
+
         {doiLinks}
 
-        {/*{ !hasContent ? <span>ref id: {ref.id}</span> : null }*/}
         { !hasContent ? <span>{ref.wikitext}</span> : null }
 
-        {false && ref.link_status
+        {false && ref.link_status  // NB omit for now...
             // display link_status array values
             ? <div className={`ref-link-status-wrapper`}>
 
@@ -84,7 +90,7 @@ function getReferenceCaption(ref, i) {
             </div>
             : null}
 
-        {true && <div>
+        {false && <div> {/* extra info for debug */}
             #{i} {ref.id} {ref.type}-{ref.footnote_subtype}
         </div>}
     </>
@@ -92,7 +98,7 @@ function getReferenceCaption(ref, i) {
     return markup
 }
 
-function RefFlock({ refArray, refFilters, onAction} ) {
+function RefFlock({ refArray, refFilter, onAction, pageData= {}} ) {
 
     const [refDetails, setRefDetails] = useState(null);
     // const [isLoading, setIsLoading] = useState(false);
@@ -153,24 +159,12 @@ function RefFlock({ refArray, refFilters, onAction} ) {
         setOpenModal(true)
     }, [refDetails])
 
+    // return if no references to show
     if (!refArray) {
         return <FlockBox caption={"References List"} className={"ref-flock"}>
-            <div className={"ref-list-wrapper"}>
-                {"No references to show."}
-            </div>
+            {"No references to show."}
         </FlockBox>
-
     }
-
-                        // const handleRemoveFilter = (e) => {
-                        //
-                        //     // send action back up the component tree
-                        //     onAction( {
-                        //         "action": "removeReferenceFilter",
-                        //         "value": '',
-                        //     })
-                        //     // do we need to do anything local?
-                        // }
 
     const onHoverListItem = e => {
         // show tool tip for link status icon
@@ -185,23 +179,11 @@ function RefFlock({ refArray, refFilters, onAction} ) {
         setTooltipHtmlRefList(html)
     }
 
-    const filteredRefs = refFilters
-        ? refArray.filter((refFilters.filterFunction)()) // Note self-calling function
+    const filteredRefs = refFilter
+        ? refArray.filter((refFilter.filterFunction)().bind(null, pageData.urlDict), ) // NB Note self-calling function
         : refArray;
 
-                    // const buttonRemove = refFilterDef
-                    //     ? <button onClick={handleRemoveFilter}
-                    //          className={'utility-button'}
-                    //          style={{position: "relative", top: "-0.1rem"}}
-                    //         ><span>Remove Filter</span></button>
-                    //     : null
-
     const handleCopyRefsClick = () => { // used to copy url list and status
-
-        // // filter filteredRefs to only show footnote citations
-        // let refArrayData = filteredRefs.filter( r => {
-        //     return r.type === "footnote" && r.footnote_subtype === "content"
-        // })
 
         let refArrayData = filteredRefs
 
@@ -267,8 +249,6 @@ function RefFlock({ refArray, refFilters, onAction} ) {
         </div>
     </>
 
-    // }
-
     const refTooltip = <MyTooltip id="ref-list-tooltip"
                                float={true}
                                closeOnEsc={true}
@@ -282,9 +262,7 @@ function RefFlock({ refArray, refFilters, onAction} ) {
 
     return <FlockBox caption={flockCaption} className={"ref-flock"}>
 
-        <div className={"ref-list-wrapper"}>
-            {flockRows}
-        </div>
+        {flockRows}
 
         <RefView details={refDetails} open={openModal} onClose={() => setOpenModal(false)} />
 

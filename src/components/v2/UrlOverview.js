@@ -35,6 +35,15 @@ Chart.register(
 
 const UrlOverview = React.memo(({pageData, options, onAction, currentState}) => {  // React.memo so doesn't re-rerender with param changes
 
+    const [expand, setExpand] = useState({
+        "actionable" : true,
+        "link_status" : true,
+        "papers" : true,
+        "reliability" : true,
+        "tld" : true,
+        "books" : true,
+        "templates" : true,
+    })
     const iareColors = {
         blue: "#35a2eb",
         darkBlue: "#1169a5",
@@ -50,16 +59,58 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState}) => 
         white: "#FFFFFF"
     }
 
+    const onToggleShow = (name) => {
+        console.log("hi there")
+        setExpand( prevState => {
+            return {
+                ...prevState,
+                [name]:!prevState[name]
+            }
+        })
+    }
+
     return <div className={"url-overview"}>
 
-        {/*<div className={"row"}>*/}
-        {/*    <div className={"col"}>*/}
-        {/*        <div className={"control-box"}>Controls here.</div>*/}
-        {/*    </div>*/}
-
-        {/*</div>*/}
-
-        <ControlBox >Controls here.</ControlBox>
+        <ControlBox>
+            <h3 className={"control-box-caption"}>Filters</h3>
+            <div className={"category-row"}>Click on an Item to filter URLs and References.</div>
+            <div className={"button-row"}>
+                <button
+                    type="button"
+                    className={`btn small-button utility-button`}
+                    onClick={() => {
+                        setExpand(prevState => {
+                            const newState = {}
+                            Object.keys(prevState).forEach(key => {
+                                newState[key] = true
+                            })
+                            return newState
+                        })
+                    }}
+                    // // tooltip attributes
+                    // data-tooltip-id={props.tooltipId}
+                    // data-tooltip-html={props.tooltip}
+                >Expand All
+                </button>
+                <button
+                    type="button"
+                    className={`btn small-button utility-button`}
+                    onClick={() => {
+                        setExpand(prevState => {
+                            const newState = {}
+                            Object.keys(prevState).forEach(key => {
+                                newState[key] = false
+                            })
+                            return newState
+                        })
+                    }}
+                    // // tooltip attributes
+                    // data-tooltip-id={props.tooltipId}
+                    // data-tooltip-html={props.tooltip}
+                >Shrink All
+                </button>
+            </div>
+        </ControlBox>
 
         <div className={"row"}>
 
@@ -67,35 +118,36 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState}) => 
 
                         {/* the old URL status pie chart */}
                         {/*<FilterBox caption="URL Status Codes" showContents={true}>*/}
-                        {/*    <UrlStatusChart pageData={pageData} colors={colors} onAction={onAction} />*/}
+                        {/*    <UrlStatusChart pageData={pageData} colors={colors} onAction={onAction} currentState={currentState?. } />*/}
                         {/*</FilterBox>*/}
 
-                <FilterBox caption={"Actionable"} showContents={true} >
-                    <ActionableChart pageData={pageData} onAction={onAction} currentState={currentState?.actionables} />
+
+                <FilterBox name={"actionable"} caption={"Actionable"} showContents={expand.actionable} onToggle={onToggleShow} >
+                    <ActionableChart pageData={pageData} onAction={onAction} currentState={currentState?.actionable} />
                 </FilterBox>
 
-                <FilterBox caption="Link Status Codes" showContents={true}>
-                    <LinkStatusChart pageData={pageData} onAction={onAction} />
+                <FilterBox name={"link_status"} caption="Link Status Codes" showContents={expand.link_status} onToggle={onToggleShow}>
+                    <LinkStatusChart pageData={pageData} onAction={onAction} currentState={currentState?.link_status } />
                 </FilterBox>
 
-                <FilterBox caption="Papers and DOIs" showContents={true}>
-                    <PapersChart pageData={pageData} onAction={onAction} />
+                <FilterBox name={"papers"} caption="Papers and DOIs" showContents={expand.papers} onToggle={onToggleShow}>
+                    <PapersChart pageData={pageData} onAction={onAction} currentState={currentState?.papers } />
                 </FilterBox>
 
-                <FilterBox caption="Reliability Statistics">
-                    <PerennialChart pageData={pageData} onAction={onAction} />
+                <FilterBox name={"reliability"} caption="Reliability Statistics" showContents={expand.reliability} onToggle={onToggleShow}>
+                    <PerennialChart pageData={pageData} onAction={onAction} currentState={currentState?.perennial } />
                 </FilterBox>
 
-                <FilterBox caption="Top Level Domains">
-                    <TldChart pageData={pageData} onAction={onAction} />
+                <FilterBox name={"tld"} caption="Top Level Domains" showContents={expand.tld} onToggle={onToggleShow}>
+                    <TldChart pageData={pageData} onAction={onAction} currentState={currentState?.tld } />
                 </FilterBox>
 
-                <FilterBox caption="Links to Books">
-                    <BooksChart pageData={pageData} options={{colors:iareColors}} onAction={onAction} />
+                <FilterBox name={"books"} caption="Links to Books" showContents={expand.books} onToggle={onToggleShow}>
+                    <BooksChart pageData={pageData} options={{colors:iareColors}} onAction={onAction} currentState={currentState?.books } />
                 </FilterBox>
 
-                <FilterBox caption="Template Occurrences">
-                    <TemplateChart pageData={pageData} onAction={onAction} />
+                <FilterBox name={"templates"} caption="Template Occurrences" showContents={expand.templates} onToggle={onToggleShow}>
+                    <TemplateChart pageData={pageData} onAction={onAction} currentState={currentState?.template } />
                 </FilterBox>
 
             </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import './shared/components.css';
 // import Draggable from "react-draggable";
 
@@ -12,28 +12,24 @@ expected props:
 
  */
 export default function FilterBox({
+                                      name = '',
                                       caption = null,
                                       tooltip = '',
                                       showContents = true,
+                                      onToggle,
                                       children
                                   }) {
-
-    const [expanded, setExpanded] = useState(showContents)
-
-    const handleExpand = () => {
-        setExpanded( prevState => !prevState )
-    }
 
     return <>
         {/*<Draggable>*/ /* Not sure about this yet */}
 
             <div className={"filter-box"}>
 
-                <div className={"filter-box-caption"} onClick={handleExpand}>{caption}
-                    <div className={`filter-box-show ${expanded ? "closed" : "open" }`}
-                        >{expanded ? "hide" : "show"}</div>
+                <div className={"filter-box-caption"} onClick={() => onToggle(name)}>{caption}
+                    <div className={`filter-box-show ${showContents ? "closed" : "open" }`}
+                    >{showContents ? "hide" : "show"}</div>
                 </div>
-                {expanded && <div className={"filter-box-contents"}>{children}</div>}
+                {showContents && <div className={"filter-box-contents"}>{children}</div>}
 
             </div>
         {/*</Draggable>*/}

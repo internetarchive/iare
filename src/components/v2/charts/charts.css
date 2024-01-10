@@ -1,3 +1,8 @@
+:root {
+    --border-legend-entry: 1px solid transparent;
+    --border-legend-selected: 1px solid #a6a6a6;
+    --color-legend-selected: #e0e0e0;
+}
 
 .chart-instruction {
     font-style: italic;
@@ -13,11 +18,18 @@
 .chart-legend .legend-entry {
     /*display: inline-block;*/
     margin-right:.65rem;
-    margin-bottom:.25rem;
+    margin-bottom:.2rem;
     /*cursor: pointer;*/
     font-size: 16px;
     color:#666666;
+    border: var(--border-legend-entry);
+    padding: 0pt 1.5pt 0 3pt;
 }
+.chart-legend .legend-entry.legend-entry-selected {
+    border: var(--border-legend-selected);
+    background: var(--color-legend-selected);
+}
+
 .chart-legend .legend-box,
 .chart-legend .legend-label {
     display: inline-block;
@@ -25,7 +37,7 @@
 }
 
 .chart-legend .legend-label .lolite {
-    filter: brightness(1.75);
+    filter: brightness(1.65);
 }
 
 .chart-legend .legend-box {

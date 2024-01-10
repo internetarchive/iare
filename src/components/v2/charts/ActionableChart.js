@@ -2,7 +2,6 @@ import {ACTIONABLE_FILTER_MAP} from "../../../constants/actionableMap";
 import FilterButtons from "../../FilterButtons";
 import {Tooltip as MyTooltip} from "react-tooltip";
 
-
 function ActionFilters({
                            filterSet = null,
                            filterRender,
@@ -34,11 +33,6 @@ function ActionFilters({
 
 const ActionableChart = ({pageData, options, onAction, currentState = ""}) => {
 
-    const localized = {
-        "actionable": "Actionable",
-        "actionable_subtitle": " - Show Links from Citations that can be improved right now"
-    }
-
     const renderActionableButton = (props) => {
         /*
         callback for button render function of <FilterButton>
@@ -56,9 +50,6 @@ const ActionableChart = ({pageData, options, onAction, currentState = ""}) => {
     }
 
     return <>
-        {/*<h4 className={"section-caption"}>{localized.actionable}<span*/}
-        {/*    className={"inferior"}>{localized.actionable_subtitle}</span></h4>*/}
-
         <div className={"row"}>
             <div className={"col-12"}>
                 <ActionFilters

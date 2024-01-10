@@ -48,7 +48,7 @@ const barsColorEnd = colors.blue;
 //
 // TODO: Test Harness candidate - pass good and bad summary data
 
-export default function RefOverview ({ refArray, summary, onAction, selectedFilter } ) {
+export default function RefOverview ({ refArray, summary, onAction, selectedFilter, pageData={} } ) {
 
     const [tooltipText, setTooltipText] = useState( '' );
 
@@ -119,7 +119,8 @@ export default function RefOverview ({ refArray, summary, onAction, selectedFilt
 
                     names.map((name, i, arr) => {
                         let f = filterSet.filterMap[name];
-                        f.count = refArray.filter((f.filterFunction)()).length;
+                        f.count = refArray.filter((f.filterFunction)().bind(null, pageData.urlDict)).length;
+
                         return {
                             name: name,
                             context: filterSet.context,

@@ -3,7 +3,7 @@ import './charts.css';
 import {generateColorFade} from "../../../utils/utils";
 import ChartLegend from "./ChartLegend";
 
-const PapersChart = ({pageData, options, onAction}) => {
+const PapersChart = ({pageData, options, onAction, currentState=null}) => {
 
     if (!pageData?.stats?.papers) return <div>
         <p>No Papers statistics to show.</p>
@@ -11,16 +11,8 @@ const PapersChart = ({pageData, options, onAction}) => {
 
     const myDataLabel = "Papers"
     const rawData = pageData.stats.papers
-    const chartInstruction = "Click to filter References List"
     const chartLegendClass = "chart-legend-books"
 
-    // const myData = Object.keys(rawData).map(key => {
-    //     return {
-    //         label: key,
-    //         count: rawData[key],
-    //         link: key
-    //     }
-    // })
     const myData = rawData.map(d => d)  // rawData is already in desired format
         .sort((a, b) => {
         // sort it
@@ -64,9 +56,8 @@ const PapersChart = ({pageData, options, onAction}) => {
 
         {myChartData.datasets[0].data.length > 0
             ? <>
-                <h4 className={"chart-instruction"}>{chartInstruction}</h4>
-
-                <ChartLegend data={myData} onClick={onClickLegend} colors={colorArray} className={chartLegendClass} />
+                <ChartLegend data={myData} onClick={onClickLegend} currentState={currentState}
+                             colors={colorArray} className={chartLegendClass} />
 
             </>
             : <p>No Papers to show.</p>}

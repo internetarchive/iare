@@ -14,7 +14,6 @@ export const normalizeUrlArray = (urlArray=[]) => {
     return urlArray.map( uData => uData.data )
 }
 
-
 export const copyToClipboard = (copyText, label="Data") => {
 
     navigator.clipboard.writeText(copyText)

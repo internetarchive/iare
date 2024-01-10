@@ -3,7 +3,7 @@ import PieChart from "../../PieChart";
 import ChartLegend from "./ChartLegend";
 import {LINK_STATUS_MAP} from "../../../constants/linkStatusMap";
 
-const LinkStatusChart = ({pageData, options, onAction}) => {
+const LinkStatusChart = ({pageData, options, onAction, currentState = null}) => {
 
     if (!pageData?.urlArray?.length) return <div>
         <p>No Link Status statistics to show.</p>
@@ -65,13 +65,12 @@ const LinkStatusChart = ({pageData, options, onAction}) => {
 
     const onClickLegend = e => {
         const linkStatus = e.target.closest('.legend-entry').dataset['link'];
-        // alert(`onCLickLegend: ${template}`)
         onAction({action: "setLinkStatusFilter", value: linkStatus})
     }
 
     return <>
-        <h4 className={"chart-instruction"}>Click to filter URL List</h4>
-        <ChartLegend data={linkStatusData} onClick={onClickLegend} colors={colorArray} className={"chart-legend-link-status"} />
+        <ChartLegend data={linkStatusData} onClick={onClickLegend} currentState={currentState}
+                     colors={colorArray} className={"chart-legend-link-status"} />
 
         <div className={"link-status-chart-display"}>
             {linkStatusChartData.datasets[0].data.length > 0 ?

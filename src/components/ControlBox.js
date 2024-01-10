@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import './shared/components.css';
 
 // TODO: add onHover for tooltip? onTooltip?
@@ -9,7 +9,7 @@ export default function ControlBox({
                                      children
                                  }) {
     return <>
-        <div className={`control-box${className ? ` ${className}` : ''}`}>
+        <div className={`control-box ${className ? `${className}` : ''}`}>
             {caption && <div className={"control-box-caption"}>{caption}</div>}
             <div className={"control-box-contents"}>{children}</div>
         </div>

@@ -4,7 +4,7 @@ import './charts.css';
 import {generateColorFade} from "../../../utils/utils";
 import ChartLegend from "./ChartLegend";
 
-const BooksChart = ({pageData, options, onAction}) => {
+const BooksChart = ({pageData, options, onAction, currentState = null}) => {
 
     if (!pageData?.stats?.books) return <div>
         <p>No Books statistics to show.</p>
@@ -99,9 +99,8 @@ const BooksChart = ({pageData, options, onAction}) => {
 
         {booksChartData.datasets[0].data.length > 0
             ? <>
-                <h4 className={"chart-instruction"}>Click to filter URL List</h4>
-
-                <ChartLegend data={booksData} onClick={onClickLegend} colors={colorArray} className={"chart-legend-books"} />
+                <ChartLegend data={booksData} onClick={onClickLegend} currentState={currentState}
+                             colors={colorArray} className={"chart-legend-books"} />
 
                 <div className={"books-chart-display"}>
                     <PieChart chartData={booksChartData} options={booksChartOptions} onClick={onClickChart}/>
