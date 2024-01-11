@@ -4,7 +4,6 @@ import PathNameFetch from "./components/PathNameFetch";
 import Loader from "./components/Loader";
 import PageDisplay from "./components/PageDisplay";
 import MakeLink from "./components/MakeLink";
-//// import TestRefModal from "./components/vTest/TestRefModal";
 import Dropdown from "./components/Dropdown";
 import {IariSources} from "./constants/endpoints";
 import {UrlStatusCheckMethods} from "./constants/checkMethods";
@@ -14,11 +13,9 @@ import {ConfigContext} from "./contexts/ConfigContext"
 export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, myDebug}) {
 
     const [isDebug, setDebug] = useState(myDebug);
-    const [isShowReferences, setIsShowReferences] = useState(true);
     const [isShowUrlOverview, setIsShowUrlOverview] = useState(true);
     const [isShowShortcuts, setIsShowShortcuts] = useState(true);
-    const [isShowExpertMode, setIsShowExpertMode] = useState(true);
-    const [isShowNewFeatures, setIsShowNewFeatures] = useState(true);
+    const [isShowDebugInfo, setIsShowDebugInfo] = useState(true);
 
     // params settable from from address url
     const [targetPath, setTargetPath] = useState(myPath);
@@ -319,13 +316,6 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
     </div>
 
     const buttons = <>
-        <button // this is the 'show refereences' button
-            className={"utility-button debug-button"}
-            onClick={() => {
-                setIsShowReferences(prevState => !prevState )
-            }
-            } >{isShowReferences ? "Hide" : "Show"} References List</button>
-        &nbsp;
         <button // this is the 'show urls list' button
             className={"utility-button debug-button"}
             onClick={() => {
@@ -340,19 +330,12 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
             }
             } >{isShowShortcuts ? "Hide" : "Show"} Shortcuts</button>
         &nbsp;
-        <button // this is the 'show Expert Mode' button
-            className={"utility-button debug-button"}
-            onClick={() => {
-                setIsShowExpertMode(prevState => !prevState )
-            }
-            } >{isShowExpertMode ? "Hide" : "Show"} Clipboard Controls</button>
-        &nbsp;
         <button // this is the 'show New Features' button
             className={"utility-button debug-button"}
             onClick={() => {
-                setIsShowNewFeatures(prevState => !prevState )
+                setIsShowDebugInfo(prevState => !prevState )
             }
-            } >{isShowNewFeatures ? "Hide" : "Show"} New Features</button>
+            } >{isShowDebugInfo ? "Hide" : "Show"} Debug Info</button>
         </>
 
     const debug = <div className={"debug-section " + (isDebug ? "debug-on" : "debug-off")}>
@@ -375,11 +358,9 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         iariSource: IariSources[myIariSourceId]?.proxy,
         urlStatusMethod: checkMethod,
         isDebug: !!isDebug,
-        isShowReferences: isShowReferences,
         isShowUrlOverview: isShowUrlOverview,
         isShowShortcuts: isShowShortcuts,
-        isShowExpertMode: isShowExpertMode,
-        isShowNewFeatures: isShowNewFeatures,
+        isShowDebugInfo: isShowDebugInfo,
     }
 
     console.log(`rendering App component:`, JSON.stringify({

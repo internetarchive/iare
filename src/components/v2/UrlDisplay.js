@@ -453,13 +453,9 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                           selectedUrl={selectedUrl}
                           fetchMethod={myConfig.urlStatusMethod} />
 
-                {myConfig.isShowReferences && /* References List may go away soon... */
-                    // <div className={"section-box"}>
-                        <RefFlock refArray={refArray} refFilter={refFilter} onAction={handleAction} pageData={pageData} />
-                    // </div>
-                }
-
+                <RefFlock refArray={refArray} refFilter={refFilter} onAction={handleAction} pageData={pageData} />
             </div>
+
         </div>
 
 

@@ -14,7 +14,7 @@ const handleCiteRefClick = (e) => {
     window.open(e.currentTarget.href, "_blank")
 }
 
-function getReferenceCaption(ref, i) {
+function getReferenceCaption(ref, i, showDebugInfo = false) {
 
     let hasContent = false;
     let spanCount = 0
@@ -90,7 +90,7 @@ function getReferenceCaption(ref, i) {
             </div>
             : null}
 
-        {false && <div> {/* extra info for debug */}
+        {showDebugInfo && <div> {/* extra info for debug */}
             #{i} {ref.id} {ref.type}-{ref.footnote_subtype}
         </div>}
     </>
@@ -107,59 +107,27 @@ function RefFlock({ refArray, refFilter, onAction, pageData= {}} ) {
     const [openModal, setOpenModal] = useState(false)
 
     const myConfig = useContext(ConfigContext);
-    const myIariBase = myConfig?.iariSource;
+    // const myIariBase = myConfig?.iariSource;
+    const isShowDebugInfo = !!myConfig?.isShowDebugInfo;  // NB double-negative to force boolean value
     // TODO catch undefined myIariBase exception
 
 
-    const fetchDetail = (ref) => {
+    const fetchRefDetail = (ref) => {
         // handle null ref
         if (!ref) {
             setRefDetails("Trying to fetch invalid reference");
             return;
         }
-
-        const myEndpoint = `${myIariBase}/statistics/reference/${ref.id}`;
-        const data = ref
-        data.endpoint = myEndpoint;
-        setRefDetails(data);  // use reference data direct from page data, rather than fetching it again fresh from source
+        setRefDetails(ref);  // use reference data direct from page data, rather than fetching it again fresh from source
         setOpenModal(true)
-
-        // // TODO: we do NOT do a force refresh of ref data here; instead we get it from ref list that came with article page data
-        // // TODO: do we want to use refresh here? respect a refresh flag?
-        // const myEndpoint = `${myIariBase}/statistics/reference/${ref.id}`;
-        //
-        // // fetch the data
-        // fetch(myEndpoint, {
-        // })
-        //
-        //     .then((res) => {
-        //         if(!res.ok) throw new Error(res.status);
-        //         return res.json();
-        //     })
-        //
-        //     .then((data) => {
-        //         data.endpoint = myEndpoint;
-        //         data.link_status = ref.link_status
-        //         data.citeRef = 'TEMP'  // ref.cite_ref ? ref.cite_ref : '?'
-        //         setRefDetails(data);
-        //     })
-        //
-        //     .catch((err) => {
-        //         setRefDetails(`Error with details (${err})`);
-        //     })
-        //
-        //     .finally(() => {
-        //         // console.log("fetch finally")
-        //     });
-
     }
 
     useEffect( () => {
         // alert("will show new refDetails")
         setOpenModal(true)
-    }, [refDetails])
+    }, [refDetails])  // triggered when refDetails changes
 
-    // return if no references to show
+    // if no references to show...
     if (!refArray) {
         return <FlockBox caption={"References List"} className={"ref-flock"}>
             {"No references to show."}
@@ -175,7 +143,6 @@ function RefFlock({ refArray, refFilter, onAction, pageData= {}} ) {
         if (linkStatus) {
             html = `<div>${linkDefs[linkStatus]?.desc ? linkDefs[linkStatus]?.desc : "Unknown link status"}</div>`
         }
-
         setTooltipHtmlRefList(html)
     }
 
@@ -243,8 +210,8 @@ function RefFlock({ refArray, refFilter, onAction, pageData= {}} ) {
                    className={"ref-button"}
                    onClick={(e) => {
                        console.log ('ref clicked')
-                       fetchDetail(ref)
-                   }}>{getReferenceCaption(ref, i)}</button>
+                       fetchRefDetail(ref)
+                   }}>{getReferenceCaption(ref, i, isShowDebugInfo)}</button>
             })}
         </div>
     </>
