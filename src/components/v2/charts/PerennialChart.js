@@ -8,7 +8,7 @@ import ChartLegend from "./ChartLegend";
 /*
 shows piechart, for now, of links associated with perennial categories
  */
-const PerennialChart = ({pageData, options, onAction}) => {
+const PerennialChart = ({pageData, options, onAction, currentState = null}) => {
 
     if (!pageData?.rsp_statistics) return <div>
         <p>No Perennial Source statistics to show.</p>
@@ -110,8 +110,9 @@ const PerennialChart = ({pageData, options, onAction}) => {
     }
 
     return <>
-        <h4 className={"chart-instruction"}>Click to filter URL List</h4>
-        <ChartLegend data={perennialData} onClick={onClickLegend} colors={colorArray} className={"chart-legend-perennial"} />
+        {/*<h4 className={"chart-instruction"}>Click to filter URL List</h4>*/}
+        <ChartLegend data={perennialData} onClick={onClickLegend} currentState={currentState}
+                     colors={colorArray} className={"chart-legend-perennial"} />
 
         <div className={"perennial-chart-display"}>
             {perennialChartData.datasets[0].data.length > 0 ?

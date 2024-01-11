@@ -1,15 +1,11 @@
-import React, {useContext, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {Tooltip as MyTooltip} from "react-tooltip";
-import {ConfigContext} from "../../contexts/ConfigContext";
+// import {ConfigContext} from "../../contexts/ConfigContext";
 import {httpStatusCodes, iabotLiveStatusCodes} from "../../constants/httpStatusCodes"
 import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../constants/urlFilterMaps";
-import {UrlStatusCheckMethods} from "../../constants/checkMethods";
 import {convertToCSV, copyToClipboard} from "../../utils/utils";
 import {rspMap} from "../../constants/perennialList";
-
-const localized = {
-    "show_all_button_text":"Show All",
-}
+import FlockBox from "../FlockBox";
 
 const urlListDef = {  // keys match class names
     columns : {
@@ -87,7 +83,6 @@ const urlFlock = React.memo( function UrlFlock({
                                 urlFilters = {},  // keyed object of filter definitions to apply to urlArray for final url list display
                                 onAction,
                                 selectedUrl = '',
-                                extraCaption = null,
                                 fetchMethod="" }) {
     // TODO maybe should not/don't have to use memo here??
 
@@ -107,7 +102,7 @@ const urlFlock = React.memo( function UrlFlock({
         sortOrder: ["status"]  // array indicating which sorts get applied and in what order. NB this is not implemented yet, but will be
     })
 
-    const myConfig = useContext(ConfigContext);
+    // const myConfig = useContext(ConfigContext);
 
     const handleSortClick = (sortKey) => {
         // toggle sort direction of specified sort and set new sort state with setSort
@@ -242,14 +237,14 @@ const urlFlock = React.memo( function UrlFlock({
             "value": url,
         })
     }
-
-    const handleRemoveFilter = (e) => {
-        // send action back up the component tree
-        onAction( {
-            "action": "removeUrlFilter",
-            "value": '',
-        })
-    }
+                //
+                // const handleRemoveFilter = (e) => {
+                //     // send action back up the component tree
+                //     onAction( {
+                //         "action": "removeUrlFilter",
+                //         "value": '',
+                //     })
+                // }
 
     const onClickHeader = (evt) => {
     }
@@ -258,13 +253,22 @@ const urlFlock = React.memo( function UrlFlock({
         // clears tooltip html...only if no other sub-elements got there first
         setUrlTooltipHtml('')
     }
-    const onHoverHeaderRow = (e) => {
+
+    // const onHoverHeaderRow = (e) => {
+    //     e.stopPropagation()  // prevents default onHover of UrlFlock from engaging and erasing tooltip
+    //
+    //     const html = urlListDef.columns[e.target.className]?.ttHeader
+    //
+    //     setUrlTooltipHtml(html)
+    // }
+
+    const onHoverHeaderRow = useCallback ((e) => {  // useCallback prevents re-render upon hover???
         e.stopPropagation()  // prevents default onHover of UrlFlock from engaging and erasing tooltip
 
         const html = urlListDef.columns[e.target.className]?.ttHeader
 
         setUrlTooltipHtml(html)
-    }
+    }, [])
 
     const onHoverDataRow = e => {
         // show tool tip for targeted column of hovered row
@@ -316,86 +320,33 @@ const urlFlock = React.memo( function UrlFlock({
         setUrlTooltipHtml(text);
     }
 
-    const getMultiLineCaption = ( myCaptions = [] ) => {
-        const prefixBreak = myCaptions.length > 1
-        return myCaptions.map((str, index) => (
-            <React.Fragment key={index}>
-                {prefixBreak && index === 0 ? <br/> : null}
-                {str}
-                {index < myCaptions.length - 1 && <br />}  {/* Add <br/> except for the last element */}
-            </React.Fragment>))
-    }
-
-
-    const getFlock = (flockArray, flockFilters) => {
+    const getFlockRows = (flockArray, flockFilters) => {
         if (!flockArray || flockArray.length === 0) return <h4>No URLs to show</h4>
 
         if (!flockFilters) flockFilters = {}  // prevent null errors
         // TODO what to do if flockFilters not a keyed object of FlockFilter's? Can we make it a custom type (of FlockFilters)?
 
-        // initialize the urls as the full provided array
-        let filteredUrls = flockArray
 
-        const handleCopyClick = () => { // used to copy url list and status
-            // TODO Add column heading for cite status
+        // filter the urls according to the set of filters provided
+        // NB Currently only 1 filter is supported; in the future we may support more
 
-            const urlArrayData = [...filteredUrls].sort(
-                (a, b) => (a.url > b.url) ? 1 : (a.url < b.url) ? -1 : 0  // sort by url
+        let filteredUrls = flockArray  // initialize the urls as the full provided array
 
-            ).map( u => {  // get one row per line:
-                return [
-                    u.url,
-                    u.status_code,
-                    u.archive_status?.hasArchive,
-                    u.reference_info?.templates ? u.reference_info?.templates.join(",") : null,
-                    u.status_code_errors?.reason ? u.status_code_errors.reason : null,
-                    u.status_code_errors?.message ? u.status_code_errors.message : null,
-                ]
-                // TODO output archive status and maybe iabot live stuff
-            })
-
-            // add column labels
-            urlArrayData.unshift( [
-                'URL',
-                `${fetchMethod} status`,
-                `Has Archive`,
-                `Templates`,
-                `Error reason`,
-                `Error message`
-            ] )
-
-            copyToClipboard(convertToCSV(urlArrayData))
-
-        }
-
-        // get final filteredUrls by applying filters successively, while accumulating the
-        // filter captions into the filterCaptions array, via a side effect within .map()
-        // TODO turn this into a function...
-        let filterCaptions = Object.keys(flockFilters)
-            .filter(key => !!flockFilters[key] && flockFilters[key].filterFunction )  // exclude null filter defs, and null filter functions
-            .map( filterName => {  // apply non-null filters and append filter caption
-                const f = flockFilters[filterName]
+        Object.keys(flockFilters).forEach( filterName => {
+            const f = flockFilters[filterName]
+            if (f) {  // if filter is null, skip
                 if (Array.isArray(f.filterFunction)) {
                     // interpret f.filterFunction as an array of filters,
                     //    and apply all filters one at a time
                     // TODO turn this into some kind of effective recursive loop
-                    const captionList = f.filterFunction.map( oneFilter => {
+                    f.filterFunction.forEach( oneFilter => {
                         filteredUrls = filteredUrls.filter( (oneFilter.filterFunction)() )  // NB: Note self-calling function
-                        return oneFilter.caption
                     })
-                    return getMultiLineCaption(captionList)
                 } else {  // f is one filter
                     filteredUrls = filteredUrls.filter( (f.filterFunction)() )  // NB: Note self-calling function
-                    return flockFilters[filterName].caption
                 }
-            })
-
-        // temporarily fixes bug where flockFilters is being set to an array with a single elment of another emoty array.
-        // it has something to do with the empty Archive Status state setting the flockFilters when it shouldn't
-        // TODO NB Fix this bug
-        if (filterCaptions.length === 1 && filterCaptions[0].length === 0) {
-            filterCaptions = ''
-        }
+            }
+        })
 
         // sort filteredUrls if specified
         if (sort.sortOrder?.length > 0) {
@@ -491,59 +442,43 @@ const urlFlock = React.memo( function UrlFlock({
             </div>
         }
 
-        const enableShowAllButton = Object.keys(flockFilters).length > 0
-            && flockFilters[Object.keys(flockFilters)[0]]
-            && flockFilters[Object.keys(flockFilters)[0]]['name'] !== 'all'
-                // make sure filter definition is not null
-                // and that this is not the "all" filter,
-                // in which case we disable the "Show All" button
-        const buttonShowAll = <button
-            className={`utility-button small-button${enableShowAllButton ?'':' disabled'}` }
-                onClick={handleRemoveFilter}
-                disabled={!enableShowAllButton}
-                // className={'utility-button button-remove-url-filter'}
-            ><span>{localized['show_all_button_text']}</span></button>
+        // iterate over array of url objects to create rendered output
+        const flockRows = filteredUrls.map((u, i) => {
 
-        const checkMethodDisplay = UrlStatusCheckMethods[fetchMethod]?.caption
+            // TODO: we should sanitize earlier on in the process to save time here...
 
-        const buttonCopy = <button className={'btn utility-button small-button'} onClick={handleCopyClick} ><span>Copy to Clipboard</span></button>
+            // if url object is problematic...display as error row
+            if (!u || u.url === undefined || u.status_code === undefined) {
 
-        const firstLineCaption = `${filteredUrls.length.toString()} ${filteredUrls.length === 1 
-            ? 'URL' 
-            : 'URLs'}, Status Check Method: ${checkMethodDisplay}`
+                const errText = !u ? `URL data not defined for index ${i}`
+                    : !u.url ? `URL missing for index ${i}`
+                        : u.status_code === undefined ? `URL status code undefined (try Force Refresh)`
+                            : 'Unknown error'; // this last case should not happen
 
-        const flockMetaHeader = <div className={"url-list-meta-header"}>
-            <div>
-                <h4 className={"url-flock-caption"}>{firstLineCaption}</h4>
-            </div>
-            <div>{myConfig.isShowExpertMode && buttonCopy} {buttonShowAll}</div>
-        </div>
-
-        // show filter.desc
-        // show filter.fixit
-
-        const allFilterNames = Object.keys(flockFilters)
-        const oneFilter = allFilterNames?.length > 0 ?  flockFilters[allFilterNames[0]] : {}
-        // first filter only gets "info treatment"
-        // TODO must handle mul;tiple conditions...
-        const flockInfoHeader = <div className={"url-list-info-header"}>
-            {oneFilter?.desc
-                ? <div>
-                    <div className={"flock-info-condition" + (oneFilter.fixit ? '' : ' condition-calm')}>Condition:</div>
-                    <div>{oneFilter.desc}</div>
-                  </div>
-                : <div>
-                    <div className={"flock-info-condition condition-calm"}>Condition:</div>
-                    <div>No Condition applied; All URLs shown.</div>
-                  </div>
+                // TODO do something akin to "myMethodRenderer.getErrorRow"
+                return getErrorRow(u, i, errText)
             }
-            {oneFilter?.fixit
-                ? <div>
-                <div className={"flock-info-tofix"}>To Fix:</div>
-                <div>{oneFilter.fixit}</div>
-                </div>
-                : null}
-        </div>
+
+            // otherwise show "normally"
+            const classes = 'url-row '
+                + (u.status_code === 0 ? ' url-is-unknown'
+                    : u.status_code >= 300 && u.status_code < 400 ? ' url-is-redirect'
+                        : u.status_code >= 400 && u.status_code < 500 ? ' url-is-notfound'
+                            : u.status_code >= 500 && u.status_code < 600 ? ' url-is-error'
+                                : '')
+                + (u.url === selectedUrl ? ' url-selected' : '')
+                + (u.rsp ? ` url-rating-${u.rsp[0]}` : '')
+
+            // TODO do something akin to "myCheckMethod.renderRowData"
+            return getDataRow(u, i, classes)
+
+        } )
+
+        return [flockRows, filteredUrls]
+
+    }  // end getFlockRows
+
+    const getFlock = (rows) => {
 
         const flockHeaderRow = <div
             className={"url-list-header"}
@@ -572,12 +507,8 @@ const urlFlock = React.memo( function UrlFlock({
                 <div className={"url-status"} onClick={() => {handleSortClick("status")}}
                 >Link<br/>Status</div>
 
-
-                {/*<div className={"url-status"} onClick={() => {handleSortClick("status")}}*/}
-                {/*>Status<br/>{checkMethodDisplay}</div>*/}
-
                 <div className={"url-archive_status"} onClick={() => { handleSortClick("archive_status"); } }
-                    >{archiveFilterDefs['iabot']._.name}</div>
+                >{archiveFilterDefs['iabot']._.name}</div>
 
                 <div className={"url-citations"} onClick={() => { handleSortClick("references"); } }
                 >Citation<br/>Priority</div>
@@ -595,55 +526,13 @@ const urlFlock = React.memo( function UrlFlock({
 
         </div>
 
-
-
-        // iterate over array of url objects to create rendered output
-        const flockRows = filteredUrls.map((u, i) => {
-
-            // TODO: we should sanitize earlier on in the process to save time here...
-
-            // if url object is problematic...
-            if (!u || u.url === undefined || u.status_code === undefined) {
-
-                const errText = !u ? `URL data not defined for index ${i}`
-                    : !u.url ? `URL missing for index ${i}`
-                        : u.status_code === undefined ? `URL status code undefined (try Force Refresh)`
-                            : 'Unknown error'; // this last case should not happen
-
-                // TODO do something akin to "myMethodRenderer.getErrorRow"
-                return getErrorRow(u, i, errText)
-            }
-
-            // otherwise show "normally"
-            const classes = 'url-row '
-                + (u.status_code === 0 ? ' url-is-unknown'
-                    : u.status_code >= 300 && u.status_code < 400 ? ' url-is-redirect'
-                        : u.status_code >= 400 && u.status_code < 500 ? ' url-is-notfound'
-                            : u.status_code >= 500 && u.status_code < 600 ? ' url-is-error'
-                                : '')
-                + (u.url === selectedUrl ? ' url-selected' : '')
-                + (u.rsp ? ` url-rating-${u.rsp[0]}` : '')
-
-        // TODO do something akin to "myCheckMethod.renderRowData"
-            return getDataRow(u, i, classes)
-
-        } )
-
         return <>
-            {/*{false && flockCaption}*/}
-            {/* TODO do something akin to "myMethodRenderer.getHeaderRow" */}
-            {flockMetaHeader}
-            {flockInfoHeader}
             {flockHeaderRow}
             <div className={"url-list"}
                  onClick={handleRowClick}
-                 onMouseOver={onHoverDataRow}
-            >
-                {flockRows}
-            </div>
-        </>        
+                 onMouseOver={onHoverDataRow}>{rows}</div>
+        </>
     }
-    
 
     const tooltipFlock = <MyTooltip id="my-url-tooltip"
                                float={true}
@@ -655,17 +544,63 @@ const urlFlock = React.memo( function UrlFlock({
                                className={"url-flock-tooltip"}
     />
 
-    const urls = getFlock(urlArray, urlFilters)
+    const [flockRows, flockArray] = getFlockRows(urlArray, urlFilters)
+    const flock = getFlock(flockRows)
 
-    return <>
-        <div className={"url-flock"}
-             data-tooltip-id="my-url-tooltip"
+    const handleCopyUrlsClick = () => {
+
+        const urlArrayData = [...flockArray].sort(   // NB "..." used so that copy of array is sorted, not original flock array
+            (a, b) => (a.url > b.url) ? 1 : (a.url < b.url) ? -1 : 0  // sort by url
+
+        ).map( u => {  // get one row per line:
+            return [
+                u.url,
+                u.status_code,
+                u.archive_status?.hasArchive,
+                u.reference_info?.templates ? u.reference_info?.templates.join(",") : null,
+                u.status_code_errors?.reason ? u.status_code_errors.reason : null,
+                u.status_code_errors?.message ? u.status_code_errors.message : null,
+            ]
+            // TODO output archive status and maybe iabot live stuff
+        })
+
+        const numItems = urlArrayData.length
+
+        // add column labels
+        urlArrayData.unshift( [
+            'URL',
+            `${fetchMethod} status`,
+            `Has Archive`,
+            `Templates`,
+            `Error reason`,
+            `Error message`
+        ] )
+
+        copyToClipboard(convertToCSV(urlArrayData), `${numItems} URLs`)
+
+    }
+
+    const buttonCopy = <button onClick={handleCopyUrlsClick} className={'btn utility-button small-button'} ><span>Copy to Clipboard</span></button>
+
+    const flockCaption = <>
+        <div>URL Links</div>
+        <div className={"sub-caption"}>
+            <div>{flockRows.length} {flockRows.length === 1 ? 'URL' : 'URLs'}</div>
+            {buttonCopy}
+        </div>
+    </>
+
+    return <FlockBox caption={flockCaption} className={"url-flock"}>
+
+        <div data-tooltip-id="my-url-tooltip"
              data-tooltip-html={urlTooltipHtml}
              onMouseOver={onHoverUrlFlock}
-            >{urls}</div>
+        >{flock}</div>
 
         {tooltipFlock}
-    </>
+
+    </FlockBox>
+
 })
 
 export default urlFlock

@@ -5,6 +5,7 @@ import {Tooltip as MyTooltip} from "react-tooltip";
 import {REF_LINK_STATUS_FILTERS as linkDefs} from "../../constants/refFilterMaps";
 import {convertToCSV, copyToClipboard} from "../../utils/utils";
 import MakeLink from "../MakeLink";
+import FlockBox from "../FlockBox";
 
 const baseWikiUrl = "https://en.wikipedia.org/wiki/" // for now TODO get from config or context or pageData
 
@@ -13,9 +14,10 @@ const handleCiteRefClick = (e) => {
     window.open(e.currentTarget.href, "_blank")
 }
 
-function getReferenceCaption(ref) {
+function getReferenceCaption(ref, i) {
 
     let hasContent = false;
+    let spanCount = 0
 
     const citeRefLinks = ref.cite_refs
         ? ref.cite_refs.map( cr => {
@@ -29,46 +31,51 @@ function getReferenceCaption(ref) {
         : null // <div>No Citation Refs!</div>
 
     const doiLinks = []
-    // for each template, if there is a "doi" parameter, add it to the display
-    ref.templates.forEach(t => {
+    ref.templates.forEach( (t, ti) => {
+        // for each template, if there is a "doi" parameter, add it to the display
         if (t.parameters?.doi) {
             hasContent = true
             const href = `https://doi.org/${encodeURIComponent(t.parameters.doi)}`
-            doiLinks.push(<MakeLink href={href} linkText={`DOI: ${t.parameters.doi}`}/> )
+            doiLinks.push(<MakeLink href={href} linkText={`DOI: ${t.parameters.doi}`} key={`${ti}-${t.parameters.doi}`}/> )
         }
     })
+
+    const setSpan = () => {
+        hasContent = true
+        spanCount++
+    }
 
     const markup = <>
 
         {ref.titles
-            ? ref.titles.map( (t,i) => {
-                hasContent = true
-                return <span className={'ref-line ref-title'} style={{fontWeight: "bold"}}>{t}</span>
+            ? ref.titles.map( (t) => {
+                setSpan()
+                return <span className={'ref-line ref-title'} key={spanCount} >{t}</span>
             }) : null }
 
         {ref.name
             ? <>
-                {hasContent = true}
-                <span className={'ref-line ref-name'}>Reference Name: <span style={{fontWeight: "bold"}}>{ref.name}</span></span>
+                {setSpan()}
+                <span className={'ref-line ref-name'} key={spanCount}><span className={'caption'}>Reference Name:</span> {ref.name}</span>
               </>
             : null }
 
-        {ref.template_names && ref.template_names.length
+        {ref.template_names?.length
             ? <>
-                {hasContent = true}
                 {ref.template_names.map( tn => {
-                return <span className={'ref-line ref-template'}>Template: <span style={{fontWeight: "bold"}}>{tn}</span></span>
+                    setSpan()
+                    return <span className={'ref-line ref-template'} key={spanCount}><span className={'caption'}>Template:</span> {tn}</span>
             })}
                 </>
             : null}
 
         {false && citeRefLinks}
+
         {doiLinks}
 
-        {/*{ !hasContent ? <span>ref id: {ref.id}</span> : null }*/}
         { !hasContent ? <span>{ref.wikitext}</span> : null }
 
-        {false && ref.link_status
+        {false && ref.link_status  // NB omit for now...
             // display link_status array values
             ? <div className={`ref-link-status-wrapper`}>
 
@@ -83,12 +90,15 @@ function getReferenceCaption(ref) {
             </div>
             : null}
 
+        {false && <div> {/* extra info for debug */}
+            #{i} {ref.id} {ref.type}-{ref.footnote_subtype}
+        </div>}
     </>
 
     return markup
 }
 
-function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
+function RefFlock({ refArray, refFilter, onAction, pageData= {}} ) {
 
     const [refDetails, setRefDetails] = useState(null);
     // const [isLoading, setIsLoading] = useState(false);
@@ -99,8 +109,6 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
     const myConfig = useContext(ConfigContext);
     const myIariBase = myConfig?.iariSource;
     // TODO catch undefined myIariBase exception
-
-    let flockCaption, flockRows;
 
 
     const fetchDetail = (ref) => {
@@ -151,14 +159,11 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
         setOpenModal(true)
     }, [refDetails])
 
-    const handleRemoveFilter = (e) => {
-
-        // send action back up the component tree
-        onAction( {
-            "action": "removeReferenceFilter",
-            "value": '',
-        })
-        // do we need to do anything local?
+    // return if no references to show
+    if (!refArray) {
+        return <FlockBox caption={"References List"} className={"ref-flock"}>
+            {"No references to show."}
+        </FlockBox>
     }
 
     const onHoverListItem = e => {
@@ -174,105 +179,75 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
         setTooltipHtmlRefList(html)
     }
 
+    const filteredRefs = refFilter
+        ? refArray.filter((refFilter.filterFunction)().bind(null, pageData.urlDict), ) // NB Note self-calling function
+        : refArray;
 
-    if (!refArray) {
-        flockCaption = <h4>No references!</h4>
-        flockRows = null
+    const handleCopyRefsClick = () => { // used to copy url list and status
 
-    } else {
-        // filter the refs if filter defined
-        const filteredRefs = refFilterDef
-            ? refArray.filter((refFilterDef.filterFunction)()) // Note self-calling function
-            : refArray;
+        let refArrayData = filteredRefs
 
-        const buttonRemove = refFilterDef
-            ? <button onClick={handleRemoveFilter}
-                 className={'utility-button'}
-                 style={{position: "relative", top: "-0.1rem"}}
-                ><span>Remove Filter</span></button>
-            : null
+        // sort filtered refs and return fields per each ref
+        refArrayData = refArrayData.sort(
+            (a, b) => (a.ref_index > b.ref_index) ? 1 : (a.ref_index < b.ref_index) ? -1 : 0
+        ).map( r => {
+            return [
+                r["ref_index"],
+                r["id"],
+                r["name"],
+                r["titles"].join("+++"),
+                r["urls"].join("+++"),
+            ]
+        })
 
-        const handleCopyClick = () => { // used to copy url list and status
+        const numItems = refArrayData.length
 
-            // filter filteredRefs to only show footnote citations
-            let refArrayData = filteredRefs.filter( r => {
-                return r.type === "footnote" && r.footnote_subtype === "content"
-            })
+        // add column labels
+        refArrayData.unshift( [
+            'ref_index',
+            'wari_id',
+            'name',
+            'title',
+            'urls',
+        ] )
 
-            // sort filtered refs and return fields per each ref
-            refArrayData = refArrayData.sort(
-                (a, b) => (a.ref_index > b.ref_index) ? 1 : (a.ref_index < b.ref_index) ? -1 : 0
-            ).map( r => {
-                return [
-                    r["ref_index"],
-                    r["id"],
-                    r["name"],
-                    r["titles"].join("+++"),
-                    r["urls"].join("+++"),
-                ]
-            })
-
-            // add column labels
-            refArrayData.unshift( [
-                'ref_index',
-                'wari_id',
-                'name',
-                'title',
-                'urls',
-            ] )
-
-            copyToClipboard(convertToCSV(refArrayData))
-
-        }
-
-        // flockCaption is a complicated algorithm to show filter definition contents
-        flockCaption = <>
-            {/*<h4>Applied Filter: {refFilterDef ? <div>{refFilterDef.desc}</div> : 'Show All'}</h4>*/}
-            <h4><span className={"filter-title"}>Applied Filter:</span> {
-                refFilterDef
-                    ? (
-                        refFilterDef?.lines
-                            ? <div>{refFilterDef.lines[0]}<br/>{refFilterDef.lines[1]}</div>
-                            : refFilterDef?.caption
-                                ? <div>{refFilterDef.caption}</div>
-                                : refFilterDef?.desc
-                                    ? <div>{refFilterDef.desc}</div>
-                                    : <div style={{fontStyle:"italic"}}>Invalid filter definition</div>
-                    )
-                    : "Show All"
-            }</h4>
-            <h4>{filteredRefs.length} {filteredRefs.length === 1
-                ? 'Reference' : 'References'}{buttonRemove}</h4>
-            {extraCaption}
-        </>
-
-        const buttonCopy = <button onClick={handleCopyClick} className={'utility-button small-button'} ><span>Copy to Clipboard</span></button>
-
-        const listHeader = <div className={"ref-list-header"} >
-            <div className={"list-header-row"}>
-                <div className={"list-name"}>Reference {myConfig.isShowExpertMode && buttonCopy}</div>
-            </div>
-        </div>
-
-        flockRows = <>
-            {listHeader}
-            <div className={"ref-list"}
-                 data-tooltip-id="ref-list-tooltip"
-                 data-tooltip-html={tooltipHtmlRefList}
-                 onMouseOver={onHoverListItem}
-            >
-                {filteredRefs.map((ref, i) => {
-                    return <button key={ref.id}
-                       className={"ref-button"}
-                       onClick={(e) => {
-                           console.log ('ref clicked')
-                           fetchDetail(ref)
-                       }}>{getReferenceCaption(ref)}</button>
-                })}
-            </div>
-        </>
+        copyToClipboard(convertToCSV(refArrayData), `${numItems} References`)
 
     }
+
+    const buttonCopy = <button onClick={handleCopyRefsClick} className={'utility-button small-button'} ><span>Copy to Clipboard</span></button>
+
+    const flockCaption = <>
+        <div>References List</div>
+        <div className={"sub-caption"}>
+            <div>{filteredRefs.length} {filteredRefs.length === 1 ? 'Reference' : 'References'}</div>
+            {buttonCopy}
+        </div>
+    </>
+
+    const flockHeader = <div className={"ref-list-header"} >
+        <div className={"list-header-row"}>
+            <div className={"list-name"}>Reference</div>
+        </div>
+    </div>
+
+    const flockRows = <>
+        {flockHeader}
+        <div className={"ref-list"}
+             data-tooltip-id="ref-list-tooltip"
+             data-tooltip-html={tooltipHtmlRefList}
+             onMouseOver={onHoverListItem}
+        >
+            {filteredRefs.map((ref, i) => {
+                return <button key={ref.id}
+                   className={"ref-button"}
+                   onClick={(e) => {
+                       console.log ('ref clicked')
+                       fetchDetail(ref)
+                   }}>{getReferenceCaption(ref, i)}</button>
+            })}
+        </div>
+    </>
 
     const refTooltip = <MyTooltip id="ref-list-tooltip"
                                float={true}
@@ -284,18 +259,17 @@ function RefFlock({ refArray, refFilterDef, onAction, extraCaption=null } ) {
                                className={"ref-list-tooltip"}
     />
 
-    return <div className={"ref-flock"}>
 
-        <div className={"ref-list-wrapper"}>
-            {flockCaption}
-            {flockRows}
-        </div>
+    return <FlockBox caption={flockCaption} className={"ref-flock"}>
+
+        {flockRows}
 
         <RefView details={refDetails} open={openModal} onClose={() => setOpenModal(false)} />
 
         {refTooltip}
 
-    </div>
+    </FlockBox>
+
 }
 
 export default RefFlock;

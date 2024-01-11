@@ -4,7 +4,7 @@ import './charts.css';
 import {generateColorFade} from "../../../utils/utils";
 import ChartLegend from "./ChartLegend";
 
-const TemplateChart = ({pageData, options, onAction}) => {
+const TemplateChart = ({pageData, options, onAction, currentState=null}) => {
 
     if (!pageData?.stats?.templates) return <div>
         <p>No Template statistics to show.</p>
@@ -30,8 +30,6 @@ const TemplateChart = ({pageData, options, onAction}) => {
 
     const myColors = {blue: "#35a2eb", darkBlue: "#1169a5", red: "#ff6384", teal: "#4bc0c0", orange: "#ff9f40", purple: "#9866ff", yellow: "#ffcd57", green: "#5bbd38", grey: "#c9cbcf", magenta: "#f763ff", black: "#000000", white: "#FFFFFF"}
 
-    // const colorArray = [colors.teal, colors.yellow, colors.red, colors.magenta, colors.grey,]
-    // const colorArray = [colors.teal, colors.yellow]
     const colorArray = generateColorFade(myColors.blue, myColors.green, templateData.length )
 
     const templateChartData = {
@@ -121,9 +119,8 @@ const TemplateChart = ({pageData, options, onAction}) => {
     }
 
     return <>
-        <h4 className={"chart-instruction"}>Click to filter URL and References Lists</h4>
-
-        <ChartLegend data={templateData} onClick={onClickLegend} colors={colorArray} className={"chart-legend-templates"} />
+        <ChartLegend data={templateData} onClick={onClickLegend} currentState={currentState}
+                     colors={colorArray} className={"chart-legend-templates"} />
 
         <div className={"template-chart-display"}>
             {templateChartData.datasets[0].data.length > 0 ?

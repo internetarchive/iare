@@ -3,60 +3,56 @@ import UrlFlock from "./UrlFlock";
 import RefFlock from "./RefFlock";
 import UrlOverview from "./UrlOverview";
 import '../shared/urls.css';
-import '../shared/filters.css';
+import '../shared/components.css';
 import {LINK_STATUS_MAP} from "../../constants/linkStatusMap";
 import {ACTIONABLE_FILTER_MAP} from "../../constants/actionableMap";
 import {REF_FILTER_DEFS} from "../../constants/refFilterMaps";
 import {ConfigContext} from "../../contexts/ConfigContext";
-import FilterButtons from "../FilterButtons";
-import ChoiceFetch from "../ChoiceFetch";
+import {rspMap} from "../../constants/perennialList";
 import RefView from "./RefView/RefView";
-import {Tooltip as MyTooltip} from "react-tooltip";
-
-const localized = {
-    "url_display_title":"URLs",
-    "actionable": "Actionable",
-    "actionable_subtitle": " - Show Links from Citations that can be improved right now"
-}
-
-function ActionFilters( {filterSet= null, filterRender, flock = [], onAction, options = {}, currentFilterName = '', tooltipId='', className = null}) {
-    const handleActionable = (actionable) => {
-        onAction({
-            action: "setUrlActionFilter", value: actionable,
-        })
-    }
-
-
-    return <FilterButtons
-        flock={flock}  // flock set to count filters against
-        filterMap={filterSet}
-        onClick={handleActionable}
-        caption={null}
-        currentFilterName={currentFilterName}  // sets "pressed" default selection
-        className={className}
-        tooltipId={tooltipId}
-        onRender={filterRender}  // how to render each button
-    />
-
-}
-
+// import {Tooltip as MyTooltip} from "react-tooltip";
+import ConditionsBox from "../ConditionsBox";
 
 export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {}, urlArchiveFilterMap = {} } ) {
-    // pageData.urlArray displayed with UrlFlock with filter maps applied
+    // TODO remove urlStatusFilterMap?
 
     const [urlFilters, setUrlFilters] = useState( null ); // keyed object of url filters to pass in to UrlFlock  TODO: implement UrlFilter custom objects
     const [refFilter, setRefFilter] = useState( null ); // filter to pass in to RefFlock
     const [selectedUrl, setSelectedUrl] = useState(''); // currently selected url in url list
-    const [selectedUrlActionFilterName, setSelectedUrlActionFilterName] = useState('')
-    const [selectedCitationType, setSelectedCitationType] = useState('')
+    const [currentState, setCurrentState] = useState({})
 
     const [openModal, setOpenModal] = useState(false)
     const [refDetails, setRefDetails] = useState(null);
+
+    const [currentConditions, setCurrentConditions] = useState([])
 
     let myConfig = React.useContext(ConfigContext);
     myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
     const myIariBase = myConfig?.iariSource;
 
+    /*
+    for now, just replaces current condition with passed in condition.
+    argument "condition" is assumed to be a filter definition, which, for
+    functional purposes, must have a "category" and "desc" field,
+    with an optional "fixit" field.  maybe down the line a "tooltip" field.
+    */
+    const setCondition = (newCondition) => {
+        setCurrentConditions(newCondition)
+    }
+
+    // sets the current "state of the filters".
+    // The filter boxes respond to currentState by adjusting their displayed state
+    // if "whichFilter" is null, all filter states should be reset to null
+    const setFilterState = (whichFilter, value) => {
+        setCurrentState(prevState => {
+            const newState = prevState
+            Object.keys(prevState).forEach( state => {
+                newState[state] = null
+            })
+            if (whichFilter?.key) newState[whichFilter.key] = value
+            return newState
+        })
+    }
 
     const fetchReferenceDetail = useCallback( (ref) => {
         // handle null ref
@@ -72,180 +68,185 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         setOpenModal(true)
     }, [myIariBase])
 
-
     // callback from sub-components that induce actions upon flocks.
-    // result is an object:
+    // "result" parameter is an object consisting of:
     //  {
     //      action: <action name>,
     //      value: <param value>
     //  }
+    //
+    // most of these actions will set the flock filters to a current value.
+    // Currently only one filter can be applied at a time.
+    // Maybe later the capability of more than one filter will exist.
     const handleAction = useCallback( result => {
         const {action, value} = result;
         console.log (`UrlDisplay: handleAction: action=${action}, value=${value}`);
+        const noneFilter = {
+            "filter" : {
+                filterFunction: () => () => {return false},
+            }
+        }
+        const filters = {
+            actionable: { key: "actionable" },
+            link_status: { key: "link_status" },
+            papers: { key: "papers" },
+            perennial: { key: "perennial" },
+            tld: { key: "tld" },
+            books: { key: "books" },
+            templates: { key: "templates" },
+        }
 
-        if (action === "setUrlStatusFilter") {
-            // value is filter key name
-            const f = value ? urlStatusFilterMap[value] : null
-            setUrlFilters({ "url_status" : f })
+        if (0) {
+            // allows for easy addition of "else if"
+        }
+                    // else if (action === "setUrlStatusFilter") {  // soon to be deprecated
+                    //     // value is filter key name
+                    //     const f = value ? urlStatusFilterMap[value] : null
+                    //     setUrlFilters({ "url_status" : f })
+                    // }
+
+        else if (action === "removeAll") {
+            // clear filters (show all) for URL  and Refs list
+            setUrlFilters(null)
+            setRefFilter(null)
+            setSelectedUrl(null)
+            setFilterState(null)
+            setCondition(null)
+        }
+
+        else if (action === "setActionableFilter") {
+            // filter URL List by actionable filter determined by value as key
+            const f = value ? ACTIONABLE_FILTER_MAP[value] : null
+
+            setUrlFilters({"action_filter": f})
+            setRefFilter(f?.refFilterFunction
+                ? { filterFunction: f.refFilterFunction }
+                : null)
+            setFilterState(filters.actionable, value)
+            setCondition(f)
         }
 
         else if (action === "setLinkStatusFilter") {
-            // value is filter key name
+            // value is key into LINK_STATUS_MAP
             const f = value ? LINK_STATUS_MAP[value] : null
             setUrlFilters({ "link_status" : f })
+            setRefFilter(f?.refFilterFunction
+                ? { filterFunction: f.refFilterFunction }
+                : null )
+            setFilterState(filters.link_status, value)
+            setCondition(f)
         }
 
         else if (action === "setPapersFilter") {
             // value is filter key name
             const f = value ? REF_FILTER_DEFS[value] : null
             setRefFilter(f)
+            setUrlFilters(noneFilter)
+            setFilterState(filters.papers, value)
+            setCondition({category: "Papers", desc: `References with papers of type "${value}"`})
         }
 
+        else if (action === "setPerennialFilter") {
+            // value is perennial to filter by
+            setUrlFilters({ "url_perennial_filter" : getUrlPerennialFilter(value) })
+            setRefFilter(getRefPerennialFilter(value))
+            setSelectedUrl(null)
+            setFilterState(filters.perennial, value)
+            setCondition({category: "Reliability", desc: `Links with Reliability Status of: "${rspMap[value].caption}"`})
+        }
+
+        else if (action === "setTldFilter") {
+            // value is tld
+            setUrlFilters({ "url_tld_filter" : getUrlTldFilter(value) })
+            setRefFilter(getRefTldFilter(value))
+            setSelectedUrl(null)
+            setFilterState(filters.tld, value)
+            setCondition({category: "Top Level Domain", desc: `Links with Top Level Domain of: "${value}"`})
+        }
+
+        else if (action === "setBooksFilter") {
+            setUrlFilters({ "url_book_filter" : getUrlBooksFilter(value) })
+            setRefFilter(getRefBooksFilter(value))
+            setSelectedUrl(null)
+            setFilterState(filters.books, value)
+            setCondition({category: "Books", desc: `Links to books from "${value}"`})
+        }
+
+        else if (action === "setTemplateFilter") {
+            // filter URLs (and references?) by template indicated by "value" argument
+            setUrlFilters({ "url_template_filter" : getUrlTemplateFilter(value) })
+            setRefFilter(getRefTemplateFilter(value))
+            setSelectedUrl(null)
+            setCondition({category: "Template", desc: `Utilizes template "${value}"`})
+            setFilterState(filters.templates, value)
+        }
+
+
         else if (action === "showRefsForUrl") {
+
             // value is url key name
             const myRef = pageData.urlDict[value]?.refs[0] // for now...shall pass entire array soon
             fetchReferenceDetail(myRef)
 
-            // also set Ref filter
-            setRefFilter(getUrlRefFilter(value))
+            // // NB disabling for now
+            // // also set Ref filter
+            // setRefFilter(getUrlRefFilter(value))
 
             setSelectedUrl(value)
-        }
-
-        else if (action === "setArchiveStatusFilters") {
-            setUrlFilters({ "archive_status_filter" : value })  // NB: value is filter object
-        }
-
-
-        else if (action === "setUrlReferenceFilter") {
-            // filter References to those that contain a url specified by the value parameter
-            setRefFilter(getUrlRefFilter(value))
-            setSelectedUrl(value)
-        }
-
-        else if (action === "setUrlActionFilter") {
-            // filter References as determined by action.value as key into actionable filter map
-            const f = value ? ACTIONABLE_FILTER_MAP[value] : null
-            setUrlFilters( { "action_filter": f } )
-            setSelectedUrlActionFilterName(value)
-        }
-
-        else if (action === "removeUrlFilter") {
-            // clear filter (show all) for URL list
-            setUrlFilters(null)
-            setSelectedUrl(null)
-            setSelectedUrlActionFilterName(null)
-        }
-
-        else if (action === "removeReferenceFilter") {
-            // clear filter (show all) for references list
-            setRefFilter(null)
-            setSelectedUrl(null)
-        }
-
-        else if (action === "setTemplateFilter") {
-            console.log (`UrlDisplay: handleAction: setting templateFilter for ${value}`);
-            // filter URLs (and references?) if they include template indicated by "value" argument"
-            setUrlFilters({ "url_template_filter" : getUrlTemplateFilter(value) })
-            setSelectedUrl(null)
-
-            // and also do the references
-            setRefFilter(getRefTemplateFilter(value))
 
         }
 
-        else if (action === "setBooksFilter") {
-            console.log (`UrlDisplay: handleAction: setting booksFilter for ${value}`);
-            setUrlFilters({ "url_book_filter" : getUrlBooksFilter(value) })
-            setSelectedUrl(null)
 
-            // // and also do the references
-            // setRefFilter(getRefTemplateFilter(value))
+                        // else if (action === "setArchiveStatusFilters") {
+                        //     setUrlFilters({ "archive_status_filter" : value })  // NB: value is filter object
+                        // }
 
-        }
 
-        else if (action === "setTldFilter") {
-            console.log (`UrlDisplay: handleAction: setting tld filter for ${value}`);
-            // only filter urls (for now)
-            setUrlFilters({ "url_tld_filter" : getUrlTldFilter(value) })
-            setSelectedUrl(null)
-        }
-
-        else if (action === "setPerennialFilter") {
-            console.log (`UrlDisplay: handleAction: setting perennialFilter for ${value}`);
-            // filter URLs (and references?) if they include perennial indicated by "value" argument"
-            setUrlFilters({ "url_perennial_filter" : getUrlPerennialFilter(value) })
-            setSelectedUrl(null)
-
-            // TODO: and also do the references
-            // setRefFilter(getRefPerennialFilter(value))
-
-        }
+                        // else if (action === "setUrlReferenceFilter") {
+                        //     // value parameter specifies url to filter References by
+                        //     setRefFilter(getUrlRefFilter(value))
+                        //     setSelectedUrl(value)
+                        // }
 
         else {
             console.log(`Action "${action}" not supported.`)
             alert(`Action "${action}" not supported.`)
         }
 
-        // TODO: Action for setReferenceFilter/ShowReference for filtered URLS
-        // i.e. show all refs that contain ANY of the URLS in the filtered URL list
+                        // TODO: Action for setReferenceFilter/ShowReference for filtered URLS
+                        // i.e. show all refs that contain ANY of the URLS in the filtered URL list
 
-    }, [urlStatusFilterMap, fetchReferenceDetail, pageData.urlDict])
-
-
-    if (!pageData) return null;  /// NB must be put AFTER useEffect and useCallback, as these hooks cannot after conditional statements
+    }, [fetchReferenceDetail, pageData.urlDict])
 
 
-    const handleCitationTypeChange = (e) => {
-        const citationType = e.target.value
-        console.log("Citation type changed to: " + citationType + ", take appropriate filter action")
-        setSelectedCitationType(citationType)
-    }
+    if (!pageData) return null;  /// NB must be put AFTER useEffect and useCallback, as these hooks cannot exist after conditional statements
 
 
-
-    const renderUrlActionButton = (props) => {
-        /*
-        callback for button render function of <FilterButton>
-        expects:
-            props.filter.caption
-            props.filter.count
-        */
-
-        // TODO put in some element data for tooltip, like filter.desc
-        // TODO Question: where does tool tip come from? is it generic tooltip for the page?
-        return <>
-            <div>{props.filter?.caption}</div>
-            <div className={'filter-count'}>{props.filter?.count} items</div>
-        </>
-    }
-
-
-
-    // TODO candidate for external shared function
-    // TODO allow targetUrl(s) to be an array of Urls
-    const getUrlRefFilter = (targetUrl) => {
-
-        if (!targetUrl || targetUrl === '') {
-            return null; // no filter means all filter
-        }
-
-        return {
-            // TODO: implement UrlFilter custom object
-
-            desc: `Citations with URL: ${targetUrl}`,
-
-            caption: <span>Contains URL: <br/><span
-                className={'target-url'}><a target={"_blank"} rel={"noreferrer"}
-                                            href={targetUrl} >{targetUrl}</a
-            ></span></span>,
-
-            filterFunction: () => (d) => {
-                // TODO make this use an array of targetUrls
-                return d.urls.includes( targetUrl )
-            },
-        }
-    }
+                // // TODO eliminate!!
+                // // TODO candidate for external shared function
+                // // TODO allow targetUrl(s) to be an array of Urls
+                // const getUrlRefFilter = (targetUrl) => {
+                //
+                //     if (!targetUrl || targetUrl === '') {
+                //         return null; // no filter means all filter
+                //     }
+                //
+                //     return {
+                //         // TODO: implement UrlFilter custom object
+                //
+                //         desc: `Citations with URL: ${targetUrl}`,
+                //
+                //         caption: <span>Contains URL: <br/><span
+                //             className={'target-url'}><a target={"_blank"} rel={"noreferrer"}
+                //                                         href={targetUrl} >{targetUrl}</a
+                //         ></span></span>,
+                //
+                //         filterFunction: () => (urlDict, ref) => {
+                //             // TODO make this use an array of targetUrls
+                //             return ref.urls.includes( targetUrl )
+                //         },
+                //     }
+                // }
 
     const getUrlTemplateFilter = (templateName) => {
 
@@ -276,7 +277,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
     const getUrlBooksFilter = (bookDomain) => {
 
-        if (!bookDomain || bookDomain === '') {
+        if (!bookDomain?.length) {
             return null; // no bookDomain means all filter
         }
 
@@ -288,11 +289,28 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             caption: <span>{`Contains Books from "${bookDomain}"`}</span>,
 
             filterFunction: () => (url) => {
-                // if url.refs.templates include cite book...
                 if (!(url.reference_info.templates.includes("cite book"))) return false
-
-                // and this url's netloc matches the bookDomain
+                // return true if this url's netloc matches the bookDomain
                 return (url.netloc === bookDomain)
+            },
+        }
+    }
+
+    const getRefBooksFilter = (bookDomain) => {
+        if (!bookDomain?.length) {
+            return null; // no bookDomain means all filter
+        }
+        return {
+            filterFunction: () => (urlDict, ref) => {
+                if (!ref.template_names.includes("cite book")) return false  // block if no book template
+                return ref.urls.some( url => {
+                    const urlObject = urlDict[url]
+                    if (!urlObject?.netloc) return false  // block if no netloc
+
+                    // TODO This is questionable
+
+                    return (urlObject.netloc === bookDomain)
+                })
             },
         }
     }
@@ -313,19 +331,32 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         }
     }
 
+    const getRefTldFilter = (tld) => {
+        if (!tld?.length) {
+            return null; // no template means "all" filter
+        }
+        return {
+            filterFunction: () => (urlDict, ref) => {
+                return ref.urls.some( url => {
+                    const urlObject = urlDict[url]
+                    if (!urlObject?.tld) return false  // block if no tld
+                    return urlObject.tld === tld
+                })
+            },
+        }
+    }
+
     const getUrlPerennialFilter = (perennialKey) => {
         if (!perennialKey || perennialKey === '') {
             return null; // null means "all" filter
         }
-        // return synthetic filter showing only URLs that have perennialKey in their rsp array
+        // return synthetic filter showing URLs that have specified perennialKey in their rsp array
         return {
             desc: `URLs that contain Perennial "${perennialKey}"`,
             caption: <span>{`Contains Perennial "${perennialKey}"`}</span>,
             filterFunction: () => (url) => {
-                // loop thru refs
-                // if any of those refs contain templateName, return true anf exit
-                if (!perennialKey?.length) return true  // always let URL in if templateName is empty
-                if (!url.rsp) return true  // let it through if there is no rsp list
+                // if (!perennialKey?.length) return true  // always let URL in if templateName is empty
+                if (!url.rsp) return false  // if no rsp list for url, block it - it does not "belong"
                 return url.rsp.includes(perennialKey)
             }
         }
@@ -333,34 +364,18 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
     // eslint-disable-next-line no-unused-vars
     const getRefPerennialFilter = (perennialKey) => {
-        if (!perennialKey || perennialKey === '') {
+        if (!perennialKey?.length) {
             return null; // null means "all" filter
         }
-
-        return null  // for now, until we settle down with Ref objects
-
-                    // // return synthetic filter showing only Refs that have urls that are associated with perennialKey
-                    // return {
-                    //
-                    //     desc: `References that contain URLs with perennial "${perennialKey}"`,
-                    //
-                    //     caption: <span>{`Contains URLs with perennial "${perennialKey}"`}</span>,
-                    //
-                    //     filterFunction: () => (ref) => {
-                    //         // loop thru refs
-                    //         // if any of those refs contain templateName, return true anf exit
-                    //         if (!perennialKey?.length) return true  // always let reference through if templateName is empty
-                    //
-                    //         // return true if ANY (.some) of the urls include the perennialKey in their rsp array
-                    //
-                    //         return ref.urlObjs.some(url => {
-                    //             // if any of the ref's templates contain the target templateName, return true...
-                    //             if (!url.rsp) return true  // let it through if there is no rsp list
-                    //             return url.rsp.includes(perennialKey)
-                    //         })
-                    //
-                    //     },
-                    // }
+        return {
+            filterFunction: () => (urlDict, ref) => {
+                return ref.urls.some( url => {
+                    const urlObject = urlDict[url]
+                    if (!urlObject?.rsp) return false  // if no rsp list for url, block it - it does not "belong"
+                    return urlObject.rsp.includes(perennialKey)
+                })
+            },
+        }
     }
 
     const getRefTemplateFilter = (templateName) => {
@@ -376,7 +391,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
             caption: <span>{`Contains Template "${templateName}"`}</span>,
 
-            filterFunction: () => (ref) => {
+            filterFunction: () => (urlDict, ref) => {
                 // loop thru refs
                 // if any of those refs contain templateName, return true anf exit
                 if (!templateName?.length) return true  // always let reference through if templateName is empty
@@ -394,73 +409,11 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         }
     }
 
-    const citationTypes = {
-        "footnotes": {
-            caption: "Footnotes",
-            value: "footnotes"
-        },
-        "sections": {
-            caption: "Other Sections",
-            value: "sections"
-        },
-        "all": {
-            caption: "All",
-            value: "all"
-        },
-    }
 
     const refArray = (pageData.references)
 
-    // const copyButton = <button onClick={handleCopyClick} className={'utility-button'} ><span>Copy to Clipboard</span></button>
-
-    // const urlListCaption = <h3>URL List{myConfig.isDebug ? copyButton : null }</h3>
-    const extraUrlCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click a URL row to show References using that URL</h4>
-    const extraRefCaption = <h4 style={{fontStyle:"italic",fontWeight:"bold"}}>Click on Reference to view details</h4>
-
     console.log("UrlDisplay: render");
 
-    const showChoiceFetch = false; // turns on/off diaply of "footnotes: conte/nqmed/all user/patron query
-
-    const actionableTooltip = <MyTooltip id="tooltip-actionable"
-                               float={true}
-                               closeOnEsc={true}
-                               delayShow={420}
-                               variant={"info"}
-                               noArrow={true}
-                               offset={5}
-                               className={"tooltip-actionable"}
-    />
-
-    const actionables = <>
-        <h4 className={"section-caption"}>{localized.actionable}<span className={"inferior"}>{localized.actionable_subtitle}</span></h4>
-
-        <div className={"row"}>
-            <div className={showChoiceFetch ? "col-9" : "col-12" }>
-                <ActionFilters
-                    filterSet={ACTIONABLE_FILTER_MAP}
-                    filterRender={renderUrlActionButton}
-                    flock={pageData.urlArray}
-                    onAction={handleAction}
-                    options ={{}}
-                    currentFilterName={selectedUrlActionFilterName}
-                    className={'url-action-filter-buttons'}
-                    tooltipId={'tooltip-actionable'}
-                />
-            </div>
-            {showChoiceFetch &&
-                <div className={"col-3"}>
-                    <ChoiceFetch
-                        choices={citationTypes}
-                        selectedChoice={selectedCitationType}
-                        options={{
-                            caption:<h4>Show Citations from: </h4>,
-                            className:"citation-choices"
-                        }}
-                        onChange={handleCitationTypeChange} />
-                </div>
-            }
-        </div>
-    </>
 
     // setup url stats
 
@@ -479,36 +432,38 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
     pageData.url_status_statistics = {urlCounts: urlCounts}
 
+
     return <>
 
         {myConfig.isShowUrlOverview &&
             <div className={"section-box url-overview-column"}>
-                <UrlOverview pageData={pageData} options={{}} onAction={handleAction}/>
+                <UrlOverview pageData={pageData} options={{}} onAction={handleAction} currentState={currentState}/>
             </div>
         }
 
 
         <div className={"section-box"}>
-            {actionableTooltip}
-            {false && <h3>{localized.url_display_title}</h3>}
-            {actionables}
 
-            <UrlFlock urlArray={pageData.urlArray}
-                      urlFilters={urlFilters}
-                      onAction={handleAction}
-                      selectedUrl={selectedUrl}
-                      extraCaption={extraUrlCaption}
-                      fetchMethod={myConfig.urlStatusMethod} />
+            <ConditionsBox caption={"Conditions"} conditions={currentConditions} onAction={handleAction} />
+
+            <div style={{display:"flex"}}>
+                <UrlFlock urlArray={pageData.urlArray}
+                          urlFilters={urlFilters}
+                          onAction={handleAction}
+                          selectedUrl={selectedUrl}
+                          fetchMethod={myConfig.urlStatusMethod} />
+
+                {myConfig.isShowReferences && /* References List may go away soon... */
+                    // <div className={"section-box"}>
+                        <RefFlock refArray={refArray} refFilter={refFilter} onAction={handleAction} pageData={pageData} />
+                    // </div>
+                }
+
+            </div>
         </div>
 
 
-        {myConfig.isShowReferences && /* References List is tentative - may go away soon... */
-        <div className={"section-box"}>
-            <h4 className={"box-caption"}>References List</h4>
-            <RefFlock refArray={refArray} refFilterDef={refFilter} onAction={handleAction} extraCaption={extraRefCaption} />
-        </div>}
-
-
+        {/* this is the popup Reference Viewer component */}
         <RefView details={refDetails} open={openModal} onClose={() => setOpenModal(false)} />
 
     </>

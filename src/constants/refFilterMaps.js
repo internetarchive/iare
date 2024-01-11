@@ -7,45 +7,45 @@ export const REF_FILTER_DEFS = {
     NoTemplate: {
         caption: "No Template",
         desc: "Citations without a CS1|2 template (free form)",
-        filterFunction: () => (d) => d.template_names.length < 1,
+        filterFunction: () => (urlDict, ref) => ref.template_names.length < 1,
     },
 
     NamedTemplate: {
         caption: "Has Template",
         desc: 'Citations containing any template',
-        filterFunction: () => (d) => {return d.template_names.length > 0},
+        filterFunction: () => (urlDict, ref) => {return ref.template_names.length > 0},
     },
     ManyTemplates: {
         caption: "More than 1 Template",
         desc: 'Citations containing more than 1 template',
-        filterFunction: () => (d) => {return d.template_names.length > 1},
+        filterFunction: () => (urlDict, ref) => {return ref.template_names.length > 1},
     },
     CiteWeb: {
         caption: "{{cite web}} templates",
         desc: "Citations containing a {{cite web}} template",
-        filterFunction: () => (d) => {
-            return d.template_names.includes("cite web");
+        filterFunction: () => (urlDict, ref) => {
+            return ref.template_names.includes("cite web");
         },
     },
     CiteMap: {
         caption: "{{cite map}} templates",
         desc: "Citations containing a {{cite map}} template",
-        filterFunction: () => (d) => {
-            return d.template_names.includes("cite map");
+        filterFunction: () => (urlDict, ref) => {
+            return ref.template_names.includes("cite map");
         },
     },
     CiteJournal: {
         caption: "{{cite journal}} templates",
         desc: "Citations containing a {{cite journal}} template",
-        filterFunction: () => (d) => {
-            return d.template_names.includes("cite journal");
+        filterFunction: () => (urlDict, ref) => {
+            return ref.template_names.includes("cite journal");
         },
     },
     CiteBook: {
         caption: "{{cite book}} templates",
         desc: "Citations containing a {{cite book}} template",
-        filterFunction: () => (d) => {
-            return d.template_names.includes("cite book");
+        filterFunction: () => (urlDict, ref) => {
+            return ref.template_names.includes("cite book");
         },
     },
     ISBN: {
@@ -55,40 +55,40 @@ export const REF_FILTER_DEFS = {
          */
         caption: "Has ISBN",
         desc: "Citations containing an ISBN",
-        filterFunction: () => (d) => {
-            return d.template_names.includes("cite book") || d.template_names.includes("isbn");
+        filterFunction: () => (urlDict, ref) => {
+            return ref.template_names.includes("cite book") || ref.template_names.includes("isbn");
         },
     },
 
     archiveBook: {
         caption: "Books linked to archive.org",
         desc: "Citations containing a link to a book hosted at archive.org",
-        filterFunction: () => (d) => {
-            return !!d.urls.find(url => url.includes("https://archive.org/details/"))
+        filterFunction: () => (urlDict, ref) => {
+            return !!ref.urls.find(url => url.includes("https://archive.org/details/"))
         }
     },
 
     googleBook: {
         caption: "Books linked to Google Books",
         desc: "Citations containing a link to a book hosted at googlebooks",
-        filterFunction: () => (d) => {
-            return !!d.urls.find(url => url.includes("https://books.google.com/"))
+        filterFunction: () => (urlDict, ref) => {
+            return !!ref.urls.find(url => url.includes("https://books.google.com/"))
         }
     },
 
     journalArchive: {
         caption: "Journal Article linked to archive.org",
         desc: "Citations linking to a journal article in archive.org",
-        filterFunction: () => (d) => {
-            return d.template_names.includes("cite journal")
-                && !!d.urls.find((url) => url.includes("https://web.archive.org/"))
+        filterFunction: () => (urlDict, ref) => {
+            return ref.template_names.includes("cite journal")
+                && !!ref.urls.find((url) => url.includes("https://web.archive.org/"))
         }
     },
 
     hasDoi: {
         caption: "Reference contains DOI link",
         desc: "Reference has a DOI link",
-        filterFunction: () => (ref) => {
+        filterFunction: () => (urlDict, ref) => {
             return ref.templates.find(tmplt => {
                 return !!tmplt.parameters?.doi
             })
@@ -98,7 +98,7 @@ export const REF_FILTER_DEFS = {
     manyUrls: {
         caption: "More than 2 URLs",
         desc: 'Citations containing more than 2 URLs',
-        filterFunction: () => (d) => {return d.urls.length > 2},
+        filterFunction: () => (urlDict, ref) => {return ref.urls.length > 2},
     },
 
     // archiveAny: {
@@ -124,25 +124,25 @@ export const REF_FILTER_TYPES = {
     general: {
         caption: "General",
         desc: "Citations not in Footnotes section",
-        filterFunction: () => (d) => {return d.type === "general"},
+        filterFunction: () => (urlDict, ref) => {return ref.type === "general"},
     },
 
     footnote: {
         caption: "Footnote",
         desc: "Citations in Footnote section",
-        filterFunction: () => (d) => {return d.type === "footnote"},
+        filterFunction: () => (urlDict, ref) => {return ref.type === "footnote"},
     },
 
     content: {
         caption: "Content",
         desc: "Citations with Content",
-        filterFunction: () => (d) => {return d.footnote_subtype === "content"},
+        filterFunction: () => (urlDict, ref) => {return ref.footnote_subtype === "content"},
     },
 
     named: {
         caption: "Named",
         desc: "Citations referring to an already defined citation",
-        filterFunction: () => (d) => {return d.footnote_subtype === "named"},
+        filterFunction: () => (urlDict, ref) => {return ref.footnote_subtype === "named"},
     },
 
 };

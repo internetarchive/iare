@@ -222,6 +222,12 @@ export default function PageData({pageData = {}}) {
             }
         })
 
+        // // turn url string into urlObject property of reference
+        // if (!ref.urlObjects) ref.urlObjects = []
+        // ref.urls.forEach( url => {
+        //     ref.urlObjects.push(urlDict[url])
+        // })
+
     }, [])
 
 
@@ -287,6 +293,7 @@ export default function PageData({pageData = {}}) {
         // * calculate the status of the links in the references by examining the primary and
         //   archived urls in the templates in each reference
         // * acquire template statistics
+        // * make urlObjects property from urls property via urlDict
         //
         // TODO: this should be IARI API, not front-end post-retrieval
         //
@@ -310,9 +317,12 @@ export default function PageData({pageData = {}}) {
 
         const gatherPapersStatistics = (refArray) => {
             // use filter def from references filter def
-            const papersStats = ["hasDoi"].map(key => {
+            const paperFilterDefinitions = ["hasDoi"]
+            const papersStats = paperFilterDefinitions.map(key => {
                 const f = REF_FILTER_DEFS[key];
-                const count = pageData.references.filter((f.filterFunction)()).length; // Note the self-evaluating filterFunction!
+
+                // NB: must use bind here to pass urlDict to filter function
+                const count = pageData.references.filter((f.filterFunction)().bind(null, pageData.urlDict)).length; // Note the self-evaluating filterFunction!
                 return {
                     label: f.caption,
                     count: count,
@@ -360,11 +370,12 @@ export default function PageData({pageData = {}}) {
                 // TODO we should send and display a notice...shouldnt happen
                 // TODO add to test case: associateRefsWithLinks w/ bad urlDict
 
+                // if url does not have current reference in it's associated reference list, add it now
+
                 // create refs and ref_ids array properties if not there
                 if (!(myUrl["ref_ids"])) myUrl["ref_ids"] = []
                 if (!(myUrl["refs"])) myUrl["refs"] = []
 
-                // if url does not have current reference in it's associated reference list, add it now
                 // TODO check and debug here if ref.id will be reliable
                 // TODO it might change over time, and then havoc may be iontroduced
                 // TODO but maybe not, as it is unique to each wikitext
@@ -545,8 +556,8 @@ export default function PageData({pageData = {}}) {
 
                 // process received data - TODO this should eventually be done in IARI
                 processUrls(pageData, myUrls);  // creates pageData.urlDict and pageData.urlArray; loads pageData.errors
-                processReferences(pageData)  // associates url links with references
-                associateRefsWithLinks(pageData)
+                processReferences(pageData)  //
+                associateRefsWithLinks(pageData)  // associates url links with references
                 processRspData(pageData)
                 processBooksData(pageData)
 

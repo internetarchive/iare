@@ -105,6 +105,7 @@ const getArchiveStatusFromData = (data) => {  // return dict of success or failu
 
 // calls iari check-url endpoint
 // archive status is included in results
+// returns a promise with the fetch results
 const fetchUrl = async ({iariBase, url, refresh=false, timeout=0, method=''}) => {
 
     const endpoint = `${iariBase}/check-url`
@@ -465,7 +466,6 @@ export const iariPostProcessUrl = (urlObj) => {
 
     const getDomainParts = (url) => {  // TODO should be done in IARI
         // top-level-domain (TLD) and second-level-domain (SLD) extraction
-        console.log(`getDomainStats for: ${url}`)
         const parsedUrl = new URL(url);
         const hostnameParts = parsedUrl.hostname.split('.');
 

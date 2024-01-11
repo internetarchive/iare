@@ -6,7 +6,7 @@ import ChartLegend from "./ChartLegend";
 /*
 shows piechart, for now, of tlds of urls
  */
-const TldChart = ({pageData, options, onAction}) => {
+const TldChart = ({pageData, options, onAction, currentState = null}) => {
 
     if (!pageData?.tld_statistics) return <div>
         <p>No Top Level Domains statistics to show.</p>
@@ -64,17 +64,6 @@ const TldChart = ({pageData, options, onAction}) => {
         borderWidth: 2,
     }
 
-    // deprecated - we no longer have chart.js draw our graph for us -we do it ourselves
-            // const onClickChartLegend = (event, legendItem, legend) => {
-            //     const index = legendItem.index;
-            //     const ci = legend.chart;
-            //     const link = ci.data.datasets[0].links[index];
-            //     // console.log(`legend index: ${index}, link: ${link}`);
-            //
-            //     // pass link up to passed in click routine
-            //     onAction({action: "setTldFilter", value: link})
-            // }
-
     const onClickChart = (link) => {
         // console.log("pie chart clicked, link=", link)
         onAction({action: "setTldFilter", value: link})
@@ -110,13 +99,12 @@ const TldChart = ({pageData, options, onAction}) => {
 
     const onClickLegend = e => {
         const tld = e.target.closest('.legend-entry').dataset['link'];
-        // alert(`onCLickLegend: ${template}`)
         onAction({action: "setTldFilter", value: tld})
     }
 
     return <>
-        <h4 className={"chart-instruction"}>Click to filter URL List</h4>
-        <ChartLegend data={tldData} onClick={onClickLegend} colors={colorArray} className={"chart-legend-tld"} />
+        <ChartLegend data={tldData} onClick={onClickLegend} currentState={currentState}
+                     colors={colorArray} className={"chart-legend-tld"} />
 
         <div className={"tld-chart-display"}>
             {tldChartData.datasets[0].data.length > 0 ?

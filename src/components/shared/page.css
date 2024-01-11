@@ -30,6 +30,7 @@
 
 .section-box {
     margin-left: 1rem;
+    z-index: 1;
 }
 .section-box:first-child {
     margin-left: 0;
