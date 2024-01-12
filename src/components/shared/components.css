@@ -3,6 +3,9 @@
     --border-box-light: 2px solid #b4b4b7 !important;
     --border-box-radius:0.33rem;
 
+    --border-row: 1pt solid #505050 !important;
+    --border-row-light: 1pt solid #aeaeae !important;
+
     --margin-box-bottom: .35rem;
     --margin-box-left: .35rem;
 
@@ -30,6 +33,11 @@
     --color-button-dark: #fefefe;
 
     --width-category-column: 7.5rem;
+
+    --width-list-entry-count: 2.5rem;
+    --color-list-header: magenta;
+    --color-list-rows: turquoise;
+    --height-list-component: 12.67rem;
 }
 
 /* Control Box */  /* may move these to better file location */
@@ -320,4 +328,43 @@
 }
 .condition-control-box button:first-of-type {
     margin-left:0 !important;
+}
+
+/* ListChart styles */
+
+.list-chart {
+    font-size:0.85rem;
+}
+.list-chart .list-entry,
+.list-chart .list-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.list-chart .list-header {
+    cursor: pointer;
+    border-bottom: var(--border-row);
+    padding-bottom:.15rem;
+    margin-bottom:.15rem;
+    /*color: var(--color-list-header);*/
+}
+.list-chart .list-rows {
+    cursor: pointer;
+    margin-bottom:.15rem;
+    /*color: var(--color-list-rows);*/
+    height: var(--height-list-component);
+    overflow: auto;
+}
+.list-chart .list-entry {
+    border-bottom: var(--border-row-light);
+    padding-top:.15rem;
+    padding-bottom:.15rem;
+}
+.list-chart .list-label {
+}
+.list-chart .list-count {
+    min-width:var(--width-list-entry-count);
+    max-width:var(--width-list-entry-count);
+    /*background-color:green;*/
+    text-align: center;
 }

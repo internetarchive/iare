@@ -13,17 +13,20 @@ import {ConfigContext} from "./contexts/ConfigContext"
 export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, myDebug}) {
 
     const [isDebug, setDebug] = useState(myDebug);
+
+    // these are config values to show/hide certain UI features, available from debug info box
     const [isShowUrlOverview, setIsShowUrlOverview] = useState(true);
     const [isShowShortcuts, setIsShowShortcuts] = useState(true);
-    const [isShowDebugInfo, setIsShowDebugInfo] = useState(true);
+    const [isShowDebugInfo, setIsShowDebugInfo] = useState(false);
+    const [isShowViewOptions, setIsShowViewOptions] = useState(false);
 
     // params settable from from address url
     const [targetPath, setTargetPath] = useState(myPath);
     const [refreshCheck, setRefreshCheck] = useState(myRefresh);
     const [checkMethod, setCheckMethod] = useState(myMethod);
 
+    // states of page
     const [endpointPath, setEndpointPath] = useState('');
-
     const [pageData, setPageData] = useState(null);
     const [myError, setMyError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -315,7 +318,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         <div className={"header-aux1"}>{versionDisplay}{siteDisplay}{showHideDebugButton}</div>
     </div>
 
-    const buttons = <>
+    const debugButtons = <>
         <button // this is the 'show urls list' button
             className={"utility-button debug-button"}
             onClick={() => {
@@ -330,6 +333,13 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
             }
             } >{isShowShortcuts ? "Hide" : "Show"} Shortcuts</button>
         &nbsp;
+        <button // this is the 'show view options' button
+            className={"utility-button debug-button"}
+            onClick={() => {
+                setIsShowViewOptions(prevState => !prevState )
+            }
+            } >{isShowViewOptions ? "Hide" : "Show"} View Options</button>
+        &nbsp;
         <button // this is the 'show New Features' button
             className={"utility-button debug-button"}
             onClick={() => {
@@ -340,13 +350,13 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
 
     const debug = <div className={"debug-section " + (isDebug ? "debug-on" : "debug-off")}>
         <div style={{marginBottom:".5rem"}}>{iariChoiceSelect} {methodChoiceSelect}</div>
-        <div>{buttons}</div>
         <p><span className={'label'}>Environment:</span> {env} (host: {window.location.host})</p>
         <p><span className={'label'}>IARE version:</span> {package_json.version}</p>
         <p><span className={'label'}>IARI Source:</span> {myIariSourceId} ({IariSources[myIariSourceId]?.proxy})</p>
         <p><span className={'label'}>Check Method:</span> {UrlStatusCheckMethods[checkMethod].caption} ({checkMethod})</p>
         <p><span className={'label'}>URL from address line:</span> {myPath}</p>
         <p><span className={'label'}>Force Refresh:</span> {refreshCheck ? "TRUE" : "false"}</p>
+        <div>{debugButtons}</div>
         <p><span className={'label'}>pathName:</span> <MakeLink href={targetPath}/></p>
         <p><span className={'label'}>endpointPath:</span> <MakeLink href={endpointPath}/></p>
 
@@ -361,6 +371,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         isShowUrlOverview: isShowUrlOverview,
         isShowShortcuts: isShowShortcuts,
         isShowDebugInfo: isShowDebugInfo,
+        isShowViewOptions: isShowViewOptions,
     }
 
     console.log(`rendering App component:`, JSON.stringify({

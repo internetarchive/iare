@@ -88,6 +88,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         }
         const filters = {
             actionable: { key: "actionable" },
+            domains: { key: "domains" },
             link_status: { key: "link_status" },
             papers: { key: "papers" },
             perennial: { key: "perennial" },
@@ -124,6 +125,14 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                 : null)
             setFilterState(filters.actionable, value)
             setCondition(f)
+        }
+
+        else if (action === "setDomainFilter") {
+            // filter URL and Ref list by domain specified in value
+            setUrlFilters({ "domain_filter" : getUrlDomainFilter(value) })
+            setRefFilter(getRefDomainFilter(value))
+            setFilterState(filters.domains, value)
+            setCondition({category: "Pay Level Domains", desc: `Links of domain: "${value}"`})
         }
 
         else if (action === "setLinkStatusFilter") {
@@ -344,6 +353,43 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                 })
             },
         }
+    }
+
+    const getUrlDomainFilter = (targetDomain) => {
+
+        if (!targetDomain?.length) {  // targetDomain is falsey or empty string
+            return null; // null means "all" filter
+        }
+
+        return {
+            caption: `Contains ${targetDomain} domain`,
+            desc: `Link contains domain: ${targetDomain}`,
+            filterFunction: () => (url) => {
+                return url?.pay_level_domain === targetDomain
+                // return url?.netloc === targetDomain
+            },
+        }
+
+    }
+
+    const getRefDomainFilter = (targetDomain) => {
+
+        if (!targetDomain?.length) {  // targetDomain is falsey or empty string
+            return null; // null means "all" filter
+        }
+
+        return {
+            caption: `Contains ${targetDomain} domain`,
+            desc: `Reference contains links that contain domain: ${targetDomain}`,
+            filterFunction: () => (urlDict, ref) => {
+                return ref.urls.some( url => {
+                    // const urlObject = urlDict[url]?
+                    // return urlObject?.netloc === targetDomain
+                    return urlDict[url]?.pay_level_domain === targetDomain
+                })
+            },
+        }
+
     }
 
     const getUrlPerennialFilter = (perennialKey) => {
