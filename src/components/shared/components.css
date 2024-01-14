@@ -65,7 +65,9 @@
     line-height:1.8;
 }
 .control-box .button-row {
-    margin-top:.375rem;
+    display:flex;
+    flex-direction: row;
+    margin-top: 0.23rem;
 }
 .control-box .button-row .utility-button {
     background-color: var(--color-button-dark-bg) !important;
@@ -73,9 +75,20 @@
     padding-left:.5rem;
     padding-right:.5rem;
     margin-right:.25rem;
+    margin-top: 0;
+    height: 1rem;
 }
 .control-box .button-row .utility-button:first-of-type {
     margin-left:0;
+}
+
+.control-box .auto-expand {
+    margin-right: 0.25rem;
+    margin-left: 0.25rem;
+    padding-top: 0.1rem;
+}
+.control-box .auto-expand input[type=checkbox] {
+    margin-right:.25rem;
 }
 
 /* Condition Box */
