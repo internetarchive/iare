@@ -10,7 +10,7 @@ import {REF_FILTER_DEFS} from "../../constants/refFilterMaps";
 import {ConfigContext} from "../../contexts/ConfigContext";
 import {rspMap} from "../../constants/perennialList";
 import RefView from "./RefView/RefView";
-// import {Tooltip as MyTooltip} from "react-tooltip";
+import {Tooltip as MyTooltip} from "react-tooltip";
 import ConditionsBox from "../ConditionsBox";
 
 export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {}, urlArchiveFilterMap = {} } ) {
@@ -88,6 +88,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         }
         const filters = {
             actionable: { key: "actionable" },
+            domains: { key: "domains" },
             link_status: { key: "link_status" },
             papers: { key: "papers" },
             perennial: { key: "perennial" },
@@ -124,6 +125,14 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                 : null)
             setFilterState(filters.actionable, value)
             setCondition(f)
+        }
+
+        else if (action === "setDomainFilter") {
+            // filter URL and Ref list by domain specified in value
+            setUrlFilters({ "domain_filter" : getUrlDomainFilter(value) })
+            setRefFilter(getRefDomainFilter(value))
+            setFilterState(filters.domains, value)
+            setCondition({category: "Pay Level Domains", desc: `Links of domain: "${value}"`})
         }
 
         else if (action === "setLinkStatusFilter") {
@@ -218,9 +227,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
     }, [fetchReferenceDetail, pageData.urlDict])
 
-
     if (!pageData) return null;  /// NB must be put AFTER useEffect and useCallback, as these hooks cannot exist after conditional statements
-
 
                 // // TODO eliminate!!
                 // // TODO candidate for external shared function
@@ -346,6 +353,43 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         }
     }
 
+    const getUrlDomainFilter = (targetDomain) => {
+
+        if (!targetDomain?.length) {  // targetDomain is falsey or empty string
+            return null; // null means "all" filter
+        }
+
+        return {
+            caption: `Contains ${targetDomain} domain`,
+            desc: `Link contains domain: ${targetDomain}`,
+            filterFunction: () => (url) => {
+                return url?.pay_level_domain === targetDomain
+                // return url?.netloc === targetDomain
+            },
+        }
+
+    }
+
+    const getRefDomainFilter = (targetDomain) => {
+
+        if (!targetDomain?.length) {  // targetDomain is falsey or empty string
+            return null; // null means "all" filter
+        }
+
+        return {
+            caption: `Contains ${targetDomain} domain`,
+            desc: `Reference contains links that contain domain: ${targetDomain}`,
+            filterFunction: () => (urlDict, ref) => {
+                return ref.urls.some( url => {
+                    // const urlObject = urlDict[url]?
+                    // return urlObject?.netloc === targetDomain
+                    return urlDict[url]?.pay_level_domain === targetDomain
+                })
+            },
+        }
+
+    }
+
     const getUrlPerennialFilter = (perennialKey) => {
         if (!perennialKey || perennialKey === '') {
             return null; // null means "all" filter
@@ -432,35 +476,51 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
     pageData.url_status_statistics = {urlCounts: urlCounts}
 
+    const tooltipUrlDisplay = <MyTooltip id="url-display-tooltip"
+                                    float={true}
+                                    closeOnEsc={true}
+                                    delayShow={420}
+                                    variant={"info"}
+                                    noArrow={true}
+                                    offset={5}
+                                    className={"url-display-tooltip"}
+                                    style={{ zIndex: 999 }}
+                            />
 
     return <>
 
-        {myConfig.isShowUrlOverview &&
-            <div className={"section-box url-overview-column"}>
-                <UrlOverview pageData={pageData} options={{}} onAction={handleAction} currentState={currentState}/>
+        <div className={'section-content'}>
+
+            {myConfig.isShowUrlOverview &&
+                <div className={"section-box url-overview-column"}>
+                    <UrlOverview pageData={pageData} options={{}} onAction={handleAction} currentState={currentState}/>
+                </div>
+            }
+
+            <div className={"section-box"}>
+
+                <ConditionsBox caption={"Conditions"} conditions={currentConditions} onAction={handleAction}/>
+
+                <div style={{display: "flex"}}>
+                    <UrlFlock urlArray={pageData.urlArray}
+                              urlFilters={urlFilters}
+                              onAction={handleAction}
+                              selectedUrl={selectedUrl}
+                              fetchMethod={myConfig.urlStatusMethod}
+                        // onTooltip={handleTooltip}
+                    />
+
+                    <RefFlock refArray={refArray} refFilter={refFilter} onAction={handleAction} pageData={pageData}/>
+                </div>
+
             </div>
-        }
 
 
-        <div className={"section-box"}>
+            {/* this is the popup Reference Viewer component */}
+            <RefView details={refDetails} open={openModal} onClose={() => setOpenModal(false)}/>
 
-            <ConditionsBox caption={"Conditions"} conditions={currentConditions} onAction={handleAction} />
-
-            <div style={{display:"flex"}}>
-                <UrlFlock urlArray={pageData.urlArray}
-                          urlFilters={urlFilters}
-                          onAction={handleAction}
-                          selectedUrl={selectedUrl}
-                          fetchMethod={myConfig.urlStatusMethod} />
-
-                <RefFlock refArray={refArray} refFilter={refFilter} onAction={handleAction} pageData={pageData} />
-            </div>
+            {tooltipUrlDisplay}
 
         </div>
-
-
-        {/* this is the popup Reference Viewer component */}
-        <RefView details={refDetails} open={openModal} onClose={() => setOpenModal(false)} />
-
     </>
 }

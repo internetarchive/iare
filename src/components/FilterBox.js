@@ -14,6 +14,7 @@ expected props:
 export default function FilterBox({
                                       name = '',
                                       caption = null,
+                                      className = null,
                                       tooltip = '',
                                       showContents = true,
                                       onToggle,
@@ -23,8 +24,7 @@ export default function FilterBox({
     return <>
         {/*<Draggable>*/ /* Not sure about this yet */}
 
-            <div className={"filter-box"}>
-
+            <div className={`filter-box ${className ? className : ''}`}>
                 <div className={"filter-box-caption"} onClick={() => onToggle(name)}>{caption}
                     <div className={`filter-box-show ${showContents ? "closed" : "open" }`}
                     >{showContents ? "hide" : "show"}</div>
