@@ -493,7 +493,8 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
             {myConfig.isShowUrlOverview &&
                 <div className={"section-box url-overview-column"}>
-                    <UrlOverview pageData={pageData} options={{}} onAction={handleAction} currentState={currentState}/>
+                    <UrlOverview pageData={pageData} options={{}} onAction={handleAction}
+                                 currentState={currentState} tooltipId={"url-display-tooltip"}/>
                 </div>
             }
 
@@ -507,7 +508,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                               onAction={handleAction}
                               selectedUrl={selectedUrl}
                               fetchMethod={myConfig.urlStatusMethod}
-                        // onTooltip={handleTooltip}
+                              tooltipId={"url-display-tooltip"}
                     />
 
                     <RefFlock refArray={refArray} refFilter={refFilter} onAction={handleAction} pageData={pageData}/>

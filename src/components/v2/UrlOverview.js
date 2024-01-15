@@ -16,7 +16,7 @@ import Checkbox from "../Checkbox";
 import {Chart, LinearScale, BarElement, ArcElement, Legend, Tooltip, Title, SubTitle, Colors,} from 'chart.js'
 Chart.register(LinearScale, BarElement, ArcElement, Legend, Tooltip, Title, SubTitle, Colors,);
 
-const UrlOverview = React.memo(({pageData, options, onAction, currentState}) => {  // React.memo so doesn't re-rerender with param changes
+const UrlOverview = React.memo(({pageData, options, onAction, currentState, tooltipId=null}) => {  // React.memo so doesn't re-rerender with param changes
 
     const [autoExpand, setAutoExpand] = useState(true )
 
@@ -101,9 +101,11 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState}) => 
                     // data-tooltip-html={props.tooltip}
                 >Shrink All
                 </button>
-                <Checkbox className={"auto-expand"} label={"Accordion Mode"} value={autoExpand} onChange={() => setAutoExpand(prevState => !prevState)}/>
+                <Checkbox className={"auto-expand"} label={"Accordion Mode"} value={autoExpand}
+                          onChange={() => setAutoExpand(prevState => !prevState)}
+                          tooltipId={tooltipId} tooltipContent={"Only one filter will be expanded at a time.<br/>Click on a filter caption to show it."}
+                />
             </div>
-
 
         </ControlBox>
 
@@ -118,7 +120,8 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState}) => 
 
                 <FilterBox name={"actionable"} caption={"Actionable"} showContents={expand.actionable}
                            onToggle={onToggleShow}>
-                    <ActionableChart pageData={pageData} onAction={onAction} currentState={currentState?.actionable}/>
+                    <ActionableChart pageData={pageData} onAction={onAction} currentState={currentState?.actionable}
+                                     tooltipId={tooltipId}/>
                 </FilterBox>
 
                 <FilterBox name={"link_status"} caption="Link Status Codes" showContents={expand.link_status}

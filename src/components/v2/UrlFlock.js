@@ -82,7 +82,8 @@ const urlFlock = React.memo( function UrlFlock({
                                 urlFilters = {},  // keyed object of filter definitions to apply to urlArray for final url list display
                                 onAction,
                                 selectedUrl = '',
-                                fetchMethod="" }) {
+                                fetchMethod="",
+                                tooltipId = ''}) {
     // TODO maybe should not/don't have to use memo here??
 
     const [urlTooltipHtml, setUrlTooltipHtml] = useState( '<div>ToolTip<br />second line' );
@@ -579,7 +580,8 @@ const urlFlock = React.memo( function UrlFlock({
 
     return <FlockBox caption={flockCaption} className={"url-flock"}>
 
-        <div data-tooltip-id="url-display-tooltip"  // id of tooltip for entire url display (not just this flock)
+        {/*<div data-tooltip-id="url-display-tooltip"  // id of tooltip for entire url display (not just this flock)*/}
+        <div data-tooltip-id={tooltipId}  // id of tooltip for entire url display (not just this flock)
              data-tooltip-html={urlTooltipHtml}
              onMouseOver={onHoverUrlFlock}
         >{flock}</div>

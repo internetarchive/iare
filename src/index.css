@@ -366,4 +366,6 @@ font-style:italic;
 font-weight:normal;
 }
 
-
+.tooltip-active {
+    cursor: pointer;
+}
