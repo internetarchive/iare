@@ -4,17 +4,6 @@ import React, {useState} from 'react'
 import TemplateChart from "./charts/TemplateChart";
 import PerennialChart from "./charts/PerennialChart";
 import TldChart from "./charts/TldChart";
-import {
-    Chart,
-    LinearScale,
-    BarElement,
-    ArcElement,
-    Legend,
-    Tooltip,
-    Title,
-    SubTitle,
-    Colors,
-} from 'chart.js'
 import BooksChart from "./charts/BooksChart";
 import FilterBox from "../FilterBox";
 import PapersChart from "./charts/PapersChart";
@@ -24,16 +13,8 @@ import ActionableChart from "./charts/ActionableChart";
 import DomainsChart from "./charts/DomainsChart";
 import Checkbox from "../Checkbox";
 
-Chart.register(
-    LinearScale,
-    BarElement,
-    ArcElement,
-    Legend,
-    Tooltip,
-    Title,
-    SubTitle,
-    Colors,
-);
+import {Chart, LinearScale, BarElement, ArcElement, Legend, Tooltip, Title, SubTitle, Colors,} from 'chart.js'
+Chart.register(LinearScale, BarElement, ArcElement, Legend, Tooltip, Title, SubTitle, Colors,);
 
 const UrlOverview = React.memo(({pageData, options, onAction, currentState}) => {  // React.memo so doesn't re-rerender with param changes
 
@@ -120,7 +101,7 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState}) => 
                     // data-tooltip-html={props.tooltip}
                 >Shrink All
                 </button>
-                <Checkbox className={"auto-expand"} label={"Expand One Max"} value={autoExpand} onChange={() => setAutoExpand(prevState => !prevState)}/>
+                <Checkbox className={"auto-expand"} label={"Accordion Mode"} value={autoExpand} onChange={() => setAutoExpand(prevState => !prevState)}/>
             </div>
 
 
@@ -140,14 +121,14 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState}) => 
                     <ActionableChart pageData={pageData} onAction={onAction} currentState={currentState?.actionable}/>
                 </FilterBox>
 
-                <FilterBox name={"domains"} caption="Pay Level Domains" className={'domains-filter-box'}
-                           showContents={expand.domains} onToggle={onToggleShow}>
-                    <DomainsChart pageData={pageData} onAction={onAction} currentState={currentState?.domains}/>
-                </FilterBox>
-
                 <FilterBox name={"link_status"} caption="Link Status Codes" showContents={expand.link_status}
                            onToggle={onToggleShow}>
                     <LinkStatusChart pageData={pageData} onAction={onAction} currentState={currentState?.link_status}/>
+                </FilterBox>
+
+                <FilterBox name={"domains"} caption="Pay Level Domains" className={'domains-filter-box'}
+                           showContents={expand.domains} onToggle={onToggleShow}>
+                    <DomainsChart pageData={pageData} onAction={onAction} currentState={currentState?.domains}/>
                 </FilterBox>
 
                 <FilterBox name={"papers"} caption="Papers and DOIs" showContents={expand.papers}
