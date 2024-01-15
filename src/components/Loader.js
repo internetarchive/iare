@@ -1,5 +1,6 @@
 import React from 'react'
-import loader from '../images/spin.gif'
+// import loader from '../images/spin.gif'
+import loader from '../images/waiting/spin2.gif'
 
 const Loader = ({startTime, message}) => {
     console.log("Loader: ", message)

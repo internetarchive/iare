@@ -113,56 +113,57 @@ export default function PageInfo({ pageData }) {
         : null
     const linkPageSource = <a href={pageData.pathName} target={"_blank"} rel={"noreferrer"}>{pageData.pathName}</a>
 
+    const pageInfoDetails = pageData ? <div className={'detail-section'}>
+
+        <p>media type: {pageData.mediaType}</p>
+
+        <p>Check Method: {myConfig.urlStatusMethod}</p>
+
+        {ores_score_display
+            ? <>
+                <p style={{marginBottom:0}}>ORES Score: {ores_score_display}</p>
+                <PureJson data={pageData.ores_score} caption={null} />
+            </>
+            : null
+        }
+
+        <p>endpoint: <a href={pageData.endpoint} target={"_blank"} rel={"noreferrer"}>{pageData.endpoint}</a></p>
+
+        <ClickButton buttonText={"Copy CiteRefs to CSV"} handleClick={handleCopyCiteRefs} />
+        <ClickButton buttonText={"Copy Reference Data to CSV"} handleClick={handleCopyRefs} />
+        <ClickButton buttonText={"Copy UrlArray to Clipboard (JSON)"} handleClick={handleCopyUrlArray} />
+        <ClickButton buttonText={"Copy UrlArray to CSV"} handleClick={handleCopyUrlArrayCsv} />
+        <ClickButton buttonText={"Copy PageData to Clipboard (JSON)"} handleClick={handleCopyPageData} />
+
+        <div className={"page-details-table"} style={{display: "flex", flexDirection: "row"}}>
+
+            <ArrayDisplay arr={[
+                {'IARI JSON version': pageData.version},
+                {'lang': pageData.lang},
+                {'site': pageData.site},
+                {'title': pageData.title},
+            ]}/>
+
+            <ArrayDisplay arr={[
+                {'wari_id': pageData.wari_id},
+                {'page id': pageData.page_id},
+
+                {'timestamp': pageData.timestamp ? new Date(pageData.timestamp * 1000).toString() : ""}, // times 1000 b/c of milliseconds
+                {'timing': pageData["timing"]},
+
+            ]} styleObj={{marginLeft: "1em"}}/>
+        </div>
+
+    </div>
+        : <p>Nothing to display - pageData is missing.</p>
+
     return <div className="page-info">
 
-        <h6 className={"page-stats-header"}><div>Wiki Page Analyzed: {linkPageSource}{true && oresResults}</div><div>{buttonMoreDetails}</div></h6>
+        <h6 className={"page-stats-header"}>
+            <div>Wiki Page Analyzed: {linkPageSource}{true && oresResults}</div><div>{buttonMoreDetails}</div>
+        </h6>
 
-        {pageData
-            ? <div className={'detail-section' + (showDetail ? ' detail-show' : ' detail-hide') }>
-
-                <p>media type: {pageData.mediaType}</p>
-
-                <p>Check Method: {myConfig.urlStatusMethod}</p>
-
-                {ores_score_display
-                    ? <>
-                        <p style={{marginBottom:0}}>ORES Score: {ores_score_display}</p>
-                        <PureJson data={pageData.ores_score} caption={null} />
-                    </>
-                    : null
-                }
-
-                <p>endpoint: <a href={pageData.endpoint} target={"_blank"} rel={"noreferrer"}>{pageData.endpoint}</a></p>
-
-                <ClickButton buttonText={"Copy CiteRefs to CSV"} handleClick={handleCopyCiteRefs} />
-                <ClickButton buttonText={"Copy Reference Data to CSV"} handleClick={handleCopyRefs} />
-                <ClickButton buttonText={"Copy UrlArray to Clipboard (JSON)"} handleClick={handleCopyUrlArray} />
-                <ClickButton buttonText={"Copy UrlArray to CSV"} handleClick={handleCopyUrlArrayCsv} />
-                <ClickButton buttonText={"Copy PageData to Clipboard (JSON)"} handleClick={handleCopyPageData} />
-
-                <div className={"page-details-table"} style={{display: "flex", flexDirection: "row"}}>
-
-                    <ArrayDisplay arr={[
-                        {'IARI JSON version': pageData.version},
-                        {'lang': pageData.lang},
-                        {'site': pageData.site},
-                        {'title': pageData.title},
-                    ]}/>
-
-                    <ArrayDisplay arr={[
-                        {'wari_id': pageData.wari_id},
-                        {'page id': pageData.page_id},
-
-                        {'timestamp': pageData.timestamp ? new Date(pageData.timestamp * 1000).toString() : ""}, // times 1000 b/c of milliseconds
-                        {'timing': pageData["timing"]},
-
-                    ]} styleObj={{marginLeft: "1em"}}/>
-                </div>
-
-            </div>
-
-            : <p>Nothing to display - pageData is missing.</p>
-        }
+        {showDetail && pageInfoDetails}
 
     </div>
 

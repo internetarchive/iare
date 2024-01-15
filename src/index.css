@@ -1,4 +1,7 @@
 :root {
+    --color-text: black;
+    --color-text-muted: grey;
+
     --color-list-fg-selected: #054630; /*#1c654f;*/
     --color-list-bg-selected: #ceefd9; /*#c4e4c8;*/
     --color-list-fg-hover: #fffde5; /*blue;*/
@@ -40,6 +43,10 @@
 
     --radio-button-magnify:1.35;
 
+}
+
+html {
+    font-size:20px; /* this defines the "rem" size */
 }
 
 body {
@@ -359,4 +366,6 @@ font-style:italic;
 font-weight:normal;
 }
 
-
+.tooltip-active {
+    cursor: pointer;
+}

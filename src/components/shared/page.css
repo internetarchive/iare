@@ -1,12 +1,13 @@
 .page-info {
     margin-top: 0.5rem;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
 }
 .page-info .page-stats-header {
     display:flex;
     flex-direction:row;
     flex-wrap:wrap;
     justify-content: space-between;
+    color: var(--color-text-muted);
 }
 
 .page-data {
@@ -18,18 +19,20 @@
     padding-top:.25rem;
 }
 .page-data .display-content {
-    margin-top:.5rem;
-    display:flex;
-    flex-direction: row;
+    margin-top:0;
 }
 
 /* *******************
  section-box is common component class for sections
  - see UrlDisplay and RefDisplay e.g.
  ********************* */
+.section-content {
+    display:flex;
+    flex-direction: row;
+}
 
 .section-box {
-    margin-left: 1rem;
+    margin-left: .5rem;
     z-index: 1;
 }
 .section-box:first-child {
@@ -104,4 +107,10 @@ button.shortcut-button {
 button.shortcut-button:hover {
     color:black !important;
     background-color: #b9b5b5 !important;
+}
+
+/* special for this app */
+
+.domains-filter-box .filter-box-contents {
+    paddin-bottom: .25rem;
 }

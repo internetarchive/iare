@@ -1,12 +1,11 @@
 import React, {useCallback, useState} from 'react';
-import {Tooltip as MyTooltip} from "react-tooltip";
-// import {ConfigContext} from "../../contexts/ConfigContext";
 import {httpStatusCodes, iabotLiveStatusCodes} from "../../constants/httpStatusCodes"
 import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../constants/urlFilterMaps";
 import {convertToCSV, copyToClipboard} from "../../utils/utils";
 import {rspMap} from "../../constants/perennialList";
 import FlockBox from "../FlockBox";
 
+/* definitions of url list headers */
 const urlListDef = {  // keys match class names
     columns : {
         "url-name": {
@@ -83,7 +82,8 @@ const urlFlock = React.memo( function UrlFlock({
                                 urlFilters = {},  // keyed object of filter definitions to apply to urlArray for final url list display
                                 onAction,
                                 selectedUrl = '',
-                                fetchMethod="" }) {
+                                fetchMethod="",
+                                tooltipId = ''}) {
     // TODO maybe should not/don't have to use memo here??
 
     const [urlTooltipHtml, setUrlTooltipHtml] = useState( '<div>ToolTip<br />second line' );
@@ -264,9 +264,7 @@ const urlFlock = React.memo( function UrlFlock({
 
     const onHoverHeaderRow = useCallback ((e) => {  // useCallback prevents re-render upon hover???
         e.stopPropagation()  // prevents default onHover of UrlFlock from engaging and erasing tooltip
-
         const html = urlListDef.columns[e.target.className]?.ttHeader
-
         setUrlTooltipHtml(html)
     }, [])
 
@@ -308,7 +306,6 @@ const urlFlock = React.memo( function UrlFlock({
         } else {
             // show tooltip from list definition
             html = urlListDef.columns[myClassName]?.ttData
-
         }
 
         setUrlTooltipHtml(html)
@@ -534,15 +531,6 @@ const urlFlock = React.memo( function UrlFlock({
         </>
     }
 
-    const tooltipFlock = <MyTooltip id="my-url-tooltip"
-                               float={true}
-                               closeOnEsc={true}
-                               delayShow={420}
-                               variant={"info"}
-                               noArrow={true}
-                               offset={5}
-                               className={"url-flock-tooltip"}
-    />
 
     const [flockRows, flockArray] = getFlockRows(urlArray, urlFilters)
     const flock = getFlock(flockRows)
@@ -592,12 +580,11 @@ const urlFlock = React.memo( function UrlFlock({
 
     return <FlockBox caption={flockCaption} className={"url-flock"}>
 
-        <div data-tooltip-id="my-url-tooltip"
+        {/*<div data-tooltip-id="url-display-tooltip"  // id of tooltip for entire url display (not just this flock)*/}
+        <div data-tooltip-id={tooltipId}  // id of tooltip for entire url display (not just this flock)
              data-tooltip-html={urlTooltipHtml}
              onMouseOver={onHoverUrlFlock}
         >{flock}</div>
-
-        {tooltipFlock}
 
     </FlockBox>
 

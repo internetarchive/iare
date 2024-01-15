@@ -4,39 +4,28 @@ import React, {useState} from 'react'
 import TemplateChart from "./charts/TemplateChart";
 import PerennialChart from "./charts/PerennialChart";
 import TldChart from "./charts/TldChart";
-import {
-    Chart,
-    LinearScale,
-    BarElement,
-    ArcElement,
-    Legend,
-    Tooltip,
-    Title,
-    SubTitle,
-    Colors,
-} from 'chart.js'
 import BooksChart from "./charts/BooksChart";
 import FilterBox from "../FilterBox";
 import PapersChart from "./charts/PapersChart";
 import LinkStatusChart from "./charts/LinkStatusChart";
 import ControlBox from "../ControlBox";
 import ActionableChart from "./charts/ActionableChart";
+import DomainsChart from "./charts/DomainsChart";
+import Checkbox from "../Checkbox";
 
-Chart.register(
-    LinearScale,
-    BarElement,
-    ArcElement,
-    Legend,
-    Tooltip,
-    Title,
-    SubTitle,
-    Colors,
-);
+import {Chart, LinearScale, BarElement, ArcElement, Legend, Tooltip, Title, SubTitle, Colors,} from 'chart.js'
+Chart.register(LinearScale, BarElement, ArcElement, Legend, Tooltip, Title, SubTitle, Colors,);
 
-const UrlOverview = React.memo(({pageData, options, onAction, currentState}) => {  // React.memo so doesn't re-rerender with param changes
+const UrlOverview = React.memo(({pageData, options, onAction, currentState, tooltipId=null}) => {  // React.memo so doesn't re-rerender with param changes
+
+    const [autoExpand, setAutoExpand] = useState(true )
+
+    // todo create a structure called "filters" or "myFilters", defining a key
+    // for each filter we want to have here.
 
     const [expand, setExpand] = useState({
         "actionable" : true,
+        "domains" : true,
         "link_status" : true,
         "papers" : true,
         "reliability" : true,
@@ -60,12 +49,15 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState}) => 
     }
 
     const onToggleShow = (name) => {
-        console.log("hi there")
         setExpand( prevState => {
-            return {
-                ...prevState,
-                [name]:!prevState[name]
-            }
+            const newState = {}
+            // init mewState with all false if autoExpand
+            Object.keys(prevState).forEach( state => {
+                newState[state] = autoExpand ? false : prevState[state]
+            })
+            // regardless set state of specified to true
+            newState[name] = 0 && autoExpand ? true : !prevState[name]
+            return newState
         })
     }
 
@@ -109,45 +101,61 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState}) => 
                     // data-tooltip-html={props.tooltip}
                 >Shrink All
                 </button>
+                <Checkbox className={"auto-expand"} label={"Accordion Mode"} value={autoExpand}
+                          onChange={() => setAutoExpand(prevState => !prevState)}
+                          tooltipId={tooltipId} tooltipContent={"Only one filter will be expanded at a time.<br/>Click on a filter caption to show it."}
+                />
             </div>
+
         </ControlBox>
 
         <div className={"row"}>
 
             <div className={"col col-12"}>
 
-                        {/* the old URL status pie chart */}
-                        {/*<FilterBox caption="URL Status Codes" showContents={true}>*/}
-                        {/*    <UrlStatusChart pageData={pageData} colors={colors} onAction={onAction} currentState={currentState?. } />*/}
-                        {/*</FilterBox>*/}
+                {/* the old URL status pie chart */}
+                {/*<FilterBox caption="URL Status Codes" showContents={true}>*/}
+                {/*    <UrlStatusChart pageData={pageData} colors={colors} onAction={onAction} currentState={currentState?. } />*/}
+                {/*</FilterBox>*/}
 
-
-                <FilterBox name={"actionable"} caption={"Actionable"} showContents={expand.actionable} onToggle={onToggleShow} >
-                    <ActionableChart pageData={pageData} onAction={onAction} currentState={currentState?.actionable} />
+                <FilterBox name={"actionable"} caption={"Actionable"} showContents={expand.actionable}
+                           onToggle={onToggleShow}>
+                    <ActionableChart pageData={pageData} onAction={onAction} currentState={currentState?.actionable}
+                                     tooltipId={tooltipId}/>
                 </FilterBox>
 
-                <FilterBox name={"link_status"} caption="Link Status Codes" showContents={expand.link_status} onToggle={onToggleShow}>
-                    <LinkStatusChart pageData={pageData} onAction={onAction} currentState={currentState?.link_status } />
+                <FilterBox name={"link_status"} caption="Link Status Codes" showContents={expand.link_status}
+                           onToggle={onToggleShow}>
+                    <LinkStatusChart pageData={pageData} onAction={onAction} currentState={currentState?.link_status}/>
                 </FilterBox>
 
-                <FilterBox name={"papers"} caption="Papers and DOIs" showContents={expand.papers} onToggle={onToggleShow}>
-                    <PapersChart pageData={pageData} onAction={onAction} currentState={currentState?.papers } />
+                <FilterBox name={"domains"} caption="Pay Level Domains" className={'domains-filter-box'}
+                           showContents={expand.domains} onToggle={onToggleShow}>
+                    <DomainsChart pageData={pageData} onAction={onAction} currentState={currentState?.domains}/>
                 </FilterBox>
 
-                <FilterBox name={"reliability"} caption="Reliability Statistics" showContents={expand.reliability} onToggle={onToggleShow}>
-                    <PerennialChart pageData={pageData} onAction={onAction} currentState={currentState?.perennial } />
+                <FilterBox name={"papers"} caption="Papers and DOIs" showContents={expand.papers}
+                           onToggle={onToggleShow}>
+                    <PapersChart pageData={pageData} onAction={onAction} currentState={currentState?.papers}/>
+                </FilterBox>
+
+                <FilterBox name={"reliability"} caption="Reliability Statistics" showContents={expand.reliability}
+                           onToggle={onToggleShow}>
+                    <PerennialChart pageData={pageData} onAction={onAction} currentState={currentState?.perennial}/>
                 </FilterBox>
 
                 <FilterBox name={"tld"} caption="Top Level Domains" showContents={expand.tld} onToggle={onToggleShow}>
-                    <TldChart pageData={pageData} onAction={onAction} currentState={currentState?.tld } />
+                    <TldChart pageData={pageData} onAction={onAction} currentState={currentState?.tld}/>
                 </FilterBox>
 
                 <FilterBox name={"books"} caption="Links to Books" showContents={expand.books} onToggle={onToggleShow}>
-                    <BooksChart pageData={pageData} options={{colors:iareColors}} onAction={onAction} currentState={currentState?.books } />
+                    <BooksChart pageData={pageData} options={{colors: iareColors}} onAction={onAction}
+                                currentState={currentState?.books}/>
                 </FilterBox>
 
-                <FilterBox name={"templates"} caption="Template Occurrences" showContents={expand.templates} onToggle={onToggleShow}>
-                    <TemplateChart pageData={pageData} onAction={onAction} currentState={currentState?.templates } />
+                <FilterBox name={"templates"} caption="Template Occurrences" showContents={expand.templates}
+                           onToggle={onToggleShow}>
+                    <TemplateChart pageData={pageData} onAction={onAction} currentState={currentState?.templates}/>
                 </FilterBox>
 
             </div>

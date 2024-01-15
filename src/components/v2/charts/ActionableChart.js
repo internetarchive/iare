@@ -1,15 +1,15 @@
 import {ACTIONABLE_FILTER_MAP} from "../../../constants/actionableMap";
 import FilterButtons from "../../FilterButtons";
-import {Tooltip as MyTooltip} from "react-tooltip";
 
 function ActionFilters({
+    // TODO we can remove this ActionFilters component and use FilterButtons directly in ActionableChart
                            filterSet = null,
                            filterRender,
                            flock = [],
                            onAction,
                            options = {},
                            currentFilterName = '',
-                           tooltipId = '',
+                           tooltipId = null,
                            className = null
                        }) {
     const handleActionable = (actionable) => {
@@ -31,7 +31,7 @@ function ActionFilters({
 
 }
 
-const ActionableChart = ({pageData, options, onAction, currentState = ""}) => {
+const ActionableChart = ({pageData, options, onAction, currentState = "", tooltipId=null}) => {
 
     const renderActionableButton = (props) => {
         /*
@@ -60,20 +60,10 @@ const ActionableChart = ({pageData, options, onAction, currentState = ""}) => {
                     options={{}}
                     currentFilterName={currentState}
                     className={'url-actionable-buttons'}
-                    tooltipId={'tooltip-actionable_chart'}
+                    tooltipId={tooltipId}
                 />
             </div>
         </div>
-
-        <MyTooltip id="tooltip-actionable_chart"
-                   float={true}
-                   closeOnEsc={true}
-                   delayShow={420}
-                   variant={"info"}
-                   noArrow={true}
-                   offset={5}
-                   className={"tooltip-actionable"}
-        />
 
     </>
 

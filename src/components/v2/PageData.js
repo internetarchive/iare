@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState} from "react";
 import UrlDisplay from "./UrlDisplay";
 import RefDisplay from "./RefDisplay";
-import FldDisplay from "./FldDisplay";
 import Loader from "../Loader";
 import {fetchUrls, iariPostProcessUrl} from "../../utils/iariUtils.js"
 import {ConfigContext} from "../../contexts/ConfigContext";
@@ -54,6 +53,7 @@ export default function PageData({pageData = {}}) {
     myConfig = myConfig ? myConfig : {} // prevents undefined myConfig.<param> errors
     const myIariBase = myConfig.iariSource
     const myStatusCheckMethod = myConfig.urlStatusMethod
+    const isShowViewOptions = myConfig.isShowViewOptions
 
     // google dev tools does not handle module level imports well, but assigning to a local var makes things work
     const rspDomains = categorizedDomains
@@ -81,31 +81,41 @@ export default function PageData({pageData = {}}) {
 
         // create url dict from returned results
         const urlDict = {}
-        urlResults && urlResults.forEach(d => {
-            // results come in with url data surrounded with a "data" element
-            // we remove that level of indirection here
 
-            const myUrl = d.data.url
+        if (urlResults) {
+            urlResults.forEach(d => {
+                // urlResults arrive from fetch routine surrounded by a "data" element:
+                // [
+                //  { data: <url data>, status_code: <result of fetch call (not the url status)> },
+                //  . . .
+                // ]
+                //
+                // we remove that level of indirection here
 
-            // add entry for url if not there yet
-            if (!urlDict[myUrl]) {
-                urlDict[myUrl] = d.data  // initialize with result data
-                urlDict[myUrl].urlCount = 0
-            }
+                const myUrl = d.data.url
 
-            try {
-                iariPostProcessUrl(urlDict[myUrl])  // sets tld, sld, _3ld, and isArchive
-            } catch (error) {
-                console.error(`Error processing URL: ${myUrl} (${error.message})`);
-                console.error(error.stack);
-                addProcessError(pageData, `Error processing URL: ${myUrl} (${error.message})`)
-                // try to fix this urlDict entry?
-                urlDict[myUrl].error = error.message
-            }
+                // add entry for url if not there yet
+                if (!urlDict[myUrl]) {
+                    urlDict[myUrl] = d.data  // initialize with result data
+                    urlDict[myUrl].urlCount = 0
+                }
 
-            // increase usage count of this url by 1; keeps track of repeats
-            urlDict[myUrl].urlCount++
-        })
+                // decorate the new url entry with some things that are currently  missing from IARI
+                // TODO Add these to iari! the "iariPostProcessUrl" should become obsolete
+                try {
+                    iariPostProcessUrl(urlDict[myUrl])  // sets tld, sld, _3ld, and isArchive
+                } catch (error) {
+                    console.error(`Error processing URL: ${myUrl} (${error.message})`);
+                    console.error(error.stack);
+                    addProcessError(pageData, `Error processing URL: ${myUrl} (${error.message})`)
+                    // try to fix this urlDict entry?
+                    urlDict[myUrl].error = error.message
+                }
+
+                // increase usage count of this url by 1; keeps track of repeats
+                urlDict[myUrl].urlCount++
+            })
+        }
 
         // primary urls are all those urls that are NOT archive links
         const primaryUrls = Object.keys(urlDict).filter(urlKey => {
@@ -601,9 +611,6 @@ export default function PageData({pageData = {}}) {
         "urls": {
             caption: "URLs"
         },
-        "domains": {
-            caption: "Domains"
-        },
         "stats": {
             caption: "Reference Types"
         },
@@ -662,13 +669,9 @@ export default function PageData({pageData = {}}) {
 
                     : <div className={"page-data"} xxstyle={{backgroundColor:"grey"}}>
 
-                        {true && viewOptions}
+                        {isShowViewOptions && viewOptions}
 
                         <div className={`display-content`}>
-
-                            {selectedViewType === 'domains' &&
-                                <FldDisplay pageData={pageData}/>
-                            }
 
                             {selectedViewType === 'urls' &&
                                 <UrlDisplay pageData={pageData} options={{refresh: pageData.forceRefresh}}

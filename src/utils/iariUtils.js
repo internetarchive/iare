@@ -118,15 +118,31 @@ const fetchUrl = async ({iariBase, url, refresh=false, timeout=0, method=''}) =>
 
     const resolveStatusResults = (data) => {
         // "data" includes all url fields from iari check-url endpoint
-        const results = {
+        return {
             url: url,
             netloc: data.netloc,
-            status_code_method: data.status_code_method,
+            pay_level_domain: data.first_level_domain,
             status_code: data.status_code,
+            status_code_method: data.status_code_method,
             status_code_error_details: data.status_code_error_details,
             archive_status: getArchiveStatusFromData(data)
         }
-        return results
+    }
+
+    const resolveErrorResults = (response) => {
+        return {
+            url: url,
+            netloc: null,
+            pay_level_domain: null,
+            status_code: 0,
+            status_code_method: method,
+            status_code_error_details: response.statusText ? response.statusText : "error from server",
+            archive_status: null,
+
+            error_code: response.status,
+            error_text: response.statusText ? response.statusText : "error from server",
+            // TODO: would be nice to use response.statusText, but as of 2023.04.08, response.statusText is empty
+        }
     }
 
 
@@ -144,17 +160,8 @@ const fetchUrl = async ({iariBase, url, refresh=false, timeout=0, method=''}) =>
 
             } else {
                 // we may have a 504 or other erroneous status_code on the check-url call
-                console.warn(`fetchUrl: Error fetching url: ${url}`)
-
-                return Promise.resolve({
-                    url: url,
-                    status_code: 0,
-                    status_code_method: method,
-                    status_code_error_details: response.statusText ? response.statusText : "error from server",
-                    error_code: response.status,
-                    error_text: response.statusText ? response.statusText : "error from server",
-                    // TODO: would be nice to use response.statusText, but as of 2023.04.08, response.statusText is empty
-                })
+                console.warn(`fetchUrl: Error fetching url ${url}.`)
+                return Promise.resolve(resolveErrorResults(response))
 
             }
         })
@@ -496,6 +503,7 @@ export const iariPostProcessUrl = (urlObj) => {
     }
 
     const isArchive = (targetUrl) => {
+        // TODO use IABot's isArchive thing that MAX wrote
         return !!(sanitizeUrlForArchive(targetUrl).match(regexWayback))
             ? true
             : !!(sanitizeUrlForArchive(targetUrl).match(regexArchiveToday))
