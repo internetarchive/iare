@@ -42,7 +42,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         ? ['easterIsland', 'internetArchive', 'pdfCovid',]
         : env === 'env-staging'
                 // default staging shortcuts
-            ? ['easterIsland', 'internetArchive', 'short_test', 'pdfOneLink']
+            ? ['easterIsland', 'internetArchive', 'mlk', 'short_test', ]
 
                 // my development shortcuts
             : ['marcBolan', 'easterIsland', 'mlk', 'internetArchive', 'karen_bakker', 'short_test', 'pdfDesantis', 'pdfOneLink'];
