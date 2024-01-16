@@ -331,20 +331,20 @@ table.single-detail tr td:not(:first-child) {
     padding-top: 0.175rem;
 }
 
+.path-fetch .path-shortcut {
+    margin-left:10px;
+}
+
 .path-fetch-wrap button {
     margin-top:.35em;
 }
 
 .path-fetch-wrap .chk-force-refresh {
     margin-top:.65em;
-}
-
-.path-fetch .path-shortcut {
-    margin-left:10px;
-}
-
-.path-fetch-wrap .chk-force-refresh {
     margin-left: .5rem;
+    margin-right: .25rem;
+}
+.path-fetch-wrap .chk-force-refresh input[type=checkbox] {
     margin-right: .25rem;
 }
 
