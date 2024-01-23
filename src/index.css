@@ -40,6 +40,8 @@
 
     --radio-button-magnify:1.35;
 
+    --padding-cells: .5rem;
+    --border-normal: 1pt solid black;
 }
 
 body {
@@ -47,7 +49,7 @@ body {
     margin: 15px 20px 20px;
 }
 
-.iare-view .header h1 {
+.iaridash .header h1 {
     position:relative;
     z-index: 10;
     margin-top:0;
@@ -59,39 +61,39 @@ body {
 
 /* environment specific */
 
-body .iare-view .header h1 {
+body .iaridash .header h1 {
     color:red;
 }
-body.env-production .iare-view .header h1 {
+body.env-production .iaridash .header h1 {
     color:#e30040;
 }
-body.env-local .iare-view .header h1 {
+body.env-local .iaridash .header h1 {
     color: #1acf84;
 }
 
 /* iari-view specific */
 
-.iare-view {
+.iaridash {
     display: flex;
     flex-direction: column;
 }
-.iare-view h3 {
+.iaridash h3 {
     color:var(--color-h3);
 }
-.iare-view h4 {
+.iaridash h4 {
     color:var(--color-h4);
 }
-.iare-view h4 .inferior {
+.iaridash h4 .inferior {
     font-size:88%;
     font-weight:normal;
     font-style:italic;
 }
 
-.iare-view .header {
+.iaridash .header {
     display: flex;
     flex-direction: column;
 }
-.iare-view .header-contents {
+.iaridash .header-contents {
     display:flex;
     flex-direction:row;
     flex-wrap:wrap;
@@ -280,7 +282,7 @@ table.single-detail tr td:not(:first-child) {
 }
 
 
-.iare-view .path-fetch {
+.iaridash .path-fetch {
     padding: 1rem 1rem 0;
     margin-top:.5rem;
     margin-bottom:.25rem;
@@ -367,4 +369,55 @@ font-weight:normal;
     padding: 0.2rem 0.35rem 0.3rem !important;
     background-color: #2299e8;
     color: white !important;
+}
+
+/* Scoreboard css */
+
+.scoreboard {
+    margin-left: .5rem;
+    width:50rem;
+}
+.scoreboard .row {
+    margin-left: 0;
+}
+.scoreboard .controls button {
+    margin-right: .5rem;
+    min-width:6rem;
+}
+
+/* DataGrid css */
+
+.data-grid {
+    width: 100%;
+}
+.data-grid .header-row {
+    background-color: lightgrey;
+    border-bottom: var(--border-normal);
+    border-top: var(--border-normal);
+}
+.data-grid .data-row {
+    background-color: #cda2b7;
+    /*padding: var(--padding-cells);*/
+    border-bottom: var(--border-normal)
+}
+.data-grid .row .item-col,
+.data-grid .row .data-cols .col
+{
+    padding: var(--padding-cells);
+    border-right: var(--border-normal);
+}
+.data-grid .row .item-col
+{
+    border-left: var(--border-normal);
+}
+
+.data-grid .row .data-cols {
+    display:flex;
+    flex-direction: row;
+    padding: 0;
+}
+.data-grid .row .data-cols > .col {
+    /*flex: 0 0 1;*/
+    overflow: hidden;
+    overflow-x: scroll;
 }

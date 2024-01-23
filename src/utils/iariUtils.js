@@ -105,7 +105,7 @@ const getArchiveStatusFromData = (data) => {  // return dict of success or failu
 
 // calls iari check-url endpoint
 // archive status is included in results
-const fetchUrl = async ({iariBase, url, refresh=false, timeout=0, method=''}) => {
+export const fetchUrl = async ({iariBase, url, refresh=false, timeout=0, method=''}) => {
 
     const endpoint = `${iariBase}/check-url`
         + `?url=${encodeURIComponent(url)}`
@@ -339,7 +339,7 @@ const fetchUrlsIabotBulk = async (iariBase, urlArray, refresh, timeout) => {
     return urlData;
 }
 
-const checkUrlsCorentin = async (urlArray, refresh, timeout) => {
+export const checkUrlsCorentin = async (urlArray, refresh, timeout) => {
 
     const endpoint = UrlStatusCheckMethods.CORENTIN.endpoint + "check"
 
