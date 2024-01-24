@@ -71,6 +71,8 @@
     background: linear-gradient(to right, #005db1, #00a5e0);
 }
 .ref-view-title-bar h2 {
+    display:flex;
+    flex-direction: row;
     color:white;
     font-weight:bold;
     font-size: var(--titlebar-font-size);
@@ -117,6 +119,9 @@
     margin-bottom: var(--margin-ref-view-section)
 }
 
+.ref-view-template .utility-button.small-button {
+    font-size:69%;
+}
 .ref-view-templates .template-header {
     display: inline-block;
 }
@@ -245,35 +250,84 @@
     margin-top:1rem;
 }
 
-.ref-view-template-url {
-    border:var(--border-box);
-    padding:.5rem;
+.ref-view-url {
+    /*border:var(--border-box);*/
+    /*padding:.5rem;*/
     margin-top:.25rem;
 }
-.ref-view-template-url p {
+.ref-view-url p {
     margin-bottom: 0;
 }
 
+.ref-view-url .url-row
+{
+    display: flex;
+    flex-direction: row;
+    border:1px solid black;
+    border-top:none;
+    position:relative;
+}
+.ref-view-url .url-row.url-header-row {
+    border-top: 1px solid black;
+}
+.ref-view-url .url-header-row .url-name,
+.ref-view-url .url-header-row .url-status,
+.ref-view-url .url-header-row .url-archive_status,
+.ref-view-url .url-header-row .url-iabot_status,
+.ref-view-url .url-header-row .url-citations,
+.ref-view-url .url-header-row .url-templates,
+.ref-view-url .url-header-row .url-sections,
+.ref-view-url .url-header-row .url-perennial
+{
+    padding-top: .15rem !important;
+    padding-bottom: .15rem !important;
+    background-color:var(--color-list-header-bg)
+}
+
 .ref-view-actionables {
-    margin-bottom: var(--margin-ref-view-section)
+    margin-bottom: var(--margin-ref-view-section);
 }
 
 .ref-view-parameters {
     margin-top:.25rem;
 }
 
-.ref-view-citation-links {
-    margin-bottom: var(--margin-ref-view-section)
+.ref-view-article-info {
+    margin-bottom: var(--margin-ref-view-section);
+    margin-top:.75rem;
+    /*font-size: 80%;*/
 }
-.ref-view-citation-links .citation-links {
+.ref-view-article-info .citation-links {
     margin-top:.2rem;
+    /*margin-left:.85rem;*/
+    display:flex;
 }
-.ref-view-citation-links .citation-links button:first-of-type {
+.ref-view-article-info .citation-links button {
+    margin-bottom:0;
+    height:1.15rem;
+}
+.ref-view-article-info .citation-links button:first-of-type {
     margin-left:0;
 }
+.ref-view-article-info .article-info {
+    display:flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+    justify-content: space-between;
 
+    margin-top: 0.25rem;
+}
+.ref-view-article-info .article-info .header-right-part {
+    display:flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+    justify-content: space-between;
+}
+
+/* visual caption display of reference */
 .ref-view-ref-display {
     margin-bottom: var(--margin-ref-view-section)
+    /*margin-bottom: .25rem;*/
 }
 
 /*** ***/

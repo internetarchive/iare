@@ -1,8 +1,7 @@
-import React, {useEffect, useState, useContext} from 'react';
-import RefView from "./refView/RefView";
+import React, {useState, useContext} from 'react';
 import {ConfigContext} from "../../contexts/ConfigContext";
 // import {Tooltip as MyTooltip} from "react-tooltip";
-import {REF_LINK_STATUS_FILTERS as linkDefs} from "../../constants/refFilterMaps";
+// import {REF_LINK_STATUS_FILTERS as linkDefs} from "../../constants/refFilterMaps";
 import {convertToCSV, copyToClipboard} from "../../utils/utils";
 import MakeLink from "../MakeLink";
 import FlockBox from "../FlockBox";
@@ -104,7 +103,7 @@ function RefFlock({ refArray, refFilter, onAction, pageData= {}, tooltipId=''} )
     // const [isLoading, setIsLoading] = useState(false);
     const [tooltipHtmlRefList, setTooltipHtmlRefList] = useState( '<div>ToolTip<br />second line</div>' );
 
-    const [openModal, setOpenModal] = useState(false)
+    // const [openModal, setOpenModal] = useState(false)
 
     const myConfig = useContext(ConfigContext);
     // const myIariBase = myConfig?.iariSource;

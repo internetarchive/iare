@@ -28,7 +28,6 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
     let myConfig = React.useContext(ConfigContext);
     myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
-    const myIariBase = myConfig?.iariSource;
 
     /*
     for now, just replaces current condition with passed in condition.
@@ -56,23 +55,19 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
     const showRefView = useCallback( (ref) => {
         // cancel any current tooltip
-
+        // FIXME
 
         // handle null ref
         if (!ref) {
             setRefDetails("Trying to fetch empty reference");
+            // TODO alert patron or show modal anyway?
             return;
         }
 
-                    // const myEndpoint = `${myIariBase}/statistics/reference/${ref.id}`;
-                    // const data = ref
-                    // data.endpoint = myEndpoint;
-            
-                    // setRefDetails(data);
         setRefDetails(ref);
-
         setOpenModal(true)
-    }, [myIariBase])
+
+    }, [])
 
     // callback from sub-components that induce actions upon flocks.
     // "result" parameter is an object consisting of:
@@ -507,7 +502,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
 
             {/* this is the popup Reference Viewer component */}
-            <RefView details={refDetails} open={openModal} onClose={() => setOpenModal(false)}/>
+            <RefView refDetails={refDetails} pageData={pageData} open={openModal} onClose={() => setOpenModal(false)} tooltipId={"url-display-tooltip"}/>
 
             {tooltipUrlDisplay}
 

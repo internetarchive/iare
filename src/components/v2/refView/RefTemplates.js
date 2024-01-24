@@ -1,16 +1,12 @@
-import React, {useState} from "react";
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
-import MakeLink from "../../MakeLink";
-import RefUrls from "./RefUrls";
+import React from "react";
 import RefTemplate from "./RefTemplate";
 
 /*
 shows tabs of template params if there; 1 tab for each template
  */
-export default function RefTemplates({ templates }) {
+export default function RefTemplates({ templates, pageData, tooltipId }) {
 
-    const [key, setKey] = useState('template_1');
+    // const [key, setKey] = useState('template_1');
     //
     // const getTabContent = (templates) => {
     //     if (!templates || !templates.length) {
@@ -38,7 +34,7 @@ export default function RefTemplates({ templates }) {
 
         {/*<h3 className={"template-header"}>Templates</h3>*/}
         {templates.map((t,i) => {
-            return <RefTemplate template={t} key={i}/>
+            return <RefTemplate template={t} pageData={pageData} tooltipId={tooltipId} key={i}/>
         })}
     </div>
 }

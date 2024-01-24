@@ -7,7 +7,7 @@ import RefActions from "./RefActions";
 import Draggable from 'react-draggable';
 import RefWikitext from "./RefWikitext";
 import RefActionables from "./RefActionables";
-import RefCitationLinks from "./RefCitationLinks";
+import RefArticleInfo from "./RefArticleInfo";
 import RefViewRefDisplay from "./RefViewRefDisplay";
 import {ConfigContext} from "../../../contexts/ConfigContext";
 
@@ -29,9 +29,10 @@ idea details:
 */
 
 
-export default function RefView({ open, onClose, details }) {
+export default function RefView({ open, onClose, refDetails, pageData = {}, tooltipId }) {
 
-    const [wikitext, setWikitext]= useState(details?.wikitext)
+    // eslint-disable-next-line
+    const [wikitext, setWikitext]= useState(refDetails?.wikitext)
 
     let myConfig = React.useContext(ConfigContext);
     myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
@@ -70,12 +71,8 @@ export default function RefView({ open, onClose, details }) {
 
         if (0) {}  // allows easy else if's
 
-        // else if (action === "refreshUrlStatus") {
-        //     alert("Refreshing Url Status (not really...)")
-        //     //fetchData()???
-        // }
-
         else if (action === "saveWikitext") {
+            // this is where we need to asynchronously save the reference/entire page, and reload, basically
             const newText = value
             saveWikitext(newText)
         }
@@ -90,7 +87,7 @@ export default function RefView({ open, onClose, details }) {
     console.log("RefView: rendering")
 
     // close modal if not in open state
-    if (!open || !details) return null;
+    if (!open || !refDetails) return null;
 
     return <div className='ref-modal-overlay' onClick={onClose} >
         <Draggable
@@ -113,6 +110,8 @@ export default function RefView({ open, onClose, details }) {
             >
 
                 <div className="ref-view-title-bar">
+                    {/*<h2>Reference View<RefCitationLinks citationLinks={details.citationLinks} />*/}
+                    {/*</h2>*/}
                     <h2>Reference View</h2>
                     <div className="modalRight">
                         <p onClick={onClose} className="closeBtn">X Close</p>
@@ -124,16 +123,19 @@ export default function RefView({ open, onClose, details }) {
                     <div className="row no-gutters">
 
                         <div className="xxx.col-9">
-                            <RefViewRefDisplay _ref={details} showDebug={myConfig.isShowDebugInfo} />
-                            <RefCitationLinks citationLinks={details.citationLinks} />
-                            <RefTemplates templates={details.templates} />
-                            <RefActionables actions={details.actions} />
+                            <RefViewRefDisplay _ref={refDetails} showDebug={myConfig.isShowDebugInfo} />
+
+                            <RefTemplates templates={refDetails.templates} pageData={pageData} tooltipId={tooltipId} />
                             {/*<RefWikitext wikitext={wikitext} ref_details={details} onAction={handleRefViewAction} />*/}
-                            <RefWikitext wikitext={details.wikitext} ref_details={details} onAction={handleRefViewAction} />
+
+                            <RefActionables actions={refDetails.actions} />
+                            <RefWikitext wikitext={refDetails.wikitext} ref_details={refDetails} onAction={handleRefViewAction} />
+
+                            <RefArticleInfo _ref={refDetails} />
                         </div>
 
                         {false && <div className="col-3">
-                            <RefActions details={details} onAction={handleRefViewAction} />
+                            <RefActions details={refDetails} onAction={handleRefViewAction} />
                         </div>}
 
                     </div>
