@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useContext} from 'react';
-import RefView from "./RefView/RefView";
+import RefView from "./refView/RefView";
 import {ConfigContext} from "../../contexts/ConfigContext";
-import {Tooltip as MyTooltip} from "react-tooltip";
+// import {Tooltip as MyTooltip} from "react-tooltip";
 import {REF_LINK_STATUS_FILTERS as linkDefs} from "../../constants/refFilterMaps";
 import {convertToCSV, copyToClipboard} from "../../utils/utils";
 import MakeLink from "../MakeLink";
@@ -98,9 +98,9 @@ function getReferenceCaption(ref, i, showDebugInfo = false) {
     return markup
 }
 
-function RefFlock({ refArray, refFilter, onAction, pageData= {}} ) {
+function RefFlock({ refArray, refFilter, onAction, pageData= {}, tooltipId=''} ) {
 
-    const [refDetails, setRefDetails] = useState(null);
+    // const [refDetails, setRefDetails] = useState(null);
     // const [isLoading, setIsLoading] = useState(false);
     const [tooltipHtmlRefList, setTooltipHtmlRefList] = useState( '<div>ToolTip<br />second line</div>' );
 
@@ -112,20 +112,15 @@ function RefFlock({ refArray, refFilter, onAction, pageData= {}} ) {
     // TODO catch undefined myIariBase exception
 
 
-    const fetchRefDetail = (ref) => {
-        // handle null ref
-        if (!ref) {
-            setRefDetails("Trying to fetch invalid reference");
-            return;
-        }
-        setRefDetails(ref);  // use reference data direct from page data, rather than fetching it again fresh from source
-        setOpenModal(true)
+    const showRefView = (ref) => {
+        onAction({action:"showRefViewForRef", value:ref})
+        // TODO test to make sure passing the entire ref is ok, vs ref.id
     }
 
-    useEffect( () => {
-        // alert("will show new refDetails")
-        setOpenModal(true)
-    }, [refDetails])  // triggered when refDetails changes
+                // useEffect( () => {
+                //     // alert("will show new refDetails")
+                //     setOpenModal(true)
+                // }, [refDetails])  // triggered when refDetails changes
 
     // if no references to show...
     if (!refArray) {
@@ -137,12 +132,14 @@ function RefFlock({ refArray, refFilter, onAction, pageData= {}} ) {
     const onHoverListItem = e => {
         // show tool tip for link status icon
 
-        const linkStatus = e.target.dataset['linkStatus']
 
         let html = ''
-        if (linkStatus) {
-            html = `<div>${linkDefs[linkStatus]?.desc ? linkDefs[linkStatus]?.desc : "Unknown link status"}</div>`
-        }
+                    // const linkStatus = e.target.dataset['linkStatus']
+                    // if (linkStatus) {
+                    //     html = `<div>${linkDefs[linkStatus]?.desc ? linkDefs[linkStatus]?.desc : "Unknown link status"}</div>`
+                    // }
+
+        html = "Click for Reference details"
         setTooltipHtmlRefList(html)
     }
 
@@ -201,7 +198,8 @@ function RefFlock({ refArray, refFilter, onAction, pageData= {}} ) {
     const flockRows = <>
         {flockHeader}
         <div className={"ref-list"}
-             data-tooltip-id="ref-list-tooltip"
+             // data-tooltip-id="ref-list-tooltip"
+             data-tooltip-id={tooltipId}
              data-tooltip-html={tooltipHtmlRefList}
              onMouseOver={onHoverListItem}
         >
@@ -210,30 +208,28 @@ function RefFlock({ refArray, refFilter, onAction, pageData= {}} ) {
                    className={"ref-button"}
                    onClick={(e) => {
                        console.log ('ref clicked')
-                       fetchRefDetail(ref)
+                       showRefView(ref)
                    }}>{getReferenceCaption(ref, i, isShowDebugInfo)}</button>
             })}
         </div>
     </>
 
-    const refTooltip = <MyTooltip id="ref-list-tooltip"
-                               float={true}
-                               closeOnEsc={true}
-                               delayShow={220}
-                               variant={"info"}
-                               noArrow={true}
-                               offset={5}
-                               className={"ref-list-tooltip"}
-    />
+                // const refTooltip = <MyTooltip id="ref-list-tooltip"
+                //                            float={true}
+                //                            closeOnEsc={true}
+                //                            delayShow={220}
+                //                            variant={"info"}
+                //                            noArrow={true}
+                //                            offset={5}
+                //                            className={"ref-list-tooltip"}
+                // />
 
 
     return <FlockBox caption={flockCaption} className={"ref-flock"}>
 
         {flockRows}
 
-        <RefView details={refDetails} open={openModal} onClose={() => setOpenModal(false)} />
-
-        {refTooltip}
+        {/*<RefView details={refDetails} open={openModal} onClose={() => setOpenModal(false)} />*/}
 
     </FlockBox>
 

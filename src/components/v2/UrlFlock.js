@@ -233,7 +233,7 @@ const urlFlock = React.memo( function UrlFlock({
 
         // send action back up the component tree to filter the references list
         onAction( {
-            "action": "showRefsForUrl",
+            "action": "showRefViewForUrl",
             "value": url,
         })
     }

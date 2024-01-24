@@ -106,7 +106,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
     const fetchArticleData = useCallback((pathName, refresh = false) => {
 
         // mediaType is "pdf", "html", "wiki", or anything else we come up with
-        const convertPathToEndpoint = (path = '', mediaType = 'wiki', refresh = false) => {
+        const convertPathToEndpoint = (path = '', mediaType = 'wikix', refresh = false) => {
 
             const iariBase = IariSources[myIariSourceId]?.proxy
             // TODO: error if iariBase is undefined or otherwise falsey
@@ -324,7 +324,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
             onClick={() => {
                 setIsShowUrlOverview(prevState => !prevState )
             }
-            } >{isShowUrlOverview ? "Hide" : "Show"} URL Filters</button>
+            } >{isShowUrlOverview ? "Hide" : "Show"} Filters</button>
         &nbsp;
         <button // this is the 'show shortcuts' button
             className={"utility-button debug-button"}

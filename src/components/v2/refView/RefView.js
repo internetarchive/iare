@@ -1,11 +1,15 @@
-import React, {useCallback, useEffect} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import "./refView.css"
 import RefTemplates from "./RefTemplates";
 import RefActions from "./RefActions";
-import RefStats from "./RefStats";
-import RefUrls from "./RefUrls";
-import {copyToClipboard} from "../../../utils/utils";
+// import RefUrls from "./RefUrls";
+// import {copyToClipboard} from "../../../utils/utils";
 import Draggable from 'react-draggable';
+import RefWikitext from "./RefWikitext";
+import RefActionables from "./RefActionables";
+import RefCitationLinks from "./RefCitationLinks";
+import RefViewRefDisplay from "./RefViewRefDisplay";
+import {ConfigContext} from "../../../contexts/ConfigContext";
 
 /*
 idea details:
@@ -22,31 +26,15 @@ idea details:
     - have a score rating for url(s) array
         - sort by score and filter ref
 
+*/
 
- */
-
-function RefViewFooter({ details }) {
-    const rawText = details ? details.wikitext : 'No raw wikitext provided'
-
-    const copyClip = <span>
-        <button onClick={() => {copyToClipboard(rawText, 'wikitext')} }
-                className={'utility-button'}
-                style={{position: "relative", top: "0"}}
-        ><span>Copy to clipboard</span></button></span>
-
-    return <div className="row ref-view-footer">
-        <div className="col-12">
-            <h4>wikitext:{false && copyClip}</h4>
-            <p className={"raw-wikitext"}>{rawText}</p>
-        </div>
-        {/*<div className="col-4">*/}
-        {/*    <h4>raw json:</h4>*/}
-        {/*    <pre className={"raw-json-detail"}>{JSON.stringify(details, null, 2)}</pre>*/}
-        {/*</div>*/}
-    </div>
-}
 
 export default function RefView({ open, onClose, details }) {
+
+    const [wikitext, setWikitext]= useState(details?.wikitext)
+
+    let myConfig = React.useContext(ConfigContext);
+    myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
 
     // adds "Escape Key closes modal" feature
     useEffect(() => {
@@ -61,24 +49,45 @@ export default function RefView({ open, onClose, details }) {
         };
     }, [onClose]);
 
+    const saveWikitext = (newText) => {
+        // for now, we just set local wikitext.
+        // soon we will insert/replace into reference data itself and resave the entire article (i think)
+        //
+        setWikitext(newText)
+
+        // set details.wikitext OR cause a wholesale refresh of the page,
+        // since things could be very much changed
+                    // //
+                    // // for now, just change details
+                    // details.wikitext = newText
+    }
+
     const handleRefViewAction = useCallback( (result={}) => {
         // extract action and value from result
         const {action, value} = result;
 
         console.log(`RefView: handleAction: action=${action}, value=${value}`);
 
-        if (action === "refreshUrlStatus") {
-            alert("Refreshing Url Status (not really...)")
-            //fetchData()???
+        if (0) {}  // allows easy else if's
+
+        // else if (action === "refreshUrlStatus") {
+        //     alert("Refreshing Url Status (not really...)")
+        //     //fetchData()???
+        // }
+
+        else if (action === "saveWikitext") {
+            const newText = value
+            saveWikitext(newText)
         }
 
-        if (action === "jumpToCitationRef") {
+        else if (action === "jumpToCitationRef") {
             const citeRef = value
             alert(`jumpToCitationRef: Coming Soon (citeRef=${citeRef})`)
         }
 
     }, [])
 
+    console.log("RefView: rendering")
 
     // close modal if not in open state
     if (!open || !details) return null;
@@ -115,17 +124,16 @@ export default function RefView({ open, onClose, details }) {
                     <div className="row no-gutters">
 
                         <div className="xxx.col-9">
-                            <div className={'ref-view-upper-part'}>
-                                <RefTemplates templates={details.templates} />
-                                <RefUrls urls={details.urls} />
-                                {/*<RefLinkStatus linkStatus={details.link_status} />*/}
-                            </div>
-                            <RefViewFooter details={details} />
+                            <RefViewRefDisplay _ref={details} showDebug={myConfig.isShowDebugInfo} />
+                            <RefCitationLinks citationLinks={details.citationLinks} />
+                            <RefTemplates templates={details.templates} />
+                            <RefActionables actions={details.actions} />
+                            {/*<RefWikitext wikitext={wikitext} ref_details={details} onAction={handleRefViewAction} />*/}
+                            <RefWikitext wikitext={details.wikitext} ref_details={details} onAction={handleRefViewAction} />
                         </div>
 
                         {false && <div className="col-3">
                             <RefActions details={details} onAction={handleRefViewAction} />
-                            <RefStats details={details} />
                         </div>}
 
                     </div>

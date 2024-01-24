@@ -1,4 +1,6 @@
 :root {
+    --color-debug-background: #b4df5e;
+
     --color-text: black;
     --color-text-muted: grey;
 
@@ -53,6 +55,15 @@ body {
     font: 14px "Century Gothic", Futura, sans-serif;
     margin: 15px 20px 20px;
 }
+
+/* global-ish */
+
+.no-padding {
+    padding-left:0 !important;
+    padding-right:0 !important;
+}
+
+/* specific to iari */
 
 .iare-view .header h1 {
     position:relative;

@@ -19,12 +19,6 @@ export default function RefUrls({ urls }) {
 //    https://iabot.wmcloud.org/index.php?page=manageurlsingle&url=http%3A%2F%2Findigenouspeoplesissues.com%2Findex.php%3Foption%3Dcom_content%26view%3Darticle%26id%3D14679%3Arapanui-protests-continue-against-the-hotel-hanga-roa%26catid%3D23%3Asouth-america-indigenous-peoples%26Itemid%3D56
     const endpointIabot = 'https://iabot.wmcloud.org/index.php?page=manageurlsingle'
 
-    const headerRow = <tr>
-        <th className={'url-name'}><h3 className={"urls-header"}>URLs</h3></th>
-        <th className={'url-status'}>Status</th>
-        <th className={'url-iabotdb_status'}>IABot</th>
-    </tr>
-
     const getDataRow = (u) => {
         const classes = (u.status_code === 0 ? ' url-is-unknown'
             : u.status_code >= 200 && u.status_code < 300 ? ' url-is-success'
@@ -94,8 +88,14 @@ export default function RefUrls({ urls }) {
 
     }, [urls, myStatusMethod, myIariBase])
 
+    const headerRow = <tr>
+        <th className={'url-name'}><h3 className={"urls-header"}>URLs</h3></th>
+        <th className={'url-status'}>Status</th>
+        <th className={'url-iabotdb_status'}>IABot</th>
+    </tr>
 
-    const urlsDisplay =
+    return <div className="ref-view-urls-wrapper">
+
         <table className={'ref-view-urls'}>
             <thead>
             {headerRow}
@@ -105,8 +105,6 @@ export default function RefUrls({ urls }) {
             </tbody>
         </table>
 
-    return <div className="ref-view-urls-wrapper">
-        {urlsDisplay}
     </div>
 }
 

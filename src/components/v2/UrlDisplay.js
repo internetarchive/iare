@@ -9,7 +9,7 @@ import {ACTIONABLE_FILTER_MAP} from "../../constants/actionableMap";
 import {REF_FILTER_DEFS} from "../../constants/refFilterMaps";
 import {ConfigContext} from "../../contexts/ConfigContext";
 import {rspMap} from "../../constants/perennialList";
-import RefView from "./RefView/RefView";
+import RefView from "./refView/RefView";
 import {Tooltip as MyTooltip} from "react-tooltip";
 import ConditionsBox from "../ConditionsBox";
 
@@ -54,17 +54,23 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         })
     }
 
-    const fetchReferenceDetail = useCallback( (ref) => {
+    const showRefView = useCallback( (ref) => {
+        // cancel any current tooltip
+
+
         // handle null ref
         if (!ref) {
-            setRefDetails("Trying to fetch invalid reference");
+            setRefDetails("Trying to fetch empty reference");
             return;
         }
 
-        const myEndpoint = `${myIariBase}/statistics/reference/${ref.id}`;
-        const data = ref
-        data.endpoint = myEndpoint;
-        setRefDetails(data);
+                    // const myEndpoint = `${myIariBase}/statistics/reference/${ref.id}`;
+                    // const data = ref
+                    // data.endpoint = myEndpoint;
+            
+                    // setRefDetails(data);
+        setRefDetails(ref);
+
         setOpenModal(true)
     }, [myIariBase])
 
@@ -191,22 +197,27 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
         }
 
 
-        else if (action === "showRefsForUrl") {
+        else if (action === "showRefViewForUrl") {
 
             // value is url key name
-            const myRef = pageData.urlDict[value]?.refs[0] // for now...shall pass entire array soon
-            fetchReferenceDetail(myRef)
+            const myRef = pageData.urlDict[value]?.refs[0]
+            // for now...eventually shall pass entire ref array so that refView
+            // shows a list of references to scroll with
+            showRefView(myRef)
 
             // // NB disabling for now
             // // also set Ref filter
             // setRefFilter(getUrlRefFilter(value))
-
             setSelectedUrl(value)
+        }
 
+        else if (action === "showRefViewForRef") {
+            // value is ref
+            showRefView(value)
         }
 
 
-                        // else if (action === "setArchiveStatusFilters") {
+            // else if (action === "setArchiveStatusFilters") {
                         //     setUrlFilters({ "archive_status_filter" : value })  // NB: value is filter object
                         // }
 
@@ -225,35 +236,10 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                         // TODO: Action for setReferenceFilter/ShowReference for filtered URLS
                         // i.e. show all refs that contain ANY of the URLS in the filtered URL list
 
-    }, [fetchReferenceDetail, pageData.urlDict])
+    }, [showRefView, pageData.urlDict])
 
-    if (!pageData) return null;  /// NB must be put AFTER useEffect and useCallback, as these hooks cannot exist after conditional statements
-
-                // // TODO eliminate!!
-                // // TODO candidate for external shared function
-                // // TODO allow targetUrl(s) to be an array of Urls
-                // const getUrlRefFilter = (targetUrl) => {
-                //
-                //     if (!targetUrl || targetUrl === '') {
-                //         return null; // no filter means all filter
-                //     }
-                //
-                //     return {
-                //         // TODO: implement UrlFilter custom object
-                //
-                //         desc: `Citations with URL: ${targetUrl}`,
-                //
-                //         caption: <span>Contains URL: <br/><span
-                //             className={'target-url'}><a target={"_blank"} rel={"noreferrer"}
-                //                                         href={targetUrl} >{targetUrl}</a
-                //         ></span></span>,
-                //
-                //         filterFunction: () => (urlDict, ref) => {
-                //             // TODO make this use an array of targetUrls
-                //             return ref.urls.includes( targetUrl )
-                //         },
-                //     }
-                // }
+    if (!pageData) return null;  // NB must be put AFTER useEffect and useCallback, as those hooks
+                                 //    cannot exist after conditional statements
 
     const getUrlTemplateFilter = (templateName) => {
 
@@ -511,7 +497,10 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
                               tooltipId={"url-display-tooltip"}
                     />
 
-                    <RefFlock refArray={refArray} refFilter={refFilter} onAction={handleAction} pageData={pageData}/>
+                    <RefFlock pageData={pageData} refArray={refArray}
+                              refFilter={refFilter} onAction={handleAction}
+                              tooltipId={"url-display-tooltip"}
+                    />
                 </div>
 
             </div>

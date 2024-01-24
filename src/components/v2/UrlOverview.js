@@ -65,7 +65,7 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState, tool
 
         <ControlBox>
             <h3 className={"control-box-caption"}>Filters</h3>
-            <div className={"category-row"}>Click on an Item to filter URLs and References.</div>
+            <div className={"category-row"}>Clicking an item filters URL and References lists.</div>
             <div className={"button-row"}>
                 <button
                     type="button"
