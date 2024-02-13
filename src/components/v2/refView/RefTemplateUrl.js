@@ -32,12 +32,30 @@ export default function RefTemplateUrl({ url, index, isSelected=false }) {
             })
     })
 
+    const getHeaderRow = () => {
+        return <div className={"ref-view-url-header"}
+            // onClick={onClickHeader}
+            // onMouseOver={onHoverHeaderRow}
+        >
+            <div className={"url-row url-header-row"}>
+                <div className={"url-name"}>URL Link</div>
+                <div className={"url-status"}>Status</div>
+                <div className={"url-archive_status"}>Archive</div>
+                <div className={"url-citations"}>Priority</div>
+                <div className={"url-perennial"}>Reliability</div>
+            </div>
+
+        </div>
+
+    }
+
+
     const getErrorRow = (u, i, errText) => {
         return <div className={`url-row url-row-error`} key={i}
-                    data-url={u.url}
+                    data-url={u?.url}
                     data-err-text={errText}
         >
-            <div className={"url-name"}>{u.url ? u.url : `ERROR: No url for index ${i}`}</div>
+            <div className={"url-name"}>{u?.url ? u.url : `ERROR: No url for index ${i}`}</div>
             <div className={"url-status"}>{-1}</div>
             <div className={"url-archive_status"}>?</div>
 
@@ -71,19 +89,26 @@ export default function RefTemplateUrl({ url, index, isSelected=false }) {
         </div>
     }
 
-    let urlRow = null
+    const getUrlRow = (url) => {
 
-    // if url is problematic, display as error row
-    if (!url || url.url === undefined || url.status_code === undefined) {
+        // if url is problematic, display as error row
+        if (!url) {
 
-        const errText = !url ? `URL data not defined for index ${index}`
-            : !url.url ? `URL missing for index ${index}`
-                : url.status_code === undefined ? `URL status code undefined (try Force Refresh)`
-                    : 'Unknown error'; // this last case should not happen
+            return <div className={"no-template-url"}>There are no URLs in this template.</div>
 
-        urlRow = getErrorRow(url, index, errText)
-    }
-    else {
+        }
+
+        // if url is problematic, display as error row
+        if (url.url === undefined || url.status_code === undefined) {
+
+            const errText = !url ? `URL data not defined for index ${index}`
+                : !url.url ? `URL missing for index ${index}`
+                    : url.status_code === undefined ? `URL status code undefined (try Force Refresh)`
+                        : 'Unknown error'; // this last case should not happen
+
+            return getErrorRow(url, index, errText)
+        }
+
         // show as "normal" URL
         const classes = 'url-row '
             + (url.status_code === 0 ? ' url-is-unknown'
@@ -94,34 +119,31 @@ export default function RefTemplateUrl({ url, index, isSelected=false }) {
             + (isSelected ? ' url-selected' : '')
             + (url.rsp ? ` url-rating-${url.rsp[0]}` : '')
 
-        urlRow = getDataRow(url, index, classes)
+        return getDataRow(url, index, classes)
+
+    }
+    const getUrlRows = (url) => {  // NB: using singular url for now - may make an array later on...
+
+        // if url is falsey
+        if (!url) {
+
+            return <div className={"no-template-url"}>There are no URLs in this template.</div>
+
+        } else {
+            return <>
+                {getHeaderRow()}
+                {getUrlRow(url)}
+                </>
+        }
+
+
     }
 
 
-    const headerRow = <div className={"ref-view-url-header"}
-            // onClick={onClickHeader}
-            // onMouseOver={onHoverHeaderRow}
-            >
 
-        <div className={"url-row url-header-row"}>
-
-            <div className={"url-name"} >URL Link</div>
-
-            <div className={"url-status"}>Status</div>
-
-            <div className={"url-archive_status"}>Archive</div>
-
-            <div className={"url-citations"}>Priority</div>
-
-            <div className={"url-perennial"}>Reliability</div>
-
-        </div>
-
-    </div>
 
     return <div className="ref-view-url">
-        {headerRow}
-        {urlRow}
+        {getUrlRows(url)}
     </div>
 }
 

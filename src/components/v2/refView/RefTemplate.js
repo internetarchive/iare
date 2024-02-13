@@ -30,7 +30,7 @@ export default function RefTemplate({ template, pageData, tooltipId }) {
     }
 
     // get url objects from this template
-    // TODO Is there only ine url per template?!?
+    // TODO Is there only one url per template?!?
     const urlObj = getTemplateUrl(template)
 
     return <div className="ref-view-template">

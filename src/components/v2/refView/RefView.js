@@ -123,7 +123,10 @@ export default function RefView({ open, onClose, refDetails, pageData = {}, tool
                     <div className="row no-gutters">
 
                         <div className="xxx.col-9">
-                            <RefViewRefDisplay _ref={refDetails} showDebug={myConfig.isShowDebugInfo} />
+                            <div className={"reference-info"}>
+                                <RefViewRefDisplay _ref={refDetails} showDebug={myConfig.isShowDebugInfo} />
+                                <RefArticleInfo _ref={refDetails} />
+                            </div>
 
                             <RefTemplates templates={refDetails.templates} pageData={pageData} tooltipId={tooltipId} />
                             {/*<RefWikitext wikitext={wikitext} ref_details={details} onAction={handleRefViewAction} />*/}
@@ -131,7 +134,6 @@ export default function RefView({ open, onClose, refDetails, pageData = {}, tool
                             <RefActionables actions={refDetails.actions} />
                             <RefWikitext wikitext={refDetails.wikitext} ref_details={refDetails} onAction={handleRefViewAction} />
 
-                            <RefArticleInfo _ref={refDetails} />
                         </div>
 
                         {false && <div className="col-3">

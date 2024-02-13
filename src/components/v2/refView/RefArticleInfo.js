@@ -11,7 +11,7 @@ export default function RefArticleInfo({ _ref, onAction }) {
 
     // FIXME need to flesh out citation links for real -- WAITING FOR IARI
     const anchorLinkDisplay = <div className={'citation-links'}>
-        <button className={`utility-button small-button`}>Go to Reference Definition</button>
+        <button className={`utility-button small-button`}>Go to Citation Definition in Article</button>
     </div>
     const citeLinkDisplay = <div className={'citation-links'}>
         <button className={`utility-button small-button`}>^a</button>
@@ -25,7 +25,7 @@ export default function RefArticleInfo({ _ref, onAction }) {
             <div>Section of Origin: {_ref.section}&nbsp;&nbsp;</div>
             <div className={'header-right-part'}>
                 {anchorLinkDisplay}
-                <div>&nbsp;&nbsp;Citation Occurrences:&nbsp;</div>
+                <div>&nbsp;&nbsp;Footnote Occurrences:&nbsp;</div>
                 {citeLinkDisplay}
             </div>
         </div>

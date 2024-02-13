@@ -100,7 +100,8 @@ export default function RefWikitext({ wikitext, onAction }) {
             {header}
             <textarea className={`raw-wikitext ${editable ? "editable" : "non-editable"}`}
                       readOnly={editable ? false : true}
-                      value={localWikitext} onChange={(e) => setLocalWikitext(e.target.value)}/>
+                      value={localWikitext}
+                      onChange={(e) => setLocalWikitext(e.target.value)}/>
         </div>
     </div>
 }

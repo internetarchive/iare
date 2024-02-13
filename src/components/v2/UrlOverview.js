@@ -103,7 +103,7 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState, tool
                 </button>
                 <Checkbox className={"auto-expand"} label={"Accordion Mode"} value={autoExpand}
                           onChange={() => setAutoExpand(prevState => !prevState)}
-                          tooltipId={tooltipId} tooltipContent={"Only one filter will be expanded at a time.<br/>Click on a filter caption to show it."}
+                          tooltipId={tooltipId} tooltipContent={"Only one Filter at a time will be expanded.<br/>Click on a Filter caption to show or hide."}
                 />
             </div>
 
