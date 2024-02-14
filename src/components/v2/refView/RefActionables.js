@@ -5,10 +5,10 @@ shows actionables for this reference
  */
 export default function RefActionables({ actions, onAction }) {
 
-    const actionDisplay = 1 || actions
-        ? actions
-        : "No actionable items found for this reference."
-
+    // const actionDisplay = 1 || actions
+    //     ? actions
+    //     : "No actionable items found for this reference."
+    //
     // const message = <>
     //     <div style={{fontStyle:"italic",color:"red"}}>Actionable assignment is not yet implemented.</div>
     //         {actionDisplay}
