@@ -182,7 +182,7 @@ export default function App({env, myPath, myRefresh, myMethod, myArticleVersion,
                 data.pathName = pathName;
                 data.endpoint = myEndpoint;
                 data.iariSource = IariSources[myIariSourceId]?.proxy;
-                data.iariArticleVersion = myArticleVersion;
+                data.iariArticleVersion = articleVersion;
                 data.forceRefresh = refresh;
                 data.mediaType = myMediaType; // decorate based on mediaType?
                 data.version = getIariVersion(data, myEndpoint);
@@ -219,7 +219,7 @@ export default function App({env, myPath, myRefresh, myMethod, myArticleVersion,
                 setIsLoading(false);
             });
 
-    }, [myIariSourceId]);
+    }, [myIariSourceId, articleVersion])
 
 
     // callback for PathNameFetch component
