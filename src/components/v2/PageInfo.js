@@ -158,7 +158,7 @@ export default function PageInfo({ pageData }) {
         : <p>Nothing to display - pageData is missing.</p>
 
     return <div className="page-info">
-
+show article version
         <h6 className={"page-stats-header"}>
             <div>Wiki Page Analyzed: {linkPageSource}{true && oresResults}</div><div>{buttonMoreDetails}</div>
         </h6>

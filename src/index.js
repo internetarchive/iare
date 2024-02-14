@@ -9,6 +9,7 @@ import './custom.scss'; // includes bootstrap.scss
 import './index.css';
 import {UrlStatusCheckMethods} from "./constants/checkMethods";
 import {IariSources} from "./constants/endpoints";
+import {ArticleVersions} from "./constants/articleVersions";
 
 const getEnvironment = () => {
     const REGEX_PRODUCTION_ENV = new RegExp(/^(?:(?:[\w-]+\.)+)?(?:[\w-]+\.)?archive\.org$/);  // if "(\.?)archive.org" at end of string
@@ -51,6 +52,23 @@ const getMethod = (qParams, targetEnvironment) => {
     return methodKey
 }
 
+const getArticleVersion = (qParams, targetEnvironment) => {
+    const defaultArticleVersionKey = ArticleVersions.ARTICLE_V1.key
+
+    if (targetEnvironment === 'env-production') return defaultArticleVersionKey
+    // else
+    const articleVersionKey = queryParameters.has("article_version")
+        ? queryParameters.get("article_version")
+        : defaultArticleVersionKey
+
+    // if specified article version not in our defined choices, set to default, and notify as error
+    if (!ArticleVersions[articleVersionKey]) {
+        console.error(`Article Version ${articleVersionKey} not supported.`)
+        return defaultArticleVersionKey
+    }
+    return articleVersionKey
+}
+
 // ========================================
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -61,6 +79,9 @@ const myPath = queryParameters.has("url") ? queryParameters.get("url") : '';
 const myRefresh = queryParameters.has("refresh") ? queryParameters.get("refresh").toLowerCase() === 'true' : false;
 const myIariSourceId = getIariSource(queryParameters, env);
 const myMethod = getMethod(queryParameters, env);
+const myArticleVersion = getArticleVersion(queryParameters, env);
 
-root.render(<App env={env} myPath={myPath} myRefresh={myRefresh} myMethod={myMethod} myIariSourceId={myIariSourceId} myDebug={myDebug}/>);
+root.render(<App env={env} myPath={myPath} myRefresh={myRefresh}
+                 myMethod={myMethod} myArticleVersion={myArticleVersion} myIariSourceId={myIariSourceId}
+                 myDebug={myDebug}/>);
 

@@ -225,16 +225,14 @@ button.utility-button.small-button {
 
 /* choice selections */
 
-.iari-source-wrapper,
-.check-method-wrapper {
+.choice-wrapper{
     display:inline-block;
     margin-left: .5rem;
 }
 .iari-source-wrapper {
     margin-left: 0;
 }
-.iari-source-wrapper select,
-.check-method-wrapper select {
+.choice-wrapper select {
     margin-left:.3rem;
 }
 

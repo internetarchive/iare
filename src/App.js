@@ -8,9 +8,10 @@ import Dropdown from "./components/Dropdown";
 import {IariSources} from "./constants/endpoints";
 import {UrlStatusCheckMethods} from "./constants/checkMethods";
 import {ConfigContext} from "./contexts/ConfigContext"
+import {ArticleVersions} from "./constants/articleVersions";
 
 
-export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, myDebug}) {
+export default function App({env, myPath, myRefresh, myMethod, myArticleVersion, myIariSourceId, myDebug}) {
 
     const [isDebug, setDebug] = useState(myDebug);
 
@@ -24,6 +25,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
     const [targetPath, setTargetPath] = useState(myPath);
     const [refreshCheck, setRefreshCheck] = useState(myRefresh);
     const [checkMethod, setCheckMethod] = useState(myMethod);
+    const [articleVersion, setArticleVersion] = useState(myArticleVersion);
 
     // states of page
     const [endpointPath, setEndpointPath] = useState('');
@@ -106,21 +108,29 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
     const fetchArticleData = useCallback((pathName, refresh = false) => {
 
         // mediaType is "pdf", "html", "wiki", or anything else we come up with
-        const convertPathToEndpoint = (path = '', mediaType = 'wiki', refresh = false) => {
+        const getPagePathEndpoint = (path = '', mediaType = 'wiki', refresh = false) => {
 
             const iariBase = IariSources[myIariSourceId]?.proxy
             // TODO: error if iariBase is undefined or otherwise falsey
-            console.log(`convertPathToEndpoint: myIariSourceId = ${myIariSourceId}, iariBase = ${iariBase}`)
+            console.log(`getPagePathEndpoint: myIariSourceId = ${myIariSourceId}, iariBase = ${iariBase}`)
             if (mediaType === "wiki") {
-                const sectionRegex = '&regex=references|bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
-                const options = '&dehydrate=false'
-                return `${iariBase}/statistics/article?url=${path}${sectionRegex}${options}${refresh ? "&refresh=true" : ''}`;
+
+                if (articleVersion === ArticleVersions["ARTICLE_V1"].key) {
+                    const sectionRegex = '&regex=references|bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
+                    const options = '&dehydrate=false'
+                    return `${iariBase}/statistics/article?url=${path}${sectionRegex}${options}${refresh ? "&refresh=true" : ''}`;
+                }
+
+                else if (articleVersion === ArticleVersions["ARTICLE_V2"].key) {
+                    const options = ''
+                    return `${iariBase}/article?url=${path}${options}${refresh ? "&refresh=true" : ''}`;
+                }
 
             } else if (mediaType === "pdf") {
                 return `${iariBase}/statistics/pdf?url=${path}${refresh ? "&refresh=true" : ''}`;
 
             } else {
-                // do general case...
+                // do general case...TODO make this default parser endpoint a config
 
                 return `${iariBase}/statistics/analyze?url=${path}${refresh ? "&refresh=true"
                     : ''}${mediaType ? `&media_type=${mediaType}` : ''}`;
@@ -143,13 +153,12 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         const myMediaType = getMediaType(pathName);
             // TODO: idea: respect a "forceMediaType",
             // where it can force a media type endpoint, no matter what getMediaType thinks it is.
-            // If so, passes it in to convertPathToEndpoint, where the endpoint is determined
+            // If so, passes it in to getPagePathEndpoint, where the endpoint is determined
             // by passed in mediaType rather than mediaType interpolated from pathName.
 
-        const myEndpoint = convertPathToEndpoint(pathName, myMediaType, refresh);
+        const myEndpoint = getPagePathEndpoint(pathName, myMediaType, refresh);
         console.log("APP::fetchArticleData: endpoint = ", myEndpoint)
-
-        setEndpointPath(myEndpoint); // for display
+        setEndpointPath(myEndpoint); // for display purposes only
 
         // TODO: maybe always clear pageData, so components get cleared while waiting?
         setMyError(null);
@@ -173,6 +182,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
                 data.pathName = pathName;
                 data.endpoint = myEndpoint;
                 data.iariSource = IariSources[myIariSourceId]?.proxy;
+                data.iariArticleVersion = myArticleVersion;
                 data.forceRefresh = refresh;
                 data.mediaType = myMediaType; // decorate based on mediaType?
                 data.version = getIariVersion(data, myEndpoint);
@@ -243,6 +253,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
             + (refresh ? '&refresh=true' : '')
             + (checkMethod ? `&method=${checkMethod}` : '')
             + (myIariSourceId ? `&iari-source=${iari_source}` : '')
+            + (articleVersion ? `&article_version=${articleVersion}` : '')
             + (isDebug ? '&debug=true' : '')
 
         // window.location.href = newUrl;
@@ -273,12 +284,25 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
     const handleCheckMethodChange = (methodId) => {
         // console.log(`handleStatusMethodChange: new method is: ${methodId}`)
         setCheckMethod(methodId);
-    };
+    }
     const methodChoices = Object.keys(UrlStatusCheckMethods).filter(f => !["IARI", "IABOT_SEARCHURL"].includes(f)).map( key => {
         return { caption: UrlStatusCheckMethods[key].caption, value: UrlStatusCheckMethods[key].key }
     })
-    const methodChoiceSelect = <div className={"check-method-wrapper"}>
+    const methodChoiceSelect = <div className={"choice-wrapper check-method-wrapper"}>
         <Dropdown choices={methodChoices} label={'Check Method:'} onSelect={handleCheckMethodChange} defaultChoice={checkMethod}/>
+    </div>
+
+    const handleArticleVersionChange = (articleVersionId) => {
+        // console.log(`handleStatusMethodChange: new method is: ${methodId}`)
+        setArticleVersion(articleVersionId);
+    };
+    const articleVersionChoices = Object.keys(ArticleVersions).map( key => {
+        return { caption: ArticleVersions[key].caption, value: ArticleVersions[key].key }
+    })
+    const articleVersionChoiceSelect = <div className={"choice-wrapper article-version-wrapper"}>
+        <Dropdown choices={articleVersionChoices}
+                  label={'Article Version:'}
+                  onSelect={handleArticleVersionChange} defaultChoice={articleVersion}/>
     </div>
 
 
@@ -301,7 +325,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
             return { caption: IariSources[key].caption, value: IariSources[key].key }
         })
 
-    const iariChoiceSelect = <div className={"iari-source-wrapper"}>
+    const iariChoiceSelect = <div className={"choice-wrapper iari-source-wrapper"}>
         <Dropdown choices={iariChoices} label={'Iari Source:'} onSelect={handleIariSourceIdChange} defaultChoice={myIariSourceId}/>
     </div>
 
@@ -318,41 +342,50 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         <div className={"header-aux1"}>{versionDisplay}{siteDisplay}{showHideDebugButton}</div>
     </div>
 
+    const debugButtonFilters = <button // this is the 'show urls list' button
+        className={"utility-button debug-button"}
+        onClick={() => {
+            setIsShowUrlOverview(prevState => !prevState )
+        }
+        } >{isShowUrlOverview ? "Hide" : "Show"} Filters</button>
+
+    const debugButtonShortcuts = <button // this is the 'show shortcuts' button
+        className={"utility-button debug-button"}
+        onClick={() => {
+            setIsShowShortcuts(prevState => !prevState )
+        }
+        } >{isShowShortcuts ? "Hide" : "Show"} Shortcuts</button>
+
+    const debugButtonViewTypes = <button // this is the 'show view options' button
+        className={"utility-button debug-button"}
+        onClick={() => {
+            setIsShowViewOptions(prevState => !prevState )
+        }
+        } >{isShowViewOptions ? "Hide" : "Show"} View Types</button>
+
+    const debugButtonDetails = <button // this is the 'show New Features' button
+        className={"utility-button debug-button"}
+        onClick={() => {
+            setIsShowDebugInfo(prevState => !prevState )
+        }
+        } >{isShowDebugInfo ? "Hide" : "Show"} Debug Details</button>
+
     const debugButtons = <>
-        <button // this is the 'show urls list' button
-            className={"utility-button debug-button"}
-            onClick={() => {
-                setIsShowUrlOverview(prevState => !prevState )
-            }
-            } >{isShowUrlOverview ? "Hide" : "Show"} Filters</button>
+        {debugButtonViewTypes}
         &nbsp;
-        <button // this is the 'show shortcuts' button
-            className={"utility-button debug-button"}
-            onClick={() => {
-                setIsShowShortcuts(prevState => !prevState )
-            }
-            } >{isShowShortcuts ? "Hide" : "Show"} Shortcuts</button>
+        {debugButtonDetails}
         &nbsp;
-        <button // this is the 'show view options' button
-            className={"utility-button debug-button"}
-            onClick={() => {
-                setIsShowViewOptions(prevState => !prevState )
-            }
-            } >{isShowViewOptions ? "Hide" : "Show"} View Options</button>
+        {debugButtonFilters}
         &nbsp;
-        <button // this is the 'show New Features' button
-            className={"utility-button debug-button"}
-            onClick={() => {
-                setIsShowDebugInfo(prevState => !prevState )
-            }
-            } >{isShowDebugInfo ? "Hide" : "Show"} Debug Info</button>
+        {debugButtonShortcuts}
         </>
 
     const debug = <div className={"debug-section " + (isDebug ? "debug-on" : "debug-off")}>
-        <div style={{marginBottom:".5rem"}}>{iariChoiceSelect} {methodChoiceSelect}</div>
+        <div style={{marginBottom:".5rem"}}>{iariChoiceSelect} {methodChoiceSelect} {articleVersionChoiceSelect}</div>
         <p><span className={'label'}>Environment:</span> {env} (host: {window.location.host})</p>
         <p><span className={'label'}>IARE version:</span> {package_json.version}</p>
         <p><span className={'label'}>IARI Source:</span> {myIariSourceId} ({IariSources[myIariSourceId]?.proxy})</p>
+        <p><span className={'label'}>Article Version:</span> {ArticleVersions[articleVersion].caption}</p>
         <p><span className={'label'}>Check Method:</span> {UrlStatusCheckMethods[checkMethod].caption} ({checkMethod})</p>
         <p><span className={'label'}>URL from address line:</span> {myPath}</p>
         <p><span className={'label'}>Force Refresh:</span> {refreshCheck ? "TRUE" : "false"}</p>
@@ -367,6 +400,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         environment: env,
         iariSource: IariSources[myIariSourceId]?.proxy,
         urlStatusMethod: checkMethod,
+        articleVersion: myArticleVersion,
         isDebug: !!isDebug,
         isShowUrlOverview: isShowUrlOverview,
         isShowShortcuts: isShowShortcuts,

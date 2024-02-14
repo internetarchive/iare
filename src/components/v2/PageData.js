@@ -658,7 +658,7 @@ export default function PageData({pageData = {}}) {
     const errorDisplay = getErrorDisplay(pageErrors)
 
     return <>
-
+respect article version
         {isLoadingUrls
             ? <Loader message={urlStatusLoadingMessage}/>
             : <>
