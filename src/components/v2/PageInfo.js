@@ -119,6 +119,8 @@ export default function PageInfo({ pageData }) {
 
         <p>Check Method: {myConfig.urlStatusMethod}</p>
 
+        <p>Article Version: {myConfig.articleVersion}</p>
+
         {ores_score_display
             ? <>
                 <p style={{marginBottom:0}}>ORES Score: {ores_score_display}</p>

@@ -399,6 +399,7 @@ export default function App({env, myPath, myRefresh, myMethod, myArticleVersion,
     const config = {
         environment: env,
         iariSource: IariSources[myIariSourceId]?.proxy,
+        wikiBaseUrl: "https://en.wikipedia.org/wiki/",
         urlStatusMethod: checkMethod,
         articleVersion: myArticleVersion,
         isDebug: !!isDebug,

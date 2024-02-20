@@ -128,6 +128,9 @@ export const ACTIONABLE_FILTER_MAP = {
 
             if (isLinkStatusGood(url.status_code)) {
                 // source link GOOD, check templates for archive and citation status
+
+                if (!url.refs) return false
+
                 return url.refs.some(r => {
                     // if any of the ref's templates return true...
                     return r.templates.some(t => {

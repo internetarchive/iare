@@ -8,7 +8,7 @@
 
     --color-filter-button: #d1d5da;
     /*--color-filter-button-hover: #0f0fe6;*/
-
+    --spacing-ref-button: .35rem;
 }
 
 .ref-display {
@@ -37,8 +37,8 @@
     background-color: var(--color-ref-bg);
     width: 100%;
     text-align: left;
-    padding:.3rem 1.8rem .3rem .4rem;
-    margin-bottom:2pt;
+    padding:.3rem .3rem .3rem .4rem;
+    margin-bottom:var(--spacing-ref-button);
     position:relative;
     overflow-wrap: break-word;
 }

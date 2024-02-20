@@ -79,6 +79,23 @@ export default function PageData({pageData = {}}) {
             pageData.tld_statistics = tldDict
         }
 
+        const gatherStatusStats = (urlArray) => {
+            // calc counts for each url status defined in URL_STATUS_FILTER_MAP
+            const urlCounts = (urlArray.length)
+                ? []
+                : Object.keys(URL_STATUS_FILTER_MAP).map(key => {
+                    const f = URL_STATUS_FILTER_MAP[key];
+                    const count = pageData.urlArray.filter((f.filterFunction)()).length; // Note the self-evaluating filterFunction!
+                    return {
+                        label: f.caption,
+                        count: count,
+                        link: key
+                    }
+                })
+
+            pageData.url_status_statistics = {urlCounts: urlCounts}
+
+        }
         // create url dict from returned results
         const urlDict = {}
 
@@ -129,6 +146,7 @@ export default function PageData({pageData = {}}) {
         })
 
         gatherTldStats(pageData.urlArray)
+        gatherStatusStats(pageData.urlArray)
 
     }, [])
 
@@ -216,6 +234,11 @@ export default function PageData({pageData = {}}) {
         const templateUrls = {}
 
         templates.forEach( template => {
+
+            if (!template.parameters) {
+                setPageErrors("\"parameters\" property of reference.template missing")
+                return
+            }
 
             const primaryUrl = template.parameters.url
             const archiveUrl = template.parameters.archive_url
@@ -376,6 +399,9 @@ export default function PageData({pageData = {}}) {
             // process each url link
             ref.urls.forEach(url => {
                 const myUrl = pageData.urlDict[url]
+
+                if (!myUrl) return  // skip if no entry
+
                 // TODO what to do if url not in urlDict?
                 // TODO we should send and display a notice...shouldnt happen
                 // TODO add to test case: associateRefsWithLinks w/ bad urlDict
@@ -406,9 +432,16 @@ export default function PageData({pageData = {}}) {
 
         Object.keys(pageData.urlDict).forEach( link => {
             const myUrl = pageData.urlDict[link]
+
             const statuses = []
             const templates = []
             const sections = []
+
+            if (!myUrl || !myUrl.refs) {
+                console.log(`associateRefsWithLinks: no urlDict for: ${link}`)
+                return
+            }
+
             myUrl.refs.forEach( r => {  // traverse each reference this url is involved in
 
                 // process url_status's
@@ -658,7 +691,6 @@ export default function PageData({pageData = {}}) {
     const errorDisplay = getErrorDisplay(pageErrors)
 
     return <>
-respect article version
         {isLoadingUrls
             ? <Loader message={urlStatusLoadingMessage}/>
             : <>
@@ -674,11 +706,7 @@ respect article version
                         <div className={`display-content`}>
 
                             {selectedViewType === 'urls' &&
-                                <UrlDisplay pageData={pageData} options={{refresh: pageData.forceRefresh}}
-                                            urlStatusFilterMap={URL_STATUS_FILTER_MAP}
-                                            urlArchiveFilterMap={ARCHIVE_STATUS_FILTER_MAP}
-
-                                />
+                                <UrlDisplay pageData={pageData} options={{refresh: pageData.forceRefresh}} />
                             }
 
                             {selectedViewType === 'stats' &&

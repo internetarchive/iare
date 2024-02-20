@@ -12,9 +12,11 @@ import {rspMap} from "../../constants/perennialList";
 import RefView from "./refView/RefView";
 import {Tooltip as MyTooltip} from "react-tooltip";
 import ConditionsBox from "../ConditionsBox";
+import {REFERENCE_STATS_MAP} from "../../constants/referenceStatsMap";
+import {IARE_ACTIONS} from "../../constants/iareActions";
 
-export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {}, urlArchiveFilterMap = {} } ) {
-    // TODO remove urlStatusFilterMap?
+// export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {}, urlArchiveFilterMap = {} } ) {
+export default function UrlDisplay ({ pageData, options } ) {
 
     const [urlFilters, setUrlFilters] = useState( null ); // keyed object of url filters to pass in to UrlFlock  TODO: implement UrlFilter custom objects
     const [refFilter, setRefFilter] = useState( null ); // filter to pass in to RefFlock
@@ -25,6 +27,18 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
     const [refDetails, setRefDetails] = useState(null);
 
     const [currentConditions, setCurrentConditions] = useState([])
+
+    const filters = {
+        actionable: { key: "actionable" },
+        reference_stats: { key: "reference_stats" },
+        domains: { key: "domains" },
+        link_status: { key: "link_status" },
+        papers: { key: "papers" },
+        perennial: { key: "perennial" },
+        tld: { key: "tld" },
+        books: { key: "books" },
+        templates: { key: "templates" },
+    }
 
     let myConfig = React.useContext(ConfigContext);
     myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
@@ -69,33 +83,25 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
     }, [])
 
-    // callback from sub-components that induce actions upon flocks.
+    // callback from sub-components that induce various actions.
+    //
     // "result" parameter is an object consisting of:
     //  {
     //      action: <action name>,
-    //      value: <param value>
+    //      value: <value to act upon, if any>
     //  }
     //
-    // most of these actions will set the flock filters to a current value.
+    // Most actions set the flock filters to a current value.
     // Currently only one filter can be applied at a time.
     // Maybe later the capability of more than one filter will exist.
     const handleAction = useCallback( result => {
         const {action, value} = result;
         console.log (`UrlDisplay: handleAction: action=${action}, value=${value}`);
+
         const noneFilter = {
             "filter" : {
                 filterFunction: () => () => {return false},
             }
-        }
-        const filters = {
-            actionable: { key: "actionable" },
-            domains: { key: "domains" },
-            link_status: { key: "link_status" },
-            papers: { key: "papers" },
-            perennial: { key: "perennial" },
-            tld: { key: "tld" },
-            books: { key: "books" },
-            templates: { key: "templates" },
         }
 
         if (0) {
@@ -114,6 +120,16 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             setSelectedUrl(null)
             setFilterState(null)
             setCondition(null)
+        }
+
+        else if (action === IARE_ACTIONS.FILTER_BY_REFERENCE_STATS.key) {
+            // filter URL List by actionable filter determined by value as key
+            const f = value ? REFERENCE_STATS_MAP[value] : null
+            setRefFilter(f?.refFilterFunction
+                ? { filterFunction: f.refFilterFunction }
+                : null)
+            setFilterState(filters.reference_stats, value)  // select reference stat's filter value
+            setCondition(f)
         }
 
         else if (action === "setActionableFilter") {
@@ -211,25 +227,13 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             showRefView(value)
         }
 
-
-            // else if (action === "setArchiveStatusFilters") {
-                        //     setUrlFilters({ "archive_status_filter" : value })  // NB: value is filter object
-                        // }
-
-
-                        // else if (action === "setUrlReferenceFilter") {
-                        //     // value parameter specifies url to filter References by
-                        //     setRefFilter(getUrlRefFilter(value))
-                        //     setSelectedUrl(value)
-                        // }
-
         else {
             console.log(`Action "${action}" not supported.`)
             alert(`Action "${action}" not supported.`)
         }
 
-                        // TODO: Action for setReferenceFilter/ShowReference for filtered URLS
-                        // i.e. show all refs that contain ANY of the URLS in the filtered URL list
+        // TODO: Action for setReferenceFilter/ShowReference for filtered URLS
+        // i.e. show all refs that contain ANY of the URLS in the filtered URL list
 
     }, [showRefView, pageData.urlDict])
 
@@ -250,6 +254,7 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
             caption: <span>{`Contains Template "${templateName}"`}</span>,
 
             filterFunction: () => (url) => {
+                if (!url.refs) return false
                 // loop thru refs
                 // if any of those refs contain templateName, return true anf exit
                 if (!templateName?.length) return true  // always let URL in if templateName is empty
@@ -442,20 +447,6 @@ export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {},
 
     // setup url stats
 
-    // calc counts for each filter of url status filter maps
-    const urlCounts = (!pageData?.urlArray?.length)
-        ? []
-        : Object.keys(urlStatusFilterMap).map(key => {
-            const f = urlStatusFilterMap[key];
-            const count = pageData.urlArray.filter((f.filterFunction)()).length; // Note the self-evaluating filterFunction!
-            return {
-                label: f.caption,
-                count: count,
-                link: key
-            }
-        })
-
-    pageData.url_status_statistics = {urlCounts: urlCounts}
 
     const tooltipUrlDisplay = <MyTooltip id="url-display-tooltip"
                                     float={true}

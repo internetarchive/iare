@@ -317,8 +317,11 @@ const urlFlock = React.memo( function UrlFlock({
         setUrlTooltipHtml(text);
     }
 
+    // returns [flockRow markup, array of filtered urls]
     const getFlockRows = (flockArray, flockFilters) => {
-        if (!flockArray || flockArray.length === 0) return <h4>No URLs to show</h4>
+        if (!flockArray || flockArray.length === 0) {
+            return [<h4>No URLs to show</h4>, []]
+        }
 
         if (!flockFilters) flockFilters = {}  // prevent null errors
         // TODO what to do if flockFilters not a keyed object of FlockFilter's? Can we make it a custom type (of FlockFilters)?

@@ -89,6 +89,44 @@ export default function RefView({ open, onClose, refDetails, pageData = {}, tool
     // close modal if not in open state
     if (!open || !refDetails) return null;
 
+    const handleLocalRefClick = (e) => {
+        // console.log("handleClick local ref")
+        e.preventDefault()
+
+
+        let myTagName
+        let myHref
+        let myClass
+
+        try {
+            myTagName = e.target.tagName
+        } catch(err) {
+            myTagName = "error with tag name"
+        }
+
+        if (myTagName === "A") {
+            try {
+                myHref = e.target.attributes["href"].value
+            } catch(err) {
+                myHref = "error with link href"
+            }
+
+            try {
+                myClass = e.target.classList
+            } catch(err) {
+                myClass = "error with classList"
+            }
+
+        }
+
+        const myRel = e.target?.attributes["rel"]?.value
+
+        console.log(`ref click, tagName = ${myTagName}`)
+        console.log(`ref click, myRel = ${myRel}`)
+        // console.log(`ref click, class = ${e.target.classList}`)
+        console.log(`ref click, href = ${myHref}`)
+    }
+
     return <div className='ref-modal-overlay' onClick={onClose} >
         <Draggable
             handle={".ref-view-title-bar"}
@@ -123,9 +161,11 @@ export default function RefView({ open, onClose, refDetails, pageData = {}, tool
                     <div className="row no-gutters">
 
                         <div className="xxx.col-9">
-                            <div className={"reference-info"}>
-                                <RefViewRefDisplay _ref={refDetails} showDebug={myConfig.isShowDebugInfo} />
-                                <RefArticleInfo _ref={refDetails} />
+                            <div className={"reference-info"} onClick={handleLocalRefClick}>
+                                <RefViewRefDisplay _ref={refDetails}
+                                    articleVersion={pageData.iariArticleVersion}
+                                    showDebug={myConfig.isShowDebugInfo} />
+                                <RefArticleInfo _ref={refDetails} pageData={pageData}/>
                             </div>
 
                             <RefTemplates templates={refDetails.templates} pageData={pageData} tooltipId={tooltipId} />

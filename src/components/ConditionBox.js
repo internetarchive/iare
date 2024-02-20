@@ -11,7 +11,7 @@ export default function ConditionBox({filter = null}) {
 
     if (!filter) return <div className={`condition-box`}>
         <div className={"category-row"}>
-            <div className={"cond-data"}>None - Showing All Items</div>
+            <div className={"cond-data"}>Showing All Items</div>
         </div>
         <div className={"fixit-row"}>
             <div className={"cond-data"}>Click on Actionable or another filter to explore.</div>

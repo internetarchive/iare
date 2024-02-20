@@ -1,33 +1,70 @@
 import React from "react";
+import {ArticleVersions} from "../../../constants/articleVersions";
+import {ConfigContext} from "../../../contexts/ConfigContext";
 
 /*
 shows citation links for this reference
  */
-export default function RefArticleInfo({ _ref, onAction }) {
+export default function RefArticleInfo({ _ref, pageData={}, onAction }) {
 
-    // const linkDisplay = _ref.citationLinks.map(cite => {
-    //         return <div className={"ref-citation-link"}>{cite}</div>
-    //     })
+    let myConfig = React.useContext(ConfigContext);
+    myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
 
-    // FIXME need to flesh out citation links for real -- WAITING FOR IARI
-    const anchorLinkDisplay = <div className={'citation-links'}>
-        <button className={`utility-button small-button`}>Go to Citation Definition in Article</button>
-    </div>
-    const citeLinkDisplay = <div className={'citation-links'}>
-        <button className={`utility-button small-button`}>^a</button>
-        <button className={`utility-button small-button`}>^b</button>
-        <button className={`utility-button small-button`}>^c</button>
-    </div>
+    const handleCiteLink = (e) => {
+        // requires/expects e.target.dataset.cite_link
+        const citeRefLink = e.target.dataset["cite_link"]
+        if (citeRefLink) {  // prepend wikibase to link which has article name and #citeref link
+            window.open(citeRefLink.replace( /^\.\//, myConfig.wikiBaseUrl),"_blank")
+        }
+    }
+    const handleCiteHomeLink = (e) => {
+        // requires/expects e.target.dataset.cite_def_link
+        const citeDefLink = e.target.dataset["cite_def_link"]
+        if (citeDefLink) {  // prepend pathName to link which has #citedef link
+            window.open(pageData.pathName + citeDefLink,"_blank")
+        }
+    }
 
-    return <div className="ref-view-article-info">
-        {/*<h3>Article Origin Information</h3>*/}
-        <div className={"article-info"}>
-            <div>Section of Origin: {_ref.section}&nbsp;&nbsp;</div>
+    let articleInfo = null
+    if (pageData.iariArticleVersion === ArticleVersions.ARTICLE_V1.key) {
+        articleInfo = <div>Section of Origin: {_ref.section}&nbsp;&nbsp;</div>
+
+    } else if (pageData.iariArticleVersion === ArticleVersions.ARTICLE_V2.key) {
+        const anchorLinkDisplay = <div className={'citation-links'}>
+            <button className={`utility-button small-button`}
+                    data-cite_def_link={_ref.cite_def_link}
+                    onClick={handleCiteHomeLink}
+            >Go to Citation Definition in Article</button>
+        </div>
+
+        const citeRefLinks = _ref.cite_ref_links
+            ? _ref.cite_ref_links.map( (cr, i) => {
+                return <button className={`utility-button small-button`}
+                    data-cite_link={cr.href}
+                    key={i}
+                    onClick={handleCiteLink}>^{String.fromCharCode(i + 97)}</button>
+            })
+            : null // <div>No Citation Refs!</div>
+
+
+        articleInfo = <>
+            <div className={'header-left-part'}>&nbsp;
+            </div>
             <div className={'header-right-part'}>
                 {anchorLinkDisplay}
                 <div>&nbsp;&nbsp;Footnote Occurrences:&nbsp;</div>
-                {citeLinkDisplay}
+                {citeRefLinks}
             </div>
+            </>
+
+
+    } else {
+        articleInfo = <div> Unknown reference version "{pageData.iariArticleVersion}"</div>
+    }
+
+    return <div className="ref-view-article-info">
+        <div className={"article-info"}>
+            {articleInfo}
         </div>
     </div>
 }
