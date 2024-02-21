@@ -1,9 +1,9 @@
 import React, {useCallback, useEffect, useState} from "react";
-import RefViewRefDisplay from "./refView/RefViewRefDisplay";
-import RefArticleInfo from "./refView/RefArticleInfo";
-import RefTemplates from "./refView/RefTemplates";
-import RefActionables from "./refView/RefActionables";
-import RefWikitext from "./refView/RefWikitext";
+import RefViewRefDisplay from "./RefViewRefDisplay";
+import RefArticleInfo from "./RefArticleInfo";
+import RefTemplates from "./RefTemplates";
+import RefActionables from "./RefActionables";
+import RefWikitext from "./RefWikitext";
 
 /*
 
@@ -19,7 +19,7 @@ function RefDetails({ refDetails = {},
     // adds "Escape Key closes modal" feature
     useEffect(() => {
         setWikitext(refDetails?.wikiText)
-    }, [refDetails]);
+    }, [refDetails, setWikitext]);
 
 
     const handleLocalRefClick = (e) => {
@@ -29,7 +29,6 @@ function RefDetails({ refDetails = {},
 
         let myTagName
         let myHref
-        let myClass
 
         try {
             myTagName = e.target.tagName
@@ -44,11 +43,6 @@ function RefDetails({ refDetails = {},
                 myHref = "error with link href"
             }
 
-            try {
-                myClass = e.target.classList
-            } catch(err) {
-                myClass = "error with classList"
-            }
 
         }
 
@@ -64,6 +58,8 @@ function RefDetails({ refDetails = {},
         // for now, we just set local wikitext.
         // soon we will insert/replace into reference data itself and resave the entire article (i think)
         //
+
+        console.log(`wikitext is: ${wikitext}`)
         setWikitext(newText)
 
         // set details.wikitext OR cause a wholesale refresh of the page,
@@ -92,7 +88,7 @@ function RefDetails({ refDetails = {},
             alert(`jumpToCitationRef: Coming Soon (citeRef=${citeRef})`)
         }
 
-    }, [])
+    }, [saveWikitext])
 
     return <>
         <div className={"reference-info"} onClick={handleLocalRefClick}>

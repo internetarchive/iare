@@ -1,5 +1,4 @@
-import React, {useState, useContext} from 'react';
-import {ConfigContext} from "../../contexts/ConfigContext";
+import React, {useState} from 'react';
 import {ArticleVersions} from "../../constants/articleVersions";
 import {convertToCSV, copyToClipboard} from "../../utils/utils";
 import CitationDisplay_v1 from "./citations/CitationDisplay_v1";
@@ -7,10 +6,10 @@ import CitationDisplay_v2 from "./citations/CitationDisplay_v2";
 import FilterConditionBox from "../FilterConditionBox";
 import FlockBox from "../FlockBox";
 
-const handleCiteRefClick = (e) => {
-    e.stopPropagation()
-    window.open(e.currentTarget.href, "_blank")
-}
+            // const handleCiteRefClick = (e) => {
+            //     e.stopPropagation()
+            //     window.open(e.currentTarget.href, "_blank")
+            // }
 
 function RefFlock({ refArray,
                       refFilter,
@@ -20,21 +19,9 @@ function RefFlock({ refArray,
                       options = {},
                       tooltipId=''} ) {
 
-    // const [refDetails, setRefDetails] = useState(null);
-    // const [isLoading, setIsLoading] = useState(false);
     const [tooltipHtmlRefList, setTooltipHtmlRefList] = useState( '<div>ToolTip<br />second line</div>' );
 
-    // const [openModal, setOpenModal] = useState(false)
-
-    const myConfig = useContext(ConfigContext);
-    const isShowDebugInfo = !!myConfig?.isShowDebugInfo;  // NB double-negative to force boolean value
     // TODO catch undefined myIariBase exception
-
-
-                // const showRefView = (ref) => {
-                //     onAction({action:"showRefViewForRef", value:ref})
-                //     // TODO test to make sure passing the entire ref is ok, vs ref.id
-                // }
 
     const handleListClick= (e) => {
         console.log("handleClickList")
@@ -50,11 +37,6 @@ function RefFlock({ refArray,
             "action": "referenceClicked",
             "value": refId,
         })
-
-        // onAction( {
-        //     "action": "referenceClickedRef",
-        //     "value": myRef,
-        // })
 
     }
 
@@ -145,9 +127,11 @@ function RefFlock({ refArray,
         let referenceCaption = null
 
         if (pageData.iariArticleVersion === ArticleVersions.ARTICLE_V1.key) {
+            // eslint-disable-next-line react/jsx-pascal-case
             referenceCaption = <CitationDisplay_v1 reference={_ref} index={i} />
 
         } else if (pageData.iariArticleVersion === ArticleVersions.ARTICLE_V2.key) {
+            // eslint-disable-next-line react/jsx-pascal-case
             referenceCaption = <CitationDisplay_v2 options={options} reference={_ref} index={i} />
             // referenceCaption = getReferenceCaptionVersion2(ref, i, isShowDebugInfo)
         }

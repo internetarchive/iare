@@ -1,9 +1,9 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import Draggable from 'react-draggable';
 import {ConfigContext} from "../../../contexts/ConfigContext";
 import {ArticleVersions} from "../../../constants/articleVersions";
 import RefFlock from "../RefFlock";
-import RefDetails from "../RefDetails";
+import RefDetails from "./RefDetails";
 import "./refView.css"
 
 
@@ -19,7 +19,17 @@ export default function RefView({ open, onClose,
 
     // eslint-disable-next-line
     const [selectedRefId, setSelectedRefId]= useState(defaultRefId)
-    const [refDetails, setRefDetails]= useState(pageData.references.find(r => r.ref_id == defaultRefId))
+    // xxeslint-disable-next-line eqeqeq
+    const [refDetails, setRefDetails]= useState(defaultRefId
+        ? pageData.references.find(
+            r => {
+                return r.ref_id
+                ? r.ref_id.toString() === defaultRefId.toString()
+                : false
+            })
+        : null
+    )
+    // NB using == instead of === because an int == str
 
     let myConfig = React.useContext(ConfigContext);
     myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
@@ -64,7 +74,14 @@ export default function RefView({ open, onClose,
             } else if (pageData.iariArticleVersion === ArticleVersions.ARTICLE_V2.key) {
                 // get ref details for refId (specified by value)
                 const refId = result.value
-                const foundRef = pageData.references.find(r => r.ref_id == refId)  // NB Note ==, not ===
+                const foundRef = refId
+                    ? pageData.references.find(
+                        r => {
+                            return r.ref_id
+                                ? r.ref_id.toString() === refId.toString()
+                                : false
+                        })  // NB Note ==, not ===
+                    : null
                 setRefDetails(foundRef)
             }
         }
