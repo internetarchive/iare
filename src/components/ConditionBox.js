@@ -9,6 +9,8 @@ maybe tooltip in the future
 */
 export default function ConditionBox({filter = null}) {
 
+    console.log(`ConditionBox: filter: ${filter ? filter.caption : ""}`)
+
     if (!filter) return <div className={`condition-box`}>
         <div className={"category-row"}>
             <div className={"cond-data"}>Showing All Items</div>

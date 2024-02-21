@@ -1,7 +1,10 @@
 import React, {useCallback, useContext} from "react";
 import {ConfigContext} from "../../../contexts/ConfigContext";
 
-function CitationDisplay_v2({ reference = null, index=0, onAction}) {
+function CitationDisplay_v2({ reference = null,
+                                index=0,
+                                options = {},
+                                onAction}) {
 
     const myConfig = useContext(ConfigContext);
 
@@ -53,7 +56,6 @@ function CitationDisplay_v2({ reference = null, index=0, onAction}) {
             {citeId}
         </div>
     </div>
-    const showExtra = true
 
     return <>
 
@@ -63,7 +65,7 @@ function CitationDisplay_v2({ reference = null, index=0, onAction}) {
                 ? <div dangerouslySetInnerHTML={{__html: reference.span_html}} />
                 : null }
 
-        {showExtra && extra_info}
+        {options?.show_extra && extra_info}
 
         {false && citeRefLinks ? <div className={"cite-ref-links"}>{citeRefLinks}</div> : null }
 

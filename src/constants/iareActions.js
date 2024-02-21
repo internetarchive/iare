@@ -4,4 +4,8 @@ export const IARE_ACTIONS = {
         key:"FILTER_BY_REFERENCE_STATS",
     },
 
+    SHOW_REFERENCE_VIEWER: {
+        key:"SHOW_REFERENCE_VIEWER",
+    },
+
 }

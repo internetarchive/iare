@@ -1,38 +1,25 @@
 import React, {useCallback, useEffect, useState} from "react";
-import "./refView.css"
-import RefTemplates from "./RefTemplates";
-import RefActions from "./RefActions";
-// import RefUrls from "./RefUrls";
-// import {copyToClipboard} from "../../../utils/utils";
 import Draggable from 'react-draggable';
-import RefWikitext from "./RefWikitext";
-import RefActionables from "./RefActionables";
-import RefArticleInfo from "./RefArticleInfo";
-import RefViewRefDisplay from "./RefViewRefDisplay";
 import {ConfigContext} from "../../../contexts/ConfigContext";
-
-/*
-idea details:
-    templates array - show parameters in grid.
-    * ? give template score based on parameters filled
-        - could show templates by score - scatter? bar chart with filters? could show refs with templates of certain score range
-
-    urls array
-    -  show urls with status codes
-        - peek into "new" modified, decorated url array for status code (& other info?)
-    - display archive status of link
-        - show IA logo and address underneath link if it is archived
-            - for now, can show url's inref button itself?
-    - have a score rating for url(s) array
-        - sort by score and filter ref
-
-*/
+import {ArticleVersions} from "../../../constants/articleVersions";
+import RefFlock from "../RefFlock";
+import RefDetails from "../RefDetails";
+import "./refView.css"
 
 
-export default function RefView({ open, onClose, refDetails, pageData = {}, tooltipId }) {
+export default function RefView({ open, onClose,
+                                    // refDetails,  // TODO: remove, as refDetails should be set in this component as a state
+                                    pageData = {},
+                                    refFilter=null,
+                                    defaultRefId=0,
+
+                                    // refView must take a filter and a default selected ref id
+                                    // that filter gets passed on to RefFlock
+                                    tooltipId }) {
 
     // eslint-disable-next-line
-    const [wikitext, setWikitext]= useState(refDetails?.wikitext)
+    const [selectedRefId, setSelectedRefId]= useState(defaultRefId)
+    const [refDetails, setRefDetails]= useState(pageData.references.find(r => r.ref_id == defaultRefId))
 
     let myConfig = React.useContext(ConfigContext);
     myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
@@ -50,81 +37,37 @@ export default function RefView({ open, onClose, refDetails, pageData = {}, tool
         };
     }, [onClose]);
 
-    const saveWikitext = (newText) => {
-        // for now, we just set local wikitext.
-        // soon we will insert/replace into reference data itself and resave the entire article (i think)
-        //
-        setWikitext(newText)
-
-        // set details.wikitext OR cause a wholesale refresh of the page,
-        // since things could be very much changed
-                    // //
-                    // // for now, just change details
-                    // details.wikitext = newText
-    }
-
-    const handleRefViewAction = useCallback( (result={}) => {
-        // extract action and value from result
-        const {action, value} = result;
-
-        console.log(`RefView: handleAction: action=${action}, value=${value}`);
-
-        if (0) {}  // allows easy else if's
-
-        else if (action === "saveWikitext") {
-            // this is where we need to asynchronously save the reference/entire page, and reload, basically
-            const newText = value
-            saveWikitext(newText)
-        }
-
-        else if (action === "jumpToCitationRef") {
-            const citeRef = value
-            alert(`jumpToCitationRef: Coming Soon (citeRef=${citeRef})`)
-        }
-
-    }, [])
 
     console.log("RefView: rendering")
 
     // close modal if not in open state
-    if (!open || !refDetails) return null;
-
-    const handleLocalRefClick = (e) => {
-        // console.log("handleClick local ref")
-        e.preventDefault()
+    if (!open) return null;
 
 
-        let myTagName
-        let myHref
-        let myClass
+    const handleRefListClick = (result) => {
+        // set refDetails according to reference id
+        // alert(`handleRefListClick: result: ${JSON.stringify(result)}`)
 
-        try {
-            myTagName = e.target.tagName
-        } catch(err) {
-            myTagName = "error with tag name"
-        }
+        if (!result) return
 
-        if (myTagName === "A") {
-            try {
-                myHref = e.target.attributes["href"].value
-            } catch(err) {
-                myHref = "error with link href"
+        if (result.action === "referenceClicked") {
+
+            if (pageData.iariArticleVersion === ArticleVersions.ARTICLE_V1.key) {
+                // get ref details for refId (specified by value)
+                const refId = result.value
+                // we need to use different algorithm here...V! does not contain ref_id
+                // NB TODO need to have a common index for refs...
+                //  can be iare-session specific; does not need to carry over across pages por page fetches
+                const foundRef = pageData.references.find(r => r.ref_id === refId)
+                setRefDetails(foundRef)
+
+            } else if (pageData.iariArticleVersion === ArticleVersions.ARTICLE_V2.key) {
+                // get ref details for refId (specified by value)
+                const refId = result.value
+                const foundRef = pageData.references.find(r => r.ref_id == refId)  // NB Note ==, not ===
+                setRefDetails(foundRef)
             }
-
-            try {
-                myClass = e.target.classList
-            } catch(err) {
-                myClass = "error with classList"
-            }
-
         }
-
-        const myRel = e.target?.attributes["rel"]?.value
-
-        console.log(`ref click, tagName = ${myTagName}`)
-        console.log(`ref click, myRel = ${myRel}`)
-        // console.log(`ref click, class = ${e.target.classList}`)
-        console.log(`ref click, href = ${myHref}`)
     }
 
     return <div className='ref-modal-overlay' onClick={onClose} >
@@ -158,29 +101,34 @@ export default function RefView({ open, onClose, refDetails, pageData = {}, tool
 
                 <div className="ref-view-contents">
 
-                    <div className="row no-gutters">
+                    {/*<div className="row no-gutters">*/}
 
-                        <div className="xxx.col-9">
-                            <div className={"reference-info"} onClick={handleLocalRefClick}>
-                                <RefViewRefDisplay _ref={refDetails}
-                                    articleVersion={pageData.iariArticleVersion}
-                                    showDebug={myConfig.isShowDebugInfo} />
-                                <RefArticleInfo _ref={refDetails} pageData={pageData}/>
-                            </div>
+                        <div className={"ref-view-list"}>
 
-                            <RefTemplates templates={refDetails.templates} pageData={pageData} tooltipId={tooltipId} />
-                            {/*<RefWikitext wikitext={wikitext} ref_details={details} onAction={handleRefViewAction} />*/}
-
-                            <RefActionables actions={refDetails.actions} />
-                            <RefWikitext wikitext={refDetails.wikitext} ref_details={refDetails} onAction={handleRefViewAction} />
-
+                            {/* show Ref Flock at left of ref view for navigation */}
+                            <RefFlock pageData={pageData}
+                                      refArray={pageData.references}
+                                      refFilter={refFilter}
+                                      onAction={handleRefListClick}
+                                      selectedReferenceId={null}
+                                      options={{
+                                          hide_header: true,
+                                          show_extra: false,
+                                          show_filter_description: true
+                                        }}
+                                      tooltipId={"url-display-tooltip"}
+                            />
                         </div>
 
-                        {false && <div className="col-3">
-                            <RefActions details={refDetails} onAction={handleRefViewAction} />
-                        </div>}
+                        <div className="ref-view-details">
+                            <RefDetails
+                                refDetails={refDetails}
+                                pageData={pageData}
+                                tooltipId={tooltipId}
+                                config={myConfig} />
+                        </div>
 
-                    </div>
+                    {/*</div>*/}
 
                 </div>
 

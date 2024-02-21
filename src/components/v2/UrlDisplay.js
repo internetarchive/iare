@@ -24,7 +24,8 @@ export default function UrlDisplay ({ pageData, options } ) {
     const [currentState, setCurrentState] = useState({})
 
     const [openModal, setOpenModal] = useState(false)
-    const [refDetails, setRefDetails] = useState(null);
+    // const [refDetails, setRefDetails] = useState(null);
+    const [selectedRefId, setSelectedRefId] = useState(null);
 
     const [currentConditions, setCurrentConditions] = useState([])
 
@@ -53,9 +54,10 @@ export default function UrlDisplay ({ pageData, options } ) {
         setCurrentConditions(newCondition)
     }
 
-    // sets the current "state of the filters".
-    // The filter boxes respond to currentState by adjusting their displayed state
-    // if "whichFilter" is null, all filter states should be reset to null
+    // sets the current "state of the filters". Each filter has its own
+    // state of what it's current "value" is that it is filtering upon.
+    // The filter boxes respond to currentState by adjusting the displayed state.
+    // If "whichFilter" is null, all filter states reset to null
     const setFilterState = (whichFilter, value) => {
         setCurrentState(prevState => {
             const newState = prevState
@@ -67,18 +69,29 @@ export default function UrlDisplay ({ pageData, options } ) {
         })
     }
 
-    const showRefView = useCallback( (ref) => {
+    /*
+    show modal refView
+    - refFilter should already be set
+    - selectedRefId should be respected
+    - set modal to "show"
+     */
+    const showRefView = useCallback( (refId) => {
         // cancel any current tooltip
         // FIXME
 
         // handle null ref
-        if (!ref) {
-            setRefDetails("Trying to fetch empty reference");
+        if (!refId) {
+            alert(`urlDisplay: showRefView, refId is null!`)
+            // setSelectedRefId(ref.ref_id);  // default ref to select in popup
+            // setRefDetails("Trying to fetch empty reference");
             // TODO alert patron or show modal anyway?
             return;
         }
 
-        setRefDetails(ref);
+        // alert(`urlDisplay: showRefView, ref id is: ${refId}`)
+        // setRefDetails(ref);
+        // setSelectedRefId(ref.ref_id);  // default ref to select in popup
+        setSelectedRefId(refId);  // default ref to select in popup
         setOpenModal(true)
 
     }, [])
@@ -157,7 +170,10 @@ export default function UrlDisplay ({ pageData, options } ) {
             const f = value ? LINK_STATUS_MAP[value] : null
             setUrlFilters({ "link_status" : f })
             setRefFilter(f?.refFilterFunction
-                ? { filterFunction: f.refFilterFunction }
+                ? { caption: f.caption,
+                    desc: f.desc,
+                    filterFunction: f.refFilterFunction
+                }
                 : null )
             setFilterState(filters.link_status, value)
             setCondition(f)
@@ -222,9 +238,9 @@ export default function UrlDisplay ({ pageData, options } ) {
             setSelectedUrl(value)
         }
 
-        else if (action === "showRefViewForRef") {
-            // value is ref
-            showRefView(value)
+        else if (action === IARE_ACTIONS.SHOW_REFERENCE_VIEWER.key) {
+            const myRefId = value  // value is reference id
+            showRefView(myRefId)
         }
 
         else {
@@ -329,6 +345,8 @@ export default function UrlDisplay ({ pageData, options } ) {
             return null; // no template means "all" filter
         }
         return {
+            desc: `References with Links with Top Level Domain of "${tld}"`,
+            caption: <span>{`Contains Links with Top Level Domain "${tld}"`}</span>,
             filterFunction: () => (urlDict, ref) => {
                 return ref.urls.some( url => {
                     const urlObject = urlDict[url]
@@ -398,6 +416,8 @@ export default function UrlDisplay ({ pageData, options } ) {
             return null; // null means "all" filter
         }
         return {
+            desc: `References with Links that contain Perennial "${perennialKey}"`,
+            caption: <span>{`Contains Links with Perennial "${perennialKey}"`}</span>,
             filterFunction: () => (urlDict, ref) => {
                 return ref.urls.some( url => {
                     const urlObject = urlDict[url]
@@ -416,11 +436,8 @@ export default function UrlDisplay ({ pageData, options } ) {
 
         // return synthetic filter showing only URLs that have templateName in their associated citation templates
         return {
-
             desc: `References that contain Template "${templateName}"`,
-
             caption: <span>{`Contains Template "${templateName}"`}</span>,
-
             filterFunction: () => (urlDict, ref) => {
                 // loop thru refs
                 // if any of those refs contain templateName, return true anf exit
@@ -428,7 +445,6 @@ export default function UrlDisplay ({ pageData, options } ) {
 
                 if (!ref.template_names) return false  // if ref does not have template_mames property...
                 return ref.template_names.includes(templateName)  // return true of templateName represented
-
                             // return url.refs.some(r => {
                             //     // if any of the ref's templates contain the target templateName, return true...
                             //     if (!r.template_names) return false  // if ref does not have template_mames property...
@@ -439,13 +455,23 @@ export default function UrlDisplay ({ pageData, options } ) {
         }
     }
 
+    const handleRefClick = (result) => {
+        // value is reference (or reference id?)(or ref index?)
+        // action should be "referenceClicked"
+        if (result.action === "referenceClicked") {
+            const refId = result.value
+            // alert(`Reference clicked - will show RefView with current filter and selected refid of: ${refId}`)
+            // pass up to local handler
+            handleAction({"action":IARE_ACTIONS.SHOW_REFERENCE_VIEWER.key, value:refId})
+            // NB I know this is redundant, but leaving ot this way in case we want to
+            //  massage any of the data before passing it to RefView
+        }
+    }
+
 
     const refArray = (pageData.references)
 
-    console.log("UrlDisplay: render");
-
-
-    // setup url stats
+    console.log(`UrlDisplay: render; refFilter.caption = ${refFilter?.caption}`);
 
 
     const tooltipUrlDisplay = <MyTooltip id="url-display-tooltip"
@@ -483,8 +509,11 @@ export default function UrlDisplay ({ pageData, options } ) {
                               tooltipId={"url-display-tooltip"}
                     />
 
-                    <RefFlock pageData={pageData} refArray={refArray}
-                              refFilter={refFilter} onAction={handleAction}
+                    <RefFlock pageData={pageData}
+                              refArray={refArray}
+                              refFilter={refFilter}
+                              onAction={handleRefClick}
+                              options={{hide_header:true, show_filter_description: false}}
                               tooltipId={"url-display-tooltip"}
                     />
                 </div>
@@ -493,7 +522,13 @@ export default function UrlDisplay ({ pageData, options } ) {
 
 
             {/* this is the popup Reference Viewer component */}
-            <RefView refDetails={refDetails} pageData={pageData} open={openModal} onClose={() => setOpenModal(false)} tooltipId={"url-display-tooltip"}/>
+            <RefView // refDetails={refDetails}
+                     refFilter={refFilter}
+                     selectedRefId={selectedRefId}
+                     defaultRefId={selectedRefId}
+                     pageData={pageData}
+                     open={openModal}
+                     onClose={() => setOpenModal(false)} tooltipId={"url-display-tooltip"}/>
 
             {tooltipUrlDisplay}
 

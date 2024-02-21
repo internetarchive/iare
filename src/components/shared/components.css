@@ -27,6 +27,9 @@
     --color-condition: black;
     --color-condition-box: #d1d5da;
 
+    --color-filter-condition: #23374d;
+    --color-filter-condition-bg: #93bfee;
+
     --color-actionable-bg: hsl(205 71% 87% / 1);
 
     --color-button-dark-bg: #2199e8;
@@ -38,6 +41,8 @@
     --color-list-header: magenta;
     --color-list-rows: turquoise;
     --height-list-component: 12.67rem;
+
+    --padding-tight:.35rem;
 }
 
 /* Control Box */  /* may move these to better file location */
@@ -380,4 +385,22 @@
     max-width:var(--width-list-entry-count);
     /*background-color:green;*/
     text-align: center;
+}
+
+/* FilterConditionBox */
+
+.filter-condition-box {
+    margin-top: var(--margin-ref-view-section-tight);
+    padding: var(--padding-tight);
+    border-radius: var(--border-box-radius);
+    font-weight: normal;
+    font-size:.75rem;
+    border: var(--border-box);
+    background-color: var(--color-filter-condition-bg);
+    color: var(--color-filter-condition);
+}
+.filter-condition-box .condition-label {
+    font-size:80%;
+    /*font-weight:bold;*/
+    margin-bottom:.1rem;
 }

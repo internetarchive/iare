@@ -1,20 +1,24 @@
 import React, {useState, useContext} from 'react';
 import {ConfigContext} from "../../contexts/ConfigContext";
-// import {Tooltip as MyTooltip} from "react-tooltip";
-// import {REF_LINK_STATUS_FILTERS as linkDefs} from "../../constants/refFilterMaps";
-import {convertToCSV, copyToClipboard} from "../../utils/utils";
-import MakeLink from "../MakeLink";
-import FlockBox from "../FlockBox";
 import {ArticleVersions} from "../../constants/articleVersions";
+import {convertToCSV, copyToClipboard} from "../../utils/utils";
 import CitationDisplay_v1 from "./citations/CitationDisplay_v1";
 import CitationDisplay_v2 from "./citations/CitationDisplay_v2";
+import FilterConditionBox from "../FilterConditionBox";
+import FlockBox from "../FlockBox";
 
 const handleCiteRefClick = (e) => {
     e.stopPropagation()
     window.open(e.currentTarget.href, "_blank")
 }
 
-function RefFlock({ refArray, refFilter, onAction, pageData= {}, tooltipId=''} ) {
+function RefFlock({ refArray,
+                      refFilter,
+                      pageData= {},
+                      onAction,
+                      selectedReferenceId=null,
+                      options = {},
+                      tooltipId=''} ) {
 
     // const [refDetails, setRefDetails] = useState(null);
     // const [isLoading, setIsLoading] = useState(false);
@@ -27,15 +31,38 @@ function RefFlock({ refArray, refFilter, onAction, pageData= {}, tooltipId=''} )
     // TODO catch undefined myIariBase exception
 
 
-    const showRefView = (ref) => {
-        onAction({action:"showRefViewForRef", value:ref})
-        // TODO test to make sure passing the entire ref is ok, vs ref.id
+                // const showRefView = (ref) => {
+                //     onAction({action:"showRefViewForRef", value:ref})
+                //     // TODO test to make sure passing the entire ref is ok, vs ref.id
+                // }
+
+    const handleListClick= (e) => {
+        console.log("handleClickList")
+        e.preventDefault()  // prevents internal a links from jumping automatically
+
+        const refId = e.target.closest('button.ref-button').dataset["ref_id"]
+        // const myRef = e.target.closest('button.ref-button').dataset["ref"]
+
+        // alert(`will take action on refId ${refId}`)
+
+        // send action back up the component tree
+        onAction( {
+            "action": "referenceClicked",
+            "value": refId,
+        })
+
+        // onAction( {
+        //     "action": "referenceClickedRef",
+        //     "value": myRef,
+        // })
+
     }
+
 
     // if no references to show...
     if (!refArray) {
         return <FlockBox caption={"References List"} className={"ref-flock"}>
-            {"No references to show."}
+            {/*{"No references to show."}*/}
         </FlockBox>
     }
 
@@ -88,6 +115,12 @@ function RefFlock({ refArray, refFilter, onAction, pageData= {}, tooltipId=''} )
 
     }
 
+    const filterDescription = options.show_filter_description
+        ? <div className={"ref-list-filter-desc"} >
+            <FilterConditionBox filter={refFilter} />
+        </div>
+        : null
+
     const buttonCopy = <button onClick={handleCopyRefsClick} className={'utility-button small-button'} ><span>Copy to Clipboard</span></button>
 
     const flockCaption = <>
@@ -96,13 +129,16 @@ function RefFlock({ refArray, refFilter, onAction, pageData= {}, tooltipId=''} )
             <div>{filteredRefs.length} {filteredRefs.length === 1 ? 'Reference' : 'References'}</div>
             {buttonCopy}
         </div>
+        {filterDescription}
     </>
 
-    const flockHeader = <div className={"ref-list-header"} >
-        <div className={"list-header-row"}>
-            <div className={"list-name"}>Reference</div>
+    const flockListHeader = options.hide_header
+        ? null
+        : <div className={"ref-list-header"} >
+            <div className={"list-header-row"}>
+                <div className={"list-name"}>Reference</div>
+            </div>
         </div>
-    </div>
 
     const filteredRows = filteredRefs.map((_ref, i) => {
 
@@ -112,27 +148,39 @@ function RefFlock({ refArray, refFilter, onAction, pageData= {}, tooltipId=''} )
             referenceCaption = <CitationDisplay_v1 reference={_ref} index={i} />
 
         } else if (pageData.iariArticleVersion === ArticleVersions.ARTICLE_V2.key) {
-            referenceCaption = <CitationDisplay_v2 reference={_ref} index={i} />
+            referenceCaption = <CitationDisplay_v2 options={options} reference={_ref} index={i} />
             // referenceCaption = getReferenceCaptionVersion2(ref, i, isShowDebugInfo)
         }
 
         return <button key={_ref.ref_id}
                        className={"ref-button"}
-                       onClick={(e) => {
-                           console.log ('ref clicked')
-                           showRefView(_ref)
-                       }}>{referenceCaption}</button>
+                       data-ref_id={_ref.ref_id}
+                       data-ref={_ref}
+                       // onClick={(e) => {
+                       //     console.log ('ref clicked')
+                       //     showRefView(_ref)
+                       // }}
+                    >{referenceCaption}</button>
     })
 
-    const handleListClick= (e) => {
-        console.log("handleClickList")
-        e.preventDefault()
-        // e.stopPropagation()
+    /*
+    within a reference display, there may be links from the original citation.
+    fully resolved links, with https// will work fine, but there
+    are probably many relative links relative to wikipedia that
+    wont work here, as they will be relative to the top if IARE.
 
-    }
+    Also, if the link is not an external reference, i imagine we want to carry thru
+    the default action of exposing the reference detaiuls in the referee sectoin
+
+    this is accomplished by propogating up the "message event" to display
+    the details for the reference clicked.
+
+    SO, in conclusion, we will alwyas just find the surrounding ref button, and
+    pass back up the "showRefDetails(refId)" message (or, selecteReferenceId")
+    */
 
     const flockList = <>
-        {flockHeader}
+        {flockListHeader}
         <div className={"ref-list"}
              // data-tooltip-id="ref-list-tooltip"
              data-tooltip-id={tooltipId}
@@ -145,17 +193,7 @@ function RefFlock({ refArray, refFilter, onAction, pageData= {}, tooltipId=''} )
         </div>
     </>
 
-                // const refTooltip = <MyTooltip id="ref-list-tooltip"
-                //                            float={true}
-                //                            closeOnEsc={true}
-                //                            delayShow={220}
-                //                            variant={"info"}
-                //                            noArrow={true}
-                //                            offset={5}
-                //                            className={"ref-list-tooltip"}
-                // />
-
-
+    console.log(`RefFlock: render flock, refFilter: ${refFilter?.caption}`)
     return <FlockBox caption={flockCaption} className={"ref-flock"}>
 
         {flockList}

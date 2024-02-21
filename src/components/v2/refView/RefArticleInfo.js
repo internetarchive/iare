@@ -7,8 +7,19 @@ shows citation links for this reference
  */
 export default function RefArticleInfo({ _ref, pageData={}, onAction }) {
 
+
     let myConfig = React.useContext(ConfigContext);
     myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
+
+
+    if (!_ref) {
+        return <div className="ref-view-article-info">
+            <div className={"article-info"}>
+                Reference is undefined - no article info to display.
+            </div>
+        </div>
+    }
+
 
     const handleCiteLink = (e) => {
         // requires/expects e.target.dataset.cite_link
@@ -48,10 +59,9 @@ export default function RefArticleInfo({ _ref, pageData={}, onAction }) {
 
 
         articleInfo = <>
-            <div className={'header-left-part'}>&nbsp;
+            <div className={'header-left-part'}>{anchorLinkDisplay}
             </div>
             <div className={'header-right-part'}>
-                {anchorLinkDisplay}
                 <div>&nbsp;&nbsp;Footnote Occurrences:&nbsp;</div>
                 {citeRefLinks}
             </div>
