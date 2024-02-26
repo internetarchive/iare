@@ -18,16 +18,18 @@ import {IARE_ACTIONS} from "../../constants/iareActions";
 // export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {}, urlArchiveFilterMap = {} } ) {
 export default function UrlDisplay ({ pageData, options } ) {
 
-    const [urlFilters, setUrlFilters] = useState( null ); // keyed object of url filters to pass in to UrlFlock  TODO: implement UrlFilter custom objects
-    const [refFilter, setRefFilter] = useState( null ); // filter to pass in to RefFlock
-    const [selectedUrl, setSelectedUrl] = useState(''); // currently selected url in url list
-    const [currentState, setCurrentState] = useState({})
-
-    const [openModal, setOpenModal] = useState(false)
-    // const [refDetails, setRefDetails] = useState(null);
-    const [selectedRefId, setSelectedRefId] = useState(null);
-
     const [currentConditions, setCurrentConditions] = useState([])
+
+    const [urlFilters, setUrlFilters] = useState( null ); // keyed object of url filters to pass in to UrlFlock  TODO: implement UrlFilter custom objects
+    const [selectedUrl, setSelectedUrl] = useState(''); // currently selected url in url list
+
+    const [refFilter, setRefFilter] = useState( null ); // filter to pass in to RefFlock
+    const [selectedRefIndex, setSelectedRefIndex] = useState(null);  // currently selected ref index in RefFlock list
+
+    const [currentState, setCurrentState] = useState({})  // aggregate state of filter boxes
+
+    const [openModal, setOpenModal] = useState(false)  // shows or hides RefView popup
+
 
     const filters = {
         actionable: { key: "actionable" },
@@ -58,6 +60,10 @@ export default function UrlDisplay ({ pageData, options } ) {
     // state of what it's current "value" is that it is filtering upon.
     // The filter boxes respond to currentState by adjusting the displayed state.
     // If "whichFilter" is null, all filter states reset to null
+
+    // NB Currently only 1 filter at a time can be active, so, we set the state
+    // of all filters except the one specified to be null. Only 1 filter at a
+    // time will display "selected state"
     const setFilterState = (whichFilter, value) => {
         setCurrentState(prevState => {
             const newState = prevState
@@ -72,31 +78,26 @@ export default function UrlDisplay ({ pageData, options } ) {
     /*
     show modal refView
     - refFilter should already be set
-    - selectedRefId should be respected
+    - selectedRefIndex should be respected
     - set modal to "show"
      */
-    const showRefView = useCallback( (refId) => {
+    const showRefView = useCallback( (refIndex) => {
         // cancel any current tooltip
         // FIXME
 
         // handle null ref
-        if (!refId) {
-            alert(`urlDisplay: showRefView, refId is null!`)
-            // setSelectedRefId(ref.ref_id);  // default ref to select in popup
-            // setRefDetails("Trying to fetch empty reference");
+        if (!refIndex) {
+            alert(`urlDisplay: showRefView, Invalid refIndex!`)
             // TODO alert patron or show modal anyway?
             return;
         }
 
-        // alert(`urlDisplay: showRefView, ref id is: ${refId}`)
-        // setRefDetails(ref);
-        // setSelectedRefId(ref.ref_id);  // default ref to select in popup
-        setSelectedRefId(refId);  // default ref to select in popup
+        setSelectedRefIndex(refIndex);  // default ref to select in popup
         setOpenModal(true)
 
     }, [])
 
-    // callback from sub-components that induce various actions.
+    // callback from sub-components when various actions induced.
     //
     // "result" parameter is an object consisting of:
     //  {
@@ -106,7 +107,8 @@ export default function UrlDisplay ({ pageData, options } ) {
     //
     // Most actions set the flock filters to a current value.
     // Currently only one filter can be applied at a time.
-    // Maybe later the capability of more than one filter will exist.
+    // Maybe later the capability of more than one filter will come to be.
+    //
     const handleAction = useCallback( result => {
         const {action, value} = result;
         console.log (`UrlDisplay: handleAction: action=${action}, value=${value}`);
@@ -239,8 +241,7 @@ export default function UrlDisplay ({ pageData, options } ) {
         }
 
         else if (action === IARE_ACTIONS.SHOW_REFERENCE_VIEWER.key) {
-            const myRefId = value  // value is reference id
-            showRefView(myRefId)
+            showRefView(value)  // value is reference index
         }
 
         else {
@@ -459,10 +460,11 @@ export default function UrlDisplay ({ pageData, options } ) {
         // value is reference (or reference id?)(or ref index?)
         // action should be "referenceClicked"
         if (result.action === "referenceClicked") {
-            const refId = result.value
+
+            const refIndex = result.value
             // alert(`Reference clicked - will show RefView with current filter and selected refid of: ${refId}`)
             // pass up to local handler
-            handleAction({"action":IARE_ACTIONS.SHOW_REFERENCE_VIEWER.key, value:refId})
+            handleAction({"action":IARE_ACTIONS.SHOW_REFERENCE_VIEWER.key, value:refIndex})
             // NB I know this is redundant, but leaving ot this way in case we want to
             //  massage any of the data before passing it to RefView
         }
@@ -515,6 +517,8 @@ export default function UrlDisplay ({ pageData, options } ) {
                               onAction={handleRefClick}
                               options={{hide_header:true, show_filter_description: false}}
                               tooltipId={"url-display-tooltip"}
+                              context={"UrlDisplay"}
+
                     />
                 </div>
 
@@ -524,8 +528,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             {/* this is the popup Reference Viewer component */}
             <RefView // refDetails={refDetails}
                      refFilter={refFilter}
-                     selectedRefId={selectedRefId}
-                     defaultRefId={selectedRefId}
+                     defaultRefIndex={selectedRefIndex}
                      pageData={pageData}
                      open={openModal}
                      onClose={() => setOpenModal(false)} tooltipId={"url-display-tooltip"}/>

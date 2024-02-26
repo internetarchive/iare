@@ -15,11 +15,14 @@ function RefFlock({ refArray,
                       refFilter,
                       pageData= {},
                       onAction,
-                      selectedReferenceId=null,
+                      selectedRefIndex=null,
                       options = {},
-                      tooltipId=''} ) {
+                      tooltipId='',
+                      context=""} ) {
 
     const [tooltipHtmlRefList, setTooltipHtmlRefList] = useState( '<div>ToolTip<br />second line</div>' );
+    // eslint-disable-next-line react/jsx-pascal-case
+    const [selectedRefIndex2, setSelectedRefIndex2] = useState( selectedRefIndex );
 
     // TODO catch undefined myIariBase exception
 
@@ -27,15 +30,12 @@ function RefFlock({ refArray,
         console.log("handleClickList")
         e.preventDefault()  // prevents internal a links from jumping automatically
 
-        const refId = e.target.closest('button.ref-button').dataset["ref_id"]
-        // const myRef = e.target.closest('button.ref-button').dataset["ref"]
+        const refIndex = e.target.closest('button.ref-button').dataset["ref_index"]
 
-        // alert(`will take action on refId ${refId}`)
-
-        // send action back up the component tree
+        // send action up the calling component tree
         onAction( {
             "action": "referenceClicked",
-            "value": refId,
+            "value": refIndex,
         })
 
     }
@@ -69,7 +69,8 @@ function RefFlock({ refArray,
 
         let refArrayData = filteredRefs
 
-        // sort filtered refs and return fields per each ref
+        // sort filtered refs by order they arrived from source
+        // and return fields forr each ref
         refArrayData = refArrayData.sort(
             (a, b) => (a.ref_index > b.ref_index) ? 1 : (a.ref_index < b.ref_index) ? -1 : 0
         ).map( r => {
@@ -136,9 +137,17 @@ function RefFlock({ refArray,
             // referenceCaption = getReferenceCaptionVersion2(ref, i, isShowDebugInfo)
         }
 
-        return <button key={_ref.ref_id}
-                       className={"ref-button"}
-                       data-ref_id={_ref.ref_id}
+        let className="ref-button"
+        if (selectedRefIndex !== undefined && selectedRefIndex !== null
+            && (selectedRefIndex.toString() === _ref.ref_index.toString())) {
+            className += " selected"
+            console.log(`RefFlock (${context})::filteredRows: found selected, selectedRefIndex: ${selectedRefIndex}`)
+        }
+
+
+        return <button key={_ref.ref_index}
+                       className={className}
+                       data-ref_index={_ref.ref_index}
                        data-ref={_ref}
                        // onClick={(e) => {
                        //     console.log ('ref clicked')
@@ -156,11 +165,11 @@ function RefFlock({ refArray,
     Also, if the link is not an external reference, i imagine we want to carry thru
     the default action of exposing the reference detaiuls in the referee sectoin
 
-    this is accomplished by propogating up the "message event" to display
+    this is accomplished by propagating up the "message event" to display
     the details for the reference clicked.
 
-    SO, in conclusion, we will alwyas just find the surrounding ref button, and
-    pass back up the "showRefDetails(refId)" message (or, selecteReferenceId")
+    SO, in conclusion, we will always just find the surrounding ref button, and
+    pass back up the "showRefDetails(refId)" message (or, selectReferenceId")
     */
 
     const flockList = <>
@@ -170,14 +179,13 @@ function RefFlock({ refArray,
              data-tooltip-id={tooltipId}
              data-tooltip-html={tooltipHtmlRefList}
              onMouseOver={onHoverListItem}
-
              onClick={handleListClick}
         >
             {filteredRows}
         </div>
     </>
 
-    console.log(`RefFlock: render flock, refFilter: ${refFilter?.caption}`)
+    console.log(`RefFlock (${context}): selectedRefIndex2: ${selectedRefIndex2}, refFilter: ${refFilter?.caption}`)
     return <FlockBox caption={flockCaption} className={"ref-flock"}>
 
         {flockList}

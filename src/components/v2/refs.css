@@ -5,6 +5,8 @@
     --color-ref-bg: #d5e5f6; /* d5f6d5 */ /* d5e5f6 */ /* d5e2f6 */
     --color-ref-bg-header: var(--color-list-header-bg);
     --color-ref-hilite: #0f0fe6;
+    --border-ref-button-ref-list: 2px solid #888888;
+    --border-ref-button-ref-list-selected: 4px solid mediumvioletred;
 
     --color-filter-button: #d1d5da;
     /*--color-filter-button-hover: #0f0fe6;*/
@@ -41,23 +43,23 @@
     margin-bottom:var(--spacing-ref-button);
     position:relative;
     overflow-wrap: break-word;
+
+    border: var(--border-ref-button-ref-list);
+
+    /*border: var(--border-ref-button);*/
 }
+
 .ref-button.is-pressed {
     background-color: #7690c4; /* #c1d4e0;*/
     /*width: 22rem;*/
 }
+.ref-button.selected {
+    background-color: #a6b9e5; /* #c1d4e0;*/
+    border: var(--border-ref-button-ref-list-selected);
+}
+
 .ref-button > span {
     display:block;
-}
-.ref-line.ref-title,
-.ref-line.ref-name,
-.ref-line.ref-template
-{
-    font-weight: bold;
-}
-.ref-line .caption {
-    font-style:italic;
-    opacity: 0.4;
 }
 .ref-button > .ref-count {
     color: var(--color-ref-hilite);
@@ -76,6 +78,19 @@
     height:1.25rem;
     display:inline;
 }
+
+.ref-line.ref-title,
+.ref-line.ref-name,
+.ref-line.ref-template
+{
+    font-weight: bold;
+}
+.ref-line .caption {
+    font-style:italic;
+    opacity: 0.4;
+}
+
+
 .link-status-good_good {
     content: url('../../images/good_good.png');
 }

@@ -87,7 +87,7 @@ export default function PageInfo({ pageData }) {
 
         const refData = pageData.references.map( _ref => {
             return [
-                _ref["id"],
+                _ref["ref_index"],
                 _ref["name"],
                 _ref["type"],
                 _ref["footnote_subtype"],
@@ -97,7 +97,7 @@ export default function PageInfo({ pageData }) {
 
         // add column labels
         refData.unshift( [
-            'ref_id',
+            'ref_index',
             'name',
             'type',
             'subtype',

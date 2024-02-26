@@ -12,14 +12,16 @@ function CitationDisplay_v1({ reference = null, index=0, showDebug=false}) {
     let spanCount = 0
 
     const doiLinks = []
-    reference.templates.forEach( (t, ti) => {
-        // for each template, if there is a "doi" parameter, add it to the display
-        if (t.parameters?.doi) {
-            hasContent = true
-            const href = `https://doi.org/${encodeURIComponent(t.parameters.doi)}`
-            doiLinks.push(<MakeLink href={href} linkText={`DOI: ${t.parameters.doi}`} key={`${ti}-${t.parameters.doi}`}/> )
-        }
-    })
+    if (reference.templates) {
+        reference.templates.forEach( (t, ti) => {
+            // for each template, if there is a "doi" parameter, add it to the display
+            if (t.parameters?.doi) {
+                hasContent = true
+                const href = `https://doi.org/${encodeURIComponent(t.parameters.doi)}`
+                doiLinks.push(<MakeLink href={href} linkText={`DOI: ${t.parameters.doi}`} key={`${ti}-${t.parameters.doi}`}/> )
+            }
+        })
+    }
 
     const setSpan = () => {
         hasContent = true

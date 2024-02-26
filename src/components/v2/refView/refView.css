@@ -21,6 +21,8 @@
     --margin-ref-view:.5rem;
     --margin-ref-view-section:1.65rem;
     --margin-ref-view-section-tight:.5rem;
+
+
 }
 
 .ref-modal-overlay {
@@ -412,4 +414,14 @@
     /*font-size:1rem;*/
     /*background-color: var(--button-color-blue)*/
 }
+
+.ref-view-list .ref-button {
+    background-color: #a6b9e5; /* #c1d4e0;*/
+}
+.ref-view-list .ref-button.selected {
+    background-color: #d3def8;
+    /*width: 22rem;*/
+    border: 3px solid #0966a4;
+}
+
 

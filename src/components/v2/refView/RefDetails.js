@@ -8,7 +8,7 @@ import RefWikitext from "./RefWikitext";
 /*
 
  */
-function RefDetails({ refDetails = {},
+function RefDetails({ refDetails,
                         pageData = {},
                         onAction,
                         tooltipId= null,

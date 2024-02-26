@@ -266,6 +266,9 @@ export default function PageData({pageData = {}}) {
 
     const getAnchorReferences = (pageData) => {
         // reduce references by eliminating repeats and collecting ref referrals
+        // "anchor refs" are defined as a reference that describes the content of a reference.
+        // If it is named, it can be referred to by another reference by that name.
+        // If it is not named, it is just a single instance of a reference.
 
         // for refs, if dehydrated=true, use pageData.dehydrated_references, else use pageData.references
         const refs = (pageData?.dehydrated_references?.length)
@@ -371,8 +374,14 @@ export default function PageData({pageData = {}}) {
         const anchorRefs = getAnchorReferences(pageData)
 
         // process all anchor references
-        anchorRefs.forEach( ref => {
+        anchorRefs.forEach( (ref, index) => {
             processReference(ref, pageData.urlDict)
+
+            // assign dynamic ref_index property to each reference.
+            // this gives us the ability to index each reference internally.
+
+            ref.ref_index = index
+
         })
 
         // associate citeref data with anchorRefs

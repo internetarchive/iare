@@ -7,29 +7,25 @@ import RefDetails from "./RefDetails";
 import "./refView.css"
 
 
-export default function RefView({ open, onClose,
-                                    // refDetails,  // TODO: remove, as refDetails should be set in this component as a state
+export default function RefView({ open,
+                                    onClose,
                                     pageData = {},
                                     refFilter=null,
-                                    defaultRefId=0,
+                                    defaultRefIndex=0,
+                                    tooltipId
+                                }) {
 
-                                    // refView must take a filter and a default selected ref id
-                                    // that filter gets passed on to RefFlock
-                                    tooltipId }) {
-
+    console.log(`RefView: defaultRefIndex: ${defaultRefIndex}`)
     // eslint-disable-next-line
-    const [selectedRefId, setSelectedRefId]= useState(defaultRefId)
-    // xxeslint-disable-next-line eqeqeq
-    const [refDetails, setRefDetails]= useState(defaultRefId
-        ? pageData.references.find(
-            r => {
-                return r.ref_id
-                ? r.ref_id.toString() === defaultRefId.toString()
-                : false
+    const [selectedRefIndex, setSelectedRefIndex]= useState(defaultRefIndex)
+    const [refDetails, setRefDetails]= useState((defaultRefIndex === undefined || defaultRefIndex === null)
+        // default ref details
+        ? null
+        : pageData.references.find(
+            r => {  // assume ref_index and ref_index.toString() is valid
+                return r.ref_index.toString() === defaultRefIndex.toString()
             })
-        : null
     )
-    // NB using == instead of === because an int == str
 
     let myConfig = React.useContext(ConfigContext);
     myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
@@ -42,19 +38,21 @@ export default function RefView({ open, onClose,
             }
         };
         window.addEventListener('keydown', handleKeyDown);
+
+        // return value is function to call upon component close
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
         };
     }, [onClose]);
 
+    // get initial ref details to show upon component init
+    useEffect(() => {
+        // setRefDetails(refDetails)
+        // setSelectedRefIndex(defaultRefIndex)
+        handleRefListClick({"action":"referenceClicked", "value": defaultRefIndex})
+    }, []);
 
-    console.log("RefView: rendering")
-
-    // close modal if not in open state
-    if (!open) return null;
-
-
-    const handleRefListClick = (result) => {
+    const handleRefListClick = React.useCallback((result) => {
         // set refDetails according to reference id
         // alert(`handleRefListClick: result: ${JSON.stringify(result)}`)
 
@@ -62,30 +60,30 @@ export default function RefView({ open, onClose,
 
         if (result.action === "referenceClicked") {
 
-            if (pageData.iariArticleVersion === ArticleVersions.ARTICLE_V1.key) {
-                // get ref details for refId (specified by value)
-                const refId = result.value
-                // we need to use different algorithm here...V! does not contain ref_id
-                // NB TODO need to have a common index for refs...
-                //  can be iare-session specific; does not need to carry over across pages por page fetches
-                const foundRef = pageData.references.find(r => r.ref_id === refId)
-                setRefDetails(foundRef)
+            const refIndex = result.value
 
-            } else if (pageData.iariArticleVersion === ArticleVersions.ARTICLE_V2.key) {
-                // get ref details for refId (specified by value)
-                const refId = result.value
-                const foundRef = refId
-                    ? pageData.references.find(
-                        r => {
-                            return r.ref_id
-                                ? r.ref_id.toString() === refId.toString()
-                                : false
-                        })  // NB Note ==, not ===
-                    : null
-                setRefDetails(foundRef)
-            }
+            const foundRef = (refIndex === undefined || refIndex === null)
+                // default ref details
+                ? null
+                : pageData.references.find(
+                    r => {  // assume ref_index and ref_index.toString() is valid
+                        return r.ref_index.toString() === refIndex.toString()
+                    })
+
+            setRefDetails(foundRef)
+            setSelectedRefIndex(refIndex)
+
+            //
+            // RefView owns selectedRefIndex state that us sent to RfFlock sub-encodeURIComponent(
+            //     - set selectedRefIndex here
+            //     - should be refdlected in refFlock
+
         }
-    }
+    }, [])
+
+
+    // close modal if not in open state
+    if (!open) return null;
 
     return <div className='ref-modal-overlay' onClick={onClose} >
         <Draggable
@@ -118,34 +116,34 @@ export default function RefView({ open, onClose,
 
                 <div className="ref-view-contents">
 
-                    {/*<div className="row no-gutters">*/}
+                    <div className={"ref-view-list"}>
 
-                        <div className={"ref-view-list"}>
+                        {/* show Ref Flock at left of ref view for navigation */}
+                        <RefFlock pageData={pageData}
+                                  refArray={pageData.references}
+                                  refFilter={refFilter}
+                                  onAction={handleRefListClick}
 
-                            {/* show Ref Flock at left of ref view for navigation */}
-                            <RefFlock pageData={pageData}
-                                      refArray={pageData.references}
-                                      refFilter={refFilter}
-                                      onAction={handleRefListClick}
-                                      selectedReferenceId={null}
-                                      options={{
-                                          hide_header: true,
-                                          show_extra: false,
-                                          show_filter_description: true
-                                        }}
-                                      tooltipId={"url-display-tooltip"}
-                            />
-                        </div>
+                                  // selectedRefIndex={selectedRefIndex}
+                                  selectedRefIndex={defaultRefIndex}
 
-                        <div className="ref-view-details">
-                            <RefDetails
-                                refDetails={refDetails}
-                                pageData={pageData}
-                                tooltipId={tooltipId}
-                                config={myConfig} />
-                        </div>
+                                  options={{
+                                      hide_header: true,
+                                      show_extra: false,
+                                      show_filter_description: true
+                                    }}
+                                  tooltipId={"url-display-tooltip"}
+                                  context={"RefView"}
+                        />
+                    </div>
 
-                    {/*</div>*/}
+                    <div className="ref-view-details">
+                        <RefDetails
+                            refDetails={refDetails}
+                            pageData={pageData}
+                            tooltipId={tooltipId}
+                            config={myConfig} />
+                    </div>
 
                 </div>
 
