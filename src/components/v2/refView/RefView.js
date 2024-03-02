@@ -5,27 +5,30 @@ import {ArticleVersions} from "../../../constants/articleVersions";
 import RefFlock from "../RefFlock";
 import RefDetails from "./RefDetails";
 import "./refView.css"
+import {IARE_ACTIONS} from "../../../constants/iareActions";
 
 
-export default function RefView({ open,
+export default function RefView({open,
                                     onClose,
+                                    onAction,
+
                                     pageData = {},
+                                    refDetails=null,
                                     refFilter=null,
-                                    defaultRefIndex=0,
+                                    selectedRefIndex=0,
+
                                     tooltipId
                                 }) {
 
-    console.log(`RefView: defaultRefIndex: ${defaultRefIndex}`)
     // eslint-disable-next-line
-    const [selectedRefIndex, setSelectedRefIndex]= useState(defaultRefIndex)
-    const [refDetails, setRefDetails]= useState((defaultRefIndex === undefined || defaultRefIndex === null)
-        // default ref details
-        ? null
-        : pageData.references.find(
-            r => {  // assume ref_index and ref_index.toString() is valid
-                return r.ref_index.toString() === defaultRefIndex.toString()
-            })
-    )
+
+    // const [selectedRefIndex, setSelectedRefIndex]= useState(defaultRefIndex)
+    //
+    // const [refDetails, setRefDetails]= useState((defaultRefIndex === undefined || defaultRefIndex === null)
+    //     // default ref details
+    //     ? null
+    //     :
+    // )
 
     let myConfig = React.useContext(ConfigContext);
     myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
@@ -33,9 +36,23 @@ export default function RefView({ open,
     // adds "Escape Key closes modal" feature
     useEffect(() => {
         const handleKeyDown = (event) => {
+
+            // event.stopPropagation()
+            // event.preventDefault()
+
             if (event.key === 'Escape') {
                 onClose()
             }
+
+            // else if (event.key === 'ArrowLeft') {
+            //     // handleNavPrev()
+            //     console.log("RefView: handleKeyDown: ArrowLeft")
+            // }
+            // else if (event.key === 'ArrowRight') {
+            //     // handleNavNext()
+            //     console.log("RefView: handleKeyDown: ArrowRight")
+            // }
+
         };
         window.addEventListener('keydown', handleKeyDown);
 
@@ -45,12 +62,12 @@ export default function RefView({ open,
         };
     }, [onClose]);
 
-    // get initial ref details to show upon component init
-    useEffect(() => {
-        // setRefDetails(refDetails)
-        // setSelectedRefIndex(defaultRefIndex)
-        handleRefListClick({"action":"referenceClicked", "value": defaultRefIndex})
-    }, []);
+                // // get initial ref details to show upon component init
+                // useEffect(() => {
+                //     // setRefDetails(refDetails)
+                //     // setSelectedRefIndex(defaultRefIndex)
+                //     handleRefListClick({"action":"referenceClicked", "value": defaultRefIndex})
+                // }, []);
 
     const handleRefListClick = React.useCallback((result) => {
         // set refDetails according to reference id
@@ -58,20 +75,18 @@ export default function RefView({ open,
 
         if (!result) return
 
-        if (result.action === "referenceClicked") {
+        console.log(`RefView: handleRefListClick: result = ${result.action}:${result.value}`)
+
+        if (result.action === "referenceClicked") {  // .value holds ref index to select
 
             const refIndex = result.value
 
-            const foundRef = (refIndex === undefined || refIndex === null)
-                // default ref details
-                ? null
-                : pageData.references.find(
-                    r => {  // assume ref_index and ref_index.toString() is valid
-                        return r.ref_index.toString() === refIndex.toString()
-                    })
+            // send message back up to parent component
+            onAction({"action": IARE_ACTIONS.CHANGE_REF_VIEW_SELECTION.key, "value": refIndex})
 
-            setRefDetails(foundRef)
-            setSelectedRefIndex(refIndex)
+
+            // setRefDetails(foundRef)
+            // setSelectedRefIndex(refIndex)
 
             //
             // RefView owns selectedRefIndex state that us sent to RfFlock sub-encodeURIComponent(
@@ -117,27 +132,30 @@ export default function RefView({ open,
                 <div className="ref-view-contents">
 
                     <div className={"ref-view-list"}>
-
                         {/* show Ref Flock at left of ref view for navigation */}
                         <RefFlock pageData={pageData}
                                   refArray={pageData.references}
                                   refFilter={refFilter}
-                                  onAction={handleRefListClick}
 
-                                  // selectedRefIndex={selectedRefIndex}
-                                  selectedRefIndex={defaultRefIndex}
+                                  onAction={handleRefListClick}  // what happens when flock list clicked
+
+                                  selectedRefIndex={selectedRefIndex}
+                                  // selectedRefIndex={defaultRefIndex}
 
                                   options={{
                                       hide_header: true,
                                       show_extra: false,
-                                      show_filter_description: true
+                                      show_ref_nav: true,
+                                      show_filter_description: true,
+                                      context: "RefView",
                                     }}
                                   tooltipId={"url-display-tooltip"}
-                                  context={"RefView"}
                         />
                     </div>
 
                     <div className="ref-view-details">
+                        <div>Current ref index: {selectedRefIndex}</div>
+
                         <RefDetails
                             refDetails={refDetails}
                             pageData={pageData}

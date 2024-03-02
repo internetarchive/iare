@@ -4,6 +4,7 @@ import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../constants/ur
 import {convertToCSV, copyToClipboard} from "../../utils/utils";
 import {rspMap} from "../../constants/perennialList";
 import FlockBox from "../FlockBox";
+import {IARE_ACTIONS} from "../../constants/iareActions";
 
 /* definitions of url list headers */
 const urlListDef = {  // keys match class names
@@ -233,7 +234,7 @@ const urlFlock = React.memo( function UrlFlock({
 
         // send action back up the component tree to filter the references list
         onAction( {
-            "action": "showRefViewForUrl",
+            "action": IARE_ACTIONS.SHOW_REFERENCE_VIEWER_FOR_URL.key,
             "value": url,
         })
     }

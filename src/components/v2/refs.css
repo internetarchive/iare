@@ -55,7 +55,7 @@
 }
 .ref-button.selected {
     background-color: #a6b9e5; /* #c1d4e0;*/
-    border: var(--border-ref-button-ref-list-selected);
+    /*border: var(--border-ref-button-ref-list-selected);*/
 }
 
 .ref-button > span {
@@ -132,8 +132,10 @@
 
 .ref-list {
     /*max-width:19.5rem;*/
-    max-height: calc(var(--height-list) + 2rem);
-    height: calc(var(--height-list)+ 2rem);
+    /*max-height: calc(var(--height-list) + 2rem);*/
+    /*height: calc(var(--height-list)+ 2rem);*/
+    max-height: calc(var(--height-list) + 0rem);
+    height: calc(var(--height-list)+ 0rem);
     overflow-x: hidden;
     overflow-y: scroll;
 }

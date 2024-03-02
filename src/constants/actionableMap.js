@@ -108,7 +108,7 @@ export const ACTIONABLE_FILTER_MAP = {
 
         // fancy ref loop template loop
         // if (archive-url exists) && (url-status !== live)
-         */
+        */
 
         caption: <div>Link Status: GOOD,<br/>Archive Status: GOOD,<br/>Citation Priority: Not Live</div>,
         desc: "Link Status: GOOD, Archive Status: GOOD, Citation Priority: Not Live",
@@ -117,25 +117,20 @@ export const ACTIONABLE_FILTER_MAP = {
 
         filterFunction: () => (url) => {
 
-            // run through refs and templates
-            // if template.url === d.url
-            //   if template.archive_url
-            //      if template.url_status !== "live"
-            //          return TRUE
-            //      else return FALSE
-            //   else return FALSE;
-            // else return FALSE
-
             if (isLinkStatusGood(url.status_code)) {
                 // source link GOOD, check templates for archive and citation status
 
                 if (!url.refs) return false
 
+                // return true if ANY of the url's have a ref that meets condition...
                 return url.refs.some(r => {
-                    // if any of the ref's templates return true...
+
+                    // return true if any of the ref's have templates that meet condition...
                     return r.templates.some(t => {
+
                         // if d.url matches the url parameter in this template, continue checking...
                         if (t.parameters && (t.parameters.url === url.url)) {
+
                             // return true if archive_url is there and t.parameters.url_status !== "live"
                             return (t.parameters.archive_url && (
                                 (t.parameters.url_status !== undefined)
@@ -155,33 +150,32 @@ export const ACTIONABLE_FILTER_MAP = {
         refFilterFunction: () => (ref) => {
             // go thru refs - if their urls and templates match conditions, then return true
 
-
             return true
 
-            // return ref.urlObjects.some(url => {
-            //
-            //     if (isLinkStatusGood(url.status_code)) {
-            //         // source link GOOD, check templates for archive and citation status
-            //         return url.refs.some(r => {
-            //             // if any of the ref's templates return true...
-            //             return r.templates.some(t => {
-            //                 // if d.url matches the url parameter in this template, continue checking...
-            //                 if (t.parameters && (t.parameters.url === url.url)) {
-            //                     // return true if archive_url is there and t.parameters.url_status !== "live"
-            //                     return (t.parameters.archive_url && (
-            //                         (t.parameters.url_status !== undefined)
-            //                         &&
-            //                         (t.parameters.url_status !== "live")
-            //                     ))
-            //                 } else {
-            //                     return false
-            //                 }
-            //             })
-            //         })
-            //     } else {
-            //         return false
-            //     }
-            // })
+            return ref.urlObjects.some(url => {
+
+                if (isLinkStatusGood(url.status_code)) {
+                    // source link GOOD, check templates for archive and citation status
+                    return url.refs.some(r => {
+                        // if any of the ref's templates return true...
+                        return r.templates.some(t => {
+                            // if d.url matches the url parameter in this template, continue checking...
+                            if (t.parameters && (t.parameters.url === url.url)) {
+                                // return true if archive_url is there and t.parameters.url_status !== "live"
+                                return (t.parameters.archive_url && (
+                                    (t.parameters.url_status !== undefined)
+                                    &&
+                                    (t.parameters.url_status !== "live")
+                                ))
+                            } else {
+                                return false
+                            }
+                        })
+                    })
+                } else {
+                    return false
+                }
+            })
         },
     },
         

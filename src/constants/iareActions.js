@@ -1,5 +1,9 @@
 export const IARE_ACTIONS = {
 
+    REMOVE_ALL_FILTERS: {
+        key:"REMOVE_ALL_FILTERS",
+    },
+
     FILTER_BY_REFERENCE_STATS: {
         key:"FILTER_BY_REFERENCE_STATS",
     },
@@ -8,4 +12,15 @@ export const IARE_ACTIONS = {
         key:"SHOW_REFERENCE_VIEWER",
     },
 
+    SHOW_REFERENCE_VIEWER_FOR_URL: {
+        key:"SHOW_REFERENCE_VIEWER_FOR_URL",
+    },
+
+    CHANGE_REF_VIEW_SELECTION: {
+        key:"CHANGE_REF_VIEW_SELECTION",
+    },
+
+    SET_ACTIONABLE_FILTER: {
+        key: "SET_ACTIONABLE_FILTER"
+    },
 }

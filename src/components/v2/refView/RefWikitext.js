@@ -197,15 +197,15 @@ export default function RefWikitext({ wikitext, onAction }) {
         </div>
     </div>
 
-    // show the textare text using this method: https://dev.to/joshuajee/how-to-fix-defaultvalue-error-while-working-with-textarea-in-react-1a55
-    const editable = false
+    // show the textarea text using this method: https://dev.to/joshuajee/how-to-fix-defaultvalue-error-while-working-with-textarea-in-react-1a55
+    const editable = false || true
     console.log(`localWikitext: ${localWikitext}`)
 
     return <div className="row ref-view-wikitext">
         <div className="col-12">
             {header}
             <textarea className={`raw-wikitext ${editable ? "editable" : "non-editable"}`}
-                      readOnly={editable}
+                      readOnly={!editable}
                       value={wikitext}
                       onChange={(e) => setLocalWikitext(e.target.value)}
             />

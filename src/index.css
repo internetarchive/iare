@@ -39,7 +39,8 @@
     --font-weight-debug-section:normal;
 
     /* heights of lists - NB: should be dynamic */
-    --height-list: 68vh;
+    /*--height-list: 68vh;*/
+    --height-list: 63.5vh;
     --height-list-pdf: 70vh;
     --border-list:1px solid black;
 

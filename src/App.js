@@ -301,7 +301,7 @@ export default function App({env, myPath, myRefresh, myMethod, myArticleVersion,
     })
     const articleVersionChoiceSelect = <div className={"choice-wrapper article-version-wrapper"}>
         <Dropdown choices={articleVersionChoices}
-                  label={'Article Version:'}
+                  label={'Article Parser Version:'}
                   onSelect={handleArticleVersionChange} defaultChoice={articleVersion}/>
     </div>
 

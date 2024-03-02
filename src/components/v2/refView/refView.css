@@ -392,6 +392,7 @@
 
 .ref-view-list .ref-flock {
     width: 18rem;
+    height:100%;
 }
 
 /*** ***/
@@ -415,13 +416,37 @@
     /*background-color: var(--button-color-blue)*/
 }
 
+.ref-view-list .ref-list {
+    padding-top: 3px;
+    margin-top: -3px;
+    height:100%;
+}
 .ref-view-list .ref-button {
-    background-color: #a6b9e5; /* #c1d4e0;*/
+    background-color: hsl(211deg 65.22% 81.96%); /* #baccf5; *//* #b9c7e7; */ /* #a6b9e5; */ /* #c1d4e0;*/
+    margin-left:3px;
+    margin-right:3px;
+    width:inherit;
+    width:calc(100% - 6px);
+    /*!*padding:.3rem .3rem .3rem .4rem;*!*/
+    /*padding:0;*/
+    /*!*border:3px dotted limegreen;*!*/
+    /*border:3px solid transparent;*/
+}
+.ref-view-list .flock-box-contents {
+    padding:.33rem .13rem .33rem .13rem;
+    height: calc(100% - 145px);
 }
 .ref-view-list .ref-button.selected {
-    background-color: #d3def8;
+    background-color: #e3ebf9; /* hsl(222 77% 92% / 1); */ /* #d3def8; */
     /*width: 22rem;*/
-    border: 3px solid #0966a4;
+    /*border: 3px solid #0966a4;*/
+    outline: 3px solid #0966a4;
 }
 
+.ref-list-navigation {
+    margin-top:.5rem;
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
 
+}

@@ -25,6 +25,7 @@ export default function UrlDisplay ({ pageData, options } ) {
 
     const [refFilter, setRefFilter] = useState( null ); // filter to pass in to RefFlock
     const [selectedRefIndex, setSelectedRefIndex] = useState(null);  // currently selected ref index in RefFlock list
+    const [refDetails, setRefDetails] = useState(null);  // which ref is displayed in RefView
 
     const [currentState, setCurrentState] = useState({})  // aggregate state of filter boxes
 
@@ -85,14 +86,14 @@ export default function UrlDisplay ({ pageData, options } ) {
         // cancel any current tooltip
         // FIXME
 
-        // handle null ref
-        if (!refIndex) {
+        // handle null ref, but retain 0
+        if (!refIndex && refIndex !== 0) {
             alert(`urlDisplay: showRefView, Invalid refIndex!`)
             // TODO alert patron or show modal anyway?
             return;
         }
 
-        setSelectedRefIndex(refIndex);  // default ref to select in popup
+        // setSelectedRefIndex(refIndex);  // default ref to select in popup
         setOpenModal(true)
 
     }, [])
@@ -128,7 +129,7 @@ export default function UrlDisplay ({ pageData, options } ) {
                     //     setUrlFilters({ "url_status" : f })
                     // }
 
-        else if (action === "removeAll") {
+        else if (action === IARE_ACTIONS.REMOVE_ALL_FILTERS.key) {
             // clear filters (show all) for URL  and Refs list
             setUrlFilters(null)
             setRefFilter(null)
@@ -147,7 +148,46 @@ export default function UrlDisplay ({ pageData, options } ) {
             setCondition(f)
         }
 
-        else if (action === "setActionableFilter") {
+        else if (action === IARE_ACTIONS.SHOW_REFERENCE_VIEWER.key) {
+            showRefView(value)  // value is reference index
+        }
+
+        else if (action === IARE_ACTIONS.SHOW_REFERENCE_VIEWER_FOR_URL.key) {
+
+            // NB TODO Tis may not work, as selected ref may not be in current filtered RefList.
+            // but then again, maybe it is, and this is not a problem.
+            // and even if it isnt, the ref details would show up, but not be selected in the reflist at left
+
+            // also set Ref filter
+            // setRefFilter(getUrlRefFilter(value))
+
+            // NB What we need to do is assume the filter is set, and just bring up the RefView with the first ref
+            //  that is in the URL's reflist. this will just select the ref with the ref index, regardless of the
+            //  filtered list of refs dislppaye in RefView.
+            // NB It is assumed then, that the filteredRefs contains at least the ref being targeted with the URL
+
+            const myRef = pageData.urlDict[value]?.refs[0]
+            // myRef is first ref in url's ref list
+            // value is key into urlDict (the url text)
+
+            showRefView(myRef)
+
+            setSelectedUrl(value)
+        }
+
+        else if (action === IARE_ACTIONS.CHANGE_REF_VIEW_SELECTION.key) {
+            const refIndex = result.value
+            const selectedRef = pageData.references.find(
+                r => {  // assume ref_index and ref_index.toString() is valid
+                    return r.ref_index.toString() === refIndex.toString()
+                })
+            setRefDetails(selectedRef)
+            setSelectedRefIndex(refIndex)
+            showRefView(refIndex)  // value is reference index
+        }
+
+
+        else if (action === IARE_ACTIONS.SET_ACTIONABLE_FILTER.key) {
             // filter URL List by actionable filter determined by value as key
             const f = value ? ACTIONABLE_FILTER_MAP[value] : null
 
@@ -225,25 +265,6 @@ export default function UrlDisplay ({ pageData, options } ) {
             setFilterState(filters.templates, value)
         }
 
-
-        else if (action === "showRefViewForUrl") {
-
-            // value is url key name
-            const myRef = pageData.urlDict[value]?.refs[0]
-            // for now...eventually shall pass entire ref array so that refView
-            // shows a list of references to scroll with
-            showRefView(myRef)
-
-            // // NB disabling for now
-            // // also set Ref filter
-            // setRefFilter(getUrlRefFilter(value))
-            setSelectedUrl(value)
-        }
-
-        else if (action === IARE_ACTIONS.SHOW_REFERENCE_VIEWER.key) {
-            showRefView(value)  // value is reference index
-        }
-
         else {
             console.log(`Action "${action}" not supported.`)
             alert(`Action "${action}" not supported.`)
@@ -256,6 +277,29 @@ export default function UrlDisplay ({ pageData, options } ) {
 
     if (!pageData) return null;  // NB must be put AFTER useEffect and useCallback, as those hooks
                                  //    cannot exist after conditional statements
+
+    const getUrlRefFilter = (targetUrl) => {
+
+        if (!targetUrl || targetUrl === '') {
+            return null; // no filter means all filter
+        }
+
+        return {
+            // TODO: implement UrlFilter custom object
+
+            desc: `Citations with URL: ${targetUrl}`,
+
+            caption: <span>Contains URL: <br/><span
+                className={'target-url'}><a target={"_blank"} rel={"noreferrer"}
+                                            href={targetUrl} >{targetUrl}</a
+            ></span></span>,
+
+            filterFunction: () => (urlDict, ref) => {
+                // TODO make this use an array of targetUrls
+                return ref.urls.includes( targetUrl )
+            },
+        }
+    }
 
     const getUrlTemplateFilter = (templateName) => {
 
@@ -461,10 +505,12 @@ export default function UrlDisplay ({ pageData, options } ) {
         // action should be "referenceClicked"
         if (result.action === "referenceClicked") {
 
+            console.log(`UrlDisplay: handleRefClick: result.value: ${result.value}`)
             const refIndex = result.value
             // alert(`Reference clicked - will show RefView with current filter and selected refid of: ${refId}`)
             // pass up to local handler
-            handleAction({"action":IARE_ACTIONS.SHOW_REFERENCE_VIEWER.key, value:refIndex})
+                    // handleAction({"action":IARE_ACTIONS.SHOW_REFERENCE_VIEWER.key, value:refIndex})
+            handleAction({"action":IARE_ACTIONS.CHANGE_REF_VIEW_SELECTION.key, value:refIndex})
             // NB I know this is redundant, but leaving ot this way in case we want to
             //  massage any of the data before passing it to RefView
         }
@@ -526,12 +572,16 @@ export default function UrlDisplay ({ pageData, options } ) {
 
 
             {/* this is the popup Reference Viewer component */}
-            <RefView // refDetails={refDetails}
-                     refFilter={refFilter}
-                     defaultRefIndex={selectedRefIndex}
+            <RefView open={openModal}
+                     onClose={() => setOpenModal(false)}
+                     onAction={handleAction}
+                     
                      pageData={pageData}
-                     open={openModal}
-                     onClose={() => setOpenModal(false)} tooltipId={"url-display-tooltip"}/>
+                     refDetails={refDetails}
+                     selectedRefIndex={selectedRefIndex}
+                     refFilter={refFilter}
+                     
+                     tooltipId={"url-display-tooltip"}/>
 
             {tooltipUrlDisplay}
 
