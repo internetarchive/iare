@@ -95,13 +95,14 @@ function RefDetails({ refDetails,
             <RefViewRefDisplay _ref={refDetails}
                articleVersion={pageData.iariArticleVersion}
                showDebug={showDebug} />
-            <RefArticleInfo _ref={refDetails} pageData={pageData}/>
+            {/*<RefArticleInfo _ref={refDetails} pageData={pageData}/>*/}
         </div>
+
+        <RefActionables actionables={refDetails?.actionable} />
 
         <RefTemplates templates={refDetails?.templates} pageData={pageData} tooltipId={tooltipId} />
         {/*<RefWikitext wikitext={wikitext} ref_details={details} onAction={handleRefViewAction} />*/}
 
-        <RefActionables actions={refDetails?.actions} />
         <RefWikitext wikitext={refDetails?.wikitext} ref_details={refDetails} onAction={handleRefViewAction} />
 
     </>

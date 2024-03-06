@@ -110,7 +110,7 @@
 }
 .ref-view-contents h3 {
     font-weight:bold !important;
-    /*color:magenta !important;*/
+    color:#aaaaaa !important;
     margin-bottom: 0;
 }
 .ref-view-contents {
@@ -134,15 +134,6 @@
 
 
 /* Templates section of ref view details */
-
-.reference-info {
-    border: var(--border-box-light);
-    /*margin-bottom: var(--margin-box-bottom);*/
-    margin-bottom: var(--margin-ref-view-section);
-    padding: .5rem;
-    padding-bottom: 0;
-}
-
 
 /* Templates section of ref view details */
 
@@ -323,6 +314,29 @@
 
 .ref-view-actionables {
     margin-bottom: var(--margin-ref-view-section);
+    border: var(--border-box-light);
+    padding:.35rem;
+}
+.ref-view-actionables h3 {
+    color: #74afe6 !important;
+}
+.ref-view-actionables.no-action h3 {
+    color: #727272 !important;
+    font-style:italic;
+}
+.ref-actionable {
+    margin-top:.1rem;
+}
+.ref-actionable .action-desc {
+    font-weight: bold;
+    color: #727272;
+}
+.ref-actionable .action-fixit {
+    display:flex;
+    flex-direction: row;
+    flex-wrap:wrap;
+    justify-content:  left;
+    color: #727272;
 }
 
 .ref-view-parameters {
@@ -363,15 +377,42 @@
 }
 
 /* visual caption display of reference */
+.reference-info {
+    /*border: var(--border-box-light);*/
+    border-bottom: var(--border-box-light);
+
+    /*margin-bottom: var(--margin-ref-view-section);*/
+    /*margin-bottom: var(--margin-ref-view-section-tight);*/
+    margin-bottom: .75rem;
+
+    /*padding: .5rem;*/
+    /*padding-bottom: 0;*/
+    padding:0;
+}
+
 .ref-view-ref-display {
-    /*margin-bottom: var(--margin-ref-view-section-tight)*/
-    margin-bottom: .5rem;
+    margin-bottom: var(--margin-ref-view-section-tight);
+    min-height:7.0rem;
 }
 .ref-view-ref-display .ref-button {
-    min-height: 2rem;
-
+    /*min-height: 2rem;*/
+    margin-bottom:0;
+    /*min-height: 6.4rem;*/
+}
+.ref-view-ref-display .ref-meta {
+    border-top: var(--border-row);
+    margin-top:.25rem;
+    padding-top:.25rem;
 }
 
+.ref-button-wrapper {
+    /*display:flex;*/
+    /*flex-direction:row;*/
+    /*flex-wrap:wrap;*/
+    /*justify-content: space-between;*/
+    /*margin-top:.5rem;*/
+    display: flex;
+    flex-direction: column;}
 
 /* uncategorized */
 
@@ -395,6 +436,51 @@
     height:100%;
 }
 
+.ref-list-navigation {
+    margin-top:.5rem;
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+}
+
+.ref-nav-icon-next,
+.ref-nav-icon-prev {
+    width:1.1rem;
+    cursor: pointer;
+}
+.ref-nav-icon-next {
+    /*float:right;*/
+    content: url('../../../images/arrow_right.svg');
+}
+.ref-nav-icon-prev {
+    /*float:left;*/
+    content: url('../../../images/arrow_left.svg');
+}
+
+.ref-view-list .ref-list {
+    padding-top: 3px;
+    margin-top: -3px;
+    height:100%;
+}
+.ref-view-list .ref-button {
+    background-color: hsl(211deg 65.22% 81.96%); /* #baccf5; *//* #b9c7e7; */ /* #a6b9e5; */ /* #c1d4e0;*/
+    margin-left:3px;
+    margin-right:3px;
+    width:inherit;
+    width:calc(100% - 6px);
+}
+.ref-view-list .flock-box-contents {
+    padding:.33rem .13rem .33rem .13rem;
+    height: calc(100% - 145px);
+}
+.ref-view-list .ref-button.selected {
+    background-color: #e3ebf9; /* hsl(222 77% 92% / 1); */ /* #d3def8; */
+    /*width: 22rem;*/
+    /*border: 3px solid #0966a4;*/
+    outline: 3px solid #0966a4;
+}
+
 /*** ***/
 /*** ***/
 /*** ***/
@@ -416,37 +502,4 @@
     /*background-color: var(--button-color-blue)*/
 }
 
-.ref-view-list .ref-list {
-    padding-top: 3px;
-    margin-top: -3px;
-    height:100%;
-}
-.ref-view-list .ref-button {
-    background-color: hsl(211deg 65.22% 81.96%); /* #baccf5; *//* #b9c7e7; */ /* #a6b9e5; */ /* #c1d4e0;*/
-    margin-left:3px;
-    margin-right:3px;
-    width:inherit;
-    width:calc(100% - 6px);
-    /*!*padding:.3rem .3rem .3rem .4rem;*!*/
-    /*padding:0;*/
-    /*!*border:3px dotted limegreen;*!*/
-    /*border:3px solid transparent;*/
-}
-.ref-view-list .flock-box-contents {
-    padding:.33rem .13rem .33rem .13rem;
-    height: calc(100% - 145px);
-}
-.ref-view-list .ref-button.selected {
-    background-color: #e3ebf9; /* hsl(222 77% 92% / 1); */ /* #d3def8; */
-    /*width: 22rem;*/
-    /*border: 3px solid #0966a4;*/
-    outline: 3px solid #0966a4;
-}
 
-.ref-list-navigation {
-    margin-top:.5rem;
-    display:flex;
-    flex-direction: row;
-    justify-content: space-between;
-
-}

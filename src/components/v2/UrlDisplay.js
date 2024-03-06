@@ -63,8 +63,8 @@ export default function UrlDisplay ({ pageData, options } ) {
     // If "whichFilter" is null, all filter states reset to null
 
     // NB Currently only 1 filter at a time can be active, so, we set the state
-    // of all filters except the one specified to be null. Only 1 filter at a
-    // time will display "selected state"
+    //  of all filters except the one specified to be null. Only 1 filter at a
+    //  time will be in a "selected" state
     const setFilterState = (whichFilter, value) => {
         setCurrentState(prevState => {
             const newState = prevState
@@ -129,6 +129,10 @@ export default function UrlDisplay ({ pageData, options } ) {
                     //     setUrlFilters({ "url_status" : f })
                     // }
 
+        else if (action === IARE_ACTIONS.SHOW_REFERENCE_VIEWER.key) {
+            showRefView(value)  // value is reference index
+        }
+
         else if (action === IARE_ACTIONS.REMOVE_ALL_FILTERS.key) {
             // clear filters (show all) for URL  and Refs list
             setUrlFilters(null)
@@ -136,20 +140,6 @@ export default function UrlDisplay ({ pageData, options } ) {
             setSelectedUrl(null)
             setFilterState(null)
             setCondition(null)
-        }
-
-        else if (action === IARE_ACTIONS.FILTER_BY_REFERENCE_STATS.key) {
-            // filter URL List by actionable filter determined by value as key
-            const f = value ? REFERENCE_STATS_MAP[value] : null
-            setRefFilter(f?.refFilterFunction
-                ? { filterFunction: f.refFilterFunction }
-                : null)
-            setFilterState(filters.reference_stats, value)  // select reference stat's filter value
-            setCondition(f)
-        }
-
-        else if (action === IARE_ACTIONS.SHOW_REFERENCE_VIEWER.key) {
-            showRefView(value)  // value is reference index
         }
 
         else if (action === IARE_ACTIONS.SHOW_REFERENCE_VIEWER_FOR_URL.key) {
@@ -175,6 +165,16 @@ export default function UrlDisplay ({ pageData, options } ) {
             setSelectedUrl(value)
         }
 
+        else if (action === IARE_ACTIONS.FILTER_BY_REFERENCE_STATS.key) {
+            // filter REF List by stats specified by REFERENCE_STATS_MAP[ref_stats_key]
+            const f = value ? REFERENCE_STATS_MAP[value] : null
+            setRefFilter(f?.refFilterFunction
+                ? { filterFunction: f.refFilterFunction }
+                : null)
+            setFilterState(filters.reference_stats, value)  // select reference stat's filter value
+            setCondition(f)
+        }
+
         else if (action === IARE_ACTIONS.CHANGE_REF_VIEW_SELECTION.key) {
             const refIndex = result.value
             const selectedRef = pageData.references.find(
@@ -193,18 +193,66 @@ export default function UrlDisplay ({ pageData, options } ) {
 
             setUrlFilters({"action_filter": f})
             setRefFilter(f?.refFilterFunction
-                ? { filterFunction: f.refFilterFunction }
+                ? {
+                    desc: f.desc,
+                    caption: f.caption,
+                    filterFunction: f.refFilterFunction
+                }
                 : null)
             setFilterState(filters.actionable, value)
             setCondition(f)
         }
 
-        else if (action === "setDomainFilter") {
+        else if (action === "IARE_ACTIONS.SET_DOMAIN_FILTER.key") {
             // filter URL and Ref list by domain specified in value
             setUrlFilters({ "domain_filter" : getUrlDomainFilter(value) })
             setRefFilter(getRefDomainFilter(value))
             setFilterState(filters.domains, value)
             setCondition({category: "Pay Level Domains", desc: `Links of domain: "${value}"`})
+        }
+
+        else if (action === "IARE_ACTIONS.SET_PAPERS_FILTER.key") {
+            // value is filter key name
+            const f = value ? REF_FILTER_DEFS[value] : null
+            setRefFilter(f)
+            setUrlFilters(noneFilter)
+            setFilterState(filters.papers, value)
+            setCondition({category: "Papers", desc: `References with papers of type "${value}"`})
+        }
+
+        else if (action === "IARE_ACTIONS.SET_PERENNIAL_FILTER.key") {
+            // value is perennial to filter by
+            setUrlFilters({ "url_perennial_filter" : getUrlPerennialFilter(value) })
+            setRefFilter(getRefPerennialFilter(value))
+            setSelectedUrl(null)
+            setFilterState(filters.perennial, value)
+            setCondition({category: "Reliability", desc: `Links with Reliability Status of: "${rspMap[value].caption}"`})
+        }
+
+        else if (action === "IARE_ACTIONS.SET_TLD_FILTER.key") {
+            // value is tld
+            setUrlFilters({ "url_tld_filter" : getUrlTldFilter(value) })
+            setRefFilter(getRefTldFilter(value))
+            setSelectedUrl(null)
+            setFilterState(filters.tld, value)
+            setCondition({category: "Top Level Domain", desc: `Links with Top Level Domain of: "${value}"`})
+        }
+
+        else if (action === "IARE_ACTIONS.SET_BOOKS_FILTER.key") {
+            setUrlFilters({ "url_book_filter" : getUrlBooksFilter(value) })
+            setRefFilter(getRefBooksFilter(value))
+            setSelectedUrl(null)
+            setFilterState(filters.books, value)
+            setCondition({category: "Books", desc: `Links to books from "${value}"`})
+        }
+
+        else if (action === "IARE_ACTIONS.SET_TEMPLATE_FILTER.key") {
+            // filter URLs (and references?) by template indicated by "value" argument
+            setUrlFilters({ "url_template_filter" : getUrlTemplateFilter(value) })
+            setRefFilter(getRefTemplateFilter(value))
+            setSelectedUrl(null)
+            setCondition({category: "Template", desc: `Utilizes template "${value}"`})
+            setFilterState(filters.templates, value)
         }
 
         else if (action === "setLinkStatusFilter") {
@@ -219,50 +267,6 @@ export default function UrlDisplay ({ pageData, options } ) {
                 : null )
             setFilterState(filters.link_status, value)
             setCondition(f)
-        }
-
-        else if (action === "setPapersFilter") {
-            // value is filter key name
-            const f = value ? REF_FILTER_DEFS[value] : null
-            setRefFilter(f)
-            setUrlFilters(noneFilter)
-            setFilterState(filters.papers, value)
-            setCondition({category: "Papers", desc: `References with papers of type "${value}"`})
-        }
-
-        else if (action === "setPerennialFilter") {
-            // value is perennial to filter by
-            setUrlFilters({ "url_perennial_filter" : getUrlPerennialFilter(value) })
-            setRefFilter(getRefPerennialFilter(value))
-            setSelectedUrl(null)
-            setFilterState(filters.perennial, value)
-            setCondition({category: "Reliability", desc: `Links with Reliability Status of: "${rspMap[value].caption}"`})
-        }
-
-        else if (action === "setTldFilter") {
-            // value is tld
-            setUrlFilters({ "url_tld_filter" : getUrlTldFilter(value) })
-            setRefFilter(getRefTldFilter(value))
-            setSelectedUrl(null)
-            setFilterState(filters.tld, value)
-            setCondition({category: "Top Level Domain", desc: `Links with Top Level Domain of: "${value}"`})
-        }
-
-        else if (action === "setBooksFilter") {
-            setUrlFilters({ "url_book_filter" : getUrlBooksFilter(value) })
-            setRefFilter(getRefBooksFilter(value))
-            setSelectedUrl(null)
-            setFilterState(filters.books, value)
-            setCondition({category: "Books", desc: `Links to books from "${value}"`})
-        }
-
-        else if (action === "setTemplateFilter") {
-            // filter URLs (and references?) by template indicated by "value" argument
-            setUrlFilters({ "url_template_filter" : getUrlTemplateFilter(value) })
-            setRefFilter(getRefTemplateFilter(value))
-            setSelectedUrl(null)
-            setCondition({category: "Template", desc: `Utilizes template "${value}"`})
-            setFilterState(filters.templates, value)
         }
 
         else {
@@ -355,6 +359,8 @@ export default function UrlDisplay ({ pageData, options } ) {
             return null; // no bookDomain means all filter
         }
         return {
+            desc: `References that contain "${bookDomain}" in a Cite Book template"`,
+            caption: <span>{`Contains Books from "${bookDomain}"`}</span>,
             filterFunction: () => (urlDict, ref) => {
                 if (!ref.template_names.includes("cite book")) return false  // block if no book template
                 return ref.urls.some( url => {
@@ -409,8 +415,8 @@ export default function UrlDisplay ({ pageData, options } ) {
         }
 
         return {
-            caption: `Contains ${targetDomain} domain`,
-            desc: `Link contains domain: ${targetDomain}`,
+            desc: `Link contains domain: "${targetDomain}"`,
+            caption: `Contains "${targetDomain}" domain`,
             filterFunction: () => (url) => {
                 return url?.pay_level_domain === targetDomain
                 // return url?.netloc === targetDomain
@@ -426,8 +432,8 @@ export default function UrlDisplay ({ pageData, options } ) {
         }
 
         return {
-            caption: `Contains ${targetDomain} domain`,
-            desc: `Reference contains links that contain domain: ${targetDomain}`,
+            caption: `Contains "${targetDomain}" domain`,
+            desc: `Reference contains links that contain domain: "${targetDomain}"`,
             filterFunction: () => (urlDict, ref) => {
                 return ref.urls.some( url => {
                     // const urlObject = urlDict[url]?
@@ -578,6 +584,7 @@ export default function UrlDisplay ({ pageData, options } ) {
                      
                      pageData={pageData}
                      refDetails={refDetails}
+
                      selectedRefIndex={selectedRefIndex}
                      refFilter={refFilter}
                      

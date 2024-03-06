@@ -20,21 +20,12 @@ export default function RefView({open,
                                     tooltipId
                                 }) {
 
-    // eslint-disable-next-line
-
-    // const [selectedRefIndex, setSelectedRefIndex]= useState(defaultRefIndex)
-    //
-    // const [refDetails, setRefDetails]= useState((defaultRefIndex === undefined || defaultRefIndex === null)
-    //     // default ref details
-    //     ? null
-    //     :
-    // )
-
     let myConfig = React.useContext(ConfigContext);
     myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
 
-    // adds "Escape Key closes modal" feature
     useEffect(() => {
+        // adds "Escape Key closes modal" feature
+
         const handleKeyDown = (event) => {
 
             // event.stopPropagation()
@@ -43,15 +34,6 @@ export default function RefView({open,
             if (event.key === 'Escape') {
                 onClose()
             }
-
-            // else if (event.key === 'ArrowLeft') {
-            //     // handleNavPrev()
-            //     console.log("RefView: handleKeyDown: ArrowLeft")
-            // }
-            // else if (event.key === 'ArrowRight') {
-            //     // handleNavNext()
-            //     console.log("RefView: handleKeyDown: ArrowRight")
-            // }
 
         };
         window.addEventListener('keydown', handleKeyDown);
@@ -62,43 +44,55 @@ export default function RefView({open,
         };
     }, [onClose]);
 
-                // // get initial ref details to show upon component init
-                // useEffect(() => {
-                //     // setRefDetails(refDetails)
-                //     // setSelectedRefIndex(defaultRefIndex)
-                //     handleRefListClick({"action":"referenceClicked", "value": defaultRefIndex})
-                // }, []);
-
     const handleRefListClick = React.useCallback((result) => {
-        // set refDetails according to reference id
-        // alert(`handleRefListClick: result: ${JSON.stringify(result)}`)
+        // what happens when reference in ref list clicked:
+        //  set refDetails according to reference id
 
         if (!result) return
 
         console.log(`RefView: handleRefListClick: result = ${result.action}:${result.value}`)
 
-        if (result.action === "referenceClicked") {  // .value holds ref index to select
+        if (result.action === "referenceClicked") {
 
-            const refIndex = result.value
+            const refIndex = result.value  // value holds ref index to select
 
-            // send message back up to parent component
+            // send message back up to parent component, which should take care of updating refDetails
             onAction({"action": IARE_ACTIONS.CHANGE_REF_VIEW_SELECTION.key, "value": refIndex})
-
-
-            // setRefDetails(foundRef)
-            // setSelectedRefIndex(refIndex)
-
-            //
-            // RefView owns selectedRefIndex state that us sent to RfFlock sub-encodeURIComponent(
-            //     - set selectedRefIndex here
-            //     - should be refdlected in refFlock
 
         }
     }, [])
 
 
+                    // const handleFlockKeyDown = (event) => {
+                    //
+                    //     console.log(`RefView: handleFlockKeyDown, event.key: ${event.key}`)
+                    //     // event.stopPropagation()
+                    //     // event.preventDefault()
+                    //
+                    //     if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+                    //         event.stopPropagation()
+                    //         event.preventDefault()
+                    //         // ??? event.preventDefault()
+                    //         console.log(`RefView: handleKeyDown: selectedRefIndex: ${selectedRefIndex}, arrowLeft or arrowUp`)
+                    //         // handleNavPrev()
+                    //
+                    //     } else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+                    //         event.stopPropagation()
+                    //         event.preventDefault()
+                    //         console.log(`RefView: handleKeyDown: selectedRefIndex: ${selectedRefIndex}, arrowRight or arrowDown`)
+                    //         // handleNavNext()
+                    //     }
+                    //
+                    // };
+
+
     // close modal if not in open state
     if (!open) return null;
+
+    const debugAtTop = false && <>
+        <div>Debug:</div>
+        <div>Current ref index: {selectedRefIndex}</div>
+        </>
 
     return <div className='ref-modal-overlay' onClick={onClose} >
         <Draggable
@@ -138,6 +132,7 @@ export default function RefView({open,
                                   refFilter={refFilter}
 
                                   onAction={handleRefListClick}  // what happens when flock list clicked
+                                  // onKeyDown={handleFlockKeyDown}  // what happens when key down flock list
 
                                   selectedRefIndex={selectedRefIndex}
                                   // selectedRefIndex={defaultRefIndex}
@@ -154,8 +149,7 @@ export default function RefView({open,
                     </div>
 
                     <div className="ref-view-details">
-                        <div>Current ref index: {selectedRefIndex}</div>
-
+                        {debugAtTop}
                         <RefDetails
                             refDetails={refDetails}
                             pageData={pageData}

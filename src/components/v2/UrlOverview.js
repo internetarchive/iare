@@ -13,6 +13,7 @@ import Checkbox from "../Checkbox";
 
 import {Chart, LinearScale, BarElement, ArcElement, Legend, Tooltip, Title, SubTitle, Colors,} from 'chart.js'
 import ReferenceStats from "./charts/ReferenceStats";
+import {ConfigContext} from "../../contexts/ConfigContext";
 Chart.register(LinearScale, BarElement, ArcElement, Legend, Tooltip, Title, SubTitle, Colors,);
 
 // displays overview stats of article data
@@ -49,6 +50,9 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState, tool
         white: "#FFFFFF"
     }
 
+    let myConfig = React.useContext(ConfigContext);
+    myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
+
     const onToggleShow = (name) => {
         setExpand( prevState => {
             const newState = {}
@@ -69,7 +73,7 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState, tool
         tooltipContent={"In Accordion Mode, one filter is visible at a time.<br/>Clicking one filter will automatically hide the others."}
     />
 
-    const myFilters = <>
+    const debugFilters = myConfig.isShowDebugComponents && <>
         <FilterBox name={"reference_stats"} caption={"Reference Stats"} showContents={expand.reference_stats}
                    onToggle={onToggleShow}  // gets passed filter name when clicked from within FilterBox
             >
@@ -152,7 +156,7 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState, tool
                 {/*    <UrlStatusChart pageData={pageData} colors={colors} onAction={onAction} currentState={currentState?. } />*/}
                 {/*</FilterBox>*/}
 
-                {myFilters}  {/* will eventually put all filters in this variable with a sort of config-comtrolled inclusion */}
+                {debugFilters}  {/* will eventually put all filters in this variable with a sort of config-comtrolled inclusion */}
 
                 <FilterBox name={"actionable"} caption={"Actionable"} showContents={expand.actionable}
                            onToggle={onToggleShow}>

@@ -19,6 +19,7 @@ export default function App({env, myPath, myRefresh, myMethod, myArticleVersion,
     const [isShowUrlOverview, setIsShowUrlOverview] = useState(true);
     const [isShowShortcuts, setIsShowShortcuts] = useState(true);
     const [isShowDebugInfo, setIsShowDebugInfo] = useState(false);
+    const [isShowDebugComponents, setIsShowDebugComponents] = useState(false);
     const [isShowViewOptions, setIsShowViewOptions] = useState(false);
 
     // params settable from from address url
@@ -203,7 +204,7 @@ export default function App({env, myPath, myRefresh, myMethod, myArticleVersion,
                     setMyError("502 Server problem (no further info available)")
 
                 } else if (err.name === "TypeError" && err.message === "Failed to fetch") {
-                    setMyError(err.message + " - Possible IARI service failure.");
+                    setMyError(err.message + " - IARI service failure: Service down or CORS issue.");
                     // TODO: this happens when filename does not exist!
                     // or when CORS error encountered
                 } else {
@@ -370,10 +371,19 @@ export default function App({env, myPath, myRefresh, myMethod, myArticleVersion,
         }
         } >{isShowDebugInfo ? "Hide" : "Show"} Debug Details</button>
 
+    const debugButtonComponents = <button // this is the 'show New Features' button
+        className={"utility-button debug-button"}
+        onClick={() => {
+            setIsShowDebugComponents(prevState => !prevState )
+        }
+        } >{isShowDebugComponents ? "Hide" : "Show"} Debug Components</button>
+
     const debugButtons = <>
         {debugButtonViewTypes}
         &nbsp;
         {debugButtonDetails}
+        &nbsp;
+        {debugButtonComponents}
         &nbsp;
         {debugButtonFilters}
         &nbsp;
@@ -406,6 +416,7 @@ export default function App({env, myPath, myRefresh, myMethod, myArticleVersion,
         isShowUrlOverview: isShowUrlOverview,
         isShowShortcuts: isShowShortcuts,
         isShowDebugInfo: isShowDebugInfo,
+        isShowDebugComponents: isShowDebugComponents,
         isShowViewOptions: isShowViewOptions,
     }
 

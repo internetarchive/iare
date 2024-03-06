@@ -1,6 +1,7 @@
 import React, {useContext} from "react";
 import MakeLink from "../../MakeLink";
 import {ConfigContext} from "../../../contexts/ConfigContext";
+import {ArticleVersions} from "../../../constants/articleVersions";
 
 function CitationDisplay_v1({ reference = null, index=0, showDebug=false}) {
 
@@ -28,7 +29,11 @@ function CitationDisplay_v1({ reference = null, index=0, showDebug=false}) {
         spanCount++
     }
 
-    const markup = <>
+    const articleInfo = reference.section ? <div className={"article-info"}>Section of Origin: {reference.section}</div> : null
+
+    const refMeta = articleInfo ? <div className={"ref-meta"}>{articleInfo}</div> : null
+
+    const markup = <div className={"ref-button-wrapper"}>
 
         {reference.titles
             ? reference.titles.map( (t) => {
@@ -59,7 +64,10 @@ function CitationDisplay_v1({ reference = null, index=0, showDebug=false}) {
         {!!myConfig?.isShowDebugInfo && <div> {/* extra info for debug */}
             #{index} {reference.id} {reference.type}-{reference.footnote_subtype}
         </div>}
-    </>
+
+        {refMeta}
+
+    </div>
 
     return markup
 }

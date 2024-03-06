@@ -28,7 +28,7 @@ const DomainsChart = ({pageData, options, onAction, currentState = null}) => {
     })
 
     const onClickItem = (link) => {
-        onAction({action: "setDomainFilter", value: link})
+        onAction({action: "IARE_ACTIONS.SET_DOMAIN_FILTER.key", value: link})
     }
 
     return <>

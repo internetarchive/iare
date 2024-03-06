@@ -34,7 +34,8 @@ export default function RefTemplate({ template, pageData, tooltipId }) {
     const urlObj = getTemplateUrl(template)
 
     return <div className="ref-view-template">
-        <h3 className={"template-header"}>Template: {template.parameters.template_name} {plusMinusButton}</h3>
+        {/*<h3 className={"template-header"}>Template: {template.parameters.template_name} {plusMinusButton}</h3>*/}
+        <h3 className={"template-header"}>Template: {template.name} {plusMinusButton}</h3>
         {showParams && <RefParameters parameters={template.parameters} />}
         <RefTemplateUrl url={urlObj} index={0} isSelected={false} />
     </div>

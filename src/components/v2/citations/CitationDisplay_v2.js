@@ -57,7 +57,7 @@ function CitationDisplay_v2({ reference = null,
         </div>
     </div>
 
-    return <>
+    return <div className={"ref-button-wrapper"}>
 
         {reference.cite_html
             ? <div dangerouslySetInnerHTML={{__html: reference.cite_html}} />
@@ -72,7 +72,7 @@ function CitationDisplay_v2({ reference = null,
         {!!myConfig?.isShowDebugInfo && <div> {/* protect if myConfig is not defined */}
             #{index} {reference.id} {reference.type}
         </div>}
-    </>
+    </div>
 
 }
 

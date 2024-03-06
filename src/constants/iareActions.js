@@ -23,4 +23,29 @@ export const IARE_ACTIONS = {
     SET_ACTIONABLE_FILTER: {
         key: "SET_ACTIONABLE_FILTER"
     },
+
+    SET_DOMAIN_FILTER: {
+        key: "SET_DOMAIN_FILTER"
+    },
+
+    SET_PAPERS_FILTER: {
+        key: "SET_PAPERS_FILTER"
+    },
+
+    SET_PERENNIAL_FILTER: {
+        key: "SET_PERENNIAL_FILTER"
+    },
+
+    SET_TLD_FILTER: {
+        key: "SET_TLD_FILTER"
+    },
+
+    SET_BOOKS_FILTER: {
+        key: "SET_BOOKS_FILTER"
+    },
+
+    SET_TEMPLATE_FILTER: {
+        key: "SET_TEMPLATE_FILTER"
+    },
+
 }

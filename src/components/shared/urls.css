@@ -6,7 +6,8 @@
     --width-url-archive-status: 3rem;
     --width-url-citations: 3.5rem;
     --width-url-templates: 4.0rem;
-    --width-url-sections: 5.5rem;
+    --width-url-actionable: 7.0rem;
+    --width-url-sections: 4.5rem;
     --width-url-perennial: 5.0rem;
 
     --width-col-url-overview: 327px;
@@ -244,6 +245,7 @@
     /*border-left: 1px solid black;*/
     width: var(--width-url-citations);
     max-width: var(--width-url-citations);
+    min-width: var(--width-url-citations);
 }
 .url-row .url-templates {
     text-align: left;
@@ -251,17 +253,26 @@
     width: var(--width-url-templates);
     max-width: var(--width-url-templates);
 }
+.url-row .url-actionable {
+    text-align: left;
+    /*border-left: 1px solid black;*/
+    width: var(--width-url-actionable);
+    max-width: var(--width-url-actionable);
+    min-width: var(--width-url-actionable);
+}
 .url-row .url-sections {
     text-align: left;
     /*border-left: 1px solid black;*/
     width: var(--width-url-sections);
     max-width: var(--width-url-sections);
+    min-width: var(--width-url-sections);
 }
 .url-row .url-perennial {
     text-align: center;
     /*border-left: 1px solid black;*/
     width: var(--width-url-perennial);
     max-width: var(--width-url-perennial);
+    min-width: var(--width-url-perennial);
 }
 
 .url-row a,
@@ -286,6 +297,7 @@
 .url-header-row .url-iabot_status,
 .url-header-row .url-citations,
 .url-header-row .url-templates,
+.url-header-row .url-actionable,
 .url-header-row .url-sections,
 .url-header-row .url-perennial
 {

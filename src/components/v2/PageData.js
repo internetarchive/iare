@@ -12,6 +12,7 @@ import {REF_FILTER_DEFS} from "../../constants/refFilterMaps";
 import {areObjectsEqual} from "../../utils/utils";
 import {categorizedDomains, rspMap} from "../../constants/perennialList";
 import {UrlStatusCheckMethods} from "../../constants/checkMethods";
+import {ACTIONABLE_FILTER_MAP} from "../../constants/actionableMap";
 
 /*
 When this component is rendered, it must "process" the pageData. This involves:
@@ -150,6 +151,39 @@ export default function PageData({pageData = {}}) {
 
     }, [])
 
+    const processActionables = useCallback( (pageData, urlResults) => {
+        // for each url in urlResults, check if it is actionable
+        // if so, add to url.actionable list
+
+        if (!pageData?.urlArray) return
+
+        pageData.urlArray.forEach(urlObj => {
+            // for each url:
+            // if url is actionable, add to url.actionable list
+            urlObj.actionable = []
+            Object.keys(ACTIONABLE_FILTER_MAP).forEach(key => {
+                const f = ACTIONABLE_FILTER_MAP[key];
+                if ((f.filterFunction)()(urlObj)) {
+                    urlObj.actionable.push(key)
+                }
+            })
+        })
+
+        pageData.references.forEach(_ref => {
+            // for each url:
+            // if url is actionable, add to url.actionable list
+            _ref.actionable = []
+            Object.keys(ACTIONABLE_FILTER_MAP).forEach(key => {
+                const f = ACTIONABLE_FILTER_MAP[key];
+
+                if ((f.refFilterFunction)()(pageData.urlDict, _ref)) {
+                    _ref.actionable.push(key)
+                }
+            })
+        })
+
+    }, [])
+
 
     // take the wt:value and put it straight to value:<value>
     const normalizeMediaWikiParams = (oldParams) => {
@@ -227,8 +261,8 @@ export default function PageData({pageData = {}}) {
     }, [])
 
 
-    // currently only sets the "hasTemplateArchive" property to true if archive_url parameter found in template
     const processReference = useCallback( (ref, urlDict) => {
+        // sets the "hasTemplateArchive" property to true if archive_url parameter found in template
 
         const templates = ref?.templates ? ref.templates : []
         const templateUrls = {}
@@ -334,6 +368,25 @@ export default function PageData({pageData = {}}) {
         // TODO: this should be IARI API, not front-end post-retrieval
         //
 
+        const processTemplates = (refArray) => {
+            // for each template in reference, set template.name tp params[template_name] if there
+            if (refArray?.length) {
+                refArray.forEach( ref => {
+                    if (!ref.templates?.length) return
+                    ref.templates.forEach(template => {
+                        // console.log(`Another Template found for ref id ${ref.id}: ${templateName}`)
+
+                        // if template.name not set, try to pull it from parameters[template_name]
+                        // this is to fix bug in ARTICLE_V1 parser that just puts template name in
+                        // "template_name" property of parameters object
+                        if (!template.name && template.parameters) {
+                            template["name"] = template.parameters["template_name"]
+                        }
+                    })
+                })
+            }
+        }
+
         const gatherTemplateStatistics = (refArray) => {
             const templateDict = {}  // stores count of each template
             if (refArray?.length) {
@@ -392,6 +445,8 @@ export default function PageData({pageData = {}}) {
 
         gatherTemplateStatistics(pageData.references)
         gatherPapersStatistics(pageData.references)
+        processTemplates(pageData.references)
+
 
     }, [processReference, processCiteRefs])
 
@@ -592,6 +647,16 @@ export default function PageData({pageData = {}}) {
             })
         }
 
+        const fetchNewRefs = () => {
+            // return fetchUrls( {
+            //     iariBase: myIariBase,
+            //     urlArray: pageData.urls,
+            //     refresh: pageData.forceRefresh,
+            //     timeout: 60,
+            //     method: myStatusCheckMethod
+            // })
+        }
+
         const fetchPageData = async () => {
 
             try {
@@ -606,12 +671,18 @@ export default function PageData({pageData = {}}) {
                 // fetch info for each url and wait for results before continuing
                 const myUrls = await fetchPageUrls()
 
+
+                // TODO: fetch article data from IARI for V2 or artvile parsing to get array of citerefs
+                const newRefs = await fetchNewRefs()  // grabs article_V2 data from IARI
+
                 // process received data - TODO this should eventually be done in IARI
                 processUrls(pageData, myUrls);  // creates pageData.urlDict and pageData.urlArray; loads pageData.errors
                 processReferences(pageData)  //
                 associateRefsWithLinks(pageData)  // associates url links with references
                 processRspData(pageData)
                 processBooksData(pageData)
+
+                processActionables(pageData)
 
                 // if any errors, display
                 if (pageData.process_errors?.length > 0) setPageErrors(pageData.process_errors)

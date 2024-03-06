@@ -17,27 +17,32 @@ function RefFlock({ pageData= {},
                       selectedRefIndex=null,
 
                       onAction,
+                      onKeyDown,
+
                       options = {},
                       tooltipId='',
                       } ) {
 
     if (options.context) console.log("RefFlock: component entrance")
 
-    const [tooltipHtmlRefList, setTooltipHtmlRefList] = useState( '<div>ToolTip<br />second line</div>' );
+    let selectedArrayIndex = -1  // where in the filteredRefs is our current array index (not refIndex, which is the "global index" of the reference
+    const [tooltipHtmlRefList, setTooltipHtmlRefList] = useState( '<div>ToolTip<br />second line</div>' )
 
     // TODO catch undefined myIariBase exception
 
-    const flockListRef = useRef(null);
-    const targetItemRef = useRef(null);
+    const flockListRef = useRef(null)
+    const targetItemRef = useRef(null)
 
     // scrolls selected reference element into view
     useEffect(() => {
         const container = flockListRef.current;
         const target = targetItemRef.current;
         if (container && target) {
+            console.log(`RefFlock (${options?.context}): scrolling to targetItemRef`)
             target.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" })
+            target.focus()
         }
-    });  // no dependencies means runs upon EVERY render
+    })  // no dependencies means runs upon EVERY render
 
     // const flockRef = React.useRef(null)
     //
@@ -48,7 +53,10 @@ function RefFlock({ pageData= {},
 
     React.useEffect(() => {
         // Focus on the element when the component mounts to ensure keystrokes get focused
-        if (options?.context) flockListRef.current.focus();
+        if (options?.context) {
+            console.log(`RefFlock (${options?.context}): setting focus to flockListRef`)
+            flockListRef.current.focus()
+        }
     }, []); // Empty dependency array ensures this effect runs only once after the initial render
 
     const handleKeyDown = (event) => {
@@ -166,13 +174,6 @@ function RefFlock({ pageData= {},
         })
     }
 
-    const refNavigation = options.show_ref_nav
-        ? <div className={"ref-list-navigation"} >
-            <button onClick={handleNavPrev} className={'utility-button small-button'} ><span>Prev</span></button>
-            <button onClick={handleNavNext} className={'utility-button small-button'} ><span>Next</span></button>
-        </div>
-        : null
-
     const filteredRefs = refFilter
         ? refArray.filter((refFilter.filterFunction)().bind(null, pageData.urlDict), ) // NB Note self-calling function
         : refArray;
@@ -182,18 +183,6 @@ function RefFlock({ pageData= {},
             <FilterConditionBox filter={refFilter} />
         </div>
         : null
-
-    const buttonCopy = <button onClick={handleCopyRefsClick} className={'utility-button small-button'} ><span>Copy to Clipboard</span></button>
-
-    const flockCaption = <>
-        <div>References List</div>
-        <div className={"sub-caption"}>
-            <div>{filteredRefs.length} {filteredRefs.length === 1 ? 'Reference' : 'References'}</div>
-            {buttonCopy}
-        </div>
-        {filterDescription}
-        {refNavigation}
-    </>
 
     const flockListHeader = options.hide_header
         ? null
@@ -223,6 +212,8 @@ function RefFlock({ pageData= {},
             && (selectedRefIndex.toString() === _ref.ref_index.toString())
         )
 
+        if (isSelected) selectedArrayIndex = i
+
         let className=`ref-button${isSelected ? ' selected' : ''}`
 
         return isSelected
@@ -242,6 +233,30 @@ function RefFlock({ pageData= {},
                       data-array-index={i}
             >{referenceCaption}</button>
     })
+
+    const showPrev = true
+    const showNext = true
+
+    const refNavigation = options.show_ref_nav
+        ? <div className={"ref-list-navigation"} >
+            <span onClick={handleNavPrev} className={`ref-nav-icon-prev ${showPrev ? "" : "disabled" }`}>Prev</span>
+            <span className={"ref-nav-info"}>Reference {selectedArrayIndex + 1} of {filteredRefs.length}</span>
+            <span onClick={handleNavNext} className={`ref-nav-icon-next ${showNext ? "" : "disabled" }`}>Next</span>
+        </div>
+        : null
+
+
+    const buttonCopy = <button onClick={handleCopyRefsClick} className={'utility-button small-button'} ><span>Copy to Clipboard</span></button>
+    const flockCaption = <>
+        <div>References List</div>
+        <div className={"sub-caption"}>
+            <div>{filteredRefs.length} {filteredRefs.length === 1 ? 'Reference' : 'References'}</div>
+            {buttonCopy}
+        </div>
+        {filterDescription}
+        {refNavigation}
+    </>
+
 
     /*
     within a reference display, there may be links from the original citation.
@@ -267,6 +282,7 @@ function RefFlock({ pageData= {},
              // data-tooltip-id="ref-list-tooltip"
              data-tooltip-id={tooltipId}
              data-tooltip-html={tooltipHtmlRefList}
+
              onMouseOver={onHoverListItem}
              onClick={handleListClick}
         >
@@ -277,10 +293,9 @@ function RefFlock({ pageData= {},
     // only log if the context is specified...otherwise ignore
     if (options.context) console.log(`RefFlock: component: before render return (context: ${options?.context}): selectedRefIndex: ${selectedRefIndex}, refFilter: ${refFilter?.caption}`)
 
-    return <FlockBox onKeyDown={options?.show_ref_nav ? handleKeyDown : null}
+    return <FlockBox onKeyDown={options?.show_ref_nav ? handleKeyDown : null}  // only handle keydown if we specify navigation
                      caption={flockCaption}
                      className={"ref-flock"}>
-    {/*return <FlockBox caption={flockCaption} className={"ref-flock"}>*/}
 
         {flockList}
 

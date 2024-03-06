@@ -199,7 +199,7 @@ export default function RefWikitext({ wikitext, onAction }) {
 
     // show the textarea text using this method: https://dev.to/joshuajee/how-to-fix-defaultvalue-error-while-working-with-textarea-in-react-1a55
     const editable = false || true
-    console.log(`localWikitext: ${localWikitext}`)
+    // console.log(`localWikitext: ${localWikitext}`)
 
     return <div className="row ref-view-wikitext">
         <div className="col-12">

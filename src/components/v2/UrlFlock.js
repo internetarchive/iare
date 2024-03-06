@@ -5,6 +5,7 @@ import {convertToCSV, copyToClipboard} from "../../utils/utils";
 import {rspMap} from "../../constants/perennialList";
 import FlockBox from "../FlockBox";
 import {IARE_ACTIONS} from "../../constants/iareActions";
+import {ACTIONABLE_FILTER_MAP} from "../../constants/actionableMap";
 
 /* definitions of url list headers */
 const urlListDef = {  // keys match class names
@@ -29,10 +30,16 @@ const urlListDef = {  // keys match class names
             ttHeader: `<div>URL Status as indicated by Citation Template "url-status" Parameter</div>`,
             ttData: '<div>Link Status as indicated in Citation</div>',
         },
+
         "url-templates": {
             ttHeader: `<div>Names of Templates used by Citation</div>`,
             ttData: `<div>Templates used by Citation</div>`,
         },
+        "url-actionable": {
+            ttHeader: `<div>Actions that can be taken to improve</div>`,
+            ttData: `<div>Actions that can be taken to improve</div>`,
+        },
+
         "url-sections": {
             ttHeader: `<div>Section in Wikipedia article where Citation is defined</div>`,
             ttData: `Section in Wikipedia article where Reference originated`,
@@ -86,6 +93,7 @@ const urlFlock = React.memo( function UrlFlock({
                                 fetchMethod="",
                                 tooltipId = ''}) {
     // TODO maybe should not/don't have to use memo here??
+    //  making it a memo seemed to reduce the re-renders of the flock when the tooltip text was updated
 
     const [urlTooltipHtml, setUrlTooltipHtml] = useState( '<div>ToolTip<br />second line' );
         // TODO there is a bug where sort re-renders list every time tooltip text/html property is updated
@@ -97,6 +105,7 @@ const urlFlock = React.memo( function UrlFlock({
             "archive_status": {name: "archive_status", dir: -1},
             "references": {name: "references", dir: -1},
             "templates": {name: "templates", dir: -1},
+            "actionable": {name: "actionable", dir: -1},
             "sections": {name: "sections", dir: -1},
             "perennial": {name: "perennial", dir: -1},
         },
@@ -176,6 +185,17 @@ const urlFlock = React.memo( function UrlFlock({
         return 0;
     }
 
+    const sortByActionable = (a,b) => {
+
+        const actionA = a.actionable?.length ? a.actionable[0] : ''
+        const actionB = b.actionable?.length ? b.actionable[0] : ''
+
+        // respect sortDir
+        if (actionA < actionB) return sort.sorts['actionable'].dir * -1;
+        if (actionA > actionB) return sort.sorts['actionable'].dir;
+        return 0;
+    }
+
     const sortByPerennial = (a,b) => {
 
         const nameA = a.rsp?.length ? a.rsp[0] : ''
@@ -212,6 +232,9 @@ const urlFlock = React.memo( function UrlFlock({
         }
         else if(sort.sortOrder[0] === "templates") {
             return sortByTemplate(a,b)
+        }
+        else if(sort.sortOrder[0] === "actionable") {
+            return sortByActionable(a,b)
         }
         else if(sort.sortOrder[0] === "sections") {
             return sortBySection(a,b)
@@ -377,6 +400,14 @@ const urlFlock = React.memo( function UrlFlock({
                 })
         })
 
+        const getActionableInfo = (u => {
+            return !u.actionable
+                ? null
+                : u.actionable.map( (key,i) => {
+                    return <div key={i}>{ACTIONABLE_FILTER_MAP[key].short_caption}</div>
+                })
+        })
+
         const getSectionInfo = (u => {
             return !u.reference_info?.sections
                 ? null
@@ -414,8 +445,11 @@ const urlFlock = React.memo( function UrlFlock({
                 <div className={"url-status"}>{u.status_code}</div>
                 <div className={"url-archive_status"}>{getArchiveStatusInfo(u)}</div>
 
-                <div className={"url-citations"}>{getCitationInfo(u)}</div>
-                <div className={"url-templates"}>{getTemplateInfo(u)}</div>
+                {/*<div className={"url-citations"}>{getCitationInfo(u)}</div>*/}
+
+                {/*<div className={"url-templates"}>{getTemplateInfo(u)}</div>*/}
+                <div className={"url-actionable"}>{getActionableInfo(u)}</div>
+
                 <div className={"url-sections"}>{getSectionInfo(u)}</div>
                 <div className={"url-perennial"}>{getPerennialInfo(u)}</div>
 
@@ -435,8 +469,11 @@ const urlFlock = React.memo( function UrlFlock({
                 <div className={"url-status"}>{-1}</div>
                 <div className={"url-archive_status"}>?</div>
 
-                <div className={"url-citations"}>&nbsp;</div>
-                <div className={"url-templates"}>&nbsp;</div>
+                {/*<div className={"url-citations"}>&nbsp;</div>*/}
+
+                {/*<div className={"url-templates"}>&nbsp;</div>*/}
+                <div className={"url-actionable"}>&nbsp;</div>
+
                 <div className={"url-sections"}>&nbsp;</div>
                 <div className={"url-perennial"}>&nbsp;</div>
 
@@ -491,8 +528,12 @@ const urlFlock = React.memo( function UrlFlock({
                 <div className={"url-name"}>&nbsp;</div>
                 <div className={"url-status"}>&nbsp;</div>
                 <div className={"url-archive_status"} >&nbsp;</div>
-                <div className={"url-citations"}>&nbsp;</div>
-                <div className={"url-templates"}>&nbsp;</div>
+
+                {/*<div className={"url-citations"}>&nbsp;</div>*/}
+
+                {/*<div className={"url-templates"}>&nbsp;</div>*/}
+                <div className={"url-actionable"}>&nbsp;</div>
+
                 <div className={"url-sections"}>&nbsp;</div>
                 <div className={"url-perennial"}>&nbsp;</div>
             </div>
@@ -511,11 +552,13 @@ const urlFlock = React.memo( function UrlFlock({
                 <div className={"url-archive_status"} onClick={() => { handleSortClick("archive_status"); } }
                 >{archiveFilterDefs['iabot']._.name}</div>
 
-                <div className={"url-citations"} onClick={() => { handleSortClick("references"); } }
-                >Citation<br/>Priority</div>
+                {/*<div className={"url-citations"} onClick={() => { handleSortClick("references"); } }*/}
+                {/*>Citation<br/>Priority</div>*/}
 
-                <div className={"url-templates"} onClick={() => { handleSortClick("templates"); } }
-                >Template<br/>Type</div>
+                {/*<div className={"url-templates"} onClick={() => { handleSortClick("templates"); } }*/}
+                {/*>Template<br/>Type</div>*/}
+                <div className={"url-actionable"} onClick={() => { handleSortClick("actionable"); } }
+                >Actionable<br/>Items</div>
 
                 <div className={"url-sections"} onClick={() => { handleSortClick("sections"); } }
                 >Section<br/>of Origin</div>

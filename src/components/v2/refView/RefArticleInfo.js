@@ -37,6 +37,7 @@ export default function RefArticleInfo({ _ref, pageData={}, onAction }) {
     }
 
     let articleInfo = null
+
     if (pageData.iariArticleVersion === ArticleVersions.ARTICLE_V1.key) {
         articleInfo = <div>Section of Origin: {_ref.section}&nbsp;&nbsp;</div>
 
@@ -69,7 +70,7 @@ export default function RefArticleInfo({ _ref, pageData={}, onAction }) {
 
 
     } else {
-        articleInfo = <div> Unknown reference version "{pageData.iariArticleVersion}"</div>
+        articleInfo = <div> Unknown reference parsing version "{pageData.iariArticleVersion}"</div>
     }
 
     return <div className="ref-view-article-info">
