@@ -1,7 +1,6 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import Draggable from 'react-draggable';
 import {ConfigContext} from "../../../contexts/ConfigContext";
-import {ArticleVersions} from "../../../constants/articleVersions";
 import RefFlock from "../RefFlock";
 import RefDetails from "./RefDetails";
 import "./refView.css"
@@ -60,31 +59,7 @@ export default function RefView({open,
             onAction({"action": IARE_ACTIONS.CHANGE_REF_VIEW_SELECTION.key, "value": refIndex})
 
         }
-    }, [])
-
-
-                    // const handleFlockKeyDown = (event) => {
-                    //
-                    //     console.log(`RefView: handleFlockKeyDown, event.key: ${event.key}`)
-                    //     // event.stopPropagation()
-                    //     // event.preventDefault()
-                    //
-                    //     if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
-                    //         event.stopPropagation()
-                    //         event.preventDefault()
-                    //         // ??? event.preventDefault()
-                    //         console.log(`RefView: handleKeyDown: selectedRefIndex: ${selectedRefIndex}, arrowLeft or arrowUp`)
-                    //         // handleNavPrev()
-                    //
-                    //     } else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
-                    //         event.stopPropagation()
-                    //         event.preventDefault()
-                    //         console.log(`RefView: handleKeyDown: selectedRefIndex: ${selectedRefIndex}, arrowRight or arrowDown`)
-                    //         // handleNavNext()
-                    //     }
-                    //
-                    // };
-
+    }, [onAction])
 
     // close modal if not in open state
     if (!open) return null;

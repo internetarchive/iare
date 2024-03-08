@@ -380,6 +380,7 @@ const urlFlock = React.memo( function UrlFlock({
 
         const getArchiveStatusInfo = (u => <span className={u.archive_status?.hasArchive ? "archive-yes" : "archive-no" }></span> )
 
+        // eslint-disable-next-line no-unused-vars
         const getCitationInfo = (u => {
             // for now, returns array of statuses from url's associated references
             return !u.reference_info?.statuses
@@ -392,6 +393,7 @@ const urlFlock = React.memo( function UrlFlock({
                 })
         })
 
+        // eslint-disable-next-line no-unused-vars
         const getTemplateInfo = (u => {
             return !u.reference_info?.templates
                 ? null

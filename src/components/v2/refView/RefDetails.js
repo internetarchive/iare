@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useState} from "react";
 import RefViewRefDisplay from "./RefViewRefDisplay";
+// eslint-disable-next-line
 import RefArticleInfo from "./RefArticleInfo";
 import RefTemplates from "./RefTemplates";
 import RefActionables from "./RefActionables";
@@ -54,10 +55,9 @@ function RefDetails({ refDetails,
         console.log(`ref click, href = ${myHref}`)
     }
 
-    const saveWikitext = (newText) => {
+    const saveWikitext = useCallback ( (newText) => {
         // for now, we just set local wikitext.
         // soon we will insert/replace into reference data itself and resave the entire article (i think)
-        //
 
         console.log(`wikitext is: ${wikitext}`)
         setWikitext(newText)
@@ -67,7 +67,9 @@ function RefDetails({ refDetails,
         // //
         // // for now, just change details
         // details.wikitext = newText
-    }
+
+    // eslint-disable-next-line
+    }, [] )
 
     const handleRefViewAction = useCallback( (result={}) => {
         // extract action and value from result

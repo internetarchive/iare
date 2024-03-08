@@ -5,6 +5,7 @@
     --color-ref-bg: #d5e5f6; /* d5f6d5 */ /* d5e5f6 */ /* d5e2f6 */
     --color-ref-bg-header: var(--color-list-header-bg);
     --color-ref-hilite: #0f0fe6;
+    --color-ref-actionable: #e60f16;
     --border-ref-button-ref-list: 2px solid #888888;
     --border-ref-button-ref-list-selected: 4px solid mediumvioletred;
 
@@ -88,6 +89,14 @@
 .ref-line .caption {
     font-style:italic;
     opacity: 0.4;
+}
+.ref-line.ref-actionable {
+    font-weight:bold;
+    color: var(--color-ref-actionable);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: .2rem;
+    padding-bottom: .1rem;
 }
 
 

@@ -5,7 +5,7 @@ import Loader from "../Loader";
 import {fetchUrls, iariPostProcessUrl} from "../../utils/iariUtils.js"
 import {ConfigContext} from "../../contexts/ConfigContext";
 import {
-    ARCHIVE_STATUS_FILTER_MAP,
+    // ARCHIVE_STATUS_FILTER_MAP,
     URL_STATUS_FILTER_MAP
 } from "../../constants/urlFilterMaps";
 import {REF_FILTER_DEFS} from "../../constants/refFilterMaps";
@@ -151,7 +151,7 @@ export default function PageData({pageData = {}}) {
 
     }, [])
 
-    const processActionables = useCallback( (pageData, urlResults) => {
+    const processActionables = useCallback( (pageData) => {
         // for each url in urlResults, check if it is actionable
         // if so, add to url.actionable list
 
@@ -647,15 +647,16 @@ export default function PageData({pageData = {}}) {
             })
         }
 
-        const fetchNewRefs = () => {
-            // return fetchUrls( {
-            //     iariBase: myIariBase,
-            //     urlArray: pageData.urls,
-            //     refresh: pageData.forceRefresh,
-            //     timeout: 60,
-            //     method: myStatusCheckMethod
-            // })
-        }
+        // NB TODO make this work for V2
+        // const fetchNewRefs = () => {
+        //     // return fetchUrls( {
+        //     //     iariBase: myIariBase,
+        //     //     urlArray: pageData.urls,
+        //     //     refresh: pageData.forceRefresh,
+        //     //     timeout: 60,
+        //     //     method: myStatusCheckMethod
+        //     // })
+        // }
 
         const fetchPageData = async () => {
 
@@ -672,8 +673,8 @@ export default function PageData({pageData = {}}) {
                 const myUrls = await fetchPageUrls()
 
 
-                // TODO: fetch article data from IARI for V2 or artvile parsing to get array of citerefs
-                const newRefs = await fetchNewRefs()  // grabs article_V2 data from IARI
+                // NB TODO: fetch article data from IARI for V2 or article parsing to get array of citerefs
+                // const newRefs = await fetchNewRefs()  // grabs article_V2 data from IARI
 
                 // process received data - TODO this should eventually be done in IARI
                 processUrls(pageData, myUrls);  // creates pageData.urlDict and pageData.urlArray; loads pageData.errors
@@ -713,6 +714,7 @@ export default function PageData({pageData = {}}) {
             myStatusCheckMethod,
             processRspData,
             processBooksData,
+            processActionables,
         ])
 
 

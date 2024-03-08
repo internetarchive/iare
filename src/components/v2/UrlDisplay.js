@@ -277,11 +277,13 @@ export default function UrlDisplay ({ pageData, options } ) {
         // TODO: Action for setReferenceFilter/ShowReference for filtered URLS
         // i.e. show all refs that contain ANY of the URLS in the filtered URL list
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [showRefView, pageData.urlDict])
 
     if (!pageData) return null;  // NB must be put AFTER useEffect and useCallback, as those hooks
                                  //    cannot exist after conditional statements
 
+    // eslint-disable-next-line
     const getUrlRefFilter = (targetUrl) => {
 
         if (!targetUrl || targetUrl === '') {

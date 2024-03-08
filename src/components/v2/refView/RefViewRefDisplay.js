@@ -12,9 +12,11 @@ export default function RefViewRefDisplay({ _ref, index=0, articleVersion="", sh
     let display = null
     if (_ref) {
         if (articleVersion === ArticleVersions.ARTICLE_V1.key) {
-            display = <CitationDisplay_v1 reference={_ref} index={index} />
+            // eslint-disable-next-line react/jsx-pascal-case
+            display = <CitationDisplay_v1 reference={_ref} index={index} options={{hide_actionables:true}} />
         } else if (articleVersion === ArticleVersions.ARTICLE_V2.key) {
-            display = <CitationDisplay_v2 reference={_ref} options={{show_extra:true}} index={index} />
+            // eslint-disable-next-line react/jsx-pascal-case
+            display = <CitationDisplay_v2 reference={_ref} options={{hide_actionables:true, show_extra:true}} index={index} />
         } else {
             display = <div>Unknown article version {articleVersion ? articleVersion : "(none)"}</div>
         }

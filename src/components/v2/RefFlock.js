@@ -54,10 +54,10 @@ function RefFlock({ pageData= {},
     React.useEffect(() => {
         // Focus on the element when the component mounts to ensure keystrokes get focused
         if (options?.context) {
-            console.log(`RefFlock (${options?.context}): setting focus to flockListRef`)
+            // console.log(`RefFlock (${options?.context}): setting focus to flockListRef`)
             flockListRef.current.focus()
         }
-    }, []); // Empty dependency array ensures this effect runs only once after the initial render
+    }, [options]);
 
     const handleKeyDown = (event) => {
 
@@ -203,7 +203,6 @@ function RefFlock({ pageData= {},
         } else if (pageData.iariArticleVersion === ArticleVersions.ARTICLE_V2.key) {
             // eslint-disable-next-line react/jsx-pascal-case
             referenceCaption = <CitationDisplay_v2 options={options} reference={_ref} index={i} />
-            // referenceCaption = getReferenceCaptionVersion2(ref, i, isShowDebugInfo)
         }
 
         const isSelected = (

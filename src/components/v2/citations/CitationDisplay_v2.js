@@ -13,9 +13,14 @@ function CitationDisplay_v2({ reference = null,
             "action": "goto_cite_ref",
             "value" : e.target.href
         })
-    }, []);
+    }, [onAction]);
 
     if (!reference) return null
+
+    const actionable = (!options?.hide_actionables) && reference.actionable?.length
+        ? <span className={'ref-line ref-actionable'} >Actionable</span>
+        : null
+
 
     const citeRefLinks = reference.cite_ref_links
         ? reference.cite_ref_links.map( (cr, i) => {
@@ -58,6 +63,8 @@ function CitationDisplay_v2({ reference = null,
     </div>
 
     return <div className={"ref-button-wrapper"}>
+
+        {actionable}
 
         {reference.cite_html
             ? <div dangerouslySetInnerHTML={{__html: reference.cite_html}} />

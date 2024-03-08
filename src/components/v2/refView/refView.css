@@ -324,14 +324,14 @@
     color: #727272 !important;
     font-style:italic;
 }
-.ref-actionable {
+.ref-view-actionables .ref-actionable {
     margin-top:.1rem;
 }
-.ref-actionable .action-desc {
+.ref-view-actionables .ref-actionable .action-desc {
     font-weight: bold;
     color: #727272;
 }
-.ref-actionable .action-fixit {
+.ref-view-actionables .ref-actionable .action-fixit {
     display:flex;
     flex-direction: row;
     flex-wrap:wrap;
