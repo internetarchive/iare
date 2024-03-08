@@ -339,7 +339,7 @@ export default function App({env, myPath, myRefresh, myMethod, myArticleVersion,
 
     const heading = <div className={"header-contents"}>
         <h1>Internet Archive Reference Explorer</h1>
-        <div className={"header-aux1"}>`version ${iareVersion}`{siteDisplay}{showHideDebugButton}</div>
+        <div className={"header-aux1"}>version {iareVersion}{siteDisplay}{showHideDebugButton}</div>
     </div>
 
     const debugButtonFilters = <button // this is the 'show urls list' button
