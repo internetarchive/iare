@@ -1,10 +1,10 @@
 const myCategory = "Reference Stats"
-const regexMediaWikiCiteId = new RegExp("^mw\w{3}$")
-
+const regexMediaWikiCiteId = new RegExp("^mw[a-zA-Z0-9\\-]{3}$")  // letters, numbers, hyphen, 3 chars
 
 export const REFERENCE_STATS_MAP = {
 
     has_name: {
+        category: myCategory,
         caption: "Has Reference Name",
         desc: "The reference has an explicit name, possibly for multiple citations",
         // filter take a reference, and checks ref_info.ref_name
@@ -15,6 +15,7 @@ export const REFERENCE_STATS_MAP = {
     },
 
     cite_id_is_something: {
+        category: myCategory,
         caption: "cite_id is something",
         desc: "cite_id is something",
         // refName begins with "mw"
@@ -27,12 +28,14 @@ export const REFERENCE_STATS_MAP = {
 
 
     cite_id_is_mediawiki: {
+        category: myCategory,
         caption: "cite_id is MediaWiki default",
         desc: "cite_id is MediaWiki default",
         // refName begins with "mw"
         refFilterFunction: () => (urlDict, _ref) => {  // NB: must put urlDict as FIRST argument! (see call in RefFlock)
             if (!_ref["ref_info"]) return false
-            // if there, test for pattern "mwXXX"
+            if (!_ref["ref_info"]["cite_id"]) return false
+            // if there, test for pattern "mwAAA", where A is letter,
             return (_ref["ref_info"]["cite_id"])
                 ? regexMediaWikiCiteId.test(_ref["ref_info"]["cite_id"])
                 : false
@@ -41,6 +44,7 @@ export const REFERENCE_STATS_MAP = {
 
 
     has_no_cite_id: {
+        category: myCategory,
         caption: "No cite_id",
         desc: "No cite_id was found for the reference",
         // filter take a reference, and checks ref_info.ref_name

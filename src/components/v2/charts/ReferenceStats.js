@@ -1,8 +1,6 @@
 import React from 'react';
-import PieChart from "../../PieChart";
 import ChartLegend from "./ChartLegend";
 import {REFERENCE_STATS_MAP} from "../../../constants/referenceStatsMap";
-import {rspMap} from "../../../constants/perennialList";
 import {IARE_ACTIONS} from "../../../constants/iareActions";
 
 

@@ -395,7 +395,7 @@ export default function App({env, myPath, myRefresh, myMethod, myArticleVersion,
         <p><span className={'label'}>Environment:</span> {env} (host: {window.location.host})</p>
         <p><span className={'label'}>IARE Version:</span> {iareVersion}</p>
         <p><span className={'label'}>IARI Source:</span> {myIariSourceId} ({IariSources[myIariSourceId]?.proxy})</p>
-        <p><span className={'label'}>IARI Version:</span> {pageData.iari_version} </p>
+        <p><span className={'label'}>IARI Version:</span> {pageData?.iari_version ? pageData.iari_version : "unknown"} </p>
         <p><span className={'label'}>Article Version:</span> {ArticleVersions[articleVersion].caption}</p>
         <p><span className={'label'}>Check Method:</span> {UrlStatusCheckMethods[checkMethod].caption} ({checkMethod})</p>
         <p><span className={'label'}>URL from address line:</span> {myPath}</p>

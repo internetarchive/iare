@@ -8,6 +8,7 @@ shows wikitext box with allowance for edit and copy
 export default function RefWikitext({ wikitext, onAction }) {
 
     // const [editable, setEditable]= useState(false)
+    // eslint-disable-next-line
     const [localWikitext, setLocalWikitext]= useState(wikitext)
     // const [savedWikitext, setSavedWikitext]= useState(wikitext)
     //
