@@ -186,7 +186,8 @@ export default function App({env, myPath, myRefresh, myMethod, myArticleVersion,
                 data.iariArticleVersion = articleVersion;
                 data.forceRefresh = refresh;
                 data.mediaType = myMediaType; // decorate based on mediaType?
-                data.version = getIariVersion(data, myEndpoint);
+                data.version = getIariVersion(data, myEndpoint);  // version of pageData - determines display components
+                data.iari_version = data.iari_version ? data.iari_version : "unknown";
 
                 // and set the new pageData state
                 setPageData(data);
@@ -248,9 +249,7 @@ export default function App({env, myPath, myRefresh, myMethod, myArticleVersion,
         } ) => {
 
         const newUrl = window.location.protocol + "//"
-            + window.location.host
-            + window.location.pathname
-            + `?url=${url}`
+            + window.location.host + window.location.pathname + `?url=${url}`
             + (refresh ? '&refresh=true' : '')
             + (checkMethod ? `&method=${checkMethod}` : '')
             + (myIariSourceId ? `&iari-source=${iari_source}` : '')
@@ -330,7 +329,7 @@ export default function App({env, myPath, myRefresh, myMethod, myArticleVersion,
         <Dropdown choices={iariChoices} label={'Iari Source:'} onSelect={handleIariSourceIdChange} defaultChoice={myIariSourceId}/>
     </div>
 
-    const versionDisplay = `version ${package_json.version}`
+    const iareVersion = `${package_json.version}`
     const siteDisplay = (env !== 'env-production') ? ` STAGING SITE ` : ''
     const showHideDebugButton = (env !== 'env-production') && <button className={"utility-button debug-button small-button"}
             onClick={toggleDebug} >{
@@ -340,7 +339,7 @@ export default function App({env, myPath, myRefresh, myMethod, myArticleVersion,
 
     const heading = <div className={"header-contents"}>
         <h1>Internet Archive Reference Explorer</h1>
-        <div className={"header-aux1"}>{versionDisplay}{siteDisplay}{showHideDebugButton}</div>
+        <div className={"header-aux1"}>`version ${iareVersion}`{siteDisplay}{showHideDebugButton}</div>
     </div>
 
     const debugButtonFilters = <button // this is the 'show urls list' button
@@ -391,10 +390,12 @@ export default function App({env, myPath, myRefresh, myMethod, myArticleVersion,
         </>
 
     const debug = <div className={"debug-section " + (isDebug ? "debug-on" : "debug-off")}>
-        <div style={{marginBottom:".5rem"}}>{iariChoiceSelect} {methodChoiceSelect} {articleVersionChoiceSelect}</div>
+        <div style={{marginBottom:".5rem"}}
+            >{iariChoiceSelect} {methodChoiceSelect} {articleVersionChoiceSelect}</div>
         <p><span className={'label'}>Environment:</span> {env} (host: {window.location.host})</p>
-        <p><span className={'label'}>IARE version:</span> {package_json.version}</p>
+        <p><span className={'label'}>IARE Version:</span> {iareVersion}</p>
         <p><span className={'label'}>IARI Source:</span> {myIariSourceId} ({IariSources[myIariSourceId]?.proxy})</p>
+        <p><span className={'label'}>IARI Version:</span> {pageData.iari_version} </p>
         <p><span className={'label'}>Article Version:</span> {ArticleVersions[articleVersion].caption}</p>
         <p><span className={'label'}>Check Method:</span> {UrlStatusCheckMethods[checkMethod].caption} ({checkMethod})</p>
         <p><span className={'label'}>URL from address line:</span> {myPath}</p>
