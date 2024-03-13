@@ -218,6 +218,10 @@
     line-height:1.2;
 }
 
+.flock-box-caption button.utility-button.small-button {
+    line-height: .85rem;
+}
+
 .flock-box-caption .sub-caption {
     font-size:88%;
     font-weight:normal;

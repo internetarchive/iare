@@ -36,8 +36,8 @@ const urlListDef = {  // keys match class names
             ttData: `<div>Templates used by Citation</div>`,
         },
         "url-actionable": {
-            ttHeader: `<div>Actions that can be taken to improve</div>`,
-            ttData: `<div>Actions that can be taken to improve</div>`,
+            ttHeader: `<div>Actions that can be taken to improve citation</div>`,
+            ttData: `<div>Actions that can be taken to improve citation</div>`,
         },
 
         "url-sections": {
@@ -304,6 +304,7 @@ const urlFlock = React.memo( function UrlFlock({
             ? e.target.className
             : e.target.parentElement.className
 
+        console.log(`className for hoer is ${myClassName}`)
         let html = ''
 
         if (myClassName === "url-status") {
@@ -311,8 +312,7 @@ const urlFlock = React.memo( function UrlFlock({
             const statusDescription = httpStatusCodes[row.dataset.status_code]
             html = `<div>${row.dataset.status_code} : ${statusDescription}</div>`
 
-        } else
-            if (myClassName === "url-archive_status") {
+        } else if (myClassName === "url-archive_status") {
             // WBM archive status column special handling
             html = row.dataset.live_state
                 ? `<div>${row.dataset.archive_status === "true" ? 'Archived' : 'Not Archived'}` +
@@ -320,12 +320,19 @@ const urlFlock = React.memo( function UrlFlock({
                   `IABot live_state: ${row.dataset.live_state} - ${iabotLiveStatusCodes[row.dataset.live_state]}</div>`
                : `IABot archive_status = ${row.dataset.archive_status}<br/>IABot live_state = ${row.dataset.live_state}`
 
-        } else
-            if (myClassName === "url-citations") {
+        } else if (myClassName === "url-citations") {
             // live status from template special handling
             html = row.dataset.citation_status && row.dataset.citation_status !== '--'
                 ? `<div>Link Status ${'"' + row.dataset.citation_status + '"'} as indicated in Citation</div>`
                 : `<div>No Link Status defined in Citation</div>`
+
+        } else if (myClassName === "url-actionable") {
+            // display descriptor of actionable items
+            const actionableKey = row.dataset.actionable
+            const desc = ACTIONABLE_FILTER_MAP[actionableKey]?.desc
+            html = desc
+                ? `<div>${desc}</div>`
+                : urlListDef.columns[myClassName]?.ttData
 
         } else {
             // show tooltip from list definition
@@ -364,10 +371,14 @@ const urlFlock = React.memo( function UrlFlock({
                     //    and apply all filters one at a time
                     // TODO turn this into some kind of effective recursive loop
                     f.filterFunction.forEach( oneFilter => {
-                        filteredUrls = filteredUrls.filter( (oneFilter.filterFunction)() )  // NB: Note self-calling function
+                        if (oneFilter.filterFunction) {
+                            filteredUrls = filteredUrls.filter((oneFilter.filterFunction)())
+                        }  // NB: Note self-calling function
                     })
                 } else {  // f is one filter
-                    filteredUrls = filteredUrls.filter( (f.filterFunction)() )  // NB: Note self-calling function
+                    if (f.filterFunction) {
+                        filteredUrls = filteredUrls.filter( (f.filterFunction)() )
+                    }  // NB: Note self-calling function
                 }
             }
         })
@@ -442,6 +453,7 @@ const urlFlock = React.memo( function UrlFlock({
                         data-citation_status={citationStatus}
                         data-live_state={u.archive_status?.live_state}
                         data-perennial={u.rsp ? u.rsp[0] : null}  // just return first perennial if found for now...dont deal with > 1
+                        data-actionable={u.actionable ? u.actionable[0] : null}  // return first actionable only (for now)
             >
                 <div className={"url-name"}>{u.url}</div>
                 <div className={"url-status"}>{u.status_code}</div>
@@ -584,7 +596,7 @@ const urlFlock = React.memo( function UrlFlock({
     const [flockRows, flockArray] = getFlockRows(urlArray, urlFilters)
     const flock = getFlock(flockRows)
 
-    const handleCopyUrlsClick = () => {
+    const handleCopyUrlsDetails = () => {
 
         const urlArrayData = [...flockArray].sort(   // NB "..." used so that copy of array is sorted, not original flock array
             (a, b) => (a.url > b.url) ? 1 : (a.url < b.url) ? -1 : 0  // sort by url
@@ -617,13 +629,28 @@ const urlFlock = React.memo( function UrlFlock({
 
     }
 
-    const buttonCopy = <button onClick={handleCopyUrlsClick} className={'btn utility-button small-button'} ><span>Copy to Clipboard</span></button>
+    const handleCopyUrlsList = () => {
+
+        const urlArrayData = [...flockArray].sort(   // NB used "..." so that copy of array is sorted, not original flock array
+            (a, b) => (a.url > b.url) ? 1 : (a.url < b.url) ? -1 : 0  // sort by url
+
+        ).map( u => {  // get one row per line:
+            return u.url
+        })
+
+        copyToClipboard(urlArrayData.join("\n"))
+
+    }
+
+    const buttonCopyList = <button onClick={handleCopyUrlsList} className={'btn utility-button small-button'} ><span>Copy URL List</span></button>
+    const buttonCopyDetails = <button onClick={handleCopyUrlsDetails} className={'btn utility-button small-button'} ><span>Copy URL Details</span></button>
 
     const flockCaption = <>
         <div>URL Links</div>
         <div className={"sub-caption"}>
             <div>{flockRows.length} {flockRows.length === 1 ? 'URL' : 'URLs'}</div>
-            {buttonCopy}
+            <div>{buttonCopyList} {buttonCopyDetails}</div>
+            {/*{buttonCopyList} {buttonCopyDetails}*/}
         </div>
     </>
 

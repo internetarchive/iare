@@ -19,7 +19,7 @@ const ReferenceStats = ({pageData, options, onAction}) => {
             const f = REFERENCE_STATS_MAP[key]  // f is filter to apply for counts
             const count = pageData.references.filter(
                 // (f.refFilterFunction)()).length;  // NB Note the self-evaluating refFilterFunction!
-                (f.refFilterFunction)().bind(null, null) ).length  // NB Note the self-evaluating refFilterFunction!
+                (f.refFilterFunction)().bind(null, pageData.urlDict) ).length  // NB Note the self-evaluating refFilterFunction!
 
             return {
                 label: f.caption,

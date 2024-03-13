@@ -28,7 +28,7 @@ export const ACTIONABLE_FILTER_MAP = {
         short_caption: "Bad Live",
         caption: <div>Link Status: BAD,<br/>Citation Priority: Original</div>,
         desc: "Link Status: BAD, Citation Priority: Live",
-        fixit: <div>Set "url-status" parameter in Citation Template to "dead". This will cause the Archived Link to be the primary link in the citation.</div>,
+        fixit: <div>Set "url-status" parameter in Citation Template to "dead". This will cause the Archived Link to be the Primary Link in the citation.</div>,
         tooltip: `<div>Original URL Link Status is NOT 2XX or 3XX<br/>AND<br/>Template Parameter "url_status" is set to "live"</div>`,
 
         filterFunction: () => (u) => {

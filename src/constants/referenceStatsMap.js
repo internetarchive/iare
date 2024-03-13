@@ -54,4 +54,22 @@ export const REFERENCE_STATS_MAP = {
         },
     },
 
+    has_actionable: {
+        category: myCategory,
+        caption: "Has ANY Actionable",
+        desc: "Any Actionable is applied to Link or Citation",
+        // filter take a reference, and checks ref_info.ref_name
+        filterFunction: () => (url) => {
+            return url.actionable?.length
+        },
+        refFilterFunction: () => (urlDict, _ref) => {
+            return _ref.urls.some( url => {
+                const urlObject = urlDict[url]
+                if (!urlObject) return false
+                return urlObject.actionable?.length
+            })
+        }
+
+    },
+
 }

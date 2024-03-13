@@ -143,31 +143,23 @@ export default function UrlDisplay ({ pageData, options } ) {
         }
 
         else if (action === IARE_ACTIONS.SHOW_REFERENCE_VIEWER_FOR_URL.key) {
+            // value is url to show in RefView; more accurately, show the ref that "houses" the url
+            const refIndex = pageData.urlDict[value]?.refs[0]?.ref_index
+            const selectedRef = pageData.references.find(
+                r => {  // NB assumes ref_index and ref_index.toString() is valid
+                    return r.ref_index.toString() === refIndex.toString()
+                })
+            setRefDetails(selectedRef)
+            setSelectedRefIndex(refIndex)
 
-            // NB TODO Tis may not work, as selected ref may not be in current filtered RefList.
-            // but then again, maybe it is, and this is not a problem.
-            // and even if it isnt, the ref details would show up, but not be selected in the reflist at left
-
-            // also set Ref filter
-            // setRefFilter(getUrlRefFilter(value))
-
-            // NB What we need to do is assume the filter is set, and just bring up the RefView with the first ref
-            //  that is in the URL's reflist. this will just select the ref with the ref index, regardless of the
-            //  filtered list of refs dislppaye in RefView.
-            // NB It is assumed then, that the filteredRefs contains at least the ref being targeted with the URL
-
-            const myRef = pageData.urlDict[value]?.refs[0]
-            // myRef is first ref in url's ref list
-            // value is key into urlDict (the url text)
-
-            showRefView(myRef)
-
+            showRefView(refIndex)
             setSelectedUrl(value)
         }
 
         else if (action === IARE_ACTIONS.FILTER_BY_REFERENCE_STATS.key) {
             // filter REF List by stats specified by REFERENCE_STATS_MAP[ref_stats_key]
             const f = value ? REFERENCE_STATS_MAP[value] : null
+            setUrlFilters({"url_filter": f})
             setRefFilter(f?.refFilterFunction
                 ? { filterFunction: f.refFilterFunction }
                 : null)
@@ -203,7 +195,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             setCondition(f)
         }
 
-        else if (action === "IARE_ACTIONS.SET_DOMAIN_FILTER.key") {
+        else if (action === IARE_ACTIONS.SET_DOMAIN_FILTER.key) {
             // filter URL and Ref list by domain specified in value
             setUrlFilters({ "domain_filter" : getUrlDomainFilter(value) })
             setRefFilter(getRefDomainFilter(value))
@@ -211,7 +203,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             setCondition({category: "Pay Level Domains", desc: `Links of domain: "${value}"`})
         }
 
-        else if (action === "IARE_ACTIONS.SET_PAPERS_FILTER.key") {
+        else if (action === IARE_ACTIONS.SET_PAPERS_FILTER.key) {
             // value is filter key name
             const f = value ? REF_FILTER_DEFS[value] : null
             setRefFilter(f)
@@ -220,7 +212,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             setCondition({category: "Papers", desc: `References with papers of type "${value}"`})
         }
 
-        else if (action === "IARE_ACTIONS.SET_PERENNIAL_FILTER.key") {
+        else if (action === IARE_ACTIONS.SET_PERENNIAL_FILTER.key) {
             // value is perennial to filter by
             setUrlFilters({ "url_perennial_filter" : getUrlPerennialFilter(value) })
             setRefFilter(getRefPerennialFilter(value))
@@ -229,7 +221,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             setCondition({category: "Reliability", desc: `Links with Reliability Status of: "${rspMap[value].caption}"`})
         }
 
-        else if (action === "IARE_ACTIONS.SET_TLD_FILTER.key") {
+        else if (action === IARE_ACTIONS.SET_TLD_FILTER.key) {
             // value is tld
             setUrlFilters({ "url_tld_filter" : getUrlTldFilter(value) })
             setRefFilter(getRefTldFilter(value))
@@ -238,7 +230,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             setCondition({category: "Top Level Domain", desc: `Links with Top Level Domain of: "${value}"`})
         }
 
-        else if (action === "IARE_ACTIONS.SET_BOOKS_FILTER.key") {
+        else if (action === IARE_ACTIONS.SET_BOOKS_FILTER.key) {
             setUrlFilters({ "url_book_filter" : getUrlBooksFilter(value) })
             setRefFilter(getRefBooksFilter(value))
             setSelectedUrl(null)
@@ -246,7 +238,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             setCondition({category: "Books", desc: `Links to books from "${value}"`})
         }
 
-        else if (action === "IARE_ACTIONS.SET_TEMPLATE_FILTER.key") {
+        else if (action === IARE_ACTIONS.SET_TEMPLATE_FILTER.key) {
             // filter URLs (and references?) by template indicated by "value" argument
             setUrlFilters({ "url_template_filter" : getUrlTemplateFilter(value) })
             setRefFilter(getRefTemplateFilter(value))
