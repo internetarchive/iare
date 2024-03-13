@@ -320,8 +320,13 @@
 .ref-view-actionables h3 {
     color: #74afe6 !important;
 }
+.ref-view-actionables.no-action {
+    color: #c8c8c8 !important;
+    border: var(--border-box-light);
+    border-color: #c8c8c8;
+}
 .ref-view-actionables.no-action h3 {
-    color: #727272 !important;
+    color: inherit !important;
     font-style:italic;
 }
 .ref-view-actionables .ref-actionable {

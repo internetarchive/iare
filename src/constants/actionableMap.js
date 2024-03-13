@@ -178,7 +178,7 @@ export const ACTIONABLE_FILTER_MAP = {
         name: "dead_link_no_archive",
         short_caption: "Bad No Archive",
         caption: <div>Link Status BAD,<br/>Archive Status BAD</div>,
-        desc: "URL Link Status is BAD, Archive Link is misisng ot broken",
+        desc: "URL Link Status is BAD, Archive Link is missing or broken",
         tooltip: `<div>Original URL Status is NOT 2XX or 3XX<br/>AND<br/>No Archive exists in Wayback Machine</div>`,
         fixit: <div>Add Wayback Machine archive URL to the citation</div>,
         filterFunction: () => (url) => {
