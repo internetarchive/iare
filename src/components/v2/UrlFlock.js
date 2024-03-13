@@ -467,7 +467,7 @@ const urlFlock = React.memo( function UrlFlock({
                 <div className={"url-sections"}>{getSectionInfo(u)}</div>
                 <div className={"url-perennial"}>{getPerennialInfo(u)}</div>
 
-     :q!       </div>
+            </div>
 
         }
 
