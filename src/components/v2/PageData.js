@@ -5,13 +5,14 @@ import Loader from "../Loader";
 import {fetchUrls, iariPostProcessUrl} from "../../utils/iariUtils.js"
 import {ConfigContext} from "../../contexts/ConfigContext";
 import {
-    ARCHIVE_STATUS_FILTER_MAP,
+    // ARCHIVE_STATUS_FILTER_MAP,
     URL_STATUS_FILTER_MAP
 } from "../../constants/urlFilterMaps";
 import {REF_FILTER_DEFS} from "../../constants/refFilterMaps";
 import {areObjectsEqual} from "../../utils/utils";
 import {categorizedDomains, rspMap} from "../../constants/perennialList";
 import {UrlStatusCheckMethods} from "../../constants/checkMethods";
+import {ACTIONABLE_FILTER_MAP} from "../../constants/actionableMap";
 
 /*
 When this component is rendered, it must "process" the pageData. This involves:
@@ -79,6 +80,23 @@ export default function PageData({pageData = {}}) {
             pageData.tld_statistics = tldDict
         }
 
+        const gatherStatusStats = (urlArray) => {
+            // calc counts for each url status defined in URL_STATUS_FILTER_MAP
+            const urlCounts = (urlArray.length)
+                ? []
+                : Object.keys(URL_STATUS_FILTER_MAP).map(key => {
+                    const f = URL_STATUS_FILTER_MAP[key];
+                    const count = pageData.urlArray.filter((f.filterFunction)()).length; // Note the self-evaluating filterFunction!
+                    return {
+                        label: f.caption,
+                        count: count,
+                        link: key
+                    }
+                })
+
+            pageData.url_status_statistics = {urlCounts: urlCounts}
+
+        }
         // create url dict from returned results
         const urlDict = {}
 
@@ -129,6 +147,40 @@ export default function PageData({pageData = {}}) {
         })
 
         gatherTldStats(pageData.urlArray)
+        gatherStatusStats(pageData.urlArray)
+
+    }, [])
+
+    const processActionables = useCallback( (pageData) => {
+        // for each url in urlResults, check if it is actionable
+        // if so, add to url.actionable list
+
+        if (!pageData?.urlArray) return
+
+        pageData.urlArray.forEach(urlObj => {
+            // for each url:
+            // if url is actionable, add to url.actionable list
+            urlObj.actionable = []
+            Object.keys(ACTIONABLE_FILTER_MAP).forEach(key => {
+                const f = ACTIONABLE_FILTER_MAP[key];
+                if ((f.filterFunction)()(urlObj)) {
+                    urlObj.actionable.push(key)
+                }
+            })
+        })
+
+        pageData.references.forEach(_ref => {
+            // for each url:
+            // if url is actionable, add to url.actionable list
+            _ref.actionable = []
+            Object.keys(ACTIONABLE_FILTER_MAP).forEach(key => {
+                const f = ACTIONABLE_FILTER_MAP[key];
+
+                if ((f.refFilterFunction)()(pageData.urlDict, _ref)) {
+                    _ref.actionable.push(key)
+                }
+            })
+        })
 
     }, [])
 
@@ -209,13 +261,18 @@ export default function PageData({pageData = {}}) {
     }, [])
 
 
-    // currently only sets the "hasTemplateArchive" property to true if archive_url parameter found in template
     const processReference = useCallback( (ref, urlDict) => {
+        // sets the "hasTemplateArchive" property to true if archive_url parameter found in template
 
         const templates = ref?.templates ? ref.templates : []
         const templateUrls = {}
 
         templates.forEach( template => {
+
+            if (!template.parameters) {
+                setPageErrors("\"parameters\" property of reference.template missing")
+                return
+            }
 
             const primaryUrl = template.parameters.url
             const archiveUrl = template.parameters.archive_url
@@ -243,6 +300,9 @@ export default function PageData({pageData = {}}) {
 
     const getAnchorReferences = (pageData) => {
         // reduce references by eliminating repeats and collecting ref referrals
+        // "anchor refs" are defined as a reference that describes the content of a reference.
+        // If it is named, it can be referred to by another reference by that name.
+        // If it is not named, it is just a single instance of a reference.
 
         // for refs, if dehydrated=true, use pageData.dehydrated_references, else use pageData.references
         const refs = (pageData?.dehydrated_references?.length)
@@ -308,6 +368,25 @@ export default function PageData({pageData = {}}) {
         // TODO: this should be IARI API, not front-end post-retrieval
         //
 
+        const processTemplates = (refArray) => {
+            // for each template in reference, set template.name tp params[template_name] if there
+            if (refArray?.length) {
+                refArray.forEach( ref => {
+                    if (!ref.templates?.length) return
+                    ref.templates.forEach(template => {
+                        // console.log(`Another Template found for ref id ${ref.id}: ${templateName}`)
+
+                        // if template.name not set, try to pull it from parameters[template_name]
+                        // this is to fix bug in ARTICLE_V1 parser that just puts template name in
+                        // "template_name" property of parameters object
+                        if (!template.name && template.parameters) {
+                            template["name"] = template.parameters["template_name"]
+                        }
+                    })
+                })
+            }
+        }
+
         const gatherTemplateStatistics = (refArray) => {
             const templateDict = {}  // stores count of each template
             if (refArray?.length) {
@@ -348,8 +427,14 @@ export default function PageData({pageData = {}}) {
         const anchorRefs = getAnchorReferences(pageData)
 
         // process all anchor references
-        anchorRefs.forEach( ref => {
+        anchorRefs.forEach( (ref, index) => {
             processReference(ref, pageData.urlDict)
+
+            // assign dynamic ref_index property to each reference.
+            // this gives us the ability to index each reference internally.
+
+            ref.ref_index = index
+
         })
 
         // associate citeref data with anchorRefs
@@ -360,6 +445,8 @@ export default function PageData({pageData = {}}) {
 
         gatherTemplateStatistics(pageData.references)
         gatherPapersStatistics(pageData.references)
+        processTemplates(pageData.references)
+
 
     }, [processReference, processCiteRefs])
 
@@ -376,6 +463,9 @@ export default function PageData({pageData = {}}) {
             // process each url link
             ref.urls.forEach(url => {
                 const myUrl = pageData.urlDict[url]
+
+                if (!myUrl) return  // skip if no entry
+
                 // TODO what to do if url not in urlDict?
                 // TODO we should send and display a notice...shouldnt happen
                 // TODO add to test case: associateRefsWithLinks w/ bad urlDict
@@ -406,9 +496,16 @@ export default function PageData({pageData = {}}) {
 
         Object.keys(pageData.urlDict).forEach( link => {
             const myUrl = pageData.urlDict[link]
+
             const statuses = []
             const templates = []
             const sections = []
+
+            if (!myUrl || !myUrl.refs) {
+                console.log(`associateRefsWithLinks: no urlDict for: ${link}`)
+                return
+            }
+
             myUrl.refs.forEach( r => {  // traverse each reference this url is involved in
 
                 // process url_status's
@@ -550,6 +647,17 @@ export default function PageData({pageData = {}}) {
             })
         }
 
+        // NB TODO make this work for V2
+        // const fetchNewRefs = () => {
+        //     // return fetchUrls( {
+        //     //     iariBase: myIariBase,
+        //     //     urlArray: pageData.urls,
+        //     //     refresh: pageData.forceRefresh,
+        //     //     timeout: 60,
+        //     //     method: myStatusCheckMethod
+        //     // })
+        // }
+
         const fetchPageData = async () => {
 
             try {
@@ -564,12 +672,18 @@ export default function PageData({pageData = {}}) {
                 // fetch info for each url and wait for results before continuing
                 const myUrls = await fetchPageUrls()
 
+
+                // NB TODO: fetch article data from IARI for V2 or article parsing to get array of citerefs
+                // const newRefs = await fetchNewRefs()  // grabs article_V2 data from IARI
+
                 // process received data - TODO this should eventually be done in IARI
                 processUrls(pageData, myUrls);  // creates pageData.urlDict and pageData.urlArray; loads pageData.errors
                 processReferences(pageData)  //
                 associateRefsWithLinks(pageData)  // associates url links with references
                 processRspData(pageData)
                 processBooksData(pageData)
+
+                processActionables(pageData)
 
                 // if any errors, display
                 if (pageData.process_errors?.length > 0) setPageErrors(pageData.process_errors)
@@ -600,6 +714,7 @@ export default function PageData({pageData = {}}) {
             myStatusCheckMethod,
             processRspData,
             processBooksData,
+            processActionables,
         ])
 
 
@@ -658,7 +773,6 @@ export default function PageData({pageData = {}}) {
     const errorDisplay = getErrorDisplay(pageErrors)
 
     return <>
-
         {isLoadingUrls
             ? <Loader message={urlStatusLoadingMessage}/>
             : <>
@@ -674,11 +788,7 @@ export default function PageData({pageData = {}}) {
                         <div className={`display-content`}>
 
                             {selectedViewType === 'urls' &&
-                                <UrlDisplay pageData={pageData} options={{refresh: pageData.forceRefresh}}
-                                            urlStatusFilterMap={URL_STATUS_FILTER_MAP}
-                                            urlArchiveFilterMap={ARCHIVE_STATUS_FILTER_MAP}
-
-                                />
+                                <UrlDisplay pageData={pageData} options={{refresh: pageData.forceRefresh}} />
                             }
 
                             {selectedViewType === 'stats' &&

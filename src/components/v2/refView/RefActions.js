@@ -7,8 +7,8 @@ export default function RefActions( {details, onAction}) {
         const mainTarget = e.target.closest('.btn')
         const myCiteRef = mainTarget.dataset['citeRef']
         // onAction({action:'jumpToCitationRef', value:myCiteRef})
-        const baseWikiUrl = "https://en.wikipedia.org/wiki/"
-        const resolvedCiteRef = myCiteRef.replace( /^\.\//, baseWikiUrl)
+        const wikiBaseUrl = "https://en.wikipedia.org/wiki/"
+        const resolvedCiteRef = myCiteRef.replace( /^\.\//, wikiBaseUrl)
         window.open(resolvedCiteRef, "_blank")
     }
 

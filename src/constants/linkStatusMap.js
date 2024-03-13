@@ -12,7 +12,7 @@ export const LINK_STATUS_MAP = {
         caption: "Links OK",
         desc: "Link is OK or Has Archive",
         filterFunction: () => (url) => {
-            return isLinkStatusGood(url.status_code) || !!url.archive_status?.hasArchive  // NB: double negative
+            return isLinkStatusGood(url.status_code) || !!url.archive_status?.hasArchive  // NB: double negative === truthy
         },
         refFilterFunction: () => (urlDict, ref) => {
             return ref.urls.some( url => {
@@ -34,9 +34,11 @@ export const LINK_STATUS_MAP = {
             return ref.urls.some( url => {
                 const urlObject = urlDict[url]
                 if (!urlObject) return false
+                if (urlObject.isArchive) return false
                 // return isLinkStatusBad(urlObject.status_code) && !urlObject.archive_status?.hasArchive
 
                 const passed = isLinkStatusBad(urlObject.status_code) && !urlObject.archive_status?.hasArchive
+                // const passed = isLinkStatusBad(urlObject.status_code) && !urlObject.archive_status?.hasArchive
                 return passed
             })
         }

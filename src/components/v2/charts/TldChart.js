@@ -66,7 +66,7 @@ const TldChart = ({pageData, options, onAction, currentState = null}) => {
 
     const onClickChart = (link) => {
         // console.log("pie chart clicked, link=", link)
-        onAction({action: "setTldFilter", value: link})
+        onAction({action: "IARE_ACTIONS.SET_TLD_FILTER.key", value: link})
     }
 
     const tldChartOptions = {
@@ -99,7 +99,7 @@ const TldChart = ({pageData, options, onAction, currentState = null}) => {
 
     const onClickLegend = e => {
         const tld = e.target.closest('.legend-entry').dataset['link'];
-        onAction({action: "setTldFilter", value: tld})
+        onAction({action: "IARE_ACTIONS.SET_TLD_FILTER.key", value: tld})
     }
 
     return <>

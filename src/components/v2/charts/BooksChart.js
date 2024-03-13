@@ -56,16 +56,16 @@ const BooksChart = ({pageData, options, onAction, currentState = null}) => {
         // console.log(`legend index: ${index}, link: ${link}`);
 
         // pass link up to passed in click routine
-        onAction({action: "setBooksFilter", value: link})
+        onAction({action: "IARE_ACTIONS.SET_BOOKS_FILTER.key", value: link})
     }
     const onClickChart = (link) => {
         // console.log("pie chart clicked, link=", link)
-        onAction({action: "setBooksFilter", value: link})
+        onAction({action: "IARE_ACTIONS.SET_BOOKS_FILTER.key", value: link})
     }
     const onClickLegend = e => {
         const link = e.target.closest('.legend-entry').dataset['link'];
         // alert(`onCLickLegend: ${link}`)
-        onAction({action: "setBooksFilter", value: link})
+        onAction({action: "IARE_ACTIONS.SET_BOOKS_FILTER.key", value: link})
     }
 
     const booksChartOptions = {

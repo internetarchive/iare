@@ -1,6 +1,4 @@
 import React, {useState} from 'react'
-// import {ConfigContext} from "../../contexts/ConfigContext";
-// import UrlStatusChart from "./charts/UrlStatusChart";
 import TemplateChart from "./charts/TemplateChart";
 import PerennialChart from "./charts/PerennialChart";
 import TldChart from "./charts/TldChart";
@@ -14,8 +12,11 @@ import DomainsChart from "./charts/DomainsChart";
 import Checkbox from "../Checkbox";
 
 import {Chart, LinearScale, BarElement, ArcElement, Legend, Tooltip, Title, SubTitle, Colors,} from 'chart.js'
+import ReferenceStats from "./charts/ReferenceStats";
+import {ConfigContext} from "../../contexts/ConfigContext";
 Chart.register(LinearScale, BarElement, ArcElement, Legend, Tooltip, Title, SubTitle, Colors,);
 
+// displays overview stats of article data
 const UrlOverview = React.memo(({pageData, options, onAction, currentState, tooltipId=null}) => {  // React.memo so doesn't re-rerender with param changes
 
     const [autoExpand, setAutoExpand] = useState(true )
@@ -25,6 +26,7 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState, tool
 
     const [expand, setExpand] = useState({
         "actionable" : true,
+        "reference_stats" : true,
         "domains" : true,
         "link_status" : true,
         "papers" : true,
@@ -48,6 +50,9 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState, tool
         white: "#FFFFFF"
     }
 
+    let myConfig = React.useContext(ConfigContext);
+    myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
+
     const onToggleShow = (name) => {
         setExpand( prevState => {
             const newState = {}
@@ -61,11 +66,47 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState, tool
         })
     }
 
+    const accordionCheckbox = <Checkbox className={"auto-expand"} label={"Accordion Mode"} value={autoExpand}
+        onChange={() => setAutoExpand(prevState => !prevState)}
+        tooltipId={tooltipId}
+        // tooltipContent={"Only one Filter at a time will be expanded.<br/>Click on a Filter caption to show or hide."}
+        tooltipContent={"In Accordion Mode, one filter is visible at a time.<br/>Clicking one filter will automatically hide the others."}
+    />
+
+    const debugFilters = myConfig.isShowDebugComponents && <>
+        <FilterBox name={"reference_stats"} caption={"Reference Stats"} showContents={expand.reference_stats}
+                   onToggle={onToggleShow}  // gets passed filter name when clicked from within FilterBox
+            >
+            <ReferenceStats pageData={pageData}
+                options={{
+                    colors: {
+                                blue: "#35a2eb",
+                                darkBlue: "#1169a5",
+                                red: "#ff6384",
+                                teal: "#4bc0c0",
+                                orange: "#ff9f40",
+                                purple: "#9866ff",
+                                yellow: "#ffcd57",
+                                green: "#5bbd38",
+                                grey: "#c9cbcf",
+                                magenta: "#f763ff",
+                                black: "#000000",
+                                white: "#FFFFFF"
+                            },
+                    another_option:"your option here...",
+                 }}
+                onAction={onAction}
+                currentState={currentState?.reference_stats}
+                tooltipId={tooltipId}/>
+
+        </FilterBox>
+    </>
+
     return <div className={"url-overview"}>
 
         <ControlBox>
             <h3 className={"control-box-caption"}>Filters</h3>
-            <div className={"category-row"}>Click on an Item to filter URLs and References.</div>
+            <div className={"category-row"}>Clicking an item filters URL and References lists.</div>
             <div className={"button-row"}>
                 <button
                     type="button"
@@ -101,10 +142,7 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState, tool
                     // data-tooltip-html={props.tooltip}
                 >Shrink All
                 </button>
-                <Checkbox className={"auto-expand"} label={"Accordion Mode"} value={autoExpand}
-                          onChange={() => setAutoExpand(prevState => !prevState)}
-                          tooltipId={tooltipId} tooltipContent={"Only one filter will be expanded at a time.<br/>Click on a filter caption to show it."}
-                />
+                {accordionCheckbox}
             </div>
 
         </ControlBox>
@@ -117,6 +155,8 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState, tool
                 {/*<FilterBox caption="URL Status Codes" showContents={true}>*/}
                 {/*    <UrlStatusChart pageData={pageData} colors={colors} onAction={onAction} currentState={currentState?. } />*/}
                 {/*</FilterBox>*/}
+
+                {debugFilters}  {/* will eventually put all filters in this variable with a sort of config-comtrolled inclusion */}
 
                 <FilterBox name={"actionable"} caption={"Actionable"} showContents={expand.actionable}
                            onToggle={onToggleShow}>

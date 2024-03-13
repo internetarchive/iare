@@ -1,4 +1,6 @@
 :root {
+    --color-debug-background: #b4df5e;
+
     --color-text: black;
     --color-text-muted: grey;
 
@@ -37,7 +39,8 @@
     --font-weight-debug-section:normal;
 
     /* heights of lists - NB: should be dynamic */
-    --height-list: 68vh;
+    /*--height-list: 68vh;*/
+    --height-list: 63.5vh;
     --height-list-pdf: 70vh;
     --border-list:1px solid black;
 
@@ -53,6 +56,15 @@ body {
     font: 14px "Century Gothic", Futura, sans-serif;
     margin: 15px 20px 20px;
 }
+
+/* global-ish */
+
+.no-padding {
+    padding-left:0 !important;
+    padding-right:0 !important;
+}
+
+/* specific to iari */
 
 .iare-view .header h1 {
     position:relative;
@@ -214,16 +226,14 @@ button.utility-button.small-button {
 
 /* choice selections */
 
-.iari-source-wrapper,
-.check-method-wrapper {
+.choice-wrapper{
     display:inline-block;
     margin-left: .5rem;
 }
 .iari-source-wrapper {
     margin-left: 0;
 }
-.iari-source-wrapper select,
-.check-method-wrapper select {
+.choice-wrapper select {
     margin-left:.3rem;
 }
 

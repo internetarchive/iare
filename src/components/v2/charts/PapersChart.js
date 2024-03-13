@@ -48,7 +48,7 @@ const PapersChart = ({pageData, options, onAction, currentState=null}) => {
     const onClickLegend = e => {
         const link = e.target.closest('.legend-entry').dataset['link'];
         // alert(`onCLickLegend: ${link}`)
-        onAction({action: "setPapersFilter", value: link})
+        onAction({action: "IARE_ACTIONS.SET_PAPERS_FILTER.key", value: link})
     }
 
 

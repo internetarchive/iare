@@ -1,5 +1,6 @@
 import {ACTIONABLE_FILTER_MAP} from "../../../constants/actionableMap";
 import FilterButtons from "../../FilterButtons";
+import {IARE_ACTIONS} from "../../../constants/iareActions";
 
 function ActionFilters({
     // TODO we can remove this ActionFilters component and use FilterButtons directly in ActionableChart
@@ -14,7 +15,7 @@ function ActionFilters({
                        }) {
     const handleActionable = (actionable) => {
         onAction({
-            action: "setActionableFilter", value: actionable,
+            action: IARE_ACTIONS.SET_ACTIONABLE_FILTER.key, value: actionable,
         })
     }
 

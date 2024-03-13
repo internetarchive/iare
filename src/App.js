@@ -8,9 +8,10 @@ import Dropdown from "./components/Dropdown";
 import {IariSources} from "./constants/endpoints";
 import {UrlStatusCheckMethods} from "./constants/checkMethods";
 import {ConfigContext} from "./contexts/ConfigContext"
+import {ArticleVersions} from "./constants/articleVersions";
 
 
-export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, myDebug}) {
+export default function App({env, myPath, myRefresh, myMethod, myArticleVersion, myIariSourceId, myDebug}) {
 
     const [isDebug, setDebug] = useState(myDebug);
 
@@ -18,12 +19,14 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
     const [isShowUrlOverview, setIsShowUrlOverview] = useState(true);
     const [isShowShortcuts, setIsShowShortcuts] = useState(true);
     const [isShowDebugInfo, setIsShowDebugInfo] = useState(false);
+    const [isShowDebugComponents, setIsShowDebugComponents] = useState(false);
     const [isShowViewOptions, setIsShowViewOptions] = useState(false);
 
     // params settable from from address url
     const [targetPath, setTargetPath] = useState(myPath);
     const [refreshCheck, setRefreshCheck] = useState(myRefresh);
     const [checkMethod, setCheckMethod] = useState(myMethod);
+    const [articleVersion, setArticleVersion] = useState(myArticleVersion);
 
     // states of page
     const [endpointPath, setEndpointPath] = useState('');
@@ -106,21 +109,29 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
     const fetchArticleData = useCallback((pathName, refresh = false) => {
 
         // mediaType is "pdf", "html", "wiki", or anything else we come up with
-        const convertPathToEndpoint = (path = '', mediaType = 'wiki', refresh = false) => {
+        const getPagePathEndpoint = (path = '', mediaType = 'wiki', refresh = false) => {
 
             const iariBase = IariSources[myIariSourceId]?.proxy
             // TODO: error if iariBase is undefined or otherwise falsey
-            console.log(`convertPathToEndpoint: myIariSourceId = ${myIariSourceId}, iariBase = ${iariBase}`)
+            console.log(`getPagePathEndpoint: myIariSourceId = ${myIariSourceId}, iariBase = ${iariBase}`)
             if (mediaType === "wiki") {
-                const sectionRegex = '&regex=references|bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
-                const options = '&dehydrate=false'
-                return `${iariBase}/statistics/article?url=${path}${sectionRegex}${options}${refresh ? "&refresh=true" : ''}`;
+
+                if (articleVersion === ArticleVersions["ARTICLE_V1"].key) {
+                    const sectionRegex = '&regex=references|bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
+                    const options = '&dehydrate=false'
+                    return `${iariBase}/statistics/article?url=${path}${sectionRegex}${options}${refresh ? "&refresh=true" : ''}`;
+                }
+
+                else if (articleVersion === ArticleVersions["ARTICLE_V2"].key) {
+                    const options = ''
+                    return `${iariBase}/article?url=${path}${options}${refresh ? "&refresh=true" : ''}`;
+                }
 
             } else if (mediaType === "pdf") {
                 return `${iariBase}/statistics/pdf?url=${path}${refresh ? "&refresh=true" : ''}`;
 
             } else {
-                // do general case...
+                // do general case...TODO make this default parser endpoint a config
 
                 return `${iariBase}/statistics/analyze?url=${path}${refresh ? "&refresh=true"
                     : ''}${mediaType ? `&media_type=${mediaType}` : ''}`;
@@ -143,13 +154,12 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         const myMediaType = getMediaType(pathName);
             // TODO: idea: respect a "forceMediaType",
             // where it can force a media type endpoint, no matter what getMediaType thinks it is.
-            // If so, passes it in to convertPathToEndpoint, where the endpoint is determined
+            // If so, passes it in to getPagePathEndpoint, where the endpoint is determined
             // by passed in mediaType rather than mediaType interpolated from pathName.
 
-        const myEndpoint = convertPathToEndpoint(pathName, myMediaType, refresh);
+        const myEndpoint = getPagePathEndpoint(pathName, myMediaType, refresh);
         console.log("APP::fetchArticleData: endpoint = ", myEndpoint)
-
-        setEndpointPath(myEndpoint); // for display
+        setEndpointPath(myEndpoint); // for display purposes only
 
         // TODO: maybe always clear pageData, so components get cleared while waiting?
         setMyError(null);
@@ -173,9 +183,11 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
                 data.pathName = pathName;
                 data.endpoint = myEndpoint;
                 data.iariSource = IariSources[myIariSourceId]?.proxy;
+                data.iariArticleVersion = articleVersion;
                 data.forceRefresh = refresh;
                 data.mediaType = myMediaType; // decorate based on mediaType?
-                data.version = getIariVersion(data, myEndpoint);
+                data.version = getIariVersion(data, myEndpoint);  // version of pageData - determines display components
+                data.iari_version = data.iari_version ? data.iari_version : "unknown";
 
                 // and set the new pageData state
                 setPageData(data);
@@ -193,7 +205,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
                     setMyError("502 Server problem (no further info available)")
 
                 } else if (err.name === "TypeError" && err.message === "Failed to fetch") {
-                    setMyError(err.message + " - Possible IARI service failure.");
+                    setMyError(err.message + " - IARI service failure: Service down or CORS issue.");
                     // TODO: this happens when filename does not exist!
                     // or when CORS error encountered
                 } else {
@@ -209,7 +221,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
                 setIsLoading(false);
             });
 
-    }, [myIariSourceId]);
+    }, [myIariSourceId, articleVersion])
 
 
     // callback for PathNameFetch component
@@ -237,12 +249,11 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
         } ) => {
 
         const newUrl = window.location.protocol + "//"
-            + window.location.host
-            + window.location.pathname
-            + `?url=${url}`
+            + window.location.host + window.location.pathname + `?url=${url}`
             + (refresh ? '&refresh=true' : '')
             + (checkMethod ? `&method=${checkMethod}` : '')
             + (myIariSourceId ? `&iari-source=${iari_source}` : '')
+            + (articleVersion ? `&article_version=${articleVersion}` : '')
             + (isDebug ? '&debug=true' : '')
 
         // window.location.href = newUrl;
@@ -273,12 +284,25 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
     const handleCheckMethodChange = (methodId) => {
         // console.log(`handleStatusMethodChange: new method is: ${methodId}`)
         setCheckMethod(methodId);
-    };
+    }
     const methodChoices = Object.keys(UrlStatusCheckMethods).filter(f => !["IARI", "IABOT_SEARCHURL"].includes(f)).map( key => {
         return { caption: UrlStatusCheckMethods[key].caption, value: UrlStatusCheckMethods[key].key }
     })
-    const methodChoiceSelect = <div className={"check-method-wrapper"}>
+    const methodChoiceSelect = <div className={"choice-wrapper check-method-wrapper"}>
         <Dropdown choices={methodChoices} label={'Check Method:'} onSelect={handleCheckMethodChange} defaultChoice={checkMethod}/>
+    </div>
+
+    const handleArticleVersionChange = (articleVersionId) => {
+        // console.log(`handleStatusMethodChange: new method is: ${methodId}`)
+        setArticleVersion(articleVersionId);
+    };
+    const articleVersionChoices = Object.keys(ArticleVersions).map( key => {
+        return { caption: ArticleVersions[key].caption, value: ArticleVersions[key].key }
+    })
+    const articleVersionChoiceSelect = <div className={"choice-wrapper article-version-wrapper"}>
+        <Dropdown choices={articleVersionChoices}
+                  label={'Article Parser Version:'}
+                  onSelect={handleArticleVersionChange} defaultChoice={articleVersion}/>
     </div>
 
 
@@ -301,11 +325,11 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
             return { caption: IariSources[key].caption, value: IariSources[key].key }
         })
 
-    const iariChoiceSelect = <div className={"iari-source-wrapper"}>
+    const iariChoiceSelect = <div className={"choice-wrapper iari-source-wrapper"}>
         <Dropdown choices={iariChoices} label={'Iari Source:'} onSelect={handleIariSourceIdChange} defaultChoice={myIariSourceId}/>
     </div>
 
-    const versionDisplay = `version ${package_json.version}`
+    const iareVersion = `${package_json.version}`
     const siteDisplay = (env !== 'env-production') ? ` STAGING SITE ` : ''
     const showHideDebugButton = (env !== 'env-production') && <button className={"utility-button debug-button small-button"}
             onClick={toggleDebug} >{
@@ -315,44 +339,64 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
 
     const heading = <div className={"header-contents"}>
         <h1>Internet Archive Reference Explorer</h1>
-        <div className={"header-aux1"}>{versionDisplay}{siteDisplay}{showHideDebugButton}</div>
+        <div className={"header-aux1"}>version {iareVersion}{siteDisplay}{showHideDebugButton}</div>
     </div>
 
+    const debugButtonFilters = <button // this is the 'show urls list' button
+        className={"utility-button debug-button"}
+        onClick={() => {
+            setIsShowUrlOverview(prevState => !prevState )
+        }
+        } >{isShowUrlOverview ? "Hide" : "Show"} Filters</button>
+
+    const debugButtonShortcuts = <button // this is the 'show shortcuts' button
+        className={"utility-button debug-button"}
+        onClick={() => {
+            setIsShowShortcuts(prevState => !prevState )
+        }
+        } >{isShowShortcuts ? "Hide" : "Show"} Shortcuts</button>
+
+    const debugButtonViewTypes = <button // this is the 'show view options' button
+        className={"utility-button debug-button"}
+        onClick={() => {
+            setIsShowViewOptions(prevState => !prevState )
+        }
+        } >{isShowViewOptions ? "Hide" : "Show"} View Types</button>
+
+    const debugButtonDetails = <button // this is the 'show New Features' button
+        className={"utility-button debug-button"}
+        onClick={() => {
+            setIsShowDebugInfo(prevState => !prevState )
+        }
+        } >{isShowDebugInfo ? "Hide" : "Show"} Debug Details</button>
+
+    const debugButtonComponents = <button // this is the 'show New Features' button
+        className={"utility-button debug-button"}
+        onClick={() => {
+            setIsShowDebugComponents(prevState => !prevState )
+        }
+        } >{isShowDebugComponents ? "Hide" : "Show"} Debug Components</button>
+
     const debugButtons = <>
-        <button // this is the 'show urls list' button
-            className={"utility-button debug-button"}
-            onClick={() => {
-                setIsShowUrlOverview(prevState => !prevState )
-            }
-            } >{isShowUrlOverview ? "Hide" : "Show"} URL Filters</button>
+        {debugButtonViewTypes}
         &nbsp;
-        <button // this is the 'show shortcuts' button
-            className={"utility-button debug-button"}
-            onClick={() => {
-                setIsShowShortcuts(prevState => !prevState )
-            }
-            } >{isShowShortcuts ? "Hide" : "Show"} Shortcuts</button>
+        {debugButtonDetails}
         &nbsp;
-        <button // this is the 'show view options' button
-            className={"utility-button debug-button"}
-            onClick={() => {
-                setIsShowViewOptions(prevState => !prevState )
-            }
-            } >{isShowViewOptions ? "Hide" : "Show"} View Options</button>
+        {debugButtonComponents}
         &nbsp;
-        <button // this is the 'show New Features' button
-            className={"utility-button debug-button"}
-            onClick={() => {
-                setIsShowDebugInfo(prevState => !prevState )
-            }
-            } >{isShowDebugInfo ? "Hide" : "Show"} Debug Info</button>
+        {debugButtonFilters}
+        &nbsp;
+        {debugButtonShortcuts}
         </>
 
     const debug = <div className={"debug-section " + (isDebug ? "debug-on" : "debug-off")}>
-        <div style={{marginBottom:".5rem"}}>{iariChoiceSelect} {methodChoiceSelect}</div>
+        <div style={{marginBottom:".5rem"}}
+            >{iariChoiceSelect} {methodChoiceSelect} {articleVersionChoiceSelect}</div>
         <p><span className={'label'}>Environment:</span> {env} (host: {window.location.host})</p>
-        <p><span className={'label'}>IARE version:</span> {package_json.version}</p>
+        <p><span className={'label'}>IARE Version:</span> {iareVersion}</p>
         <p><span className={'label'}>IARI Source:</span> {myIariSourceId} ({IariSources[myIariSourceId]?.proxy})</p>
+        <p><span className={'label'}>IARI Version:</span> {pageData?.iari_version ? pageData.iari_version : "unknown"} </p>
+        <p><span className={'label'}>Article Version:</span> {ArticleVersions[articleVersion].caption}</p>
         <p><span className={'label'}>Check Method:</span> {UrlStatusCheckMethods[checkMethod].caption} ({checkMethod})</p>
         <p><span className={'label'}>URL from address line:</span> {myPath}</p>
         <p><span className={'label'}>Force Refresh:</span> {refreshCheck ? "TRUE" : "false"}</p>
@@ -366,11 +410,14 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
     const config = {
         environment: env,
         iariSource: IariSources[myIariSourceId]?.proxy,
+        wikiBaseUrl: "https://en.wikipedia.org/wiki/",
         urlStatusMethod: checkMethod,
+        articleVersion: myArticleVersion,
         isDebug: !!isDebug,
         isShowUrlOverview: isShowUrlOverview,
         isShowShortcuts: isShowShortcuts,
         isShowDebugInfo: isShowDebugInfo,
+        isShowDebugComponents: isShowDebugComponents,
         isShowViewOptions: isShowViewOptions,
     }
 

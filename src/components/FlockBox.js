@@ -1,6 +1,5 @@
 import React from "react";
 import './shared/components.css';
-// import Draggable from "react-draggable";
 
 /* FlockBox component
 
@@ -15,12 +14,15 @@ export default function FlockBox({
           caption = null,
           className = null,
           tooltip = '',
+          onKeyDown=null,
           children
       }) {
 
     return <>
 
-        <div className={`flock-box${className ? ` ${className}` : ''}`}>
+        <div className={`flock-box${className ? ` ${className}` : ''}`}
+            onKeyDown={onKeyDown}
+            >
 
             <div className={"flock-box-caption"}>{caption}</div>
             <div className={"flock-box-contents"}>{children}</div>

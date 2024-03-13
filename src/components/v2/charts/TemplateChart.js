@@ -56,11 +56,11 @@ const TemplateChart = ({pageData, options, onAction, currentState=null}) => {
         // console.log(`legend index: ${index}, link: ${link}`);
 
         // pass link up to passed in click routine
-        onAction({action: "setTemplateFilter", value: link})
+        onAction({action: "IARE_ACTIONS.SET_TEMPLATE_FILTER.key", value: link})
     }
     const onClickTemplateChart = (link) => {
         // console.log("pie chart clicked, link=", link)
-        onAction({action: "setTemplateFilter", value: link})
+        onAction({action: "IARE_ACTIONS.SET_TEMPLATE_FILTER.key", value: link})
     }
 
     const templateChartOptions = {
@@ -115,7 +115,7 @@ const TemplateChart = ({pageData, options, onAction, currentState=null}) => {
 
         const template = e.target.closest('.legend-entry').dataset['link'];
         // alert(`onCLickLegend: ${template}`)
-        onAction({action: "setTemplateFilter", value: template})
+        onAction({action: "IARE_ACTIONS.SET_TEMPLATE_FILTER.key", value: template})
     }
 
     return <>

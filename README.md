@@ -56,6 +56,12 @@ If you are running this locally, you casn open the application in a web browser 
 Throughout the code you may see "NB ..." in a comment. NB stands for "Nota Bene", meaning "note well" in latin, and is 
 used to call out certain aspects in the code worth calling out. See https://en.wikipedia.org/wiki/Nota_bene.
 
+#### Warning! 
+
+You cannot use "ref" as a component variable name in a react javascript project -
+it will give you strange errors. If you need to use a variable to 
+represent a reference, use "_ref"...I found this out the hard way!
+
 ### External components used
 
 * ReactTooltip / react-tooltip

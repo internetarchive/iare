@@ -87,7 +87,7 @@ export default function PageInfo({ pageData }) {
 
         const refData = pageData.references.map( _ref => {
             return [
-                _ref["id"],
+                _ref["ref_index"],
                 _ref["name"],
                 _ref["type"],
                 _ref["footnote_subtype"],
@@ -97,7 +97,7 @@ export default function PageInfo({ pageData }) {
 
         // add column labels
         refData.unshift( [
-            'ref_id',
+            'ref_index',
             'name',
             'type',
             'subtype',
@@ -118,6 +118,8 @@ export default function PageInfo({ pageData }) {
         <p>media type: {pageData.mediaType}</p>
 
         <p>Check Method: {myConfig.urlStatusMethod}</p>
+
+        <p>Article Version: {myConfig.articleVersion}</p>
 
         {ores_score_display
             ? <>
@@ -158,7 +160,6 @@ export default function PageInfo({ pageData }) {
         : <p>Nothing to display - pageData is missing.</p>
 
     return <div className="page-info">
-
         <h6 className={"page-stats-header"}>
             <div>Wiki Page Analyzed: {linkPageSource}{true && oresResults}</div><div>{buttonMoreDetails}</div>
         </h6>
