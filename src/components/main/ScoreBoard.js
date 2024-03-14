@@ -5,6 +5,7 @@ import {gridDef} from "./GridDefs"
 import {ConfigContext} from "../../contexts/ConfigContext";
 import {testGridData} from "./TestGridData";
 import {nowTime} from "./dataUtils";
+import CommandTest from "./CommandTest";
 
 
 export default function ScoreBoard({options = {}}) {
@@ -203,22 +204,31 @@ export default function ScoreBoard({options = {}}) {
 
     }
 
+    const controlBox = <ControlBox caption={"Controls"} className={""}>
+        <div className={"row controls"}>
+            <div className={"col"} style={{paddingLeft: "0"}}>
+                <button type={"button"}
+                        className={"btn utility-button debug-button"}
+                        onClick={() => handleAction({action: "refreshDataGrid"})}>Refresh Data Grid
+                </button>
+                {false && <button type={"button"}
+                                  className={"btn utility-button debug-button"}
+                                  onClick={() => handleAction({action:"testPromises"})}>Test Promise
+                </button>}
+            </div>
+        </div>
+    </ControlBox>
+
 
     return <div className="scoreboard">
-        <ControlBox caption={"Controls"} className={""}>
-            <div className={"row controls"}>
-                <div className={"col"} style={{paddingLeft: "0"}}>
-                    <button type={"button"}
-                            className={"btn utility-button debug-button"}
-                            onClick={() => handleAction({action: "refreshDataGrid"})}>Refresh Data Grid
-                    </button>
-                    <button type={"button"}
-                            className={"btn utility-button debug-button"}
-                            onClick={() => handleAction({action:"testPromises"})}>Test Promise
-                    </button>
-                </div>
+
+        {controlBox}
+
+        <div className="row">
+            <div className={"col"}>
+                <CommandTest commandData={{}} onAction={handleAction}/>
             </div>
-        </ControlBox>
+        </div>
 
         <div className="row">
             <div className={"col"}>

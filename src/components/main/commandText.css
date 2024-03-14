@@ -1,0 +1,30 @@
+.command-window {
+    margin-top:1rem;
+    margin-bottom:1.5rem;
+}
+
+
+.command-window textarea {
+    width:90vw;
+}
+
+.command-window .row .row,
+.command-window .row .col,
+.command-window .row h3
+{ padding-left: 0;}
+
+
+.command-results {
+    margin-top:1rem !important;
+}
+
+.command-text .header-all-parts {
+    justify-content: normal;
+    margin-bottom:.35rem;
+}
+.command-text .col,
+.command-results .col
+{
+    padding-left:0 !important;
+}
+

@@ -1,5 +1,6 @@
 import React from "react";
 import DataRow from "./DataRow";
+import './datagrid.css'
 
 /*
 display gridData using gridDef as template
@@ -44,9 +45,11 @@ export default function DataGrid({gridData = null, gridDef = {}}) {
             })
         : "No rows to show! (gridData has no entries)"
 
-    return <div className="data-grid">
-        {headerRow}
-        {dataRows}
-    </div>
-
+    return <>
+        <h3>Data Grid</h3>
+        <div className="data-grid">
+            {headerRow}
+            {dataRows}
+        </div>
+    </>
 }

@@ -4,7 +4,7 @@ export const testGridData = {
 
         row_info: {
             item_name: "https://www.bbc.com/news/business-63953096",
-            fetch_status: 0,  // 0 = fetching, 1 = fetched, 2 = dormant (?)
+            fetch_status: -1,  // 0 = fetching, 1 = fetched, other = unknown
                 // row_info.fetch_status gets changed when data invoked and data received
             fetch_timestamp: null,  // when fetch was made
         },
@@ -51,7 +51,7 @@ export const testGridData = {
 
         row_info: {
             item_name: "https://www.politico.com/amp/news/2022/11/09/crypto-megadonor-sam-bankman-fried-00066062",
-            fetch_status: 0,
+            fetch_status: -1,
             fetch_timestamp: null,
         },
 

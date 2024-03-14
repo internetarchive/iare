@@ -375,7 +375,7 @@ font-weight:normal;
 
 .scoreboard {
     margin-left: .5rem;
-    width:50rem;
+    width:95vw;
 }
 .scoreboard .row {
     margin-left: 0;
@@ -385,39 +385,26 @@ font-weight:normal;
     min-width:6rem;
 }
 
-/* DataGrid css */
-
-.data-grid {
-    width: 100%;
+.header-all-parts button.utility-button {
+    margin-bottom:0;
+    height:1.3rem;
 }
-.data-grid .header-row {
-    background-color: lightgrey;
-    border-bottom: var(--border-normal);
-    border-top: var(--border-normal);
-}
-.data-grid .data-row {
-    background-color: #cda2b7;
-    /*padding: var(--padding-cells);*/
-    border-bottom: var(--border-normal)
-}
-.data-grid .row .item-col,
-.data-grid .row .data-cols .col
-{
-    padding: var(--padding-cells);
-    border-right: var(--border-normal);
-}
-.data-grid .row .item-col
-{
-    border-left: var(--border-normal);
-}
-
-.data-grid .row .data-cols {
-    display:flex;
+.header-all-parts {
+    display: flex;
     flex-direction: row;
-    padding: 0;
+    flex-wrap:wrap;
+    justify-content: space-between;
+    margin-bottom:.35rem;
 }
-.data-grid .row .data-cols > .col {
-    /*flex: 0 0 1;*/
-    overflow: hidden;
-    overflow-x: scroll;
+
+.header-left-part
+{
+    display: flex;
+    flex-direction: row;
+}
+.header-right-part {
+    display:flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+    justify-content: space-between;
 }

@@ -31,9 +31,18 @@ const displayUrlStatus = (cellData) => {
     const displayData = Array.isArray(cellData) ? cellData : [cellData]
 
     return displayData.map( (d,i) => {
-        return <div key={i}><RawJson obj={cellData}/></div>
+        // return <div key={i}><RawJson obj={cellData}/></div>
 
-        // todo: add elapsed time here
+        return <>
+            <div className={"url-status-col"} key={i} >
+                <div className={"status-code"}>{d.status_code}</div>
+                <div>{d.elapsed ? `${Math.trunc(d.elapsed)} ms` : "~"}</div>
+                {d.status_code_error_details && d.status_code === 0
+                    ? d.status_code_error_details
+                    : null}
+            </div>
+
+        </>
 
     })
 }
@@ -100,11 +109,15 @@ export default function DataRow({itemData = null, gridDef = {}}) {
         </div>
     })
 
+    const fetchStatusClass = itemData.row_info.fetch_status === 0 ? "fetch-on"
+        : itemData.row_info.fetch_status === 1 ? "fetch-off"
+            : ""
 
     // TODO NB could make item's hash the key value here...
     return <div className={"row data-row no-gutter"} key={itemData.key}>
 
-        <div className={"col col-1 status-col"}>{itemData.row_info.fetch_status}</div>
+        <div className={`col col-1 status-col`}><span className={`${fetchStatusClass}`}>{itemData.row_info.fetch_status}</span></div>
+
         <div className={"col col-5 item-col"}>{itemData.row_info.item_name}</div>
 
         <div className={"col col-6 data-cols"}>{cols}</div>

@@ -27,6 +27,7 @@ export const gridDef = {
             // ??? do we have a "resolve" method? or os that included in operation?
             operation: () => async (item, options) => {
                 const iariBase = options.iariBase
+                const startTime = performance.now()
                 const results = await fetchUrl({
                     iariBase: iariBase,
                     url: item,
@@ -34,8 +35,20 @@ export const gridDef = {
                     // timeout:timeout,
                     method: UrlStatusCheckMethods.WAYBACK.key
                 })
-                // return results.data
-                return {key: "lwc", data: results.data}
+                const endTime = performance.now();
+                const elapsedTime = endTime - startTime;
+
+                // here is where we can check error code
+                // and coerce into "standard" format
+                const return_data = {
+                    status_code: results.data.status_code,
+                    status_code_error_details: results.data.status_code_error_details,
+                    elapsed: elapsedTime,
+                }
+                return {
+                    key: "lwc",
+                    data: return_data,
+                }
             },
             render: "url_status_array"
         },
@@ -45,7 +58,30 @@ export const gridDef = {
             caption: "IABot",
             tooltip: "Status from IABot testdeadlink API",
             operation: () => async (item, options) => {
-                return {key: "iabot", data: "iabot return"}
+                const iariBase = options.iariBase
+                const startTime = performance.now()
+                const results = await fetchUrl({
+                    iariBase: iariBase,
+                    url: item,
+                    refresh: true,
+                    // timeout:timeout,
+                    method: UrlStatusCheckMethods.IABOT.key
+                })
+
+                const endTime = performance.now();
+                const elapsedTime = endTime - startTime;
+
+                // here is where we can check error code
+                // and coerce into "standard" format
+                const return_data = {
+                    status_code: results.data.status_code,
+                    status_code_error_details: results.data.status_code_error_details,
+                    elapsed: elapsedTime,
+                }
+                return {
+                    key: "iabot",
+                    data: return_data,
+                }
             },
             render: "url_status_array"
         },
@@ -55,7 +91,30 @@ export const gridDef = {
             caption: "Corentin",
             tooltip: "Status from Corentin",
             operation: () => async (item, options) => {
-                return {key: "corentin", data: "corentin return"}
+                const iariBase = options.iariBase
+                const startTime = performance.now()
+                const results = await fetchUrl({
+                    iariBase: iariBase,
+                    url: item,
+                    refresh: true,
+                    // timeout:timeout,
+                    method: UrlStatusCheckMethods.CORENTIN.key
+                })
+
+                const endTime = performance.now();
+                const elapsedTime = endTime - startTime;
+
+                // here is where we can check error code
+                // and coerce into "standard" format
+                const return_data = {
+                    status_code: results.data.status_code,
+                    status_code_error_details: results.data.status_code_error_details,
+                    elapsed: elapsedTime,
+                }
+                return {
+                    key: "corentin",
+                    data: return_data,
+                }
             },
             render: "url_status_array"
         },

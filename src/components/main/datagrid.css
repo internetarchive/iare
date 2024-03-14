@@ -1,0 +1,62 @@
+/* DataGrid css */
+
+.data-grid {
+    width: 100%;
+}
+.data-grid .header-row {
+    background-color: lightgrey;
+    border-bottom: var(--border-normal);
+    border-top: var(--border-normal);
+}
+.data-grid .data-row {
+    background-color: #cda2b7;
+    /*padding: var(--padding-cells);*/
+    border-bottom: var(--border-normal)
+}
+.data-grid .row .status-col,
+.data-grid .row .item-col,
+.data-grid .row .data-cols .col
+{
+    padding: var(--padding-cells);
+    border-right: var(--border-normal);
+}
+/*.data-grid .row .item-col*/
+/*{*/
+/*    border-left: var(--border-normal);*/
+/*}*/
+.data-grid .row .status-col
+{
+    border-left: var(--border-normal);
+}
+
+.data-grid .row .data-cols {
+    display:flex;
+    flex-direction: row;
+    padding: 0;
+}
+.data-grid .row .data-cols > .col {
+    /*flex: 0 0 1;*/
+    overflow: hidden;
+    overflow-x: scroll;
+}
+
+.url-status-col .status-code {
+    font-size: 1.65rem;
+    font-weight: bold;
+}
+
+.status-col span {
+    width:3rem;
+    height:3rem;
+    display:block;
+    margin:0 auto;
+    content: url('../../images/question_on.png');
+}
+
+.status-col .fetch-on {
+    content: url('../../images/IYNL.gif');
+}
+
+.status-col .fetch-off {
+    content: url('../../images/yes_check.png');
+}
