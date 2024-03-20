@@ -1,6 +1,6 @@
 {
-  "short_name": "IARE",
-  "name": "Internet Archive Reference Explorer",
+  "short_name": "IARIDASH",
+  "name": "Internet Archive Reference Inventory Dashboard",
   "icons": [
     {
       "src": "favicon.ico",

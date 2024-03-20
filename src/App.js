@@ -4,9 +4,9 @@ import package_json from "../package.json";
 import Dropdown from "./components/Dropdown";
 import {IariSources} from "./constants/endpoints";
 import {UrlStatusCheckMethods} from "./constants/checkMethods";
-import {ConfigContext} from "./contexts/ConfigContext"
-import ScoreBoard from "./components/main/ScoreBoard";
-import AppHeader from "./AppHeader";
+import {ConfigContext, DataContext} from "./contexts/ConfigContext"
+// import AppHeader from "./AppHeader";
+import AppRouter from "./AppRouter";
 
 
 export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, myDebug}) {
@@ -22,6 +22,9 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
     const [checkMethod, setCheckMethod] = useState(myMethod);
 
     const [myError, setMyError] = useState(null);
+
+    const [gridItems, setGridItems] = useState("")
+    const [gridData, setGridData] = useState({})
 
     const toggleDebug = () => {
         setDebug(!isDebug);
@@ -83,21 +86,27 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
 
     // set config for config context
     const config = {
+        appTitle: appTitle,
         environment: env,
-        iariSource: IariSources[myIariSourceId]?.proxy,
+        versionDisplay: versionDisplay,
+        siteDisplay: siteDisplay,
+        showHideDebugButton: showHideDebugButton,
+        iariBase: IariSources[myIariSourceId]?.proxy,
         urlStatusMethod: checkMethod,
         isDebug: !!isDebug,
         isShowShortcuts: isShowShortcuts,
         isShowExpertMode: isShowExpertMode,
         isShowNewFeatures: isShowNewFeatures,
+
     }
 
-    console.log(`rendering App component:`, JSON.stringify({
-        refreshCheck: refreshCheck,
-        statusMethod: checkMethod,
-        iari_source: myIariSourceId,
-        config: config,
-    }))
+    // console.log(`rendering App.js:`, JSON.stringify({
+    //     refreshCheck: refreshCheck,
+    //     statusMethod: checkMethod,
+    //     iari_source: myIariSourceId,
+    //     config: config,
+    // }))
+    console.log(`rendering App.js:`)
 
     useEffect(() => {
         setMyError(null)  // for now until fixed
@@ -126,6 +135,7 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
             } >{isShowNewFeatures ? "Hide" : "Show"} New Features</button>
     </>
 
+    // eslint-disable-next-line no-unused-vars
     const debug = <div className={"debug-section " + (isDebug ? "debug-on" : "debug-off")}>
         <div style={{marginBottom:".5rem"}}>{iariChoiceSelect} {methodChoiceSelect}</div>
         <div>{buttons}</div>
@@ -138,31 +148,14 @@ export default function App({env, myPath, myRefresh, myMethod, myIariSourceId, m
 
     </div>
 
-
-    return <>
-
+    return (
         <ConfigContext.Provider value={config}>
-
-            <div className="iaridash">
-                <AppHeader
-                    debug={debug}
-                    appTitle={appTitle}
-                    versionDisplay={versionDisplay}
-                    siteDisplay={siteDisplay}
-                    showHideDebugButton={showHideDebugButton}
-                    />
-
-                <ScoreBoard options={{}} />
-
-                {myError
-                    ? <div className={myError ? "error-display" : "xerror-display-none"}>
-                        {myError || "aerf!"}
-                    </div>
-                    : null}
-
-            </div>
-
+            <DataContext.Provider value={{gridItems, setGridItems, gridData, setGridData}}>
+                <div className="iaridash">
+                    <AppRouter />
+                </div>
+            </DataContext.Provider>
         </ConfigContext.Provider>
+    )
 
-    </>
 }

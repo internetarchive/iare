@@ -20,10 +20,12 @@
     padding: var(--padding-cells);
     border-right: var(--border-normal);
 }
-/*.data-grid .row .item-col*/
-/*{*/
-/*    border-left: var(--border-normal);*/
-/*}*/
+.data-grid .row .item-col
+{
+    overflow-wrap: break-word;
+}
+
+
 .data-grid .row .status-col
 {
     border-left: var(--border-normal);
@@ -54,7 +56,8 @@
 }
 
 .status-col .fetch-on {
-    content: url('../../images/IYNL.gif');
+    /*content: url('../../images/IYNL.gif');*/
+    content: url('../../images/spinny2.gif');
 }
 
 .status-col .fetch-off {

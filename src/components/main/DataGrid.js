@@ -41,7 +41,7 @@ export default function DataGrid({gridData = null, gridDef = {}}) {
      */
     const dataRows = Object.keys(gridData).length
         ? Object.keys(gridData).map(itemKey => {
-                return <DataRow itemData={gridData[itemKey]} gridDef={gridDef} />
+                return <DataRow itemData={gridData[itemKey]} gridDef={gridDef} key={itemKey} />
             })
         : "No rows to show! (gridData has no entries)"
 

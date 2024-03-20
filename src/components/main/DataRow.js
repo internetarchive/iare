@@ -35,9 +35,9 @@ const displayUrlStatus = (cellData) => {
 
         return <>
             <div className={"url-status-col"} key={i} >
-                <div className={"status-code"}>{d.status_code}</div>
-                <div>{d.elapsed ? `${Math.trunc(d.elapsed)} ms` : "~"}</div>
-                {d.status_code_error_details && d.status_code === 0
+                <div className={"status-code"}>{d?.status_code ? d.status_code : "?"}</div>
+                <div>{d?.elapsed ? `${Math.trunc(d.elapsed)} ms` : "~"}</div>
+                {d?.status_code_error_details && d.status_code === 0
                     ? d.status_code_error_details
                     : null}
             </div>
@@ -64,7 +64,7 @@ export default function DataRow({itemData = null, gridDef = {}}) {
               it accordingly. nice!
 
               NB TODO add display components, which take data, to displayComponent, or
-              Operator Componets directory.
+              Operator Components directory.
 
     rowData.row_data.keys
 
@@ -77,24 +77,19 @@ export default function DataRow({itemData = null, gridDef = {}}) {
 
         const renderMethod = gridDef.data_columns[columnType].render
 
-        console.log(`render data cell, columnType = ${columnType}, renderMethod =${renderMethod}`)
+        // console.log(`render data cell, columnType = ${columnType}, renderMethod =${renderMethod}`)
 
-        if (0) {}  // allows us to use "else if" indiscriminately for all options
+        if (0) {}  // allows us to use "else if" indiscriminately for all "else if" options
 
         // perform one of our stock functions, if we have 'em
         else if (renderMethod === "url_status_array") {  // could use enum constants here
             return displayUrlStatus(cellData)
         }
 
-        // else if () {
-        //
-        // }
-
+        // else return raw json of unhandled render method
         else {
             return <RawJson obj={cellData} />
         }
-
-        //key={index}
 
     }
 
@@ -116,13 +111,12 @@ export default function DataRow({itemData = null, gridDef = {}}) {
     // TODO NB could make item's hash the key value here...
     return <div className={"row data-row no-gutter"} key={itemData.key}>
 
-        <div className={`col col-1 status-col`}><span className={`${fetchStatusClass}`}>{itemData.row_info.fetch_status}</span></div>
+        <div key={1} className={`col col-1 status-col`}><span className={`${fetchStatusClass}`}>{itemData.row_info.fetch_status}</span></div>
 
-        <div className={"col col-5 item-col"}>{itemData.row_info.item_name}</div>
+        <div key={2} className={"col col-5 item-col"}>{itemData.row_info.item_name}</div>
 
-        <div className={"col col-6 data-cols"}>{cols}</div>
-        {/*<p>Grid goes here!</p>*/}
-        {/*<PureJson data={rows} caption={"DataGrid data:"} />*/}
+        <div key={3} className={"col col-6 data-cols"}>{cols}</div>
+
     </div>
 
 }

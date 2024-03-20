@@ -11,11 +11,8 @@ export default function CommandTest({commandData = null, onAction}) {
     const localCommandResults = "Results will go here (state variable passed in to component)"
 
     const engageCommand = () => {
-
         // may want to set "fetching / waiting" status
-
         onAction({action: "engageCommand", value: localCommandText})
-
     }
 
     const buttonEngageCommand = <button
@@ -65,3 +62,5 @@ export default function CommandTest({commandData = null, onAction}) {
         </div>
     </>
 }
+
+

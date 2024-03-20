@@ -62,5 +62,11 @@ const myRefresh = queryParameters.has("refresh") ? queryParameters.get("refresh"
 const myIariSourceId = getIariSource(queryParameters, env);
 const myMethod = getMethod(queryParameters, env);
 
-root.render(<App env={env} myPath={myPath} myRefresh={myRefresh} myMethod={myMethod} myIariSourceId={myIariSourceId} myDebug={myDebug}/>);
+root.render(<App env={env}
+                 myPath={myPath}
+                 myRefresh={myRefresh}
+                 myMethod={myMethod}
+                 myIariSourceId={myIariSourceId}
+                 myDebug={myDebug}
+/>);
 
