@@ -11,7 +11,7 @@ All scripts should be run from the project directory.
 ### For Development:
 ### `npm start`
 
-Runs IARE Dashboardd in development mode.\
+Runs IARE Dashboard in development mode.\
 Open [http://localhost:3300](http://localhost:3300) to run.
 
 * Changes in the source code automatically reloads page.

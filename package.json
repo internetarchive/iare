@@ -1,6 +1,7 @@
 {
   "name": "iaridash",
-  "version": "0.0.0.0",
+  "version": "0.0.1.0",
+  "description": "Dashboard for Internet Archive Researcher Interface",
   "version_name": "0.0.0.0.forked from 0.2.24.17 internetarchive/iari",
   "private": true,
   "dependencies": {
