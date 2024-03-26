@@ -14,12 +14,20 @@ export const normalizeUrlArray = (urlArray=[]) => {
     return urlArray.map( uData => uData.data )
 }
 
-export const copyToClipboard = (copyText, label="Data") => {
+/*
+
+onComplete: function to call when the copy is completed. If not provided, does an alert.
+ */
+export const copyToClipboard = (copyText, label="Data", onComplete=null) => {
 
     navigator.clipboard.writeText(copyText)
         .then(() => {
             console.log(`${label} copied to clipboard.`);
-            alert(`${label} copied to clipboard.`);
+            if (onComplete) {
+                onComplete(`${label} copied to Clipboard`)
+            } else {
+                alert(`${label} copied to clipboard.`);
+            }
         })
         .catch((error) => {
             console.error(`Failed to copy ${label} to clipboard.`, error);

@@ -504,3 +504,48 @@ button.utility-button.disabled {
 /*.url-rating-reliable {background-color: var(--color-rating-reliable);}*/
 /*.url-rating-deprecated {background-color: var(--color-rating-deprecated);}*/
 /*.url-rating-multi {background-color: var(--color-rating-multi);}*/
+
+/*@keyframes fademove {*/
+/*    0%   {transform: translatey(0px);}*/
+/*    25%  {transform: translatey(200px);}*/
+/*    75%  {transform: translatey(50px);}*/
+/*    100% {transform: translatey(100px);}*/
+/*}*/
+@keyframes fadetext {
+    0%   {opacity: 0;}
+    25%  {opacity: 1;}
+    75%  {opacity: 1;}
+    100% {opacity: 0;}
+}
+
+.feedback-div {
+    display:inline-block;
+}
+.feedback-div.feedback-fade-text {
+    /*transition: opacity 3s ease; !* Define transition *!*/
+    /*opacity: 0; !* Initially set opacity to 0 *!*/
+    animation: fadetext 6s ease;
+
+}
+/*.feedback-fadeout {*/
+/*    transition: opacity 3s ease; !* Define transition *!*/
+/*    opacity: 0; !* Initially set opacity to 0 *!*/
+/*}*/
+
+/*.feedback-visible {*/
+/*    transition: opacity 1.0s ease; !* Define transition *!*/
+/*    opacity: 1; !* Set opacity to 1 when text is displayed *!*/
+/*}*/
+
+/*.feedback-div {*/
+/*    opacity: 0;*/
+/*    transition: opacity 2s;*/
+/*}*/
+
+/*.feedback-div.fade-in {*/
+/*    opacity: 1;*/
+/*}*/
+
+/*.feedback-div.fade-out {*/
+/*    opacity: 0;*/
+/*}*/

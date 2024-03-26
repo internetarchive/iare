@@ -95,6 +95,8 @@ const urlFlock = React.memo( function UrlFlock({
     // TODO maybe should not/don't have to use memo here??
     //  making it a memo seemed to reduce the re-renders of the flock when the tooltip text was updated
 
+    const [feedbackText, setFeedbackText] = useState("")
+
     const [urlTooltipHtml, setUrlTooltipHtml] = useState( '<div>ToolTip<br />second line' );
         // TODO there is a bug where sort re-renders list every time tooltip text/html property is updated
         // TODO maybe fix using React.useRef somehow???
@@ -111,8 +113,6 @@ const urlFlock = React.memo( function UrlFlock({
         },
         sortOrder: ["status"]  // array indicating which sorts get applied and in what order. NB this is not implemented yet, but will be
     })
-
-    // const myConfig = useContext(ConfigContext);
 
     const handleSortClick = (sortKey) => {
         // toggle sort direction of specified sort and set new sort state with setSort
@@ -596,6 +596,32 @@ const urlFlock = React.memo( function UrlFlock({
     const [flockRows, flockArray] = getFlockRows(urlArray, urlFilters)
     const flock = getFlock(flockRows)
 
+    // fades in feedback text and then fades it out
+    React.useEffect(() => {
+        if (feedbackText) {
+
+            const displayTimer = setTimeout(() => {
+                setFeedbackText('');
+            }, 6000);
+
+            // const displayTimer = setTimeout(() => {
+            //     setFeedbackFadeout(true)
+            //     setTimeout(() => {
+            //         setFeedbackText('');
+            //     }, 5000)
+            // }, 3000);
+
+            // const clearTimer = setTimeout(() => {
+            //     clearTimeout(displayTimer);
+            // }, 5000);
+
+            return () => {
+                clearTimeout(displayTimer);
+                // clearTimeout(clearTimer);
+            };
+        }
+    }, [feedbackText]);
+
     const handleCopyUrlsDetails = () => {
 
         const urlArrayData = [...flockArray].sort(   // NB "..." used so that copy of array is sorted, not original flock array
@@ -625,8 +651,12 @@ const urlFlock = React.memo( function UrlFlock({
             `Error message`
         ] )
 
-        copyToClipboard(convertToCSV(urlArrayData), `${numItems} URLs`)
+        copyToClipboard(convertToCSV(urlArrayData), `${numItems} URL Data Rows`, handleFeedback)
 
+    }
+
+    const handleFeedback = (feedback) => {
+        setFeedbackText(feedback)
     }
 
     const handleCopyUrlsList = () => {
@@ -638,18 +668,24 @@ const urlFlock = React.memo( function UrlFlock({
             return u.url
         })
 
-        copyToClipboard(urlArrayData.join("\n"))
+        copyToClipboard(urlArrayData.join("\n"), `${urlArrayData.length} URLs`, handleFeedback)
 
     }
 
     const buttonCopyList = <button onClick={handleCopyUrlsList} className={'btn utility-button small-button'} ><span>Copy URL List</span></button>
     const buttonCopyDetails = <button onClick={handleCopyUrlsDetails} className={'btn utility-button small-button'} ><span>Copy URL Details</span></button>
+    // const spanFeedback = <div className={`feedback-div feedback-fade-text ${feedbackText ? 'feedback-visible' : ''} ${feedbackFadeout ? 'feedback-fadeout' : ''}`}>
+    //     {feedbackText && <span>{feedbackText}</span>}
+    // </div>
+    const spanFeedback = <div className={`feedback-div ${feedbackText ? 'feedback-fade-text' : ''}`}>
+        {feedbackText && <span>{feedbackText}</span>}
+    </div>
 
     const flockCaption = <>
         <div>URL Links</div>
         <div className={"sub-caption"}>
             <div>{flockRows.length} {flockRows.length === 1 ? 'URL' : 'URLs'}</div>
-            <div>{buttonCopyList} {buttonCopyDetails}</div>
+            <div>{spanFeedback} {buttonCopyList} {buttonCopyDetails}</div>
             {/*{buttonCopyList} {buttonCopyDetails}*/}
         </div>
     </>
