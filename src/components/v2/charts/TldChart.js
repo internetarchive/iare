@@ -2,6 +2,7 @@ import React from 'react';
 import PieChart from "../../PieChart";
 import './charts.css';
 import ChartLegend from "./ChartLegend";
+import {IARE_ACTIONS} from "../../../constants/iareActions";
 
 /*
 shows piechart, for now, of tlds of urls
@@ -66,7 +67,7 @@ const TldChart = ({pageData, options, onAction, currentState = null}) => {
 
     const onClickChart = (link) => {
         // console.log("pie chart clicked, link=", link)
-        onAction({action: "IARE_ACTIONS.SET_TLD_FILTER.key", value: link})
+        onAction({action: IARE_ACTIONS.SET_TLD_FILTER.key, value: link})
     }
 
     const tldChartOptions = {
@@ -99,7 +100,7 @@ const TldChart = ({pageData, options, onAction, currentState = null}) => {
 
     const onClickLegend = e => {
         const tld = e.target.closest('.legend-entry').dataset['link'];
-        onAction({action: "IARE_ACTIONS.SET_TLD_FILTER.key", value: tld})
+        onAction({action: IARE_ACTIONS.SET_TLD_FILTER.key, value: tld})
     }
 
     return <>

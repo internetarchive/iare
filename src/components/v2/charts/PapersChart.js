@@ -2,6 +2,7 @@ import React from 'react';
 import './charts.css';
 import {generateColorFade} from "../../../utils/utils";
 import ChartLegend from "./ChartLegend";
+import {IARE_ACTIONS} from "../../../constants/iareActions";
 
 const PapersChart = ({pageData, options, onAction, currentState=null}) => {
 
@@ -48,7 +49,7 @@ const PapersChart = ({pageData, options, onAction, currentState=null}) => {
     const onClickLegend = e => {
         const link = e.target.closest('.legend-entry').dataset['link'];
         // alert(`onCLickLegend: ${link}`)
-        onAction({action: "IARE_ACTIONS.SET_PAPERS_FILTER.key", value: link})
+        onAction({action: IARE_ACTIONS.SET_PAPERS_FILTER.key, value: link})
     }
 
 

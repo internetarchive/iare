@@ -22,7 +22,7 @@
     --margin-ref-view-section:1.65rem;
     --margin-ref-view-section-tight:.5rem;
 
-
+    --border-radius-ref-section:0.35rem;
 }
 
 .ref-modal-overlay {
@@ -231,6 +231,7 @@
 }
 .ref-view-wikitext .raw-wikitext.editable {
     background-color: var(--color-bg-editable) !important;
+    border-radius: var(--border-radius-ref-section);
 }
 
 /*.ref-view .row.footer  {*/
@@ -316,10 +317,11 @@
     margin-bottom: var(--margin-ref-view-section);
     border: var(--border-box-light);
     padding:.35rem;
+    border-radius: var(--border-radius-ref-section);
 }
-.ref-view-actionables h3 {
-    color: #74afe6 !important;
-}
+/*.ref-view-actionables h3 {*/
+/*    color: #74afe6 !important;*/
+/*}*/
 .ref-view-actionables.no-action {
     color: #c8c8c8 !important;
     border: var(--border-box-light);
@@ -331,9 +333,33 @@
 }
 .ref-view-actionables .ref-actionable {
     margin-top:.1rem;
+    font-size:1rem;
 }
+
+.ref-view-actionables .action-section-label:before {
+    background-image: url('../../../images/actionable_icon.v1r1.png');
+    background-size: var(--size-actionable-icon) var(--size-actionable-icon);
+    display: inline-block;
+    width: var(--size-actionable-icon);
+    height: var(--size-actionable-icon);
+    content:"";
+    margin-right:.35rem;
+}
+.ref-view-actionables .action-section-label {
+    font-size: 1rem;
+    font-weight:bold;
+    /*color: var(--color-ref-actionable);*/
+    color: #1596c0 !important;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: .2rem;
+    padding-bottom: .1rem;
+}
+
+
+
 .ref-view-actionables .ref-actionable .action-desc {
-    font-weight: bold;
+    font-weight: normal;
     color: #727272;
 }
 .ref-view-actionables .ref-actionable .action-fixit {
@@ -342,10 +368,11 @@
     flex-wrap:wrap;
     justify-content:  left;
     color: #727272;
+    margin-bottom: .2rem;
 }
 
 .ref-view-parameters {
-    margin-top:.25rem;
+    margin-top:.2rem;
 }
 
 .ref-view-article-info {
@@ -384,11 +411,13 @@
 /* visual caption display of reference */
 .reference-info {
     /*border: var(--border-box-light);*/
-    border-bottom: var(--border-box-light);
+
+    /*border-bottom: var(--border-box-light);*/
 
     /*margin-bottom: var(--margin-ref-view-section);*/
     /*margin-bottom: var(--margin-ref-view-section-tight);*/
-    margin-bottom: .75rem;
+
+    /*margin-bottom: .75rem;*/
 
     /*padding: .5rem;*/
     /*padding-bottom: 0;*/
@@ -403,6 +432,7 @@
     /*min-height: 2rem;*/
     margin-bottom:0;
     /*min-height: 6.4rem;*/
+    border-radius: var(--border-radius-ref-section);
 }
 .ref-view-ref-display .ref-meta {
     border-top: var(--border-row);

@@ -4,6 +4,7 @@ import './charts.css';
 // import {generateColorFade} from "../../../utils/utils";
 import {rspMap} from "../../../constants/perennialList";
 import ChartLegend from "./ChartLegend";
+import {IARE_ACTIONS} from "../../../constants/iareActions";
 
 /*
 shows piechart, for now, of links associated with perennial categories
@@ -68,11 +69,11 @@ const PerennialChart = ({pageData, options, onAction, currentState = null}) => {
         // console.log(`legend index: ${index}, link: ${link}`);
 
         // pass link up to passed in click routine
-        onAction({action: "IARE_ACTIONS.SET_PERENNIAL_FILTER.key", value: link})
+        onAction({action: IARE_ACTIONS.SET_PERENNIAL_FILTER.key, value: link})
     }
     const onClickChart = (link) => {
         // console.log("pie chart clicked, link=", link)
-        onAction({action: "IARE_ACTIONS.SET_PERENNIAL_FILTER.key", value: link})
+        onAction({action: IARE_ACTIONS.SET_PERENNIAL_FILTER.key, value: link})
     }
 
     const perennialChartOptions = {
@@ -106,7 +107,7 @@ const PerennialChart = ({pageData, options, onAction, currentState = null}) => {
     const onClickLegend = e => {
         const perennial = e.target.closest('.legend-entry').dataset['link'];
         // alert(`onCLickLegend: ${template}`)
-        onAction({action: "IARE_ACTIONS.SET_PERENNIAL_FILTER.key", value: perennial})
+        onAction({action: IARE_ACTIONS.SET_PERENNIAL_FILTER.key, value: perennial})
     }
 
     return <>
