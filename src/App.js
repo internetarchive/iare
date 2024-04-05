@@ -11,7 +11,7 @@ import {ConfigContext} from "./contexts/ConfigContext"
 import {ArticleVersions} from "./constants/articleVersions";
 
 
-export default function App({env, myPath, myRefresh, myMethod, myArticleVersion, myIariSourceId, myDebug}) {
+export default function App({env, myPath, myCacheData, myRefresh, myMethod, myArticleVersion, myIariSourceId, myDebug}) {
 
     const [isDebug, setDebug] = useState(myDebug);
 
@@ -24,6 +24,7 @@ export default function App({env, myPath, myRefresh, myMethod, myArticleVersion,
 
     // params settable from from address url
     const [targetPath, setTargetPath] = useState(myPath);
+    const [cacheData, setCacheData] = useState(myCacheData);
     const [refreshCheck, setRefreshCheck] = useState(myRefresh);
     const [checkMethod, setCheckMethod] = useState(myMethod);
     const [articleVersion, setArticleVersion] = useState(myArticleVersion);
@@ -80,12 +81,20 @@ export default function App({env, myPath, myRefresh, myMethod, myArticleVersion,
     }
 
     // mediaType is "pdf", "html", "wiki", or anything else we come up with
-    const getMediaType = (path = '') => {
+    const getMediaType = (path = '', cacheData = '') => {
         // set media type based on heuristic:
+
+        // if cacheData, assume wiki
 
         // if path ends in ".pdf", assume pdf
         // if path contains ".wikipedia.org/wiki/, assume wiki
+
         // else unknown, for now
+
+
+        if (cacheData)
+            return 'wiki'
+
 
         // eslint-disable-next-line
         const regexPdf = new RegExp("\.pdf$");
@@ -106,15 +115,27 @@ export default function App({env, myPath, myRefresh, myMethod, myArticleVersion,
     // fetch article reference data
     //
     // TODO: account for error conditions, like wrong file format, not found, etc
-    const fetchArticleData = useCallback((pathName, refresh = false) => {
+    const fetchArticleData = useCallback((
+        {
+            pathName,
+            cacheData = '',
+            refresh = false
+        }) => {
 
         // mediaType is "pdf", "html", "wiki", or anything else we come up with
-        const getPagePathEndpoint = (path = '', mediaType = 'wiki', refresh = false) => {
+        const getPagePathEndpoint = (path = '', cacheData = '', mediaType = 'wiki', refresh = false) => {
 
             const iariBase = IariSources[myIariSourceId]?.proxy
             // TODO: error if iariBase is undefined or otherwise falsey
             console.log(`getPagePathEndpoint: myIariSourceId = ${myIariSourceId}, iariBase = ${iariBase}`)
-            if (mediaType === "wiki") {
+
+            if (cacheData) {
+                // use cached article result data if specified
+                // this is used (mainly?only?) for development
+                return `${iariBase}/article_cache?iari_id=${cacheData}`;
+            }
+
+            else if (mediaType === "wiki") {
 
                 if (articleVersion === ArticleVersions["ARTICLE_V1"].key) {
                     const sectionRegex = '&regex=references|bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
@@ -144,20 +165,20 @@ export default function App({env, myPath, myRefresh, myMethod, myArticleVersion,
 
 
         // handle null pathName
-        if (!pathName) {
-            console.log("APP::referenceFetch: pathName is null-ish");
+        if (!pathName && !cacheData) {
+            console.log("APP::referenceFetch: pathName is null-ish and no cache-data specified");
             setPageData(null);
             // TODO: use setMyError(null); // ??
             return;
         }
 
-        const myMediaType = getMediaType(pathName);
+        const myMediaType = getMediaType(pathName, cacheData);
             // TODO: idea: respect a "forceMediaType",
             // where it can force a media type endpoint, no matter what getMediaType thinks it is.
             // If so, passes it in to getPagePathEndpoint, where the endpoint is determined
             // by passed in mediaType rather than mediaType interpolated from pathName.
 
-        const myEndpoint = getPagePathEndpoint(pathName, myMediaType, refresh);
+        const myEndpoint = getPagePathEndpoint(pathName, cacheData, myMediaType, refresh);
         console.log("APP::fetchArticleData: endpoint = ", myEndpoint)
         setEndpointPath(myEndpoint); // for display purposes only
 
@@ -233,7 +254,6 @@ export default function App({env, myPath, myRefresh, myMethod, myArticleVersion,
             {
                 url: pathResults[0],
                 refresh: pathResults[1],
-
                 iari_source: myIariSourceId,
             }
         )
@@ -244,12 +264,15 @@ export default function App({env, myPath, myRefresh, myMethod, myArticleVersion,
     const refreshPageResults = (
         {
             url = '',
+            cache_data = '',
             refresh=false,
             iari_source = IariSources.iari_prod.key
         } ) => {
 
         const newUrl = window.location.protocol + "//"
-            + window.location.host + window.location.pathname + `?url=${url}`
+            + window.location.host + window.location.pathname
+            + `?url=${url}`
+            + (cache_data ? `&cache_data=${cache_data}` : '')
             + (refresh ? '&refresh=true' : '')
             + (checkMethod ? `&method=${checkMethod}` : '')
             + (myIariSourceId ? `&iari-source=${iari_source}` : '')
@@ -269,16 +292,22 @@ export default function App({env, myPath, myRefresh, myMethod, myArticleVersion,
     // fetch initial article specified on address bar with url param
     useEffect(() => {
 
-        console.log(`APP:::useEffect[myPath, myRefresh]: calling handlePathName: ${myPath}, ${myRefresh}`)
+        console.log(`APP:::useEffect[myPath, myCacheData, myRefresh]: calling handlePathName: ${myPath}, ${myCacheData}, ${myRefresh}`)
 
         // set these states only for debug display, essentially
         setTargetPath(myPath);
+        setCacheData(myCacheData)
         setRefreshCheck(myRefresh);
 
         // and do the fetching for the path specified (pulled from URL address)
-        fetchArticleData(myPath, myRefresh)
+        fetchArticleData({
+                pathName: myPath,
+                cacheData: myCacheData,
+                refresh: myRefresh
+            })
 
-    }, [myIariSourceId, myPath, myRefresh, fetchArticleData])
+
+        }, [myIariSourceId, myPath, myRefresh, myCacheData, fetchArticleData])
 
 
     const handleCheckMethodChange = (methodId) => {
@@ -310,6 +339,7 @@ export default function App({env, myPath, myRefresh, myMethod, myArticleVersion,
         // console.log(`handleIariSourceChange: new iari source is: ${sourceId}`)
         refreshPageResults( {
             url : targetPath,
+            cache_data : cacheData,
             refresh : refreshCheck,
             iari_source: sourceId,
         })
@@ -399,6 +429,7 @@ export default function App({env, myPath, myRefresh, myMethod, myArticleVersion,
         <p><span className={'label'}>Article Version:</span> {ArticleVersions[articleVersion].caption}</p>
         <p><span className={'label'}>Check Method:</span> {UrlStatusCheckMethods[checkMethod].caption} ({checkMethod})</p>
         <p><span className={'label'}>URL from address line:</span> {myPath}</p>
+        <p><span className={'label'}>Cache Data from address line:</span> {myCacheData}</p>
         <p><span className={'label'}>Force Refresh:</span> {refreshCheck ? "TRUE" : "false"}</p>
         <div>{debugButtons}</div>
         <p><span className={'label'}>pathName:</span> <MakeLink href={targetPath}/></p>

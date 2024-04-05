@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.2.24.27",
-  "version_name": "0.2.24.27 fade feedback",
+  "version": "0.2.24.28",
+  "version_name": "0.2.24.28 cached article data capabilities",
   "private": true,
   "dependencies": {
     "bootstrap": "^5.3.0-alpha3",

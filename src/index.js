@@ -76,12 +76,19 @@ const queryParameters = new URLSearchParams(window.location.search)
 const env = getEnvironment();
 const myDebug = queryParameters.has("debug") ? queryParameters.get("debug").toLowerCase() === 'true' : false;
 const myPath = queryParameters.has("url") ? queryParameters.get("url") : '';
+const myCacheData = queryParameters.has("cache_data") ? queryParameters.get("cache_data") : '';
 const myRefresh = queryParameters.has("refresh") ? queryParameters.get("refresh").toLowerCase() === 'true' : false;
 const myIariSourceId = getIariSource(queryParameters, env);
 const myMethod = getMethod(queryParameters, env);
 const myArticleVersion = getArticleVersion(queryParameters, env);
 
-root.render(<App env={env} myPath={myPath} myRefresh={myRefresh}
-                 myMethod={myMethod} myArticleVersion={myArticleVersion} myIariSourceId={myIariSourceId}
-                 myDebug={myDebug}/>);
+root.render(<App env={env}
+                 myPath={myPath}
+                 myCacheData={myCacheData}
+                 myRefresh={myRefresh}
+                 myMethod={myMethod}
+                 myArticleVersion={myArticleVersion}
+                 myIariSourceId={myIariSourceId}
+                 myDebug={myDebug}
+/>);
 
