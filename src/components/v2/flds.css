@@ -74,7 +74,7 @@
 
 .fld-list-header {
     /*background-color: #cccccc;*/
-    background-color: var(--color-list-header-bg);
+    background-color: var(--g-color-list-header-bg);
     color:black;
 }
 .fld-list-header:hover {

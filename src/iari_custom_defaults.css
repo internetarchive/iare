@@ -1,0 +1,28 @@
+/* style definition file for iari customizations */
+
+
+/* global definitions */
+
+:root {
+    --g-color-h1-fg: red;
+
+    --g-color-body-bg: #FFFFFF;
+
+    --g-color-list-header-fg: black;
+    --g-color-list-header-bg: #cff0ff;/*#00eaff;*//*#26e3f5;*/
+
+    --g-color-function-box-caption-fg: #FFFFFF;
+    --g-color-function-box-caption-bg: #2299e8;
+    --g-color-function-box-caption-outline: #2585cc;
+    --g-color-function-box-contents: hsl(228 23% 97% / 1);
+
+    --g-color-flock-box-caption-fg: #FFFFFF;
+    --g-color-flock-box-caption-bg: #2299e8;
+
+    --g-color-reference-display-bg: hsl(211deg 65.22% 81.96%);
+    --g-color-reference-display-fg: black;
+    --g-color-reference-display-selected-bg: #e3ebf9;
+
+    --xx-color-ref-bg: #d5e5f6; /* d5f6d5 */ /* d5e5f6 */ /* d5e2f6 */
+
+}

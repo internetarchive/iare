@@ -81,6 +81,8 @@ function RefFlock({ pageData= {},
         console.log("handleClickList")
         e.preventDefault()  // prevents internal <a> links from jumping automatically
 
+        const refElement = e.target.closest('button.ref-button')
+        if (!refElement) return // if we didn't click on a ref button, bail
         const refIndex = e.target.closest('button.ref-button').dataset["ref_index"]
 
         // send action up the calling component tree

@@ -2,8 +2,8 @@
     --width-ref-list: 22rem;
     --width-ref-list: 22rem;
 
-    --color-ref-bg: #d5e5f6; /* d5f6d5 */ /* d5e5f6 */ /* d5e2f6 */
-    --color-ref-bg-header: var(--color-list-header-bg);
+    /*--color-ref-bg: #d5e5f6; !* d5f6d5 *! !* d5e5f6 *! !* d5e2f6 *!*/
+    --color-ref-bg-header: var(--g-color-list-header-bg);
     --color-ref-hilite: #0f0fe6;
     /*--color-ref-actionable: #e60f16;*/
     --color-ref-actionable: #9a8384;
@@ -38,9 +38,9 @@
 
 .ref-button {
     cursor: pointer; /* Pointer/hand icon */
-    /*background-color: #ced9ef; !* #c1d4e0;*!*/
-    /*background-color: #ceefd9; !* #c1d4e0;*!*/
-    background-color: var(--color-ref-bg);
+
+    background-color: var(--g-color-reference-display-bg);
+
     width: 100%;
     text-align: left;
     padding:.3rem .3rem .3rem .4rem;
@@ -94,15 +94,19 @@
     opacity: 0.4;
 }
 .ref-line.ref-actionable {
-    font-size: 1rem;
-    font-weight:bold;
-    color: var(--color-ref-actionable);
-    text-align: left;
-    text-transform: uppercase;
-    letter-spacing: .2rem;
-    padding-bottom: .1rem;
-}
-.ref-line.ref-actionable:before {
+    /*font-size: 1rem;*/
+    /*font-weight:bold;*/
+    /*color: var(--color-ref-actionable);*/
+    /*text-align: left;*/
+    /*text-transform: uppercase;*/
+    /*letter-spacing: .2rem;*/
+    /*padding-bottom: .1rem;*/
+
+    font-size:0;
+
+    position:absolute;
+    right:0;
+    top:.25rem;
     background-image: url('../../images/actionable_icon.v1r1.png');
     background-size: var(--size-actionable-icon) var(--size-actionable-icon);
     display: inline-block;
@@ -110,6 +114,19 @@
     height: var(--size-actionable-icon);
     content:"";
     margin-right:.35rem;
+
+}
+.ref-line.ref-actionable:before {
+    /*position:absolute;*/
+    /*right:0;*/
+    /*top:0;*/
+    /*background-image: url('../../images/actionable_icon.v1r1.png');*/
+    /*background-size: var(--size-actionable-icon) var(--size-actionable-icon);*/
+    /*display: inline-block;*/
+    /*width: var(--size-actionable-icon);*/
+    /*height: var(--size-actionable-icon);*/
+    /*content:"";*/
+    /*margin-right:.35rem;*/
 }
 
 

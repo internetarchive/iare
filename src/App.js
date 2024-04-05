@@ -11,8 +11,9 @@ import {ConfigContext} from "./contexts/ConfigContext"
 import {ArticleVersions} from "./constants/articleVersions";
 
 
-export default function App({env, myPath, myCacheData, myRefresh, myMethod, myArticleVersion, myIariSourceId, myDebug}) {
+export default function App({env, myPath, myRefresh, myMethod, myArticleVersion, myIariSourceId, myDebug}) {
 
+    const appTitle="Internet Archive Reference Explorer - Custom CSS Enabled"
     const [isDebug, setDebug] = useState(myDebug);
 
     // these are config values to show/hide certain UI features, available from debug info box
@@ -24,7 +25,6 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
 
     // params settable from from address url
     const [targetPath, setTargetPath] = useState(myPath);
-    const [cacheData, setCacheData] = useState(myCacheData);
     const [refreshCheck, setRefreshCheck] = useState(myRefresh);
     const [checkMethod, setCheckMethod] = useState(myMethod);
     const [articleVersion, setArticleVersion] = useState(myArticleVersion);
@@ -45,10 +45,10 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
     const shortcuts = env === 'env-production'
         ? ['easterIsland', 'internetArchive', 'pdfCovid',]
         : env === 'env-staging'
-                // default staging shortcuts
+            // default staging shortcuts
             ? ['easterIsland', 'internetArchive', 'mlk', 'short_test', ]
 
-                // my development shortcuts
+            // my development shortcuts
             : ['marcBolan', 'easterIsland', 'mlk', 'internetArchive', 'karen_bakker', 'short_test', 'pdfDesantis', 'pdfOneLink'];
 
 
@@ -81,20 +81,12 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
     }
 
     // mediaType is "pdf", "html", "wiki", or anything else we come up with
-    const getMediaType = (path = '', cacheData = '') => {
+    const getMediaType = (path = '') => {
         // set media type based on heuristic:
-
-        // if cacheData, assume wiki
 
         // if path ends in ".pdf", assume pdf
         // if path contains ".wikipedia.org/wiki/, assume wiki
-
         // else unknown, for now
-
-
-        if (cacheData)
-            return 'wiki'
-
 
         // eslint-disable-next-line
         const regexPdf = new RegExp("\.pdf$");
@@ -115,27 +107,15 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
     // fetch article reference data
     //
     // TODO: account for error conditions, like wrong file format, not found, etc
-    const fetchArticleData = useCallback((
-        {
-            pathName,
-            cacheData = '',
-            refresh = false
-        }) => {
+    const fetchArticleData = useCallback((pathName, refresh = false) => {
 
         // mediaType is "pdf", "html", "wiki", or anything else we come up with
-        const getPagePathEndpoint = (path = '', cacheData = '', mediaType = 'wiki', refresh = false) => {
+        const getPagePathEndpoint = (path = '', mediaType = 'wiki', refresh = false) => {
 
             const iariBase = IariSources[myIariSourceId]?.proxy
             // TODO: error if iariBase is undefined or otherwise falsey
             console.log(`getPagePathEndpoint: myIariSourceId = ${myIariSourceId}, iariBase = ${iariBase}`)
-
-            if (cacheData) {
-                // use cached article result data if specified
-                // this is used (mainly?only?) for development
-                return `${iariBase}/article_cache?iari_id=${cacheData}`;
-            }
-
-            else if (mediaType === "wiki") {
+            if (mediaType === "wiki") {
 
                 if (articleVersion === ArticleVersions["ARTICLE_V1"].key) {
                     const sectionRegex = '&regex=references|bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
@@ -165,20 +145,20 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
 
 
         // handle null pathName
-        if (!pathName && !cacheData) {
-            console.log("APP::referenceFetch: pathName is null-ish and no cache-data specified");
+        if (!pathName) {
+            console.log("APP::referenceFetch: pathName is null-ish");
             setPageData(null);
             // TODO: use setMyError(null); // ??
             return;
         }
 
-        const myMediaType = getMediaType(pathName, cacheData);
-            // TODO: idea: respect a "forceMediaType",
-            // where it can force a media type endpoint, no matter what getMediaType thinks it is.
-            // If so, passes it in to getPagePathEndpoint, where the endpoint is determined
-            // by passed in mediaType rather than mediaType interpolated from pathName.
+        const myMediaType = getMediaType(pathName);
+        // TODO: idea: respect a "forceMediaType",
+        // where it can force a media type endpoint, no matter what getMediaType thinks it is.
+        // If so, passes it in to getPagePathEndpoint, where the endpoint is determined
+        // by passed in mediaType rather than mediaType interpolated from pathName.
 
-        const myEndpoint = getPagePathEndpoint(pathName, cacheData, myMediaType, refresh);
+        const myEndpoint = getPagePathEndpoint(pathName, myMediaType, refresh);
         console.log("APP::fetchArticleData: endpoint = ", myEndpoint)
         setEndpointPath(myEndpoint); // for display purposes only
 
@@ -254,6 +234,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
             {
                 url: pathResults[0],
                 refresh: pathResults[1],
+
                 iari_source: myIariSourceId,
             }
         )
@@ -264,15 +245,12 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
     const refreshPageResults = (
         {
             url = '',
-            cache_data = '',
             refresh=false,
             iari_source = IariSources.iari_prod.key
         } ) => {
 
         const newUrl = window.location.protocol + "//"
-            + window.location.host + window.location.pathname
-            + `?url=${url}`
-            + (cache_data ? `&cache_data=${cache_data}` : '')
+            + window.location.host + window.location.pathname + `?url=${url}`
             + (refresh ? '&refresh=true' : '')
             + (checkMethod ? `&method=${checkMethod}` : '')
             + (myIariSourceId ? `&iari-source=${iari_source}` : '')
@@ -292,22 +270,16 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
     // fetch initial article specified on address bar with url param
     useEffect(() => {
 
-        console.log(`APP:::useEffect[myPath, myCacheData, myRefresh]: calling handlePathName: ${myPath}, ${myCacheData}, ${myRefresh}`)
+        console.log(`APP:::useEffect[myPath, myRefresh]: calling handlePathName: ${myPath}, ${myRefresh}`)
 
         // set these states only for debug display, essentially
         setTargetPath(myPath);
-        setCacheData(myCacheData)
         setRefreshCheck(myRefresh);
 
         // and do the fetching for the path specified (pulled from URL address)
-        fetchArticleData({
-                pathName: myPath,
-                cacheData: myCacheData,
-                refresh: myRefresh
-            })
+        fetchArticleData(myPath, myRefresh)
 
-
-        }, [myIariSourceId, myPath, myRefresh, myCacheData, fetchArticleData])
+    }, [myIariSourceId, myPath, myRefresh, fetchArticleData])
 
 
     const handleCheckMethodChange = (methodId) => {
@@ -339,7 +311,6 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
         // console.log(`handleIariSourceChange: new iari source is: ${sourceId}`)
         refreshPageResults( {
             url : targetPath,
-            cache_data : cacheData,
             refresh : refreshCheck,
             iari_source: sourceId,
         })
@@ -362,13 +333,13 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
     const iareVersion = `${package_json.version}`
     const siteDisplay = (env !== 'env-production') ? ` STAGING SITE ` : ''
     const showHideDebugButton = (env !== 'env-production') && <button className={"utility-button debug-button small-button"}
-            onClick={toggleDebug} >{
-                isDebug ? <>&#8212;</> : "+"  // dash and plus sign
-            }</button>
-            // up and down triangles:  onClick={toggleDebug} >{isDebug ? <>&#9650;</> : <>&#9660;</>}</button>
+                                                                      onClick={toggleDebug} >{
+        isDebug ? <>&#8212;</> : "+"  // dash and plus sign
+    }</button>
+    // up and down triangles:  onClick={toggleDebug} >{isDebug ? <>&#9650;</> : <>&#9660;</>}</button>
 
     const heading = <div className={"header-contents"}>
-        <h1>Internet Archive Reference Explorer</h1>
+        <h1>{appTitle}</h1>
         <div className={"header-aux1"}>version {iareVersion}{siteDisplay}{showHideDebugButton}</div>
     </div>
 
@@ -417,11 +388,21 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
         {debugButtonFilters}
         &nbsp;
         {debugButtonShortcuts}
-        </>
+    </>
+
+    const vercelInfo = <div>
+        <p style={{marginBottom: 0}}><span className={'label'}>Vercel:</span></p>
+        <div className={"indent-info"}>{Object.keys(process.env).map( key =>{
+            return <p key={key}><span className={'label'}>{key}:</span> {process.env[key]}</p>
+        })}
+        </div>
+    </div>
+
 
     const debug = <div className={"debug-section " + (isDebug ? "debug-on" : "debug-off")}>
         <div style={{marginBottom:".5rem"}}
-            >{iariChoiceSelect} {methodChoiceSelect} {articleVersionChoiceSelect}</div>
+        >{iariChoiceSelect} {methodChoiceSelect} {articleVersionChoiceSelect}</div>
+        {vercelInfo}
         <p><span className={'label'}>Environment:</span> {env} (host: {window.location.host})</p>
         <p><span className={'label'}>IARE Version:</span> {iareVersion}</p>
         <p><span className={'label'}>IARI Source:</span> {myIariSourceId} ({IariSources[myIariSourceId]?.proxy})</p>
@@ -429,7 +410,6 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
         <p><span className={'label'}>Article Version:</span> {ArticleVersions[articleVersion].caption}</p>
         <p><span className={'label'}>Check Method:</span> {UrlStatusCheckMethods[checkMethod].caption} ({checkMethod})</p>
         <p><span className={'label'}>URL from address line:</span> {myPath}</p>
-        <p><span className={'label'}>Cache Data from address line:</span> {myCacheData}</p>
         <p><span className={'label'}>Force Refresh:</span> {refreshCheck ? "TRUE" : "false"}</p>
         <div>{debugButtons}</div>
         <p><span className={'label'}>pathName:</span> <MakeLink href={targetPath}/></p>

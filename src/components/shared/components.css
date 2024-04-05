@@ -9,12 +9,13 @@
     --margin-box-bottom: .35rem;
     --margin-box-left: .35rem;
 
-    --color-filter-box-caption: #FFFFFF;
-    --color-filter-box-caption-bg: #2299e8;
-    --color-filter-box-contents: hsl(228 23% 97% / 1);
+    /*--color-filter-box-caption: #FFFFFF;*/
+    /*--color-filter-box-caption-bg: #2299e8;*/
+    /*--color-filter-box-contents: hsl(228 23% 97% / 1);*/
+    --color-filter-box-caption: var(--g-color-function-box-caption-fg);
+    --color-filter-box-caption-bg: var(--g-color-function-box-caption-bg);
+    --color-filter-box-contents: var(--g-color-function-box-contents);
 
-    --color-flock-box-caption: #FFFFFF;
-    --color-flock-box-caption-bg: #2299e8;
     --color-flock-box-contents: white;
 
     --color-filter-btn: black;
@@ -155,7 +156,8 @@
 
 .section-caption,
 .filter-box-caption {
-    border: var(--border-box);
+    border: 2px solid var(--g-color-function-box-caption-outline);
+    /*border: var(--border-box);*/
     border-radius: var(--border-box-radius);
     padding: 0.2rem 0.35rem 0.3rem !important;
     color: var(--color-filter-box-caption) !important;
@@ -179,6 +181,9 @@
     border: var(--border-box-light);
     border-radius: var(--border-box-radius);
     background-color: var(--color-filter-box-contents);
+
+
+
 }
 .filter-box-show {
     float:right;
@@ -211,8 +216,8 @@
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     padding: 0.2rem 0.35rem 0.3rem !important;
-    color: var(--color-flock-box-caption) !important;
-    background-color: var(--color-flock-box-caption-bg);
+    color: var(--g-color-flock-box-caption-fg) !important;
+    background-color: var(--g-color-flock-box-caption-bg);
     font-size: 0.85rem;
     font-weight: bold;
     line-height:1.2;
