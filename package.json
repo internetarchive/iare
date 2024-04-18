@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.2.24.28",
-  "version_name": "0.2.24.28 cached article data capabilities",
+  "version": "0.2.24.29",
+  "version_name": "0.2.24.29 Reference View redux",
   "private": true,
   "dependencies": {
     "bootstrap": "^5.3.0-alpha3",
