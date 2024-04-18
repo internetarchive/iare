@@ -30,7 +30,7 @@ export default function RefTemplates({ templates, pageData, tooltipId }) {
     //     })
     // }
 
-    return <div className="ref-view-templates">
+    return <div className="ref-view-section ref-view-templates">
 
         {/*<h3 className={"template-header"}>Templates</h3>*/}
         {templates ?

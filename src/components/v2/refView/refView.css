@@ -1,16 +1,22 @@
 :root {
-    --titlebar-height: 1.5rem;
+    /* candidates for global definition (for AI generated colors) */
+    --color-ref-view-text: #727272;
+    --color-ref-view-inline-heading: #4e4e4e;
+    --color-sub-caption: #727272;
+
+    /* local definitions */
+    --titlebar-height: 2.5rem;
     --titlebar-font-size: 1rem;
 
     /*--grid-color-light: var(--bs-gray);*/
     --grid-color-light: #c1c1c1;
-    --height-ref-view-wikitext: 9rem;
+    --height-ref-view-wikitext: 7.5rem;
 
     /*--width-col-url: 25rem;*/
     /*--width-col-status: 25rem;*/
     --width-col-url: 27.5rem;
     --width-col-status: 4.5rem;
-    --width-col-iabotdb-status: 6rem;
+    /*--width-col-iabotdb-status: 6rem;*/
 
     --spacing-heading-top: 1rem;
     --color-hilite: var(--bs-primary-rgb);
@@ -18,11 +24,20 @@
     --color-bg-editable: white;
     --color-bg-non-editable: #d7dbdb;
 
-    --margin-ref-view:.5rem;
-    --margin-ref-view-section:1.65rem;
+    --margin-ref-view:.4rem;
+    --margin-ref-view-section:.85rem;
     --margin-ref-view-section-tight:.5rem;
 
+    --border-box-actionable: 3pt solid #ae0f3c !important;
     --border-radius-ref-section:0.35rem;
+
+    --width-ref-view-list: 17rem;
+    --height-ref-view-list-caption: 6.2rem;  /* TODO make this dynamic with resize */
+
+    --width-url-list-refview: 55rem;
+    --width-url-name-refview: 26rem;
+
+
 }
 
 .ref-modal-overlay {
@@ -74,27 +89,28 @@
     min-height:var(--titlebar-height);
     max-height:var(--titlebar-height);
     cursor:move;
-    /*background: linear-gradient(to right, #00274c, #00a5e0);*/
-    /*background: linear-gradient(to right, #00519c, #00a5e0);*/
     background: linear-gradient(to right, #005db1, #00a5e0);
+    /* TODO AIARE make "dark-title-bar-bg programmed element */
 }
 .ref-view-title-bar h2 {
     display:flex;
     flex-direction: row;
     color:white;
+    /* TODO AIARE make "dark-title-bar-fg programmed element */
     font-weight:bold;
     font-size: var(--titlebar-font-size);
-    padding: .1rem 0 .3rem .85rem;
+    padding: .5rem 0 .3rem .85rem;
 }
 .ref-view-title-bar .closeBtn {
     position:fixed;
-    top:.15rem;
+    top:.65rem;
     right:.85rem;
     cursor: pointer;
 
     background-color: rgba(255, 255, 255, 0.67);
     border:1px solid black;
     padding: 0.05rem 0.3rem;
+    border-radius:6px;
 }
 .ref-view-title-bar .closeBtn:hover {
     color:red;
@@ -104,6 +120,7 @@
     overflow:scroll;
     /*padding:0.5rem .85rem .85rem .85rem;*/
     padding:0.5rem;
+    padding-left:.35rem;
     color:black;
 
     /*background-color: #6e1a41;*/
@@ -126,25 +143,19 @@
     flex-shrink:1;
     width:100%;
     margin-left: var(--margin-ref-view);
+    overflow: scroll;
 }
 
-
-            /*.ref-view-upper-part {*/
-            /*    min-height: 18rem;*/
-            /*}*/
-
-
-/* Templates section of ref view details */
 
 /* Templates section of ref view details */
 
 .ref-view-templates {
     /*background-color: #5EDFABFF;*/
-    margin-bottom: var(--margin-ref-view-section)
+    /*margin-bottom: var(--margin-ref-view-section)*/
 }
 .ref-view-template {
     /*background-color: #5EDFABFF;*/
-    margin-bottom: var(--margin-ref-view-section)
+    /*margin-bottom: var(--margin-ref-view-section)*/
 }
 
 .ref-view-template .utility-button.small-button {
@@ -200,18 +211,27 @@
     /*background-color: var(--color-debug-background);*/
 }
 
-.ref-view-wikitext .header-all-parts {
+.ref-view-details .header-all-parts {
     display: flex;
     flex-direction: row;
     flex-wrap:wrap;
     justify-content: space-between;
-    margin-bottom:.35rem;
+    margin-bottom:.21rem;
 
     /*background-color: #a188ae;*/
 }
+
+.ref-view-section {
+    margin-bottom: var(--margin-ref-view-section);
+}
+.ref-view-section:first-of-type .header-all-parts {
+    margin-top:0;
+}
 .ref-view-wikitext .header-all-parts button.utility-button {
     margin-bottom:0;
-    height:1.3rem;
+    height:1.1rem;
+    font-size: .6rem;
+    line-height: .7;
 }
 .ref-view-wikitext .header-left-part
 {
@@ -229,10 +249,10 @@
     margin-bottom:0;
     padding:.28rem .35rem;
     width:100%;
+    border-radius: var(--border-radius-ref-section);
 }
 .ref-view-wikitext .raw-wikitext.editable {
     background-color: var(--color-bg-editable) !important;
-    border-radius: var(--border-radius-ref-section);
 }
 
 /*.ref-view .row.footer  {*/
@@ -288,13 +308,23 @@
     margin-bottom: 0;
 }
 
+.ref-view-url .ref-view-url-header {
+    /*display: none;*/
+}
 .ref-view-url .url-row
 {
     display: flex;
     flex-direction: row;
     border:1px solid black;
-    border-top:none;
+    border-radius: .5rem;
     position:relative;
+}
+.ref-view-url .url-row .url-name {
+    width: var(--width-url-name-refview);
+    min-width: var(--width-url-name-refview);
+    max-width: var(--width-url-name-refview);
+    flex-shrink: 1;
+    flex-grow: 1;
 }
 .ref-view-url .url-row.url-header-row {
     border-top: 1px solid black;
@@ -315,16 +345,18 @@
 }
 
 .ref-view-actionables {
-    margin-bottom: var(--margin-ref-view-section);
-    border: var(--border-box-light);
-    padding:.35rem;
-    border-radius: var(--border-radius-ref-section);
+    /*margin-bottom: var(--margin-ref-view-section);*/
+    /*border: var(--border-box-light);*/
 }
-/*.ref-view-actionables h3 {*/
-/*    color: #74afe6 !important;*/
-/*}*/
+.ref-view-actionables .ref-view-actionable {
+    border: var(--border-box-actionable);
+    border-radius: .5rem;
+    padding:.25rem .35rem;
+}
+
+
 .ref-view-actionables.no-action {
-    color: #c8c8c8 !important;
+    /*color: #c8c8c8 !important;*/
     color: #a7a7a7 !important;
     border: var(--border-box-light);
     border-color: #c8c8c8;
@@ -333,44 +365,34 @@
     color: inherit !important;
     font-style:italic;
 }
-.ref-view-actionables .ref-actionable {
+.ref-view-actionables .ref-view-actionable {
     margin-top:.1rem;
     font-size:.85rem;
-}
-
-.ref-view-actionables .action-section-label:before {
-    background-image: url('../../../images/actionable_icon.v1r1.png');
-    background-size: var(--size-actionable-icon) var(--size-actionable-icon);
-    display: inline-block;
-    width: var(--size-actionable-icon);
-    height: var(--size-actionable-icon);
-    content:"";
-    margin-right:.35rem;
-}
-.ref-view-actionables .action-section-label {
-    font-size: 1rem;
-    font-weight:bold;
-    /*color: var(--color-ref-actionable);*/
-    color: #1596c0 !important;
-    text-align: left;
-    text-transform: uppercase;
-    letter-spacing: .2rem;
-    padding-bottom: .1rem;
-}
-
-
-
-.ref-view-actionables .ref-actionable .action-desc {
     font-weight: normal;
-    color: #727272;
+    color: var(--color-ref-view-text);
 }
-.ref-view-actionables .ref-actionable .action-fixit {
-    display:flex;
-    flex-direction: row;
-    flex-wrap:wrap;
-    justify-content:  left;
-    color: #727272;
-    margin-bottom: .2rem;
+.ref-view-actionables .ref-view-actionable .inline-heading {
+    color: var(--color-ref-view-inline-heading);
+}
+.ref-view-actionables .ref-view-actionable .action-fixit > div {
+    display:inline;
+}
+.ref-view-actionables .ref-view-actionable .action-desc {
+}
+.ref-view-actionables .ref-view-actionable .action-fixit {
+}
+.ref-view-actionables .ref-view-actionable .action-symptom {
+}
+
+.ref-view-actionable-caption {
+    /*text-align: left;*/
+    /*text-transform: uppercase;*/
+    /*letter-spacing: .2rem;*/
+    font-style: italic;
+    font-size: .85rem;
+    font-weight: bold;
+    padding-bottom: .2rem;
+    color: var(--color-sub-caption);
 }
 
 .ref-view-parameters {
@@ -378,9 +400,6 @@
 }
 
 .ref-view-article-info {
-    margin-bottom: var(--margin-ref-view-section-tight);
-    /*margin-top:.75rem;*/
-    /*font-size: 80%;*/
 }
 .ref-view-article-info .citation-links {
     margin-top:.2rem;
@@ -426,17 +445,17 @@
     padding:0;
 }
 
-.ref-view-ref-display {
-    margin-bottom: var(--margin-ref-view-section-tight);
-    min-height:7.0rem;
+.ref-view-single-display {
+    /*margin-bottom: var(--margin-ref-view-section-tight);*/
 }
-.ref-view-ref-display .ref-button {
+.ref-view-single-display .ref-button {
     /*min-height: 2rem;*/
     margin-bottom:0;
     /*min-height: 6.4rem;*/
     border-radius: var(--border-radius-ref-section);
 }
-.ref-view-ref-display .ref-meta {
+
+.ref-view-single-display .ref-meta {
     border-top: var(--border-row);
     margin-top:.25rem;
     padding-top:.25rem;
@@ -469,7 +488,8 @@
 }
 
 .ref-view-list .ref-flock {
-    width: 18rem;
+    width: var(--width-ref-view-list);
+    max-width: var(--width-ref-view-list);
     height:100%;
 }
 
@@ -483,7 +503,7 @@
 
 .ref-nav-icon-next,
 .ref-nav-icon-prev {
-    width:1.1rem;
+    width:0.9rem;
     cursor: pointer;
 }
 .ref-nav-icon-next {
@@ -496,22 +516,29 @@
 }
 
 .ref-view-list .ref-list {
-    padding-top: 3px;
+    padding-top: .15rem;
+    /*padding-top: 3px;*/
     margin-top: -3px;
     height:100%;
 }
+
 .ref-view-list .ref-button {
-    /*background-color: hsl(211deg 65.22% 81.96%); !* #baccf5; *!!* #b9c7e7; *! !* #a6b9e5; *! !* #c1d4e0;*!*/
     background-color: var(--g-color-reference-display-bg);
     color: var(--g-color-reference-display-fg);
+
+    /* allow room for frame hilite */
     margin-left:3px;
     margin-right:3px;
-    width:inherit;
     width:calc(100% - 6px);
+    margin-bottom: .4rem;
 }
+
 .ref-view-list .flock-box-contents {
     padding:.33rem .13rem .33rem .13rem;
-    height: calc(100% - 145px);
+    /*height: calc(100% - 145px);*/
+    /*height: calc(100% - 6.2rem);*/
+    height: calc(100% - var(--height-ref-view-list-caption));
+    margin-top: .3rem;
 }
 .ref-view-list .ref-button.selected {
     /*background-color: #e3ebf9; !* hsl(222 77% 92% / 1); *! !* #d3def8; *!*/
@@ -543,4 +570,23 @@
     /*background-color: var(--button-color-blue)*/
 }
 
+.ref-list-navigation .ref-nav-info {
+    color: #333333;
+    font-weight:normal;
+    font-size:.75rem;
+}
+
+.ref-view-list .flock-box-caption {
+    border-radius: var(--border-radius-ref-section);
+    /*height: var(--height-ref-view-list-caption);*/
+    margin-left:3px;
+    margin-right:3px;
+    width:calc(100% - 6px);
+    margin-bottom: .35rem;
+}
+.ref-view-list .flock-box-contents {
+    border:none;
+    padding:0;
+    background-color: inherit;
+}
 

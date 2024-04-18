@@ -561,7 +561,11 @@ export default function UrlDisplay ({ pageData, options } ) {
                               refArray={refArray}
                               refFilter={refFilter}
                               onAction={handleRefClick}
-                              options={{hide_header:true, show_filter_description: false}}
+                              options={{
+                                  hide_header:true,
+                                  show_filter_description: false,
+                                  caption: "References List",
+                              }}
                               tooltipId={"url-display-tooltip"}
                               context={"UrlDisplay"}
 

@@ -7,7 +7,11 @@ import CitationDisplay_v2 from "../citations/CitationDisplay_v2";
 /*
 shows as much info for reference in as pleasant display as possible
  */
-export default function RefViewRefDisplay({ _ref, index=0, articleVersion="", showDebug=false }) {
+export default function RefCitationDisplay({ _ref,
+                                               index=0,
+                                               articleVersion="",
+                                               onClick,
+                                               showDebug=false }) {
 
     let display = null
     if (_ref) {
@@ -24,9 +28,21 @@ export default function RefViewRefDisplay({ _ref, index=0, articleVersion="", sh
         display = <div>No reference to show</div>
     }
 
-    return <div className="ref-view-ref-display">
-        <button key={index} className={"ref-button"}
-           >{display}</button>
+
+    return <div className={"ref-view-section reference-info"} onClick={onClick}>
+
+        <div className={"header-all-parts"}>
+            <div className={"header-left-part"}>
+                <h3>Citation</h3>
+            </div>
+        </div>
+
+        <div className="ref-view-single-display">
+            <button key={index} className={"ref-button"}
+               >{display}</button>
+        </div>
+
     </div>
+
 }
 

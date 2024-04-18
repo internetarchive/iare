@@ -1,10 +1,10 @@
 import React, {useCallback, useEffect, useState} from "react";
-import RefViewRefDisplay from "./RefViewRefDisplay";
-// eslint-disable-next-line
-import RefArticleInfo from "./RefArticleInfo";
+import RefCitationDisplay from "./RefCitationDisplay";
+// import RefArticleInfo from "./RefArticleInfo";
 import RefTemplates from "./RefTemplates";
 import RefActionables from "./RefActionables";
 import RefWikitext from "./RefWikitext";
+// import RefUrls from "./RefUrls";
 
 /*
 
@@ -93,19 +93,21 @@ function RefDetails({ refDetails,
     }, [saveWikitext])
 
     return <>
-        <div className={"reference-info"} onClick={handleLocalRefClick}>
-            <RefViewRefDisplay _ref={refDetails}
-               articleVersion={pageData.iariArticleVersion}
-               showDebug={showDebug} />
-            {/*<RefArticleInfo _ref={refDetails} pageData={pageData}/>*/}
-        </div>
+        <RefCitationDisplay _ref={refDetails}
+                            articleVersion={pageData.iariArticleVersion}
+                            showDebug={showDebug}
+                            onClick={handleLocalRefClick}
+        />
+
+        {/*<RefUrls urls={refDetails?.urls} />*/}
 
         <RefActionables actionables={refDetails?.actionable} />
 
-        <RefTemplates templates={refDetails?.templates} pageData={pageData} tooltipId={tooltipId} />
-        {/*<RefWikitext wikitext={wikitext} ref_details={details} onAction={handleRefViewAction} />*/}
+        {/*<RefArticleInfo _ref={refDetails} pageData={pageData}/>*/}
 
         <RefWikitext wikitext={refDetails?.wikitext} ref_details={refDetails} onAction={handleRefViewAction} />
+
+        <RefTemplates templates={refDetails?.templates} pageData={pageData} tooltipId={tooltipId} />
 
     </>
 

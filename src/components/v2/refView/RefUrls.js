@@ -4,6 +4,8 @@ import {normalizeUrlArray} from "../../../utils/utils";
 import {fetchUrls} from "../../../utils/iariUtils";
 // import {UrlStatusCheckContext} from "../../../contexts/UrlStatusCheckContext"
 import {ConfigContext} from "../../../contexts/ConfigContext";
+import RefSectionHeader from "./RefSectionHeader";
+
 
 /*
 shows template urls and their status codes in a tabular form
@@ -94,12 +96,14 @@ export default function RefUrls({ urls }) {
         <th className={'url-iabotdb_status'}>IABot</th>
     </tr>
 
-    return <div className="ref-view-urls-wrapper">
+    return <div className="ref-view-section ref-view-urls-wrapper">
+
+        <RefSectionHeader leftPart={<h3>URLs</h3>} />
 
         <table className={'ref-view-urls'}>
-            <thead>
+            {/*<thead>*/}
             {headerRow}
-            </thead>
+            {/*</thead>*/}
             <tbody>
             {urlRows}
             </tbody>

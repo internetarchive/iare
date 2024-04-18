@@ -28,6 +28,7 @@ export const ACTIONABLE_FILTER_MAP = {
         short_caption: "Bad Live",
         caption: <div>Link Status: BAD,<br/>Citation Priority: Original</div>,
         desc: "Link Status: BAD, Citation Priority: Live",
+        symptom: "The bad link is shown as the primary link in the citation. Since the link is bad, the Archive link should be the primary link.",
         fixit: <div>Set "url-status" parameter in Citation Template to "dead". This will cause the Archived Link to be the Primary Link in the citation.</div>,
         tooltip: `<div>Original URL Link Status is NOT 2XX or 3XX<br/>AND<br/>Template Parameter "url_status" is set to "live"</div>`,
 
@@ -179,7 +180,8 @@ export const ACTIONABLE_FILTER_MAP = {
         short_caption: "Bad No Archive",
         caption: <div>Link Status BAD,<br/>Archive Status BAD</div>,
         desc: "URL Link Status is BAD, Archive Link is missing or broken",
-        tooltip: `<div>Original URL Status is NOT 2XX or 3XX<br/>AND<br/>No Archive exists in Wayback Machine</div>`,
+        symptom: "The link is broken, and there is no Archive link to rescue it",
+        tooltip: `<div>Original Status is NOT 2XX or 3XX<br/>AND<br/>No Archive exists in Wayback Machine</div>`,
         fixit: <div>Add Wayback Machine archive URL to the citation</div>,
         filterFunction: () => (url) => {
             return (url.status_code < 200 || url.status_code >= 400)

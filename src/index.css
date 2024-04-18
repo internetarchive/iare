@@ -1,5 +1,5 @@
 @import url("iari_custom_defaults.css");
-@import url("__custom__/iare_custom_v1.css");
+@import url("__custom__/iare_custom_overrides.css");
 
 :root {
     --color-debug-background: #b4df5e;

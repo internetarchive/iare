@@ -14,7 +14,8 @@
 
     --color-filter-button: #d1d5da;
     /*--color-filter-button-hover: #0f0fe6;*/
-    --spacing-ref-button: .35rem;
+    --spacing-ref-button: .15rem;
+    --radius-ref-button: .35rem;
 }
 
 .ref-display {
@@ -39,16 +40,18 @@
 .ref-button {
     cursor: pointer; /* Pointer/hand icon */
 
-    background-color: var(--g-color-reference-display-bg);
 
     width: 100%;
     text-align: left;
+
+    background-color: var(--g-color-reference-display-bg);
     padding:.3rem .3rem .3rem .4rem;
     margin-bottom:var(--spacing-ref-button);
     position:relative;
     overflow-wrap: break-word;
 
     border: var(--border-ref-button-ref-list);
+    border-radius: var(--radius-ref-button);
 
     /*border: var(--border-ref-button);*/
 }

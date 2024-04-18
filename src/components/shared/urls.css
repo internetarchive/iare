@@ -217,6 +217,8 @@
     border-right: var(--width-cell-border);
     border-right-color: var(--color-cell-border);
 }
+
+
 .url-row .url-status {
     text-align: center;
     width: var(--width-url-status);
@@ -480,7 +482,7 @@ h4.url-flock-caption {
 
 button.utility-button.disabled {
     background-color: #e4e4e4 !important;
-    color: #a6a6a6 !important;
+    /*color: #a6a6a6 !important;*/
     border-color: #a6a6a6 !important;
     cursor: inherit;
 }
