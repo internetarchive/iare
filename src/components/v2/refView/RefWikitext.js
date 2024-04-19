@@ -195,13 +195,16 @@ export default function RefWikitext({ wikitext, onAction }) {
 
     const buttonCancel = editable ? <button className={`utility-button`} onClick={handleEditCancel}><span>Cancel Edit</span></button> : null
 
+    const buttonCopy = <button
+        onClick={() => {copyToClipboard(wikitext, 'wikitext')} }
+        className={`utility-button`}>
+        <span>Copy to Clipboard</span>
+    </button>
+
     const header = <RefSectionHeader
-        leftPart={<><h3>Wikitext</h3><span>{buttonEditSave}{buttonCancel}</span></>}
-        rightPart={<button
-            onClick={() => {copyToClipboard(wikitext, 'wikitext')} }
-            className={`utility-button`}>
-            <span>Copy to clipboard</span>
-        </button>} >
+        leftPart={<><h3>Wikitext</h3><span>{buttonEditSave}{buttonCancel}{buttonCopy}</span></>}
+        // rightPart={buttonCopy}
+        >
         {/* nothing to see here */}
     </RefSectionHeader>
 
