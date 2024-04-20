@@ -18,7 +18,7 @@ export const normalizeUrlArray = (urlArray=[]) => {
 
 onComplete: function to call when the copy is completed. If not provided, does an alert.
  */
-export const copyToClipboard = (copyText, label="Data", onComplete=null) => {
+export const copyToClipboard = (copyText, label="Data", onComplete) => {
 
     navigator.clipboard.writeText(copyText)
         .then(() => {

@@ -190,13 +190,19 @@ export default function RefWikitext({ wikitext, onAction }) {
 
     // const rawText = reference_details?.wikitext
 
+    const handleOnComplete = (message) => {
+        alert("Arf!!"+ message)
+
+        // this is where we want to set up a disappearing tooltip
+    }
+
     const buttonEditSave = <button className={`utility-button`} style={{width:"5rem"}}
                                    onClick={handleEditMode}><span>{editable ? "Save Changes" : "Edit Citation"}</span></button>
 
     const buttonCancel = editable ? <button className={`utility-button`} onClick={handleEditCancel}><span>Cancel Edit</span></button> : null
 
     const buttonCopy = <button
-        onClick={() => {copyToClipboard(wikitext, 'wikitext')} }
+        onClick={() => {copyToClipboard(wikitext, 'wikitext', handleOnComplete)} }
         className={`utility-button`}>
         <span>Copy to Clipboard</span>
     </button>
