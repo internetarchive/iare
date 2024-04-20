@@ -1,5 +1,4 @@
 import React from "react";
-import {copyToClipboard} from "../../../utils/utils";
 
 export default function RefSectionHeader({ leftPart, rightPart, children }) {
     return <div className={"header-all-parts"}>
