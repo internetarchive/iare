@@ -131,7 +131,7 @@ export default function RefTemplateUrl({ url, index, isSelected=false }) {
 
         } else {
             return <>
-                {/*{getHeaderRow()}*/}
+                {false && getHeaderRow()}
                 {getUrlRow(url)}
                 </>
         }
