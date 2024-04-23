@@ -127,7 +127,7 @@ export default function RefTemplateUrl({ url, index, isSelected=false }) {
         // if url is falsey
         if (!url) {
 
-            return <div className={"no-template-url"}>There are no URLs in this template.</div>
+            return <div className={"url-row no-template-url"}>There are no URLs in this template.</div>
 
         } else {
             return <>
