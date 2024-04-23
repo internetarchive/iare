@@ -19,7 +19,7 @@ export default function RefTemplate({ template, pageData, tooltipId, options }) 
 
     const plusMinusButton = <button
         data-tooltip-id={tooltipId}
-        data-tooltip-html={"Click to show/hide parameters"}
+        data-tooltip-html={"Click to show/hide template parameters"}
         className={"utility-button small-button"}
         onClick={toggleParams} >{
         // showParams ? <>&#8212;</> : "+"  // dash and plus sign
@@ -39,7 +39,7 @@ export default function RefTemplate({ template, pageData, tooltipId, options }) 
 
     return <div className="ref-view-template">
 
-        <RefSectionHeader leftPart={<h3>Template: {template.name} {plusMinusButton}</h3>} />
+        <RefSectionHeader leftPart={<h3>Template: <span style={{color:"var(--color-ref-view-text)"}}>{template.name}</span> {plusMinusButton}</h3>} />
 
         {showParams && <RefParameters parameters={template.parameters} />}
         <RefTemplateUrl url={urlObj} index={0} isSelected={false} />

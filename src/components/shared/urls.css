@@ -331,7 +331,8 @@
     height:var(--height-check-icon-list);
     /*content: url('../../images/no_x.png');*/
     /*content: url('../../images/wbm.link.no.png');*/
-    content: url('../../images/wbm.link.ex.png');
+    /*content: url('../../images/wbm.link.ex.png');*/
+    content: url('../../images/wbm.link.ex.grey.v3.png');
 }
 
 

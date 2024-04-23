@@ -22,14 +22,21 @@
     --color-hilite: var(--bs-primary-rgb);
     --color-lolite: #a2a2a2;
     --color-bg-editable: white;
-    --color-bg-non-editable: #e5ecf2;
+    /*--color-bg-non-editable: #e5ecf2;*/
+    --color-bg-non-editable: hsl(208 11% 95% / 1);
 
     --margin-ref-view:.4rem;
-    --margin-ref-view-section:.85rem;
+    /*--margin-ref-view-section:.85rem;*/
+    --margin-ref-view-section:1.15rem;
     --margin-ref-view-section-tight:.5rem;
 
-    --border-box-actionable: 3pt solid #ae0f3c !important;
+    /*--border-box-actionable: 3pt solid #ae0f3c !important;*/
+    /*--border-box-actionable: 3pt solid #dc295c !important;*/
+    --border-box-actionable-color: hsl(358 81% 67% / 1);
+    --border-box-actionable: 3pt solid var(--border-box-actionable-color) !important;
+
     --border-radius-ref-section:0.35rem;
+
 
     --width-ref-view-list: 17rem;
     --height-ref-view-list-caption: 6.2rem;  /* TODO make this dynamic with resize */
@@ -158,8 +165,14 @@
     /*margin-bottom: var(--margin-ref-view-section)*/
 }
 
-.ref-view-template .utility-button.small-button {
-    font-size:69%;
+.ref-view-template h3 .utility-button.small-button {
+    font-size:62%;
+    position: relative;
+    top: 1pt;
+    background-color: #e0e0e0;
+}
+.ref-view-template h3 .utility-button.small-button:hover {
+    background-color: #c7c5c5;
 }
 .ref-view-templates .template-header {
     display: inline-block;
@@ -212,11 +225,13 @@
 }
 
 .ref-view-details .header-all-parts {
+    position:relative;
     display: flex;
     flex-direction: row;
     flex-wrap:wrap;
     justify-content: space-between;
-    margin-bottom:.21rem;
+    margin-bottom:.35rem;
+
 
     /*background-color: #a188ae;*/
 }
@@ -237,6 +252,7 @@
 {
     display: flex;
     flex-direction: row;
+    position: relative;
 }
 
 .ref-view-wikitext .raw-wikitext {
