@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {copyToClipboard} from "../../../utils/utils";
 // import { RichTextarea } from "rich-textarea";
 import RefSectionHeader from "./RefSectionHeader";  // https://www.npmjs.com/package/rich-textarea
@@ -12,7 +12,7 @@ shows wikitext box with allowance for edit and copy
 /*********
  *
  *
- *  This file is under constriction...!
+ *  This file is under construction...!
  *
  *
  * ********/
@@ -22,6 +22,11 @@ export default function RefWikitext({ wikitext, onAction }) {
     const [editable, setEditable]= useState(false)
     // eslint-disable-next-line
     const [localWikitext, setLocalWikitext]= useState(wikitext)
+
+    useEffect(() => {
+        setLocalWikitext(wikitext);
+    }, [wikitext]); // Adding wikiText to the dependency array
+
     // const [savedWikitext, setSavedWikitext]= useState(wikitext)
     //
     // // if (!wikitext) {
@@ -197,7 +202,7 @@ export default function RefWikitext({ wikitext, onAction }) {
     }
 
     const buttonEditSave = <button className={`utility-button`} style={{width:"5rem"}}
-                                   onClick={handleEditMode}><span>{editable ? "Save Changes" : "Edit Citation"}</span></button>
+                                   onClick={handleEditMode}><span>{editable ? "Done Editing" : "Edit Citation"}</span></button>
 
     const buttonCancel = editable ? <button className={`utility-button`} onClick={handleEditCancel}><span>Cancel Edit</span></button> : null
 

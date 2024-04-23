@@ -6,9 +6,12 @@ import RefSectionHeader from "./RefSectionHeader";
 /*
 shows tabs of template params if there; 1 tab for each template
  */
-export default function RefTemplate({ template, pageData, tooltipId }) {
+export default function RefTemplate({ template, pageData, tooltipId, options }) {
 
-    const [showParams, setShowParams] = useState(false)
+    // default showParams = true if not defined
+    const [showParams, setShowParams] = useState(options ? (
+        options.hasOwnProperty('showParams') ? !!options.showParams : true)
+        : true)
 
     const toggleParams = () => {
         setShowParams(prevState => !prevState);
