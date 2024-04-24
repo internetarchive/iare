@@ -1,23 +1,17 @@
 import React from "react";
 import MakeLink from "../../MakeLink";
 import RefSectionHeader from "./RefSectionHeader";
-import {getArchiveStatusInfo, getPerennialInfo, getCitationInfo} from "../../../utils/urlUtils";
+import {
+    getArchiveStatusInfo,
+    getPerennialInfo,
+    // getCitationInfo
+} from "../../../utils/urlUtils";
 
 
 /*
 shows template urls and their status codes in a tabular form
  */
 export default function RefUrls({ urls, pageData, tooltipId, showDebug=false }) {
-
-    // const [urlArray, setUrlArray] = useState( [] )
-    // const [urlRows, setUrlRows] = useState( [] )
-    //
-    // const myConfig = React.useContext(ConfigContext);
-    // const myIariBase = myConfig?.iariSource;
-    // const myStatusMethod = myConfig?.urlStatusMethod;
-
-// //    https://iabot.wmcloud.org/index.php?page=manageurlsingle&url=http%3A%2F%2Findigenouspeoplesissues.com%2Findex.php%3Foption%3Dcom_content%26view%3Darticle%26id%3D14679%3Arapanui-protests-continue-against-the-hotel-hanga-roa%26catid%3D23%3Asouth-america-indigenous-peoples%26Itemid%3D56
-//     const endpointIabot = 'https://iabot.wmcloud.org/index.php?page=manageurlsingle'
 
     // assumes u is an url object
     const getUrlRow = (u, i) => {
@@ -38,15 +32,15 @@ export default function RefUrls({ urls, pageData, tooltipId, showDebug=false }) 
 
         // const endpoint = endpointIabot + `&url=${encodeURIComponent(u.url)}`
 
-        const citationStatus = !u.reference_info?.statuses?.length
-            ? null
-            : u.reference_info.statuses[0]  // just return first one
+        // const citationStatus = !u.reference_info?.statuses?.length
+        //     ? null
+        //     : u.reference_info.statuses[0]  // just return first one
 
         return <div className={"url-row " + classes} key={i}
                     data-url={u.url}
                     data-status_code={u.status_code}
                     data-archive_status={u.archive_status?.hasArchive}
-                    data-citation_status={citationStatus}
+                    // data-citation_status={citationStatus}
                     data-live_state={u.archive_status?.live_state}
                     data-perennial={u.rsp ? u.rsp[0] : null}  // just return first perennial if found for now...dont deal with > 1
         >
@@ -54,7 +48,7 @@ export default function RefUrls({ urls, pageData, tooltipId, showDebug=false }) 
             <div className={"url-status"}>{u.status_code}</div>
             <div className={"url-archive_status"}>{getArchiveStatusInfo(u)}</div>
 
-            <div className={"url-citations"}>{getCitationInfo(u)}</div>
+            {/*<div className={"url-citations"}>{getCitationInfo(u)}</div>*/}
             <div className={"url-perennial"}>{getPerennialInfo(u)}</div>
 
         </div>

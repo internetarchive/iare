@@ -380,7 +380,14 @@
     background-color: inherit !important;
 }
 
-
+.ref-view-urls .url-row .url-name {
+    width: var(--width-url-name-refview);
+    /*min-width: var(--width-url-name-refview);*/
+    /*max-width: var(--width-url-name-refview);*/
+    min-width: inherit;
+    max-width: inherit;
+    flex-grow: 1;
+}
 
 .ref-view-actionables {
     /*margin-bottom: var(--margin-ref-view-section);*/
