@@ -9,6 +9,7 @@ import {IariSources} from "./constants/endpoints";
 import {UrlStatusCheckMethods} from "./constants/checkMethods";
 import {ConfigContext} from "./contexts/ConfigContext"
 import {ArticleVersions} from "./constants/articleVersions";
+import {Tooltip as MyTooltip} from "react-tooltip";
 
 
 export default function App({env, myPath, myCacheData, myRefresh, myMethod, myArticleVersion, myIariSourceId, myDebug}) {
@@ -437,6 +438,18 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
 
     </div>
 
+    const tooltipConfirm = <MyTooltip id="confirm-tooltip-id"
+                                         float={true}
+                                         closeOnEsc={true}
+                                         delayShow={120}
+                                         variant={"info"}
+                                         noArrow={true}
+                                         offset={5}
+                                         className={"confirm-tooltip"}
+                                         style={{ zIndex: 999 }}
+    />
+
+
     // set config for config context
     const config = {
         environment: env,
@@ -450,6 +463,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
         isShowDebugInfo: isShowDebugInfo,
         isShowDebugComponents: isShowDebugComponents,
         isShowViewOptions: isShowViewOptions,
+        tooltipIdConfirm: "confirm-tooltip-id",
     }
 
     console.log(`rendering App component:`, JSON.stringify({
@@ -496,6 +510,8 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
                     </>
                 }
             </div>
+
+            {tooltipConfirm}
 
         </ConfigContext.Provider>
 

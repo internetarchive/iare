@@ -4,7 +4,7 @@ import RefCitationDisplay from "./RefCitationDisplay";
 import RefTemplates from "./RefTemplates";
 import RefActionables from "./RefActionables";
 import RefWikitext from "./RefWikitext";
-// import RefUrls from "./RefUrls";
+import RefUrls from "./RefUrls";
 
 /*
 
@@ -99,8 +99,6 @@ function RefDetails({ refDetails,
                             onClick={handleLocalRefClick}
         />
 
-        {/*<RefUrls urls={refDetails?.urls} />*/}
-
         <RefActionables actionables={refDetails?.actionable} />
 
         {/*<RefArticleInfo _ref={refDetails} pageData={pageData}/>*/}
@@ -108,6 +106,8 @@ function RefDetails({ refDetails,
         <RefWikitext wikitext={refDetails?.wikitext} ref_details={refDetails} onAction={handleRefViewAction} />
 
         <RefTemplates templates={refDetails?.templates} pageData={pageData} tooltipId={tooltipId} />
+
+        <RefUrls urls={refDetails?.urls} pageData={pageData} />
 
     </>
 

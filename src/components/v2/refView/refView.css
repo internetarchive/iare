@@ -364,6 +364,24 @@
 .ref-view-url .url-row.no-template-url {
     padding: var(--padding-url-column)
 }
+
+
+.ref-view-urls .url-row
+{
+    display: flex;
+    flex-direction: row;
+    border:1px solid black;
+    border-radius: var(--border-radius-ref-section);
+    position:relative;
+    cursor: inherit;
+}
+.ref-view-urls .url-row:hover {
+    color:inherit !important;
+    background-color: inherit !important;
+}
+
+
+
 .ref-view-actionables {
     /*margin-bottom: var(--margin-ref-view-section);*/
     /*border: var(--border-box-light);*/
@@ -390,6 +408,7 @@
     font-size:.85rem;
     font-weight: normal;
     color: var(--color-ref-view-text);
+    line-height: 1.5;
 }
 .ref-view-actionables .ref-view-actionable .inline-heading {
     color: var(--color-ref-view-inline-heading);
