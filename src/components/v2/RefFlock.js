@@ -246,14 +246,16 @@ function RefFlock({ pageData= {},
         </div>
         : null
 
-
-    const buttonCopy = <button onClick={handleCopyRefsClick} className={'utility-button small-button'} ><span>Copy to Clipboard</span></button>
-    const flockCaption = <>
-        {options?.caption ? <div>{options.caption}</div> :null}
-        <div className={"sub-caption"}>
+    const refCountAndCopy = !options.show_ref_nav
+        ? <div className={"sub-caption"}>
             <div>{filteredRefs.length} {filteredRefs.length === 1 ? 'Reference' : 'References'}</div>
-            {buttonCopy}
+            <button onClick={handleCopyRefsClick} className={'utility-button small-button'} ><span>Copy to Clipboard</span></button>
         </div>
+        :null
+
+    const flockCaption = <>
+        {options?.caption ? <div className={"ref-list-caption"}>{options.caption}</div> :null}
+        {refCountAndCopy}
         {filterDescription}
         {refNavigation}
     </>

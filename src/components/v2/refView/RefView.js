@@ -110,7 +110,6 @@ export default function RefView({open,
                                   // onKeyDown={handleFlockKeyDown}  // what happens when key down flock list
 
                                   selectedRefIndex={selectedRefIndex}
-                                  // selectedRefIndex={defaultRefIndex}
 
                                   options={{
                                       hide_header: true,
@@ -118,6 +117,7 @@ export default function RefView({open,
                                       show_ref_nav: true,
                                       show_filter_description: true,
                                       context: "RefView",
+                                      caption: "References List",
                                     }}
                                   tooltipId={"url-display-tooltip"}
                         />

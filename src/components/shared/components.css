@@ -401,7 +401,8 @@
 /* FilterConditionBox */
 
 .filter-condition-box {
-    margin-top: var(--margin-ref-view-section-tight);
+    /*margin-top: var(--margin-ref-view-section-tight);*/
+    margin-top: 0;
     padding: var(--padding-tight);
     border-radius: var(--border-box-radius);
     font-weight: normal;
