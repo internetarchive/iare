@@ -11,7 +11,7 @@ import {ACTIONABLE_FILTER_MAP} from "../../constants/actionableMap";
 const urlListDef = {  // keys match class names
     columns : {
         "url-name": {
-            ttHeader: `<div>URL Link Text</div>`,
+            ttCaption: `<div>URL Link Text</div>`,
             ttData: `<div>Link Text of URL</div>`,
             tooltip: {
                 header: `<div>URL Link Text</div>`,
@@ -19,38 +19,38 @@ const urlListDef = {  // keys match class names
             }
         },
         "url-status": {
-            ttHeader: `<div>HTTP Status Code of Primary URL</div>`,
+            ttCaption: `<div>HTTP Status Code of Primary URL</div>`,
             ttData: `<div>{status_code} : {statusDescription}</div>`
         },
         "url-archive_status": {
-            ttHeader: `<div>Archive exists in IABot database</div>`,
+            ttCaption: `<div>Archive exists in IABot database</div>`,
             ttData: ``,
         },
         "url-citations": {
-            ttHeader: `<div>URL Status as indicated by Citation Template "url-status" Parameter</div>`,
+            ttCaption: `<div>URL Status as indicated by Citation Template "url-status" Parameter</div>`,
             ttData: '<div>Link Status as indicated in Citation</div>',
         },
 
         "url-templates": {
-            ttHeader: `<div>Names of Templates used by Citation</div>`,
+            ttCaption: `<div>Names of Templates used by Citation</div>`,
             ttData: `<div>Templates used by Citation</div>`,
         },
         "url-actionable": {
-            ttHeader: `<div>Actions that can be taken to improve citation</div>`,
+            ttCaption: `<div>Actions that can be taken to improve citation</div>`,
             ttData: `<div>Actions that can be taken to improve citation</div>`,
         },
 
         "url-sections": {
-            ttHeader: `<div>Section in Wikipedia article where Citation is defined</div>`,
+            ttCaption: `<div>Section in Wikipedia article where Citation is defined</div>`,
             ttData: `Section in Wikipedia article where Reference originated`,
         },
         "url-perennial": {
-            ttHeader: `<div>Reliability Rating of URL, according to Wikipedia Reliable Sources</div>`,
+            ttCaption: `<div>Reliability Rating of URL, according to Wikipedia Reliable Sources</div>`,
             ttData: `Reliability Rating`,
         },
 
                     // "url-iabot_status": {
-                    //     ttHeader: `<div>URL Status reported by IABot</div>`,
+                    //     ttCaption: `<div>URL Status reported by IABot</div>`,
                     //     ttData: `placeholder`,
                     // },
 
@@ -281,14 +281,14 @@ const urlFlock = React.memo( function UrlFlock({
     // const onHoverHeaderRow = (e) => {
     //     e.stopPropagation()  // prevents default onHover of UrlFlock from engaging and erasing tooltip
     //
-    //     const html = urlListDef.columns[e.target.className]?.ttHeader
+    //     const html = urlListDef.columns[e.target.className]?.ttCaption
     //
     //     setUrlTooltipHtml(html)
     // }
 
     const onHoverHeaderRow = useCallback ((e) => {  // useCallback prevents re-render upon hover???
         e.stopPropagation()  // prevents default onHover of UrlFlock from engaging and erasing tooltip
-        const html = urlListDef.columns[e.target.className]?.ttHeader
+        const html = urlListDef.columns[e.target.className]?.ttCaption
         setUrlTooltipHtml(html)
     }, [])
 

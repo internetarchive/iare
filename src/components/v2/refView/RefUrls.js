@@ -61,6 +61,7 @@ export default function RefUrls({ urls, pageData, tooltipId, showDebug=false }) 
         urls.forEach( (url, i) => {
             const urlObj = pageData.urlDict[url]
             if (!urlObj) return
+            // only show url if it is NOT an archive link
             if (!urlObj.isArchive) urlRows.push(getUrlRow(urlObj, i))
         })
 

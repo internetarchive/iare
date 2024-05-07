@@ -3,7 +3,7 @@
     --color-ref-view-text: #727272;
     --color-ref-view-inline-heading: #4e4e4e;
     --color-sub-caption: #727272;
-
+    --color-actionable-header: hsl(358 69% 65% / 1);
     /* local definitions */
     --titlebar-height: 2.5rem;
     --titlebar-font-size: 1rem;
@@ -122,24 +122,26 @@
 }
 
 .ref-view-contents {
+    display:flex;
+    flex-direction: row;
     overflow:scroll;
     /*padding:0.5rem .85rem .85rem .85rem;*/
     padding:0.5rem;
     padding-left:.35rem;
     color:black;
-
-    /*background-color: #6e1a41;*/
+    background-color: var(--g-color-body-bg);
 }
+
 .ref-view-contents h3 {
     font-weight:bold !important;
     color:#aaaaaa !important;
     margin-bottom: 0;
 }
-.ref-view-contents {
-    display:flex;
-    flex-direction: row;
-    background-color: var(--g-color-body-bg);
+.ref-view-contents .section-actionables h3 {
+    color:var(--color-actionable-header) !important;
+    margin-bottom: 0;
 }
+
 
 .ref-view-list {
     flex-shrink:1;

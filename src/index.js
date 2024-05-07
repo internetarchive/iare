@@ -12,6 +12,7 @@ import {IariSources} from "./constants/endpoints";
 import {ArticleVersions} from "./constants/articleVersions";
 
 const getEnvironment = () => {
+    return 'env-staging'
     const REGEX_PRODUCTION_ENV = new RegExp(/^(?:(?:[\w-]+\.)+)?(?:[\w-]+\.)?archive\.org$/);  // if "(\.?)archive.org" at end of string
     const host = window.location.host
     if (REGEX_PRODUCTION_ENV.test(host)) return 'env-production'

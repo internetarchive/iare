@@ -8,7 +8,7 @@ shows actionables for this reference
 export default function RefActionables({ actionables, onAction }) {
 
     if (actionables?.length) return <>
-        <div className="ref-view-section yes-action">
+        <div className="ref-view-section section-actionables">
 
             <RefSectionHeader leftPart={<h3>Actionable Items</h3>} >
             </RefSectionHeader>
@@ -33,16 +33,16 @@ export default function RefActionables({ actionables, onAction }) {
                             {myAction.fixit}
                         </div>
 
-
                     </div>
                 })}
             </div>
         </div>
     </>
 
-    // else return <div className="ref-view-actionables no-action">
-    //     <h3>No Actionable items for this reference.</h3>
-    // </div>
+    // NB Return nothing, rather than a message saying there are no actionables
+            // else return <div className="ref-view-actionables no-action">
+            //     <h3>No Actionable items for this reference.</h3>
+            // </div>
     else return null
 
 }
