@@ -4,7 +4,7 @@ import RefParameters from "./RefParameters";
 import RefSectionHeader from "./RefSectionHeader";
 
 /*
-shows tabs of template params if there; 1 tab for each template
+shows parameters of Template with Expand/Collapse
  */
 export default function RefTemplate({ template, pageData, tooltipId, options }) {
 
@@ -23,19 +23,8 @@ export default function RefTemplate({ template, pageData, tooltipId, options }) 
         className={"utility-button small-button"}
         onClick={toggleParams} >{
         // showParams ? <>&#8212;</> : "+"  // dash and plus sign
-        showParams ? <>Hide Parameters</> : <>Show Parameters</>
+        showParams ? <>Collapse</> : <>Expand</>
         }</button>
-
-                // const getTemplateUrl = (template) => {
-                //     if (!pageData.urlDict) return null
-                //     // use the "url" parameter as key for urlDict
-                //     const url = template.parameters.url
-                //     return pageData.urlDict[url]
-                // }
-
-                // get url objects from this template
-                // TODO Is there only one url per template?!?
-                // const urlObj = getTemplateUrl(template)
 
     return <div className="ref-view-template">
 

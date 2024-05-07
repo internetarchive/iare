@@ -49,8 +49,8 @@ export default function RefParameters({ parameters, onAction }) {
         return keyNames.map((key, i) => {
             // show with styling for param name and value
             return <div className={`param-row`} key={i}>
-                <div className={"col-3 param-name"}>{key}</div>
-                <div className={"col-9 param-value"}>{displayParameterValue(key)}</div>
+                <div className={"xxcol-2 param-name"}>{key}</div>
+                <div className={"xxcol-10 param-value"}>{displayParameterValue(key)}</div>
             </div>
         })
 

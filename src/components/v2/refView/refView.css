@@ -8,8 +8,6 @@
     --titlebar-height: 2.5rem;
     --titlebar-font-size: 1rem;
 
-    /*--grid-color-light: var(--bs-gray);*/
-    --grid-color-light: #c1c1c1;
     --height-ref-view-wikitext: 7.5rem;
 
     /*--width-col-url: 25rem;*/
@@ -33,14 +31,17 @@
     --border-box-actionable-color: hsl(358 81% 67% / 1);
     --border-box-actionable: 3pt solid var(--border-box-actionable-color) !important;
 
-    --border-radius-ref-section:0.35rem;
-
+    --border-radius-ref-section:0.42rem;
+    --border-solid-light: 1px solid #ebebeb;
+;
 
     --width-ref-view-list: 17rem;
     --height-ref-view-list-caption: 6.2rem;  /* TODO make this dynamic with resize */
 
     --width-url-list-refview: 55rem;
     --width-url-name-refview: 26rem;
+
+    --width-param-name: 10rem;
 
 
 }
@@ -198,22 +199,27 @@
 .ref-view-templates .param-row {
     display: flex;
     flex-direction: row;
-    border:1px solid;
-    border-color: var(--grid-color-light);
-    border-top:none;
+    /*xxborder:1px solid;*/
+    /*border-color: var(--grid-color-light);*/
+    /*border-top:var(--border-solid-light);*/
+    border-top:var(--border-solid-light);
     position:relative;
 }
 .ref-view-templates .param-row:first-child {
-    border-top:1px solid;
-    border-color: var(--grid-color-light);
+    border-top:none;
+    /*border-top:var(--border-solid-light);*/
+    /*border-color: var(--grid-color-light);*/
 }
 .ref-view-templates .param-row > div {
     padding:.1rem .25rem;
 }
 
 .ref-view-templates .param-name {
-    border-right: 1px solid var(--grid-color-light);
+    /*border-right: 1px solid var(--grid-color-light);*/
+    border-right: none;
     color:dimgray;
+    width: var(--width-param-name);
+    max-width: var(--width-param-name);
 }
 .ref-view-templates .param-value {
     overflow-wrap: break-word;
@@ -269,6 +275,9 @@
     margin-bottom:0;
     padding:.28rem .35rem;
     width:100%;
+
+    /*border-radius: var(--border-radius-ref-section);*/
+    border: var(--border-box-light);
     border-radius: var(--border-radius-ref-section);
 }
 .ref-view-wikitext .raw-wikitext.editable {
@@ -317,6 +326,17 @@
 
 .row.ref-view-actions {
     margin-top:1rem;
+}
+
+.ref-view-section .url-list {
+    height: inherit; /* override urls.css */
+    border: var(--border-box-light);
+    border-radius: var(--border-radius-ref-section);
+
+}
+.ref-view-section .url-list .url-row {
+    border: none; /* override urls.css */
+
 }
 
 .ref-view-url {
@@ -445,6 +465,9 @@
 
 .ref-view-parameters {
     margin-top:.2rem;
+    padding:.25rem;
+    border: var(--border-box-light);
+    border-radius: var(--border-radius-ref-section);
 }
 
 .ref-view-article-info {
@@ -501,6 +524,9 @@
     margin-bottom:0;
     /*min-height: 6.4rem;*/
     border-radius: var(--border-radius-ref-section);
+    border: var(--border-box-light);
+    /*1pt solid #505050 !important;*/
+
 }
 
 .ref-view-single-display .ref-meta {

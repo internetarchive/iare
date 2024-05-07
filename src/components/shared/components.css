@@ -2,9 +2,10 @@
     --border-box: 2px solid #2585cc !important;
     --border-box-radius:0.33rem;
 
-    --border-box-light: 2px solid #b4b4b7 !important;
+    --border-box-light: 1.5pt solid #b4b4b7 !important;
 
-    --border-row: 1pt solid #505050 !important;
+    /*--border-row: 1pt solid #505050 !important;*/
+    --border-row: 1pt solid #3c3c3c !important;
     --border-row-light: 1pt solid #aeaeae !important;
 
     --margin-box-bottom: .35rem;

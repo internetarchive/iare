@@ -56,7 +56,7 @@ used to call out certain aspects in the code worth calling out. See https://en.w
 
 #### Warning! 
 
-You cannot use "ref" as a component variable name in a react javascript project -
+You cannot use "ref" as a component parameter name in a react javascript project -
 it will give you strange errors. If you need to use a variable to 
 represent a reference, use "_ref"...I found this out the hard way!
 
@@ -72,9 +72,9 @@ represent a reference, use "_ref"...I found this out the hard way!
 
 ### React Component Architecture
 
-When page data is received from the fetch, it is rendered with the src/PageDisplay component, eventually resolving to the src/v2/PageDisplayV2 component for typical wiki pages.
+When page data is received from the fetch, it is rendered with the src/components/PageDisplay component, eventually resolving to the src/components/v2/PageDisplayV2 component for typical wiki pages.
 
-The PageDisplayV2 contains the PageInfo component, to display some top-level information about the page retrieval, and the PageData component, which does the actual work of displaying the retrieved page data.
+The PageDisplayV2 contains the PageInfo component (which displays some top-level page retrieval information) and the PageData component, which does the actual work of displaying the retrieved page data.
 
 ```
 <PageDisplayV2>
