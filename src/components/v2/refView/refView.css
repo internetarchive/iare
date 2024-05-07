@@ -128,7 +128,7 @@
     overflow:scroll;
     /*padding:0.5rem .85rem .85rem .85rem;*/
     padding:0.5rem;
-    padding-left:.35rem;
+    padding-left:.5rem;
     color:black;
     background-color: var(--g-color-body-bg);
 }
