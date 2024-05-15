@@ -9,6 +9,7 @@
     --border-row-light: 1pt solid #aeaeae !important;
 
     --margin-box-space: .35rem;
+    --margin-box-top: .35rem;
     --margin-box-bottom: .35rem;
     --margin-box-left: .35rem;
     --margin-button-list: .35rem;
@@ -179,16 +180,20 @@
 
 .filter-box-contents {
     display:block;
-    margin-top:0;
+    /*margin-top:var(--margin-box-top);*/
     padding:.33rem;
     padding-bottom: .56rem;
     border: var(--border-box-light);
     border-radius: var(--border-box-radius);
     background-color: var(--color-filter-box-contents);
-
-
-
 }
+.actionable-filter-box .filter-box-contents {
+    margin-top:var(--margin-box-top);
+    border: none;
+    background-color: inherit;
+    padding:0;
+}
+
 .filter-box-show {
     float:right;
     font-weight:normal;

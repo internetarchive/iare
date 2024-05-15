@@ -6,7 +6,7 @@
     --width-url-archive-status: 3rem;
     --width-url-citations: 3.5rem;
     --width-url-templates: 4.0rem;
-    --width-url-actionable: 7.0rem;
+    --width-url-actionable: 8.0rem;
     --width-url-sections: 4.5rem;
     --width-url-perennial: 5.0rem;
 
@@ -20,6 +20,8 @@
     --height-archive-icon-list: 1.5rem;
     --width-archive-book-list: 1.3rem;     /* size of check / x icons in list */
     --height-archive-book-list: 1.3rem;
+
+    --width-icon-actionable: .75rem;
 
     /* perennial ratings colors */
     --color-rating-blacklist: hsl(347.31deg 100% 88%);
@@ -506,3 +508,23 @@ button.utility-button.disabled {
 /*.feedback-div.fade-out {*/
 /*    opacity: 0;*/
 /*}*/
+
+.yes-actionable {
+    position: relative;
+}
+.yes-actionable .icon-area {
+    content: "";
+    position:relative;
+    top:2pt;
+    display: inline-block;
+    margin-right:3pt;
+    width: var(--width-icon-actionable);
+    height: var(--width-icon-actionable);
+    background-image: url('../../images/actionable_icon.v1r1.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.url-perennial .lolite {
+    color: var(--color-lolite)
+}

@@ -36,7 +36,7 @@ export default function FilterButtons ( {
                 f.count = flock ? flock.filter((f.filterFunction)()).length : 0;
                 f.name = name // for render function
 
-                return <FilterButton key={name}
+                return f.count === 0 ? null :<FilterButton key={name}
                     name={name}
                     caption={f.caption}
                     count={f.count}

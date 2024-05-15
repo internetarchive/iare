@@ -158,7 +158,8 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState, tool
 
                 {debugFilters}  {/* will eventually put all filters in this variable with a sort of config-comtrolled inclusion */}
 
-                <FilterBox name={"actionable"} caption={"Actionable"} showContents={expand.actionable}
+                <FilterBox name={"actionable"} caption={"Actionable"} className={'actionable-filter-box'}
+                           showContents={expand.actionable}
                            onToggle={onToggleShow}>
                     <ActionableChart pageData={pageData} onAction={onAction} currentState={currentState?.actionable}
                                      tooltipId={tooltipId}/>

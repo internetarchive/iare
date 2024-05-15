@@ -5,11 +5,9 @@ import './shared/flockbox.css';
 
 /* FilterBox component
 
-- surrounds the children elements with a "filter-box" treatment, which currently includes:
+- surrounds children elements with a "filter-box" treatment, which currently includes:
     - stylized mini titlebar with open/close icon
-    - (maybe in future:) draggable box
-
-expected props:
+    - (maybe in future:) draggable box capabilities
 
  */
 export default function FilterBox({

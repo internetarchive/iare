@@ -418,7 +418,8 @@ const urlFlock = React.memo( function UrlFlock({
             return !u.actionable
                 ? null
                 : u.actionable.map( (key,i) => {
-                    return <div key={i}>{ACTIONABLE_FILTER_MAP[key].short_caption}</div>
+                    return <div className={"yes-actionable"} key={i}>
+                        <span className={"icon-area"}></span>{ACTIONABLE_FILTER_MAP[key].short_caption}</div>
                 })
         })
 
@@ -436,7 +437,7 @@ const urlFlock = React.memo( function UrlFlock({
                 ? null
                 // rsp contains keys into rspMap
                 : u.rsp.map( (s,i) => {
-                    return <div key={i}>{rspMap[s]?.shortCaption ? rspMap[s].shortCaption : ''}</div>
+                    return <div key={i} className={rspMap[s]?.key === "__unassigned" ? "lolite" : ""}>{rspMap[s]?.shortCaption ? rspMap[s].shortCaption : ''}</div>
                 })
         })
 

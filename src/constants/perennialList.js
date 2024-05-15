@@ -96,7 +96,7 @@ export const rspMap = {  // rsp stands for Reliable Sources / Perennial Sources
         key: "__unassigned",
         rspKey: "__unassigned",
         caption: "No Data",
-        shortCaption: "Unassigned",
+        shortCaption: "No Data",
         desc: "This source has not been associated with any defined category.",
         more_info: "https://en.wikipedia.org/wiki/Wikipedia:Reliable_sources/Perennial_sources#Legend",
         color: "grey",
