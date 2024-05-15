@@ -2,7 +2,7 @@
     /* candidates for global definition (for AI generated colors) */
     --color-ref-view-text: #727272;
     --color-ref-view-inline-heading: #4e4e4e;
-    --color-sub-caption: #727272;
+    --color-sub-caption: #9b9a9a;
     --color-actionable-header: hsl(358 69% 65% / 1);
     /* local definitions */
     --titlebar-height: 2.5rem;
@@ -138,11 +138,6 @@
     color:#aaaaaa !important;
     margin-bottom: 0;
 }
-.ref-view-contents .section-actionables h3 {
-    /*color:var(--color-actionable-header) !important;*/
-    margin-bottom: 0;
-}
-
 
 .ref-view-list {
     flex-shrink:1;
@@ -412,10 +407,6 @@
 }
 
 .ref-view-actionables {
-    /*margin-bottom: var(--margin-ref-view-section);*/
-    /*border: var(--border-box-light);*/
-}
-.ref-view-actionables .ref-view-actionable {
     border: var(--border-box-actionable);
     border-radius: .5rem;
     padding:.25rem .35rem;

@@ -13,9 +13,10 @@ export default function RefActionables({ actionables, onAction }) {
             <RefSectionHeader leftPart={<h3>Actionable Items</h3>} >
             </RefSectionHeader>
 
-            <div className={"ref-view-actionable-caption"}>This citation has some things that can be fixed.</div>
-
             <div className ="ref-view-actionables">
+
+                <div className={"ref-view-actionable-caption"}>This citation has some things that can be fixed.</div>
+
                 {actionables.map( (action, i) => {
                     const myAction = ACTIONABLE_FILTER_MAP[action]
                     if (!myAction) return null
