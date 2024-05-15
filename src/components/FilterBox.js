@@ -1,5 +1,6 @@
 import React from "react";
-import './shared/components.css';
+// import './shared/components.css';
+import './shared/flockbox.css';
 // import Draggable from "react-draggable";
 
 /* FilterBox component

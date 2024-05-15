@@ -1,0 +1,58 @@
+/* flock boxes - surrounds flock style components  */
+
+.flock-box {
+    margin-bottom:var(--margin-box-bottom);
+    margin-left:var(--margin-box-left);
+    z-index: 100;
+}
+.flock-box:first-of-type {
+    margin-left:0;
+}
+
+.flock-box-caption {
+    border: var(--border-box);
+    border-radius: var(--border-box-radius);
+    /*border-bottom-left-radius: 0;*/
+    /*border-bottom-right-radius: 0;*/
+    padding: 0.2rem 0.35rem 0.3rem !important;
+    color: var(--g-color-flock-box-caption-fg) !important;
+    background-color: var(--g-color-flock-box-caption-bg);
+    font-size: 0.85rem;
+    font-weight: bold;
+    line-height:1.2;
+}
+
+.flock-box-caption button.utility-button.small-button {
+    line-height: .85rem;
+}
+
+.flock-box-caption .sub-caption {
+    font-size:88%;
+    font-weight:normal;
+    margin-top: 0.25rem;
+    display:flex;
+    flex-flow: wrap;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.flock-box-contents {
+    display:block;
+    background-color: var(--color-filter-box-contents);
+
+    margin-top:var(--margin-box-space);
+    padding: 0;
+    border: var(--border-box-light);
+    border-top: none;
+
+    border-radius: var(--border-box-radius);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+
+    border: none;
+    background-color: inherit;
+}
+
+.flock-box-contents button{
+    margin-bottom: var(--margin-button-list);
+}

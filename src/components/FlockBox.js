@@ -1,5 +1,6 @@
 import React from "react";
 import './shared/components.css';
+import './shared/flockbox.css';
 
 /* FlockBox component
 

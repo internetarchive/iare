@@ -539,21 +539,6 @@ const urlFlock = React.memo( function UrlFlock({
             onClick={onClickHeader}
             onMouseOver={onHoverHeaderRow} >
 
-            {/* top row of header - for layout reasons - blank for now, but may be useful if column-spanning labels are desired */}
-            <div className={"url-row url-header-row url-row-top"}>
-                <div className={"url-name"}>&nbsp;</div>
-                <div className={"url-status"}>&nbsp;</div>
-                <div className={"url-archive_status"} >&nbsp;</div>
-
-                {/*<div className={"url-citations"}>&nbsp;</div>*/}
-
-                {/*<div className={"url-templates"}>&nbsp;</div>*/}
-                <div className={"url-actionable"}>&nbsp;</div>
-
-                <div className={"url-sections"}>&nbsp;</div>
-                <div className={"url-perennial"}>&nbsp;</div>
-            </div>
-
             {/* second header row - contains column labels */}
             <div className={"url-row url-header-row"}>
 
