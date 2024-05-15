@@ -624,6 +624,10 @@ export default function PageData({pageData = {}}) {
             if (!urlObj.reference_info.templates.includes("cite book")) return
             if (!urlObj.netloc) return
 
+            // set "is book" flag
+            urlObj.isBook = true
+
+            // increment count for this book location
             const netloc = urlObj.netloc
             if (!bookStats[netloc]) bookStats[netloc] = 0
             bookStats[netloc] = bookStats[netloc] + 1

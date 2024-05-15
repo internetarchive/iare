@@ -16,8 +16,10 @@
     /*--color-cell-border: grey;*/
     --color-cell-border: inherit;
 
-    --width-check-icon-list: 1.5rem;     /* size of check / x icons in list */
-    --height-check-icon-list: 1.5rem;
+    --width-archive-icon-list: 1.5rem;     /* size of check / x icons in list */
+    --height-archive-icon-list: 1.5rem;
+    --width-archive-book-list: 1.3rem;     /* size of check / x icons in list */
+    --height-archive-book-list: 1.3rem;
 
     /* perennial ratings colors */
     --color-rating-blacklist: hsl(347.31deg 100% 88%);
@@ -218,7 +220,6 @@
     border-right-color: var(--color-cell-border);
 }
 
-
 .url-row .url-status {
     text-align: center;
     width: var(--width-url-status);
@@ -236,12 +237,6 @@
     padding:.25rem 0 0;
 }
 
-/*.url-row .url-iabot_status {*/
-/*    text-align: left;*/
-/*    !*border-left: 1px solid black;*!*/
-/*    width: var(--width-url-iabot_status);*/
-/*    max-width: var(--width-url-iabot_status);*/
-/*}*/
 .url-row .url-citations {
     text-align: left;
     /*border-left: 1px solid black;*/
@@ -284,14 +279,6 @@
 .url-row > div {
     text-align:center !important;
 }
-/*.url-list a,*/
-/*.url-list .url-name {*/
-/*    overflow-wrap: break-word;*/
-/*}*/
-
-/*.url-list .url-row > div {*/
-/*    text-align:center !important;*/
-/*}*/
 
 .url-header-row .url-name,
 .url-header-row .url-status,
@@ -321,21 +308,20 @@
 }
 
 .url-row .archive-yes {
-    width:var(--width-check-icon-list);
-    height:var(--height-check-icon-list);
-    /*content: url('../../images/yes_check.png');*/
+    width:var(--width-archive-icon-list);
+    height:var(--height-archive-icon-list);
     content: url('../../images/wbm.link.yes.png');
 }
 .url-row .archive-no {
-    width:var(--width-check-icon-list);
-    height:var(--height-check-icon-list);
-    /*content: url('../../images/no_x.png');*/
-    /*content: url('../../images/wbm.link.no.png');*/
-    /*content: url('../../images/wbm.link.ex.png');*/
+    width:var(--width-archive-icon-list);
+    height:var(--height-archive-icon-list);
     content: url('../../images/wbm.link.ex.grey.v3.png');
 }
-
-
+.url-row .archive-book {
+    width:var(--width-archive-book-list);
+    height:var(--height-archive-book-list);
+    content: url('../../images/wbm.book.ia.svg');
+}
 
 /* URL Filters selections etc. */
 
@@ -393,20 +379,7 @@
     font-size:120%;
 }
 
-            /* from commented out filter chooser section */
 
-            /*.filter-archive-status-wrapper {*/
-            /*    position:absolute;*/
-            /*    top:.2rem;*/
-            /*    right:.5rem;*/
-            /*    display:block;*/
-            /*}*/
-
-            /*.filter-archive-status-wrapper .archive-status {*/
-            /*    width: var(--extent-archive-icon);*/
-            /*    height: var(--extent-archive-icon);*/
-            /*    display:block;*/
-            /*}*/
 .archive-status-yes_archive {
     content: url('../../images/yes_check.png');
 }

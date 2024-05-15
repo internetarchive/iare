@@ -1,15 +1,14 @@
 import React from "react";
 import {rspMap} from "../../../constants/perennialList";
+import {
+    getArchiveStatusInfo,
+} from "../../../utils/urlUtils";
 
 
 /*
 shows template url and its status codes in a tabular form
  */
 export default function RefTemplateUrl({ url, index, isSelected=false }) {
-
-    const getArchiveStatusInfo = ( u => {
-        return <span className={u.archive_status?.hasArchive ? "archive-yes" : "archive-no" }></span>
-    })
 
     const getCitationInfo = (u => {
         // for now, returns array of statuses from url's associated references

@@ -1,7 +1,13 @@
 import React from "react";
 import {rspMap} from "../constants/perennialList";
 
-export const getArchiveStatusInfo = (u => <span className={u.archive_status?.hasArchive ? "archive-yes" : "archive-no" }></span> )
+export const getArchiveStatusInfo = (u => {
+    return <span className={u.isBook
+        ? "archive-book"
+        : u.archive_status?.hasArchive
+            ? "archive-yes"
+            : "archive-no" }></span>
+} )
 
 export const getPerennialInfo = (u => {
     return !u.rsp

@@ -448,6 +448,7 @@
 .ref-view-actionables .ref-view-actionable .action-desc {
 }
 .ref-view-actionables .ref-view-actionable .action-fixit {
+    margin-top:.35rem
 }
 .ref-view-actionables .ref-view-actionable .action-symptom {
 }
@@ -462,7 +463,6 @@
     color: var(--color-sub-caption);
     margin-top: -.15rem;
     margin-bottom: .45rem;
-
 }
 
 .ref-view-parameters {

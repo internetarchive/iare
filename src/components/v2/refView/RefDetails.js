@@ -105,9 +105,9 @@ function RefDetails({ refDetails,
 
         <RefWikitext wikitext={refDetails?.wikitext} ref_details={refDetails} onAction={handleRefViewAction} />
 
-        <RefTemplates templates={refDetails?.templates} pageData={pageData} tooltipId={tooltipId} />
-
         <RefUrls urls={refDetails?.urls} pageData={pageData} />
+
+        <RefTemplates templates={refDetails?.templates} pageData={pageData} tooltipId={tooltipId} />
 
     </>
 
