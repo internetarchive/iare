@@ -139,7 +139,7 @@
     margin-bottom: 0;
 }
 .ref-view-contents .section-actionables h3 {
-    color:var(--color-actionable-header) !important;
+    /*color:var(--color-actionable-header) !important;*/
     margin-bottom: 0;
 }
 
