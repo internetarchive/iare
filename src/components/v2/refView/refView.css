@@ -194,30 +194,24 @@
 .ref-view-templates .param-row {
     display: flex;
     flex-direction: row;
-    /*xxborder:1px solid;*/
-    /*border-color: var(--grid-color-light);*/
-    /*border-top:var(--border-solid-light);*/
     border-top:var(--border-solid-light);
     position:relative;
 }
 .ref-view-templates .param-row:first-child {
     border-top:none;
-    /*border-top:var(--border-solid-light);*/
-    /*border-color: var(--grid-color-light);*/
 }
 .ref-view-templates .param-row > div {
     padding:.1rem .25rem;
 }
 
-.ref-view-templates .param-name {
-    /*border-right: 1px solid var(--grid-color-light);*/
+.ref-view-templates .param-row .param-name {
     border-right: none;
     color:dimgray;
-    width: var(--width-param-name);
-    max-width: var(--width-param-name);
+    flex:0 0 var(--width-param-name)
 }
 .ref-view-templates .param-value {
-    overflow-wrap: break-word;
+    /*overflow-wrap: break-word;*/
+    overflow: scroll;
 }
 
 
@@ -279,17 +273,6 @@
     background-color: var(--color-bg-editable) !important;
 }
 
-/*.ref-view .row.footer  {*/
-/*    position:absolute;*/
-/*    bottom:0;*/
-/*    right:0;*/
-/*}*/
-/*.ref-view .row.footer button {*/
-/*    color:blue !important;*/
-/*    width:5rem;*/
-/*}*/
-
-
 @media screen and (max-width: 500px) {
     .ref-modal-container {
         flex-direction: column;
@@ -302,7 +285,6 @@
 
     /* and transform other elements for responsive */
 }
-
 
 .ref-note-alert {
     color: red;

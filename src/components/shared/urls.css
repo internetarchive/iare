@@ -52,7 +52,9 @@
 
     --padding-url-column: .5rem;
 
-    --height-filter-box-rows: 26.5rem;
+    /*--height-filter-box-rows: 26.5rem;*/
+    --height-filter-box-rows: calc(100vh - 15rem);
+
 }
 
 #url-display-tooltip {

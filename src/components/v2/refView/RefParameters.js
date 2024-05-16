@@ -20,8 +20,8 @@ export default function RefParameters({ parameters, onAction }) {
 
         const keyNames = Object.keys(parameters).filter(name => {
             if (name === "template_name") return false
-            if (name === "url") return false
-            if (name === "archive_url") return false
+            // if (name === "url") return false
+            // if (name === "archive_url") return false
             return true
         })
 
