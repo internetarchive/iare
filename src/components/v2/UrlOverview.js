@@ -147,7 +147,7 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState, tool
 
         </ControlBox>
 
-        <div className={"row"}>
+        <div className={"row filter-box-rows"}>
 
             <div className={"col col-12"}>
 

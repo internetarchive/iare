@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.2.24.31",
-  "version_name": "0.2.24.31 ref view changes",
+  "version": "0.2.24.33",
+  "version_name": "0.2.24.33 resize fit",
   "private": true,
   "dependencies": {
     "bootstrap": "^5.3.0-alpha3",

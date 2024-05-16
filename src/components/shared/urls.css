@@ -51,6 +51,8 @@
     --width-overview-column: 335px;
 
     --padding-url-column: .5rem;
+
+    --height-filter-box-rows: 26.5rem;
 }
 
 #url-display-tooltip {
@@ -527,4 +529,11 @@ button.utility-button.disabled {
 
 .url-perennial .lolite {
     color: var(--color-lolite)
+}
+
+.filter-box-rows {
+    height:var(--height-filter-box-rows);
+    min-height:var(--height-filter-box-rows);
+    max-height:var(--height-filter-box-rows);
+    overflow: scroll;
 }
