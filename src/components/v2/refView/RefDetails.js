@@ -103,7 +103,7 @@ function RefDetails({ refDetails,
 
         {/*<RefArticleInfo _ref={refDetails} pageData={pageData}/>*/}
 
-        <RefWikitext wikitext={refDetails?.wikitext} ref_details={refDetails} onAction={handleRefViewAction} />
+        {true && <RefWikitext wikitext={refDetails?.wikitext} ref_details={refDetails} onAction={handleRefViewAction} />}
 
         <RefUrls urls={refDetails?.urls} pageData={pageData} />
 

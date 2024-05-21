@@ -182,7 +182,7 @@ export const ACTIONABLE_FILTER_MAP = {
         desc: "URL Link Status is BAD, Archive Link is missing or broken",
         symptom: "The link is broken, and there is no Archive link to rescue it",
         tooltip: `<div>Original Status is NOT 2XX or 3XX<br/>AND<br/>No Archive exists in Wayback Machine</div>`,
-        fixit: <div>Add Wayback Machine archive URL to the citation</div>,
+        fixit: <div>Edit the citation by adding a Wayback Machine Archive URL (WMAU)</div>,
         filterFunction: () => (url) => {
             return (url.status_code < 200 || url.status_code >= 400)
                 &&

@@ -50,7 +50,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
             ? ['easterIsland', 'internetArchive', 'mlk', 'short_test', ]
 
             // my development shortcuts
-            : ['marcBolan', 'easterIsland', 'mlk', 'internetArchive', 'karen_bakker', 'short_test', 'pdfDesantis', 'pdfOneLink'];
+            : ['marcBolan', 'easterIsland', 'easter_island_short', 'hamas_israel', 'mlk', 'internetArchive', 'karen_bakker', 'short_test', 'pdfDesantis', 'pdfOneLink'];
 
 
     // add class to body to indicate environment
