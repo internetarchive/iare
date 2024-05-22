@@ -261,6 +261,12 @@ export default function UrlDisplay ({ pageData, options } ) {
             setCondition(f)
         }
 
+        else if (action === IARE_ACTIONS.GOTO_CITE_REF.key) {
+            // jump to cite ref indicated by "value" argument
+            window.open(value, "_blank")
+        }
+
+
         else {
             console.log(`Action "${action}" not supported.`)
             alert(`Action "${action}" not supported.`)

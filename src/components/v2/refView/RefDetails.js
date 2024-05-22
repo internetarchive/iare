@@ -23,7 +23,7 @@ function RefDetails({ refDetails,
     }, [refDetails, setWikitext]);
 
 
-    const handleLocalRefClick = (e) => {
+    const handleCitationClick = (e) => {
         // console.log("handleClick local ref")
         e.preventDefault()
 
@@ -92,18 +92,22 @@ function RefDetails({ refDetails,
 
     }, [saveWikitext])
 
+    const showWikitext = true  // allows on and off display of wikitext...under experimentation
+
     return <>
         <RefCitationDisplay _ref={refDetails}
                             articleVersion={pageData.iariArticleVersion}
                             showDebug={showDebug}
-                            onClick={handleLocalRefClick}
+                            onClick={handleCitationClick}
+                            options = {{'hide_actionables':true }}
+                            onAction={onAction}
         />
 
         <RefActionables actionables={refDetails?.actionable} />
 
         {/*<RefArticleInfo _ref={refDetails} pageData={pageData}/>*/}
 
-        {true && <RefWikitext wikitext={refDetails?.wikitext} ref_details={refDetails} onAction={handleRefViewAction} />}
+        {showWikitext && <RefWikitext wikitext={refDetails?.wikitext} ref_details={refDetails} onAction={handleRefViewAction} />}
 
         <RefUrls urls={refDetails?.urls} pageData={pageData} />
 

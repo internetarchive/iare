@@ -48,4 +48,8 @@ export const IARE_ACTIONS = {
         key: "SET_TEMPLATE_FILTER"
     },
 
+    GOTO_CITE_REF: {
+        key: "GOTO_CITE_REF"
+    },
+
 }

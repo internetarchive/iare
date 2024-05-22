@@ -508,10 +508,18 @@
     padding-top:.25rem;
 }
 
-.ref-button-wrapper {
+.ref-citation-button-wrapper {
     display: flex;
     flex-direction: column;
     padding-right: 1rem;
+}
+
+.ref-view-single-display .ref-citation-html-display {
+    margin-bottom:0;
+    margin-top: .35rem;
+    padding: .3rem .3rem .3rem .4rem;
+    border-radius: var(--border-radius-ref-section);
+    border: var(--border-box-light);
 }
 
 /* uncategorized */

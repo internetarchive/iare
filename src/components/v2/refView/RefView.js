@@ -129,7 +129,9 @@ export default function RefView({open,
                             refDetails={refDetails}
                             pageData={pageData}
                             tooltipId={tooltipId}
-                            config={myConfig} />
+                            config={myConfig}
+                            onAction={onAction}
+                        />
                     </div>
 
                 </div>

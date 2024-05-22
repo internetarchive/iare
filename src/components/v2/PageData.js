@@ -9,7 +9,7 @@ import {
     URL_STATUS_FILTER_MAP
 } from "../../constants/urlFilterMaps";
 import {REF_FILTER_DEFS} from "../../constants/refFilterMaps";
-import {areObjectsEqual} from "../../utils/utils";
+// import {areObjectsEqual} from "../../utils/utils";
 import {categorizedDomains, rspMap} from "../../constants/perennialList";
 import {UrlStatusCheckMethods} from "../../constants/checkMethods";
 import {ACTIONABLE_FILTER_MAP} from "../../constants/actionableMap";
@@ -185,80 +185,124 @@ export default function PageData({pageData = {}}) {
     }, [])
 
 
-    // take the wt:value and put it straight to value:<value>
-    const normalizeMediaWikiParams = (oldParams) => {
+                // // take the wt:value and put it straight to value:<value>
+                // const normalizeMediaWikiParams = (oldParams) => {
+                //
+                //     const newParams = {}
+                //
+                //     // Iterate through keys and build normalized return param object values
+                //     for (let key of Object.keys(oldParams)) {
+                //         // set newParams value
+                //         newParams[key] = oldParams[key].wt
+                //     }
+                //
+                //     return newParams;
+                // }
 
-        const newParams = {}
+    /*
+    algorithm:
+    for each ref in wikitext:
+        for each url in ref.urls
+            if url NOT in anchorrefs then skip
+            with url:
+                for each cite_ref:
+                    if url in {cite_ref.urls}
+                    set ref.cite_ref = pointer to cite_ref element
+     */
+    const uniteCiteRefs = useCallback( (pageData) => {
 
-        // Iterate through keys and build normalized return param object values
-        for (let key of Object.keys(oldParams)) {
-            // set newParams value
-            newParams[key] = oldParams[key].wt
-        }
+        const wikiRefs = pageData?.references || []  // references from wikitext parsing
+        // const htmlRefs = pageData?.cite_refs || []  // references from html parsing
 
-        return newParams;
-    }
+        wikiRefs.forEach( wikiRef => {
 
+            wikiRef.citeRef = null
 
-    const processCiteRefs = useCallback( (refsArray, pageData) => {
+            wikiRef.urls.forEach( url => {
 
-        const citeRefs = pageData?.cite_refs ? pageData.cite_refs : []
+                //skip if not an anchor link in urlDict
+                if (!pageData.urlDict[url]) return
 
-        citeRefs.forEach( cite => {
+                // check all cite_refs for included url
+                pageData.cite_refs.forEach( citeRef => {
+                    citeRef.urls.forEach( citeUrl => {
+                        if (url === citeUrl) {
+                            // match this citeRef to the current wikiRef and return from url search loop
+                            wikiRef.citeRef = citeRef
 
-            const mwData = cite.raw_data ? JSON.parse(cite.raw_data) : {}
+                            return
 
-            // console.log(`processCiteRefs: mwData[${cite.ref_index}] is `, mwData)
-
-            // if mwData has parts[0]
-                // if parts[0].template
-
-                // save template.target in target_type for citeref
-
-                // for each ref in uniqueRef
-                    // if ref.isAssigned then skip
-                    // else
-                        // if match cite.template.params
-                            // attach citeref to that reference
-                            // tag that reference as "assigned"
-
-            if (mwData.parts && mwData.parts[0].template) {
-
-                const template = mwData.parts[0].template
-
-                // mark citation as having template type
-                cite.template_target = template.target?.wt
-
-                const citeParams = normalizeMediaWikiParams(template.params)
-
-                // see if template.params matches any wikiText ref params; returns undefined if no mathcing ref element found
-                const foundRef = refsArray.find( _ref => {  // NB cannot use "ref" as a variable name as "ref" is a keyword in React
-                    if (!(_ref.templates && _ref.templates[0])) return false
-                    // TODO skip if not a footnote ref
-                    // TODO skip if type===footnote and footnote_subtype === named
-
-                    // remove "template_name" parameter from object
-                        // TODO this is an IARI bug - should not be adding template_name to wikitext parameters!!
-                        // TODO when fixed, must also change RefView parameter display logic
-                    const refParams = {..._ref.templates[0].parameters}
-                    delete refParams.template_name
-
-                    return areObjectsEqual(refParams, citeParams)
+                        }
+                    })
                 })
 
-                if (foundRef) {
-                    ////console.log(`Found matching ref for citeRef# ${cite.ref_index}`)
-                    foundRef.cite_refs = cite.page_refs
-                }
-
-            } else {
-                // we do not have parts[0].templates - what should we do?
-            }
+            })
 
         })
 
         // end result : anchor refs are assigned with citeref
     }, [])
+
+
+                // const processCiteRefs = useCallback( (refsArray, pageData) => {
+                //
+                //     const citeRefs = pageData?.cite_refs ? pageData.cite_refs : []
+                //
+                //     citeRefs.forEach( cite => {
+                //
+                //         const mwData = cite.raw_data ? JSON.parse(cite.raw_data) : {}
+                //
+                //         // console.log(`processCiteRefs: mwData[${cite.ref_index}] is `, mwData)
+                //
+                //         // if mwData has parts[0]
+                //             // if parts[0].template
+                //
+                //             // save template.target in target_type for citeref
+                //
+                //             // for each ref in uniqueRef
+                //                 // if ref.isAssigned then skip
+                //                 // else
+                //                     // if match cite.template.params
+                //                         // attach citeref to that reference
+                //                         // tag that reference as "assigned"
+                //
+                //         if (mwData.parts && mwData.parts[0].template) {
+                //
+                //             const template = mwData.parts[0].template
+                //
+                //             // mark citation as having template type
+                //             cite.template_target = template.target?.wt
+                //
+                //             const citeParams = normalizeMediaWikiParams(template.params)
+                //
+                //             // see if template.params matches any wikiText ref params; returns undefined if no mathcing ref element found
+                //             const foundRef = refsArray.find( _ref => {  // NB cannot use "ref" as a variable name as "ref" is a keyword in React
+                //                 if (!(_ref.templates && _ref.templates[0])) return false
+                //                 // TODO skip if not a footnote ref
+                //                 // TODO skip if type===footnote and footnote_subtype === named
+                //
+                //                 // remove "template_name" parameter from object
+                //                     // TODO this is an IARI bug - should not be adding template_name to wikitext parameters!!
+                //                     // TODO when fixed, must also change RefView parameter display logic
+                //                 const refParams = {..._ref.templates[0].parameters}
+                //                 delete refParams.template_name
+                //
+                //                 return areObjectsEqual(refParams, citeParams)
+                //             })
+                //
+                //             if (foundRef) {
+                //                 ////console.log(`Found matching ref for citeRef# ${cite.ref_index}`)
+                //                 foundRef.cite_refs = cite.page_refs
+                //             }
+                //
+                //         } else {
+                //             // we do not have parts[0].templates - what should we do?
+                //         }
+                //
+                //     })
+                //
+                //     // end result : anchor refs are assigned with citeref
+                // }, [])
 
 
     const processReference = useCallback( (ref, urlDict) => {
@@ -424,31 +468,30 @@ export default function PageData({pageData = {}}) {
         }
 
 
-        const anchorRefs = getAnchorReferences(pageData)
+                    // const anchorRefs = getAnchorReferences(pageData)
+        // re-define references as just the anchor references
+        pageData.references = getAnchorReferences(pageData)
+
 
         // process all anchor references
-        anchorRefs.forEach( (ref, index) => {
+        pageData.references.forEach( (ref, index) => {
             processReference(ref, pageData.urlDict)
 
             // assign dynamic ref_index property to each reference.
             // this gives us the ability to index each reference internally.
-
             ref.ref_index = index
 
         })
 
         // associate citeref data with anchorRefs
-        processCiteRefs(anchorRefs, pageData)
-
-        // set anchorRefs as the definitive references property of pageData
-        pageData.references = anchorRefs
+        uniteCiteRefs(pageData)
 
         gatherTemplateStatistics(pageData.references)
         gatherPapersStatistics(pageData.references)
         processTemplates(pageData.references)
 
 
-    }, [processReference, processCiteRefs])
+    }, [processReference, uniteCiteRefs])
 
 
 

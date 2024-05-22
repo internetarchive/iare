@@ -11,6 +11,8 @@ function CitationDisplay_v1({ reference = null, index=0, options ={}}) {
     let hasContent = false;
     let spanCount = 0
 
+    // a helper method called from within each sub-section of reference display.
+    // by calling setSpan, hasContent is true, meaning we have a t least something
     const setSpan = () => {
         hasContent = true
         spanCount++  // spanCount is used to give each span a unique key
@@ -54,15 +56,7 @@ function CitationDisplay_v1({ reference = null, index=0, options ={}}) {
         })
     }
 
-    const articleInfo = reference.section
-        ? <div className={"article-info"}>Section of Origin: {reference.section}</div>
-        : null
-
-    const refMeta = articleInfo
-        ? <div className={"ref-meta"}>{articleInfo}</div>
-        : null
-
-    const markup = hasContent
+    const citationDisplay = hasContent
         ? <>
             {actionable}
             {refTitle}
@@ -72,17 +66,33 @@ function CitationDisplay_v1({ reference = null, index=0, options ={}}) {
         </>
         : <span>{reference.wikitext}</span>  // if nothing else to show, show wikitext
 
-    return <div className={"ref-button-wrapper"}>
+    const articleInfo = reference.section
+        ? <div className={"article-info"}>Section of Origin: {reference.section}</div>
+        : null
 
-        {markup}
+    const citationInfo = articleInfo
+        ? <div className={"ref-meta"}>{articleInfo}</div>
+        : null
 
-        {!!myConfig?.isShowDebugInfo && <div> {/* extra info for debug */}
+
+    const debugInfo = !!myConfig?.isShowDebugInfo
+        ? <div>
             #{index} {reference.id} {reference.type}-{reference.footnote_subtype}
-        </div>}
+        </div>
+        : null
 
-        {refMeta}
+    return <>
+        <div className={"ref-citation-button-wrapper"}>
 
-    </div>
+            {citationDisplay}
+
+            {debugInfo}
+
+            {citationInfo}
+
+        </div>
+
+    </>
 }
 
 export default CitationDisplay_v1;

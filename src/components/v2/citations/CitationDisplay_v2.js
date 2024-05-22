@@ -62,7 +62,7 @@ function CitationDisplay_v2({ reference = null,
         </div>
     </div>
 
-    return <div className={"ref-button-wrapper"}>
+    return <div className={"ref-citation-button-wrapper"}>
 
         {actionable}
 
