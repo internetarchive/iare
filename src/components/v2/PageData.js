@@ -224,17 +224,22 @@ export default function PageData({pageData = {}}) {
                 if (!pageData.urlDict[url]) return
 
                 // check all cite_refs for included url
-                pageData.cite_refs.forEach( citeRef => {
-                    citeRef.urls.forEach( citeUrl => {
-                        if (url === citeUrl) {
-                            // match this citeRef to the current wikiRef and return from url search loop
-                            wikiRef.citeRef = citeRef
 
-                            return
+                const citeRefs = pageData?.cite_refs
 
-                        }
+                if (citeRefs) {
+                    citeRefs.forEach( citeRef => {
+                        citeRef.urls.forEach( citeUrl => {
+                            if (url === citeUrl) {
+                                // match this citeRef to the current wikiRef and return from url search loop
+                                wikiRef.citeRef = citeRef
+
+                                return
+
+                            }
+                        })
                     })
-                })
+                }
 
             })
 

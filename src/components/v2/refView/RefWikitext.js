@@ -86,14 +86,22 @@ export default function RefWikitext({ wikitext, onAction }) {
         setEditable(false)
     }
 
+
+    const handleEditWikiSection = () => {
+        alert("Will jump to edit article")
+    }
+
     const handleOnComplete = (message) => {
         alert(message)
 
         // TODO this is where we want to set up a disappearing tooltip
     }
 
-    const buttonEditSave = <button className={`utility-button`} style={{width:"5rem"}}
-                                   onClick={handleEditMode}><span>{editable ? "Done Editing" : "Edit Citation"}</span></button>
+    const buttonEditWikiSection = <button className={`utility-button`} style={{width:"6.5rem"}}
+                                   onClick={handleEditWikiSection}><span>Edit Article Section</span></button>
+
+    const buttonEditSave = <button className={`utility-button`} style={{width:"6rem"}}
+                                   onClick={handleEditMode}><span>{editable ? "Done Editing" : "Edit Citation Text"}</span></button>
 
     const buttonCancel = editable
         ? <button className={`utility-button`} onClick={handleEditRevert}><span>Revert to Original</span></button>
@@ -106,7 +114,7 @@ export default function RefWikitext({ wikitext, onAction }) {
     </button>
 
     const header = <RefSectionHeader
-        leftPart={<><h3>Wikitext</h3><span>{buttonEditSave}{buttonCancel}{buttonCopy}</span></>}
+        leftPart={<><h3>Wikitext</h3><span>{false && buttonEditWikiSection}{buttonEditSave}{buttonCancel}{buttonCopy}</span></>}
         // rightPart={buttonCopy}
         >
         {/* nothing to see here */}

@@ -9,9 +9,12 @@ function CitationDisplay_Html({ reference = null,
     const myConfig = useContext(ConfigContext);
 
     const handleClick = useCallback((e) => {
+        e.stopPropagation()
+        const refElement = e.target.closest('a')
+        const href = refElement ? refElement.href : ""
         onAction( {
             "action": IARE_ACTIONS.GOTO_CITE_REF.key,
-            "value" : e.target.href
+            "value" : href
         })
     }, [onAction]);
 
@@ -21,13 +24,12 @@ function CitationDisplay_Html({ reference = null,
         ? <span className={'ref-line ref-actionable'} >Actionable</span>
         : null
 
-
     const pageRefLinks = reference.citeRef?.page_refs
-    const pageRefLinkDisplay = false && pageRefLinks
+    const pageRefLinkDisplay = pageRefLinks
         ? pageRefLinks.map( (pr, i) => {
             const citeRefLink = pr.href.replace( /^\.\//, myConfig?.wikiBaseUrl)
             return <a href={citeRefLink} target={"_blank"} rel={"noreferrer"} key={i}
-                      xxonClick={handleClick}>
+                      onClick={handleClick}>
                     <span className={"cite-ref-jump-link"}></span>
                 </a>
         })
@@ -37,7 +39,7 @@ function CitationDisplay_Html({ reference = null,
 
     const cite_html = reference.citeRef?.cite_html
         ? reference.citeRef.cite_html
-        : reference.citeRef.span_html
+        : reference.citeRef?.span_html
             ? reference.citeRef.span_html
             : <div>HTML render not found.</div>
 
@@ -47,7 +49,7 @@ function CitationDisplay_Html({ reference = null,
 
         <div dangerouslySetInnerHTML={{__html: cite_html}} />
 
-        <div className={"cite-ref-links"}>{pageRefLinkDisplay}</div>
+        <div className={"cite-ref-links"}><span className={"ref-citation-links"}>Article Citation Locations: </span>{pageRefLinkDisplay}</div>
 
     </div>
 
