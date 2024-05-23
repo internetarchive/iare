@@ -29,7 +29,7 @@
     /*--border-box-actionable: 3pt solid #ae0f3c !important;*/
     /*--border-box-actionable: 3pt solid #dc295c !important;*/
     --border-box-actionable-color: hsl(358 81% 67% / 1);
-    --border-box-actionable: 3pt solid var(--border-box-actionable-color) !important;
+    --border-box-actionable: 2pt solid var(--border-box-actionable-color) !important;
 
     --border-radius-ref-section:0.42rem;
     --border-solid-light: 1px solid #ebebeb;
@@ -512,6 +512,7 @@
     display: flex;
     flex-direction: column;
     padding-right: 1rem;
+    position: relative;
 }
 
 .ref-view-single-display .ref-citation-html-display {

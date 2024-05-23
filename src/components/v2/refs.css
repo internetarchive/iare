@@ -97,41 +97,18 @@
     opacity: 0.4;
 }
 .ref-line.ref-actionable {
-    /*font-size: 1rem;*/
-    /*font-weight:bold;*/
-    /*color: var(--color-ref-actionable);*/
-    /*text-align: left;*/
-    /*text-transform: uppercase;*/
-    /*letter-spacing: .2rem;*/
-    /*padding-bottom: .1rem;*/
-
-    font-size:0;
-
     position:absolute;
     right:0;
     top:.25rem;
+
+    font-size:0;  /* hides text, to only show icon */
+    content:"";
+    display: inline-block;
     background-image: url('../../images/actionable_icon.v1r1.png');
     background-size: var(--size-actionable-icon) var(--size-actionable-icon);
-    display: inline-block;
     width: var(--size-actionable-icon);
     height: var(--size-actionable-icon);
-    content:"";
-    margin-right:.35rem;
-
 }
-.ref-line.ref-actionable:before {
-    /*position:absolute;*/
-    /*right:0;*/
-    /*top:0;*/
-    /*background-image: url('../../images/actionable_icon.v1r1.png');*/
-    /*background-size: var(--size-actionable-icon) var(--size-actionable-icon);*/
-    /*display: inline-block;*/
-    /*width: var(--size-actionable-icon);*/
-    /*height: var(--size-actionable-icon);*/
-    /*content:"";*/
-    /*margin-right:.35rem;*/
-}
-
 
 .link-status-good_good {
     content: url('../../images/good_good.png');

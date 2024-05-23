@@ -20,10 +20,6 @@ function CitationDisplay_Html({ reference = null,
 
     if (!reference) return null
 
-    const actionable = (!options?.hide_actionables) && reference.actionable?.length
-        ? <span className={'ref-line ref-actionable'} >Actionable</span>
-        : null
-
     const pageRefLinks = reference.citeRef?.page_refs
     const pageRefLinkDisplay = pageRefLinks
         ? pageRefLinks.map( (pr, i) => {
@@ -44,8 +40,6 @@ function CitationDisplay_Html({ reference = null,
             : <div>HTML render not found.</div>
 
     return <div className={"ref-citation-button-wrapper"}>
-
-        {actionable}
 
         <div dangerouslySetInnerHTML={{__html: cite_html}} />
 
