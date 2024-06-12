@@ -107,6 +107,7 @@ function RefDetails({ refDetails,
             alert(`jumpToCitationRef: Coming Soon (citeRef=${citeRef})`)
         }
 
+        // eslint-disable-next-line
     }, [saveWikitext])
 
     const showWikitext = true  // allows on and off display of wikitext...under experimentation

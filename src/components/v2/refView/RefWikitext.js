@@ -4,7 +4,7 @@ import {copyToClipboard} from "../../../utils/utils";
 import RefSectionHeader from "./RefSectionHeader";
 import {ConfigContext} from "../../../contexts/ConfigContext";
 import {ACTIONS_IARE} from "../../../constants/actionsIare";
-import refDetails from "./RefDetails";  // https://www.npmjs.com/package/rich-textarea
+// import refDetails from "./RefDetails";  // https://www.npmjs.com/package/rich-textarea
 // https://github.com/inokawa/rich-textarea/blob/HEAD/docs/API.md
 // https://github.com/inokawa/rich-textarea/tree/fee148effcd29e8c3e5b790774504c0f0fc0a8fe/stories
 
