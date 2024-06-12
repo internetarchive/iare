@@ -139,7 +139,8 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
             else if (mediaType === "wiki") {
 
                 if (articleVersion === ArticleVersions["ARTICLE_V1"].key) {
-                    const sectionRegex = '&regex=references|bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
+                    // const sectionRegex = '&regex=references|bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
+                    const sectionRegex = '&sections=references|bibliography|further reading|works cited|sources|external links';
                     const options = '&dehydrate=false'
                     return `${iariBase}/statistics/article?url=${path}${sectionRegex}${options}${refresh ? "&refresh=true" : ''}`;
                 }

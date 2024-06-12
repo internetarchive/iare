@@ -1,7 +1,7 @@
 import React from 'react';
 import ChartLegend from "./ChartLegend";
 import {REFERENCE_STATS_MAP} from "../../../constants/referenceStatsMap";
-import {IARE_ACTIONS} from "../../../constants/iareActions";
+import {ACTIONS_IARE} from "../../../constants/actionsIare";
 
 
 const ReferenceStats = ({pageData, options, onAction}) => {
@@ -30,7 +30,7 @@ const ReferenceStats = ({pageData, options, onAction}) => {
 
     const onClickLegend = (e) => {
         const link = e.target.closest('.legend-entry').dataset['link'];
-        onAction({action: IARE_ACTIONS.FILTER_BY_REFERENCE_STATS.key, value: link})
+        onAction({action: ACTIONS_IARE.FILTER_BY_REFERENCE_STATS.key, value: link})
     }
 
     // const onClickPieLegend = (event, legendItem, legend) => {
@@ -40,13 +40,13 @@ const ReferenceStats = ({pageData, options, onAction}) => {
     //     // console.log(`legend index: ${index}, link: ${link}`);
     //
     //     // pass link up to passed in click routine
-    //     onAction({action: IARE_ACTIONS.FILTER_BY_REFERENCE_STATS.key, value: link})
+    //     onAction({action: ACTIONS_IARE.FILTER_BY_REFERENCE_STATS.key, value: link})
     // }
     //
     //
     // const onClickPieChart = (link) => {
     //     // console.log("pie chart clicked, link=", link)
-    //     onAction({action: IARE_ACTIONS.FILTER_BY_REFERENCE_STATS.key, value: link})
+    //     onAction({action: ACTIONS_IARE.FILTER_BY_REFERENCE_STATS.key, value: link})
     // }
 
     // const colorArray = [colors.teal, colors.yellow, colors.red, colors.magenta, colors.grey,]

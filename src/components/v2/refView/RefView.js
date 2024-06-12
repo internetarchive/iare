@@ -4,7 +4,7 @@ import {ConfigContext} from "../../../contexts/ConfigContext";
 import RefFlock from "../RefFlock";
 import RefDetails from "./RefDetails";
 import "./refView.css"
-import {IARE_ACTIONS} from "../../../constants/iareActions";
+import {ACTIONS_IARE} from "../../../constants/actionsIare";
 
 
 export default function RefView({open,
@@ -56,7 +56,7 @@ export default function RefView({open,
             const refIndex = result.value  // value holds ref index to select
 
             // send message back up to parent component, which should take care of updating refDetails
-            onAction({"action": IARE_ACTIONS.CHANGE_REF_VIEW_SELECTION.key, "value": refIndex})
+            onAction({"action": ACTIONS_IARE.CHANGE_REF_VIEW_SELECTION.key, "value": refIndex})
 
         }
     }, [onAction])

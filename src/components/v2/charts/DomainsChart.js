@@ -1,6 +1,6 @@
 import React from 'react';
 import ListChart from "../../ListChart";
-import {IARE_ACTIONS} from "../../../constants/iareActions";
+import {ACTIONS_IARE} from "../../../constants/actionsIare";
 // import ChartLegend from "./ChartLegend";
 
 const DomainsChart = ({pageData, options, onAction, currentState = null}) => {
@@ -29,7 +29,7 @@ const DomainsChart = ({pageData, options, onAction, currentState = null}) => {
     })
 
     const onClickItem = (link) => {
-        onAction({action: IARE_ACTIONS.SET_DOMAIN_FILTER.key, value: link})
+        onAction({action: ACTIONS_IARE.SET_DOMAIN_FILTER.key, value: link})
     }
 
     return <>

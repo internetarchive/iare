@@ -2,7 +2,9 @@ import React, {useEffect, useState} from "react";
 import {copyToClipboard} from "../../../utils/utils";
 // import { RichTextarea } from "rich-textarea";
 import RefSectionHeader from "./RefSectionHeader";
-import {ConfigContext} from "../../../contexts/ConfigContext";  // https://www.npmjs.com/package/rich-textarea
+import {ConfigContext} from "../../../contexts/ConfigContext";
+import {ACTIONS_IARE} from "../../../constants/actionsIare";
+import refDetails from "./RefDetails";  // https://www.npmjs.com/package/rich-textarea
 // https://github.com/inokawa/rich-textarea/blob/HEAD/docs/API.md
 // https://github.com/inokawa/rich-textarea/tree/fee148effcd29e8c3e5b790774504c0f0fc0a8fe/stories
 
@@ -18,7 +20,7 @@ shows wikitext box with allowance for edit and copy
  *
  * ********/
 
-export default function RefWikitext({ wikitext, onAction }) {
+export default function RefWikitext({ wikitext, onAction }) {  // NB TODO make onAction a typed property
 
     const [editable, setEditable]= useState(false)
     // eslint-disable-next-line
@@ -88,7 +90,7 @@ export default function RefWikitext({ wikitext, onAction }) {
 
 
     const handleEditWikiSection = () => {
-        alert("Will jump to edit article")
+        onAction({action:ACTIONS_IARE.EDIT_WIKI_SECTION.key})
     }
 
     const handleOnComplete = (message) => {
@@ -114,7 +116,7 @@ export default function RefWikitext({ wikitext, onAction }) {
     </button>
 
     const header = <RefSectionHeader
-        leftPart={<><h3>Wikitext</h3><span>{false && buttonEditWikiSection}{buttonEditSave}{buttonCancel}{buttonCopy}</span></>}
+        leftPart={<><h3>Wikitext</h3><span>{buttonEditSave}{buttonCancel}{buttonCopy}{buttonEditWikiSection}</span></>}
         // rightPart={buttonCopy}
         >
         {/* nothing to see here */}

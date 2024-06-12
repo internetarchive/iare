@@ -1,4 +1,4 @@
-export const IARE_ACTIONS = {
+export const ACTIONS_IARE = {
 
     REMOVE_ALL_FILTERS: {
         key:"REMOVE_ALL_FILTERS",
@@ -50,6 +50,10 @@ export const IARE_ACTIONS = {
 
     GOTO_CITE_REF: {
         key: "GOTO_CITE_REF"
+    },
+
+    EDIT_WIKI_SECTION: {
+        key: "EDIT_WIKI_SECTION"
     },
 
 }

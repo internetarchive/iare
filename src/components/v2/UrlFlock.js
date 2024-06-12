@@ -4,7 +4,7 @@ import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../constants/ur
 import {convertToCSV, copyToClipboard} from "../../utils/utils";
 import {rspMap} from "../../constants/perennialList";
 import FlockBox from "../FlockBox";
-import {IARE_ACTIONS} from "../../constants/iareActions";
+import {ACTIONS_IARE} from "../../constants/actionsIare";
 import {ACTIONABLE_FILTER_MAP} from "../../constants/actionableMap";
 import {
     getArchiveStatusInfo,
@@ -260,7 +260,7 @@ const urlFlock = React.memo( function UrlFlock({
 
         // send action back up the component tree to filter the references list
         onAction( {
-            "action": IARE_ACTIONS.SHOW_REFERENCE_VIEWER_FOR_URL.key,
+            "action": ACTIONS_IARE.SHOW_REFERENCE_VIEWER_FOR_URL.key,
             "value": url,
         })
     }
@@ -307,7 +307,7 @@ const urlFlock = React.memo( function UrlFlock({
             ? e.target.className
             : e.target.parentElement.className
 
-        console.log(`className for hoer is ${myClassName}`)
+        console.log(`className for hover is ${myClassName}`)
         let html = ''
 
         if (myClassName === "url-status") {

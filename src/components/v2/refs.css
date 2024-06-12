@@ -254,8 +254,8 @@
 /* citation ref jump links in Reference button caption */
 .cite-ref-jump-link {
     content: url('../../images/link-external-small-ltr-progressive.svg');
-    width:1.25rem;
-    height:1.25rem;
+    width:0.90rem;
+    height:0.90rem;
     display:inline;
 }
 

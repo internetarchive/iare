@@ -1,6 +1,6 @@
 import React, {useCallback, useContext} from "react";
 import {ConfigContext} from "../../../contexts/ConfigContext";
-import {IARE_ACTIONS} from "../../../constants/iareActions";
+import {ACTIONS_IARE} from "../../../constants/actionsIare";
 
 function CitationDisplay_Html({ reference = null,
                                 options = {},
@@ -13,7 +13,7 @@ function CitationDisplay_Html({ reference = null,
         const refElement = e.target.closest('a')
         const href = refElement ? refElement.href : ""
         onAction( {
-            "action": IARE_ACTIONS.GOTO_CITE_REF.key,
+            "action": ACTIONS_IARE.GOTO_CITE_REF.key,
             "value" : href
         })
     }, [onAction]);

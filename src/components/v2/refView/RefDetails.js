@@ -5,6 +5,7 @@ import RefTemplates from "./RefTemplates";
 import RefActionables from "./RefActionables";
 import RefWikitext from "./RefWikitext";
 import RefUrls from "./RefUrls";
+import {ACTIONS_IARE} from "../../../constants/actionsIare";
 
 /*
 
@@ -83,6 +84,22 @@ function RefDetails({ refDetails,
             // this is where we need to asynchronously save the reference/entire page, and reload, basically
             const newText = value
             saveWikitext(newText)
+        }
+
+        else if (action === ACTIONS_IARE.EDIT_WIKI_SECTION.key) {
+            // jumps to sectuion specified and puts in edit mode
+            const section_id = refDetails.section_id
+            // jump to edit mode with section_id
+
+            /*
+            https://en.wikipedia.org/w/index.php?title=Easter_Island&action=edit&section=2
+             */
+
+            const jump_string = `https://${pageData.lang}.${pageData.site}/w/index.php?title=${pageData.title}`
+                + `&action=edit&section=${section_id}`
+
+            alert(`will jump to section ${section_id} : ${jump_string}`)
+
         }
 
         else if (action === "jumpToCitationRef") {

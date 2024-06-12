@@ -229,15 +229,17 @@ export default function PageData({pageData = {}}) {
 
                 if (citeRefs) {
                     citeRefs.forEach( citeRef => {
-                        citeRef.urls.forEach( citeUrl => {
-                            if (url === citeUrl) {
-                                // match this citeRef to the current wikiRef and return from url search loop
-                                wikiRef.citeRef = citeRef
+                        if (citeRef.urls) {
+                            citeRef.urls.forEach( citeUrl => {
+                                if (url === citeUrl) {
+                                    // match this citeRef to the current wikiRef and return from url search loop
+                                    wikiRef.citeRef = citeRef
 
-                                return
+                                    return
 
-                            }
-                        })
+                                }
+                            })
+                        }
                     })
                 }
 

@@ -13,7 +13,7 @@ import RefView from "./refView/RefView";
 import {Tooltip as MyTooltip} from "react-tooltip";
 import ConditionsBox from "../ConditionsBox";
 import {REFERENCE_STATS_MAP} from "../../constants/referenceStatsMap";
-import {IARE_ACTIONS} from "../../constants/iareActions";
+import {ACTIONS_IARE} from "../../constants/actionsIare";
 
 // export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {}, urlArchiveFilterMap = {} } ) {
 export default function UrlDisplay ({ pageData, options } ) {
@@ -129,11 +129,11 @@ export default function UrlDisplay ({ pageData, options } ) {
                     //     setUrlFilters({ "url_status" : f })
                     // }
 
-        else if (action === IARE_ACTIONS.SHOW_REFERENCE_VIEWER.key) {
+        else if (action === ACTIONS_IARE.SHOW_REFERENCE_VIEWER.key) {
             showRefView(value)  // value is reference index
         }
 
-        else if (action === IARE_ACTIONS.REMOVE_ALL_FILTERS.key) {
+        else if (action === ACTIONS_IARE.REMOVE_ALL_FILTERS.key) {
             // clear filters (show all) for URL  and Refs list
             setUrlFilters(null)
             setRefFilter(null)
@@ -142,7 +142,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             setCondition(null)
         }
 
-        else if (action === IARE_ACTIONS.SHOW_REFERENCE_VIEWER_FOR_URL.key) {
+        else if (action === ACTIONS_IARE.SHOW_REFERENCE_VIEWER_FOR_URL.key) {
             // value is url to show in RefView; more accurately, show the ref that "houses" the url
             const refIndex = pageData.urlDict[value]?.refs[0]?.ref_index
             const selectedRef = pageData.references.find(
@@ -156,7 +156,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             setSelectedUrl(value)
         }
 
-        else if (action === IARE_ACTIONS.FILTER_BY_REFERENCE_STATS.key) {
+        else if (action === ACTIONS_IARE.FILTER_BY_REFERENCE_STATS.key) {
             // filter REF List by stats specified by REFERENCE_STATS_MAP[ref_stats_key]
             const f = value ? REFERENCE_STATS_MAP[value] : null
             setUrlFilters({"url_filter": f})
@@ -167,7 +167,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             setCondition(f)
         }
 
-        else if (action === IARE_ACTIONS.CHANGE_REF_VIEW_SELECTION.key) {
+        else if (action === ACTIONS_IARE.CHANGE_REF_VIEW_SELECTION.key) {
             const refIndex = result.value
             const selectedRef = pageData.references.find(
                 r => {  // assume ref_index and ref_index.toString() is valid
@@ -179,7 +179,7 @@ export default function UrlDisplay ({ pageData, options } ) {
         }
 
 
-        else if (action === IARE_ACTIONS.SET_ACTIONABLE_FILTER.key) {
+        else if (action === ACTIONS_IARE.SET_ACTIONABLE_FILTER.key) {
             // filter URL List by actionable filter determined by value as key
             const f = value ? ACTIONABLE_FILTER_MAP[value] : null
 
@@ -195,7 +195,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             setCondition(f)
         }
 
-        else if (action === IARE_ACTIONS.SET_DOMAIN_FILTER.key) {
+        else if (action === ACTIONS_IARE.SET_DOMAIN_FILTER.key) {
             // filter URL and Ref list by domain specified in value
             setUrlFilters({ "domain_filter" : getUrlDomainFilter(value) })
             setRefFilter(getRefDomainFilter(value))
@@ -203,7 +203,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             setCondition({category: "Pay Level Domains", desc: `Links of domain: "${value}"`})
         }
 
-        else if (action === IARE_ACTIONS.SET_PAPERS_FILTER.key) {
+        else if (action === ACTIONS_IARE.SET_PAPERS_FILTER.key) {
             // value is filter key name
             const f = value ? REF_FILTER_DEFS[value] : null
             setRefFilter(f)
@@ -212,7 +212,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             setCondition({category: "Papers", desc: `References with papers of type "${value}"`})
         }
 
-        else if (action === IARE_ACTIONS.SET_PERENNIAL_FILTER.key) {
+        else if (action === ACTIONS_IARE.SET_PERENNIAL_FILTER.key) {
             // value is perennial to filter by
             setUrlFilters({ "url_perennial_filter" : getUrlPerennialFilter(value) })
             setRefFilter(getRefPerennialFilter(value))
@@ -221,7 +221,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             setCondition({category: "Reliability", desc: `Links with Reliability Status of: "${rspMap[value].caption}"`})
         }
 
-        else if (action === IARE_ACTIONS.SET_TLD_FILTER.key) {
+        else if (action === ACTIONS_IARE.SET_TLD_FILTER.key) {
             // value is tld
             setUrlFilters({ "url_tld_filter" : getUrlTldFilter(value) })
             setRefFilter(getRefTldFilter(value))
@@ -230,7 +230,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             setCondition({category: "Top Level Domain", desc: `Links with Top Level Domain of: "${value}"`})
         }
 
-        else if (action === IARE_ACTIONS.SET_BOOKS_FILTER.key) {
+        else if (action === ACTIONS_IARE.SET_BOOKS_FILTER.key) {
             setUrlFilters({ "url_book_filter" : getUrlBooksFilter(value) })
             setRefFilter(getRefBooksFilter(value))
             setSelectedUrl(null)
@@ -238,7 +238,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             setCondition({category: "Books", desc: `Links to books from "${value}"`})
         }
 
-        else if (action === IARE_ACTIONS.SET_TEMPLATE_FILTER.key) {
+        else if (action === ACTIONS_IARE.SET_TEMPLATE_FILTER.key) {
             // filter URLs (and references?) by template indicated by "value" argument
             setUrlFilters({ "url_template_filter" : getUrlTemplateFilter(value) })
             setRefFilter(getRefTemplateFilter(value))
@@ -261,7 +261,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             setCondition(f)
         }
 
-        else if (action === IARE_ACTIONS.GOTO_CITE_REF.key) {
+        else if (action === ACTIONS_IARE.GOTO_CITE_REF.key) {
             // jump to cite ref indicated by "value" argument
             window.open(value, "_blank")
         }
@@ -515,8 +515,8 @@ export default function UrlDisplay ({ pageData, options } ) {
             const refIndex = result.value
             // alert(`Reference clicked - will show RefView with current filter and selected refid of: ${refId}`)
             // pass up to local handler
-                    // handleAction({"action":IARE_ACTIONS.SHOW_REFERENCE_VIEWER.key, value:refIndex})
-            handleAction({"action":IARE_ACTIONS.CHANGE_REF_VIEW_SELECTION.key, value:refIndex})
+                    // handleAction({"action":ACTIONS_IARE.SHOW_REFERENCE_VIEWER.key, value:refIndex})
+            handleAction({"action":ACTIONS_IARE.CHANGE_REF_VIEW_SELECTION.key, value:refIndex})
             // NB I know this is redundant, but leaving ot this way in case we want to
             //  massage any of the data before passing it to RefView
         }

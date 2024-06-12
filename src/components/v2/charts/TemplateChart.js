@@ -3,7 +3,7 @@ import PieChart from "../../PieChart";
 import './charts.css';
 import {generateColorFade} from "../../../utils/utils";
 import ChartLegend from "./ChartLegend";
-import {IARE_ACTIONS} from "../../../constants/iareActions";
+import {ACTIONS_IARE} from "../../../constants/actionsIare";
 
 const TemplateChart = ({pageData, options, onAction, currentState=null}) => {
 
@@ -57,11 +57,11 @@ const TemplateChart = ({pageData, options, onAction, currentState=null}) => {
         // console.log(`legend index: ${index}, link: ${link}`);
 
         // pass link up to passed in click routine
-        onAction({action: IARE_ACTIONS.SET_TEMPLATE_FILTER.key, value: link})
+        onAction({action: ACTIONS_IARE.SET_TEMPLATE_FILTER.key, value: link})
     }
     const onClickTemplateChart = (link) => {
         // console.log("pie chart clicked, link=", link)
-        onAction({action: IARE_ACTIONS.SET_TEMPLATE_FILTER.key, value: link})
+        onAction({action: ACTIONS_IARE.SET_TEMPLATE_FILTER.key, value: link})
     }
 
     const templateChartOptions = {
@@ -116,7 +116,7 @@ const TemplateChart = ({pageData, options, onAction, currentState=null}) => {
 
         const template = e.target.closest('.legend-entry').dataset['link'];
         // alert(`onCLickLegend: ${template}`)
-        onAction({action: IARE_ACTIONS.SET_TEMPLATE_FILTER.key, value: template})
+        onAction({action: ACTIONS_IARE.SET_TEMPLATE_FILTER.key, value: template})
     }
 
     return <>

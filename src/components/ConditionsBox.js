@@ -1,7 +1,7 @@
 import React from "react";
 import ConditionBox from "./ConditionBox";
 import './shared/components.css';
-import {IARE_ACTIONS} from "../constants/iareActions";
+import {ACTIONS_IARE} from "../constants/actionsIare";
 
 /* display description of conditions (filters and actions), if any */
 export default function ConditionsBox({conditions = null, onAction, caption="Conditions"}) {
@@ -13,7 +13,7 @@ export default function ConditionsBox({conditions = null, onAction, caption="Con
 
     // add the "Remove All" button
     const buttonRemove = myConditions?.length
-        ? <button onClick={() => onAction({action: IARE_ACTIONS.REMOVE_ALL_FILTERS.key})}
+        ? <button onClick={() => onAction({action: ACTIONS_IARE.REMOVE_ALL_FILTERS.key})}
                   className={'utility-button small-button inline-conditions'}
         ><span>Remove Conditions</span></button>
         : null
