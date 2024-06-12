@@ -12,14 +12,22 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
       - name: Install dependencies and build artifacts
         run: |
           npm install
           npm run build
+
       - name: Upload artifacts
         uses: actions/upload-pages-artifact@v1
         with:
           path: build/
+
   deploy:
     needs: build
     permissions:
