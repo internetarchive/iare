@@ -666,18 +666,16 @@ export default function PageData({pageData = {}}) {
         const bookStats = {}
 
         pageData.urlArray.forEach(urlObj => {
-            /* for each url:
-            if templates contains "cite book", then
-            - add or increment entry for bookStats[netloc]
-             */
             if (!urlObj.reference_info?.templates) return
             if (!urlObj.reference_info.templates.includes("cite book")) return
             if (!urlObj.netloc) return
 
+            // if templates contains "cite book", create or increment entry for bookStats[netloc]
+
             // set "is book" flag
             urlObj.isBook = true
 
-            // increment count for this book location
+            // create or increment entry for bookStats[netloc]
             const netloc = urlObj.netloc
             if (!bookStats[netloc]) bookStats[netloc] = 0
             bookStats[netloc] = bookStats[netloc] + 1

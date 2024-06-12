@@ -80,7 +80,7 @@ function CitationDisplayV1({ reference = null, index=0, options ={}}) {
 
             {debugInfo}
 
-\        </div>
+        </div>
 
     </>
 }
