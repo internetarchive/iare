@@ -2,7 +2,7 @@ import React, {useContext} from "react";
 import MakeLink from "../../MakeLink";
 import {ConfigContext} from "../../../contexts/ConfigContext";
 
-function CitationDisplay_v1({ reference = null, index=0, options ={}}) {
+function CitationDisplayV1({ reference = null, index=0, options ={}}) {
 
     const myConfig = useContext(ConfigContext);
 
@@ -66,14 +66,6 @@ function CitationDisplay_v1({ reference = null, index=0, options ={}}) {
         </>
         : <span>{reference.wikitext}</span>  // if nothing else to show, show wikitext
 
-    const articleInfo = reference.section
-        ? <div className={"article-info"}>Section of Origin: {reference.section}</div>
-        : null
-
-    const citationInfo = articleInfo
-        ? <div className={"ref-meta"}>{articleInfo}</div>
-        : null
-
 
     const debugInfo = !!myConfig?.isShowDebugInfo
         ? <div>
@@ -88,11 +80,9 @@ function CitationDisplay_v1({ reference = null, index=0, options ={}}) {
 
             {debugInfo}
 
-            {citationInfo}
-
-        </div>
+\        </div>
 
     </>
 }
 
-export default CitationDisplay_v1;
+export default CitationDisplayV1;

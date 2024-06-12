@@ -252,11 +252,18 @@
 }
 
 /* citation ref jump links in Reference button caption */
+.cite-ref-links a {
+    display: inline;
+    position: relative;
+    top: 0.15rem;
+    margin-right: .2rem;
+}
+
 .cite-ref-jump-link {
     content: url('../../images/link-external-small-ltr-progressive.svg');
-    width:0.90rem;
-    height:0.90rem;
-    display:inline;
+    width:0.85rem;
+    height:0.85rem;
+    /*display:inline;*/
 }
 
 .ref-list-caption {

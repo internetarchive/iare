@@ -1,36 +1,18 @@
-import React, {useCallback, useContext} from "react";
+import React, {useContext} from "react";
 import {ConfigContext} from "../../../contexts/ConfigContext";
 
-function CitationDisplay_v2({ reference = null,
+function CitationDisplayV2({ reference = null,
                                 index=0,
                                 options = {},
                                 onAction}) {
 
     const myConfig = useContext(ConfigContext);
 
-    const handleClick = useCallback((e) => {
-        onAction( {
-            "action": "goto_cite_ref",
-            "value" : e.target.href
-        })
-    }, [onAction]);
-
     if (!reference) return null
 
     const actionable = (!options?.hide_actionables) && reference.actionable?.length
         ? <span className={'ref-line ref-actionable'} >Actionable</span>
         : null
-
-
-    const citeRefLinks = reference.cite_ref_links
-        ? reference.cite_ref_links.map( (cr, i) => {
-            const citeRefLink = cr.href.replace( /^\.\//, myConfig?.wikiBaseUrl)
-            return <a href={citeRefLink} target={"_blank"} rel={"noreferrer"} key={i}
-                      onClick={handleClick}>
-                    <span className={"cite-ref-jump-link"}></span>
-                </a>
-        })
-        : null // <div>No Citation Refs!</div>
 
     // const doiLinks = []
     // ref.templates.forEach( (t, ti) => {
@@ -74,8 +56,6 @@ function CitationDisplay_v2({ reference = null,
 
         {options?.show_extra && extra_info}
 
-        {false && citeRefLinks ? <div className={"cite-ref-links"}>{citeRefLinks}</div> : null }
-
         {!!myConfig?.isShowDebugInfo && <div> {/* protect if myConfig is not defined */}
             #{index} {reference.id} {reference.type}
         </div>}
@@ -83,4 +63,4 @@ function CitationDisplay_v2({ reference = null,
 
 }
 
-export default CitationDisplay_v2;
+export default CitationDisplayV2;

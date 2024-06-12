@@ -1,8 +1,8 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {ArticleVersions} from "../../constants/articleVersions";
 import {convertToCSV, copyToClipboard} from "../../utils/utils";
-import CitationDisplay_v1 from "./citations/CitationDisplay_v1";
-import CitationDisplay_v2 from "./citations/CitationDisplay_v2";
+import CitationDisplayV1 from "./citations/CitationDisplayV1";
+import CitationDisplayV2 from "./citations/CitationDisplayV2";
 import FilterConditionBox from "../FilterConditionBox";
 import FlockBox from "../FlockBox";
 
@@ -200,11 +200,11 @@ function RefFlock({ pageData= {},
 
         if (pageData.iariArticleVersion === ArticleVersions.ARTICLE_V1.key) {
             // eslint-disable-next-line react/jsx-pascal-case
-            referenceCaption = <CitationDisplay_v1 reference={_ref} index={i} />
+            referenceCaption = <CitationDisplayV1 reference={_ref} index={i} />
 
         } else if (pageData.iariArticleVersion === ArticleVersions.ARTICLE_V2.key) {
             // eslint-disable-next-line react/jsx-pascal-case
-            referenceCaption = <CitationDisplay_v2 options={options} reference={_ref} index={i} />
+            referenceCaption = <CitationDisplayV2 options={options} reference={_ref} index={i} />
         }
 
         const isSelected = (

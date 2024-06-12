@@ -477,17 +477,6 @@
 
 /* visual caption display of reference */
 .reference-info {
-    /*border: var(--border-box-light);*/
-
-    /*border-bottom: var(--border-box-light);*/
-
-    /*margin-bottom: var(--margin-ref-view-section);*/
-    /*margin-bottom: var(--margin-ref-view-section-tight);*/
-
-    /*margin-bottom: .75rem;*/
-
-    /*padding: .5rem;*/
-    /*padding-bottom: 0;*/
     padding:0;
 }
 
@@ -495,9 +484,8 @@
     /*margin-bottom: var(--margin-ref-view-section-tight);*/
 }
 .ref-view-single-display .ref-button {
-    /*min-height: 2rem;*/
     margin-bottom:0;
-    /*min-height: 6.4rem;*/
+    margin-bottom: .28rem;
     border-radius: var(--border-radius-ref-section);
     border: var(--border-box-light);
 }

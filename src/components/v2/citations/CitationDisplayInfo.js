@@ -2,9 +2,9 @@ import React, {useCallback, useContext} from "react";
 import {ConfigContext} from "../../../contexts/ConfigContext";
 import {ACTIONS_IARE} from "../../../constants/actionsIare";
 
-function CitationDisplay_Html({ reference = null,
-                                options = {},
-                                onAction}) {
+function CitationDisplayInfo({ reference = null,
+                                  options = {},
+                                  onAction}) {
 
     const myConfig = useContext(ConfigContext);
 
@@ -26,27 +26,16 @@ function CitationDisplay_Html({ reference = null,
             const citeRefLink = pr.href.replace( /^\.\//, myConfig?.wikiBaseUrl)
             return <a href={citeRefLink} target={"_blank"} rel={"noreferrer"} key={i}
                       onClick={handleClick}>
-                    <span className={"cite-ref-jump-link"}></span>
-                </a>
+                <span className={"cite-ref-jump-link"}></span>
+            </a>
         })
-        : null // <div>No Citation Refs!</div>
+        : null  // <div>No Citation Refs!</div>
 
-
-
-    const cite_html = reference.citeRef?.cite_html
-        ? reference.citeRef.cite_html
-        : reference.citeRef?.span_html
-            ? reference.citeRef.span_html
-            : <div>HTML render not found.</div>
-
-    return <div className={"ref-citation-button-wrapper"}>
-
-        <div dangerouslySetInnerHTML={{__html: cite_html}} />
-
-        <div className={"cite-ref-links"}><span className={"ref-citation-links"}>Article Citation Locations: </span>{pageRefLinkDisplay}</div>
-
+    return <div className={"ref-button ref-citation-button-wrapper"}>
+        <div className={"cite-ref-links"}><span className={"ref-citation-links"}>Jump to Citation Location in Article: </span>{pageRefLinkDisplay}</div>
+        <div className={"ref-meta article-info"}>Citation Origin Article Section: {reference.section === 'root' ? 'Lead' : reference.section}</div>
     </div>
 
 }
 
-export default CitationDisplay_Html;
+export default CitationDisplayInfo;
