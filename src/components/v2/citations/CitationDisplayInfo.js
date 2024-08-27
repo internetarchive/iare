@@ -33,7 +33,7 @@ function CitationDisplayInfo({ reference = null,
 
     return <div className={"ref-button ref-citation-button-wrapper"}>
         <div className={"cite-ref-links"}><span className={"ref-citation-links"}>Jump to Citation Location in Article: </span>{pageRefLinkDisplay}</div>
-        <div className={"ref-meta article-info"}>Citation Origin Article Section: {reference.section === 'root' ? 'Lead' : reference.section}</div>
+        <div className={"ref-meta article-info"}>Citation Article Section Origin: {reference.section === 'root' ? 'Lead' : reference.section}</div>
     </div>
 
 }

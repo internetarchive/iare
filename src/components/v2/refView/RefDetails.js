@@ -6,6 +6,7 @@ import RefActionables from "./RefActionables";
 import RefWikitext from "./RefWikitext";
 import RefUrls from "./RefUrls";
 import {ACTIONS_IARE} from "../../../constants/actionsIare";
+import RefWikitextNew from "./RefWikitextNew";
 
 /*
 
@@ -130,6 +131,8 @@ function RefDetails({ refDetails,
         <RefUrls urls={refDetails?.urls} pageData={pageData} />
 
         <RefTemplates templates={refDetails?.templates} pageData={pageData} tooltipId={tooltipId} />
+
+        <RefWikitextNew wikitext="" onAction={handleRefViewAction} />
 
     </>
 

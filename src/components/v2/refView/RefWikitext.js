@@ -116,7 +116,7 @@ export default function RefWikitext({ wikitext, onAction }) {  // NB TODO make o
     </button>
 
     const header = <RefSectionHeader
-        leftPart={<><h3>Wikitext</h3><span>{buttonEditSave}{buttonCancel}{buttonCopy}{buttonEditWikiSection}</span></>}
+        leftPart={<><h3>Wikitext</h3><span>{buttonEditSave}{buttonCancel}{buttonCopy}{false && buttonEditWikiSection}</span></>}
         // rightPart={buttonCopy}
         >
         {/* nothing to see here */}

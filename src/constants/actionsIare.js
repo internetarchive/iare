@@ -56,4 +56,8 @@ export const ACTIONS_IARE = {
         key: "EDIT_WIKI_SECTION"
     },
 
+    SAVE_WIKITEXT: {
+        key: "SAVE_WIKITEXT"
+    },
+
 }

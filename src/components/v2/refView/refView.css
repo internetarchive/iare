@@ -241,20 +241,24 @@
 .ref-view-section:first-of-type .header-all-parts {
     margin-top:0;
 }
-.ref-view-wikitext .header-all-parts button.utility-button {
+.ref-view-wikitext .header-all-parts button.utility-button,
+.ref-view-wikitext-new .header-all-parts button.utility-button
+{
     margin-bottom:0;
     height:1.1rem;
     font-size: .6rem;
     line-height: .7;
 }
-.ref-view-wikitext .header-left-part
+.ref-view-wikitext .header-left-part,
+.ref-view-wikitext-new .header-left-part
 {
     display: flex;
     flex-direction: row;
     position: relative;
 }
 
-.ref-view-wikitext .raw-wikitext {
+/*.ref-view-wikitext .raw-wikitext {*/
+.raw-wikitext {
     font-size: .85rem;
     color: #808080;
     background-color: var(--color-bg-non-editable);
