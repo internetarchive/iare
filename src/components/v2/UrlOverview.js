@@ -170,14 +170,19 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState, tool
                     <LinkStatusChart pageData={pageData} onAction={onAction} currentState={currentState?.link_status}/>
                 </FilterBox>
 
+                <FilterBox name={"books"} caption="Links to Books" showContents={expand.books} onToggle={onToggleShow}>
+                    <BooksChart pageData={pageData} options={{colors: iareColors}} onAction={onAction}
+                                currentState={currentState?.books}/>
+                </FilterBox>
+
+                <FilterBox name={"papers"} caption="Links to Papers and DOIs" showContents={expand.papers}
+                           onToggle={onToggleShow}>
+                    <PapersChart pageData={pageData} onAction={onAction} currentState={currentState?.papers}/>
+                </FilterBox>
+
                 <FilterBox name={"domains"} caption="Pay Level Domains" className={'domains-filter-box'}
                            showContents={expand.domains} onToggle={onToggleShow}>
                     <DomainsChart pageData={pageData} onAction={onAction} currentState={currentState?.domains}/>
-                </FilterBox>
-
-                <FilterBox name={"papers"} caption="Papers and DOIs" showContents={expand.papers}
-                           onToggle={onToggleShow}>
-                    <PapersChart pageData={pageData} onAction={onAction} currentState={currentState?.papers}/>
                 </FilterBox>
 
                 <FilterBox name={"reliability"} caption="Reliability Statistics" showContents={expand.reliability}
@@ -187,11 +192,6 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState, tool
 
                 <FilterBox name={"tld"} caption="Top Level Domains" showContents={expand.tld} onToggle={onToggleShow}>
                     <TldChart pageData={pageData} onAction={onAction} currentState={currentState?.tld}/>
-                </FilterBox>
-
-                <FilterBox name={"books"} caption="Links to Books" showContents={expand.books} onToggle={onToggleShow}>
-                    <BooksChart pageData={pageData} options={{colors: iareColors}} onAction={onAction}
-                                currentState={currentState?.books}/>
                 </FilterBox>
 
                 <FilterBox name={"templates"} caption="Template Occurrences" showContents={expand.templates}
