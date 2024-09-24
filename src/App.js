@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState, useRef} from "react";
 import package_json from "../package.json";
 import PathNameFetch from "./components/PathNameFetch";
 import Loader from "./components/Loader";
@@ -10,6 +10,7 @@ import {UrlStatusCheckMethods} from "./constants/checkMethods";
 import {ConfigContext} from "./contexts/ConfigContext"
 import {ArticleVersions} from "./constants/articleVersions";
 import {Tooltip as MyTooltip} from "react-tooltip";
+import {debounce} from "./utils/utils";
 
 
 export default function App({env, myPath, myCacheData, myRefresh, myMethod, myArticleVersion, myIariSourceId, myDebug}) {
@@ -36,8 +37,30 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
     const [myError, setMyError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
+    // values of screen elements
+    const [scrollY, setScrollY] = useState(0);
+    const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+    const lowerSectionElementRef = useRef(null);
+    const [lowerSectionTopY, setLowerSectionTopY] = useState(0);
+    const [lowerSectionHeight, setLowerSectionHeight] = useState(0);
+
     const toggleDebug = () => {
         setDebug(!isDebug);
+    }
+
+    const handleScroll = () => {
+        setScrollY(window.scrollY);
+    }
+
+    const handleResize = () => {
+        setWindowHeight(window.innerHeight);
+
+        if (lowerSectionElementRef.current) {
+            const rect = lowerSectionElementRef.current.getBoundingClientRect();
+            setLowerSectionTopY(rect.top); // Get the top Y-coordinate
+            setLowerSectionHeight(window.innerHeight - rect.top);// Set the new element height
+        }
+
     }
 
     // production mode shows limited shortcuts
@@ -58,6 +81,27 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
         console.log('APP: useEffect[env]: app name: ' + package_json.name, ', version: ' + package_json.version)
         document.body.classList.add(env);
     }, [env])
+
+    // add event listener for scroll and resize events
+    useEffect(() => {
+
+        const debounceHandleResize = debounce(() => {
+            handleResize();
+        }, 200);
+
+        // Update the Y-coordinate when the component mounts
+        handleResize();
+
+        // listen for events on window
+        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('resize', debounceHandleResize);
+
+        // Clean up the event listener on component unmount
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
 
     function getIariVersion(pageData, endpointPath) {
@@ -481,6 +525,12 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
 
         <ConfigContext.Provider value={config}>
 
+            <div className="static-display">
+                Scroll Y: {scrollY}<br/>
+                Window H: {windowHeight}<br/>
+                LowerSection Top: {lowerSectionTopY}
+            </div>
+
             <div className="iare-view">
 
                 <div className={"header"}>
@@ -488,28 +538,36 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
                     {debug}
                 </div>
 
+                <div className={"upper_section"}>
+                    <PathNameFetch pathInitial={targetPath?.length > 0 ? targetPath : defaultIfEmpty}
+                                   checkInitial={refreshCheck}
+                                   placeholder={"Enter a Wikipedia article or PDF url here"}
+                                   shortcuts={shortcuts}
+                                   showShortcuts={isShowShortcuts}
+                                   handlePathResults={handlePathResults}
+                    />
+                </div>
 
-                <PathNameFetch pathInitial={targetPath?.length > 0 ? targetPath : defaultIfEmpty}
-                               checkInitial={refreshCheck}
-                               placeholder={"Enter a Wikipedia article or PDF url here"}
-                               shortcuts={shortcuts}
-                               showShortcuts={isShowShortcuts}
-                               handlePathResults={handlePathResults}
-                />
 
                 {myError ? <div className={myError ? "error-display" : "error-display-none"}>
                     {myError}
                 </div> : ""}
 
-                {isLoading
-                    ? <Loader message={"Analyzing Page References..."}/>
-                    : <>
-                        { /* component is re-rendered when pageData changes, which is
-                         only once per URL invocation, really */}
-                        <PageDisplay pageData={pageData}/>
-                        { /* TODO: pass in an error callback here? */}
-                    </>
-                }
+                <div className={"lower_section"}
+                     ref={lowerSectionElementRef}
+                     style={{ height: `${lowerSectionHeight}px` }}
+                >
+                    {isLoading
+                        ? <Loader message={"Analyzing Page References..."}/>
+                        : <>
+                            { /* component is re-rendered when pageData changes, which is
+                             only once per URL invocation, really */}
+                            <PageDisplay pageData={pageData}/>
+                            { /* TODO: pass in an error callback here? */}
+                        </>
+                    }
+                </div>
+
             </div>
 
             {tooltipConfirm}

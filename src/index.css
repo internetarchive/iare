@@ -117,6 +117,10 @@ body.env-local .iare-view .header h1 {
     justify-content: space-between;
 }
 
+.iare-view .lower_section {
+    overflow-y: scroll;
+}
+
 .header-aux1 {
     padding-top: 0.65rem;
     font-weight: normal;
@@ -173,6 +177,16 @@ body.env-other .header-aux1-display span.non-production {
     margin-bottom: .25rem;
 }
 
+.static-display{
+    position: fixed;
+    z-index:999;
+    top:0;
+    right:0;
+    /*width:6rem;*/
+    /*height:1.85rem;*/
+    background-color: #20c997;
+    border:2px solid mediumvioletred;
+}
 /* utility buttons (including debug buttons */
 
 button.utility-button {
