@@ -7,7 +7,7 @@ import {ConfigContext} from "../../contexts/ConfigContext";
 
 function ClickButton( {buttonCaption=null, buttonText='', handleClick}) {
     const buttonMarkup = buttonCaption ? buttonCaption : <span>{buttonText}</span>
-    return <div style={{marginBottom: "1rem"}}>
+    return <div className="debug-click-button" >
         <button onClick={handleClick} className={'utility-button small-button'} >{buttonMarkup}</button>
     </div>
 }
@@ -113,50 +113,57 @@ export default function PageInfo({ pageData }) {
         : null
     const linkPageSource = <a href={pageData.pathName} target={"_blank"} rel={"noreferrer"}>{pageData.pathName}</a>
 
-    const pageInfoDetails = pageData ? <div className={'detail-section'}>
+    const section_type = <p>media type: {pageData.mediaType}</p>
 
-        <p>media type: {pageData.mediaType}</p>
+    const section_method = <p>Check Method: {myConfig.urlStatusMethod}</p>
 
-        <p>Check Method: {myConfig.urlStatusMethod}</p>
+    const section_version = <p>Article Version: {myConfig.articleVersion}</p>
 
-        <p>Article Version: {myConfig.articleVersion}</p>
+    const section_ores = ores_score_display
+        ? <>
+            <p style={{marginBottom:0}}>ORES Score: {ores_score_display}</p>
+            <PureJson data={pageData.ores_score} caption={null} />
+        </>
+        : null
 
-        {ores_score_display
-            ? <>
-                <p style={{marginBottom:0}}>ORES Score: {ores_score_display}</p>
-                <PureJson data={pageData.ores_score} caption={null} />
-            </>
-            : null
-        }
+    const section_endpoint = <p>endpoint: <a href={pageData.endpoint} target={"_blank"} rel={"noreferrer"}>{pageData.endpoint}</a></p>
 
-        <p>endpoint: <a href={pageData.endpoint} target={"_blank"} rel={"noreferrer"}>{pageData.endpoint}</a></p>
-
+    const section_buttons = <>
         <ClickButton buttonText={"Copy CiteRefs to CSV"} handleClick={handleCopyCiteRefs} />
         <ClickButton buttonText={"Copy Reference Data to CSV"} handleClick={handleCopyRefs} />
         <ClickButton buttonText={"Copy UrlArray to Clipboard (JSON)"} handleClick={handleCopyUrlArray} />
         <ClickButton buttonText={"Copy UrlArray to CSV"} handleClick={handleCopyUrlArrayCsv} />
         <ClickButton buttonText={"Copy PageData to Clipboard (JSON)"} handleClick={handleCopyPageData} />
+    </>
 
-        <div className={"page-details-table"} style={{display: "flex", flexDirection: "row"}}>
+    const section_details = <div className={"page-details-table"} style={{display: "flex", flexDirection: "row"}}>
 
-            <ArrayDisplay arr={[
-                {'IARI JSON version': pageData.version},
-                {'lang': pageData.lang},
-                {'site': pageData.site},
-                {'title': pageData.title},
-            ]}/>
+        <ArrayDisplay arr={[
+            {'IARI JSON version': pageData.version},
+            {'lang': pageData.lang},
+            {'site': pageData.site},
+            {'title': pageData.title},
+        ]}/>
 
-            <ArrayDisplay arr={[
-                {'wari_id': pageData.wari_id},
-                {'page id': pageData.page_id},
+        <ArrayDisplay arr={[
+            {'wari_id': pageData.wari_id},
+            {'page id': pageData.page_id},
 
-                {'timestamp': pageData.timestamp ? new Date(pageData.timestamp * 1000).toString() : ""}, // times 1000 b/c of milliseconds
-                {'timing': pageData["timing"]},
+            {'timestamp': pageData.timestamp ? new Date(pageData.timestamp * 1000).toString() : ""}, // times 1000 b/c of milliseconds
+            {'timing': pageData["timing"]},
 
-            ]} styleObj={{marginLeft: "1em"}}/>
-        </div>
-
+        ]} styleObj={{marginLeft: "1em"}}/>
     </div>
+
+    const pageInfoDetails = pageData
+        ? <div className={'detail-section'}>
+        {section_type}
+        {section_endpoint}
+        {section_method}
+        {section_version}
+        {section_ores}
+        {section_buttons}
+        </div>
         : <p>Nothing to display - pageData is missing.</p>
 
     return <div className="page-info">

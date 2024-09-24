@@ -166,6 +166,12 @@ body.env-other .header-aux1-display span.non-production {
 }
 
 
+/* specialdebug buttons in bebug-ares */
+
+.debug-click-button {
+    display: inline-block;
+    margin-bottom: .25rem;
+}
 
 /* utility buttons (including debug buttons */
 
