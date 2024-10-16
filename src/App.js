@@ -277,7 +277,6 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
                     // or when CORS error encountered
                 } else {
                     // ?? should we extract HTTP status code from string? (1st 3 characters, if number? without number, next?)
-                    setMyError(err.message + " - No further info available");
                 }
                 setPageData(null);
 

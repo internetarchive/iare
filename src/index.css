@@ -170,14 +170,15 @@ body.env-other .header-aux1-display span.non-production {
 }
 
 
-/* specialdebug buttons in bebug-ares */
+/* specialdebug buttons in debug-area */
 
 .debug-click-button {
     display: inline-block;
     margin-bottom: .25rem;
 }
 
-.static-display{
+.static-display {
+    display: none;
     position: fixed;
     z-index:999;
     top:0;

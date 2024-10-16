@@ -25,36 +25,48 @@ function RefDetails({ refDetails,
     }, [refDetails, setWikitext]);
 
 
-    const handleCitationClick = (e) => {
+    const handleCitationClick = (eRaw) => {
         // console.log("handleClick local ref")
-        e.preventDefault()
+        eRaw.preventDefault()
 
-
-        let myTagName
-        let myHref
-
-        try {
-            myTagName = e.target.tagName
-        } catch(err) {
-            myTagName = "error with tag name"
+        const myCite = {
+            tagName: "",
+            href: "",
+            rel: "",
+            link: ""
         }
 
-        if (myTagName === "A") {
+        // redefine e to be closest "a" target
+        const e = eRaw.target.closest('a')
+
+        try {
+            myCite.TagName = e.tagName
+        } catch(err) {
+            myCite.TagName = "error with tag name"
+        }
+
+        if (myCite.TagName === "A") {
             try {
-                myHref = e.target.attributes["href"].value
+                myCite.href = e.attributes["href"].value
+                myCite.link = myCite.href.replace(/^\.\//, "https://en.wikipedia.org/wiki/");
+
             } catch(err) {
-                myHref = "error with link href"
+                myCite.href = "error with link href"
             }
 
 
         }
 
-        const myRel = e.target?.attributes["rel"]?.value
+        myCite.rel = e.attributes["rel"]?.value
 
-        console.log(`ref click, tagName = ${myTagName}`)
-        console.log(`ref click, myRel = ${myRel}`)
-        // console.log(`ref click, class = ${e.target.classList}`)
-        console.log(`ref click, href = ${myHref}`)
+        // console.log(`ref click, tagName = ${myCite.tagName}`)
+        // console.log(`ref click, myRel = ${myCite.rel}`)
+        // // console.log(`ref click, class = ${e.target.classList}`)
+        // console.log(`ref click, href = ${myCite.href}`)
+        // console.log(`ref click: link: ${myCite.link}`)
+
+        window.open(myCite.link, '_blank')
+
     }
 
     const saveWikitext = useCallback ( (newText) => {

@@ -1,40 +1,38 @@
 import React, {useCallback, useEffect, useState} from "react";
+import {fetchUrls, iariPostProcessUrl} from "../../utils/iariUtils.js"
 import UrlDisplay from "./UrlDisplay";
 import RefDisplay from "./RefDisplay";
 import Loader from "../Loader";
-import {fetchUrls, iariPostProcessUrl} from "../../utils/iariUtils.js"
 import {ConfigContext} from "../../contexts/ConfigContext";
-import {
-    // ARCHIVE_STATUS_FILTER_MAP,
-    URL_STATUS_FILTER_MAP
-} from "../../constants/urlFilterMaps";
+import {ACTIONABLE_FILTER_MAP} from "../../constants/actionableMap";
+import {URL_STATUS_FILTER_MAP} from "../../constants/urlFilterMaps";
 import {REF_FILTER_DEFS} from "../../constants/refFilterMaps";
-// import {areObjectsEqual} from "../../utils/utils";
 import {categorizedDomains, rspMap} from "../../constants/perennialList";
 import {UrlStatusCheckMethods} from "../../constants/checkMethods";
-import {ACTIONABLE_FILTER_MAP} from "../../constants/actionableMap";
 
 /*
 When this component is rendered, it must "process" the pageData. This involves:
-- fetching the URL status codes of all the URLS
+- fetching the status codes of all the URLS
 - process the urls into urlArray
 - process the references
   - reduce reference array by coalescing all named refs together
-  - assign reference to url items that are "owned" by reference
+  - associate reference to url items that are "owned" by each reference
 */
 
 
 export default function PageData({pageData = {}}) {
     /*
-    pageData arrives with the data from the /article endpoint fetch call,
+    pageData is mainly the data from the /article endpoint fetch call,
     with a few minor decoration properties added for convenience.
 
-    we immediately fetch the URL details for each URL in pageData.urls, which
-    creates urlDict (a url-keyed javascript object with the info for each url).
-    urlArray is created as well, with each entry pointing to a urlDict object.
+    processing starts with the fetchPageData call in the useEffect upon component instantiation.
 
-    we then flatten the Reference list, making only one entry for each multiply-
-    referenced URL with the number of times reference added as a reference property.
+    we immediately fetch the URL details for each URL in pageData.urls, which creates:
+        urlDict, a url-keyed javascript object for each url.
+        urlArray, an array with each entry pointing to a urlDict object.
+
+    we then flatten the references list, merging all "named" references into one
+    "master" reference, with the number of times a reference is used as a property.
 
         NB: we should use only "references" property, not "dehydrated_references"
         TODO: deprecate "dehydrated_references" and use a "dehydrated" flag instead
