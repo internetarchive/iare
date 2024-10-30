@@ -9,6 +9,7 @@ import {URL_STATUS_FILTER_MAP} from "../../constants/urlFilterMaps";
 import {REF_FILTER_DEFS} from "../../constants/refFilterMaps";
 import {categorizedDomains, rspMap} from "../../constants/perennialList";
 import {UrlStatusCheckMethods} from "../../constants/checkMethods";
+import StatsDisplay from "./StatsDisplay";
 
 /*
 When this component is rendered, it must "process" the pageData. This involves:
@@ -776,8 +777,11 @@ export default function PageData({pageData = {}}) {
         "urls": {
             caption: "URLs"
         },
-        "stats": {
+        "refs": {
             caption: "Reference Types"
+        },
+        "stats": {
+            caption: "Statistics"
         },
     }
 
@@ -841,9 +845,14 @@ export default function PageData({pageData = {}}) {
                                 <UrlDisplay pageData={pageData} options={{refresh: pageData.forceRefresh}} />
                             }
 
-                            {selectedViewType === 'stats' &&
+                            {selectedViewType === 'refs' &&
                                 <RefDisplay pageData={pageData} options={{}}/>
                             }
+
+                            {selectedViewType === 'stats' &&
+                                <StatsDisplay options={{}}/>
+                            }
+
                         </div>
 
                     </div>

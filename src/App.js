@@ -76,7 +76,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
             : ['marcBolan', 'easterIsland', 'easter_island_short', 'hamas_israel', 'mlk', 'internetArchive', 'karen_bakker', 'short_test', 'pdfDesantis', 'pdfOneLink'];
 
 
-    // add class to body to indicate environment
+    // add environment tag to body element's class list to enable selective environment styling
     useEffect(() => {
         console.log('APP: useEffect[env]: app name: ' + package_json.name, ', version: ' + package_json.version)
         document.body.classList.add(env);
