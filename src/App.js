@@ -1,16 +1,21 @@
 import React, {useCallback, useEffect, useState, useRef} from "react";
+import {Tooltip as MyTooltip} from "react-tooltip";
 import package_json from "../package.json";
+
+import {debounce} from "./utils/utils";
+import {getPagePathEndpoint} from "./utils/iariUtils";
+
 import PathNameFetch from "./components/PathNameFetch";
 import Loader from "./components/Loader";
 import PageDisplay from "./components/PageDisplay";
 import MakeLink from "./components/MakeLink";
 import Dropdown from "./components/Dropdown";
+
 import {IariSources} from "./constants/endpoints";
 import {UrlStatusCheckMethods} from "./constants/checkMethods";
-import {ConfigContext} from "./contexts/ConfigContext"
 import {ArticleVersions} from "./constants/articleVersions";
-import {Tooltip as MyTooltip} from "react-tooltip";
-import {debounce} from "./utils/utils";
+
+import {ConfigContext} from "./contexts/ConfigContext"
 
 
 export default function App({env, myPath, myCacheData, myRefresh, myMethod, myArticleVersion, myIariSourceId, myDebug}) {
@@ -168,51 +173,48 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
         }) => {
 
         // mediaType is "pdf", "html", "wiki", or anything else we come up with
-        const getPagePathEndpoint = (path = '', cacheData = '', mediaType = 'wiki', refresh = false) => {
-
-            const iariBase = IariSources[myIariSourceId]?.proxy
-            // TODO: error if iariBase is undefined or otherwise falsey
-            console.log(`getPagePathEndpoint: myIariSourceId = ${myIariSourceId}, iariBase = ${iariBase}`)
-
-            if (cacheData) {
-                // use cached article result data if specified
-                // this is used (mainly?only?) for development
-                return `${iariBase}/article_cache?iari_id=${cacheData}`;
-            }
-
-            else if (mediaType === "wiki") {
-
-                if (articleVersion === ArticleVersions["ARTICLE_V1"].key) {
-                    // const sectionRegex = '&regex=references|bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
-                    const sectionRegex = '&sections=references|bibliography|further reading|works cited|sources|external links';
-                    const options = '&dehydrate=false'
-                    return `${iariBase}/statistics/article?url=${path}${sectionRegex}${options}${refresh ? "&refresh=true" : ''}`;
-                }
-
-                else if (articleVersion === ArticleVersions["ARTICLE_V2"].key) {
-                    const options = ''
-                    return `${iariBase}/article?url=${path}${options}${refresh ? "&refresh=true" : ''}`;
-                }
-
-            } else if (mediaType === "pdf") {
-                return `${iariBase}/statistics/pdf?url=${path}${refresh ? "&refresh=true" : ''}`;
-
-            } else {
-                // do general case...TODO make this default parser endpoint a config
-
-                return `${iariBase}/statistics/analyze?url=${path}${refresh ? "&refresh=true"
-                    : ''}${mediaType ? `&media_type=${mediaType}` : ''}`;
-
-                // this will produce and error right now, as IARI does not support
-                // ...i (mojomonger) think we should have the generic analyze endpoint
-            }
-        };
-
+                        // const getPagePathEndpoint = (path = '', cacheData = '', mediaType = 'wiki', refresh = false) => {
+                        //
+                        //     const iariBase = IariSources[myIariSourceId]?.proxy
+                        //     // TODO: error if iariBase is undefined or otherwise falsey
+                        //     console.log(`getPagePathEndpoint: myIariSourceId = ${myIariSourceId}, iariBase = ${iariBase}`)
+                        //
+                        //     if (cacheData) {
+                        //         // use cached article result data if specified
+                        //         // this is used (mainly?only?) for development
+                        //         return `${iariBase}/article_cache?iari_id=${cacheData}`;
+                        //     }
+                        //
+                        //     else if (mediaType === "wiki") {
+                        //
+                        //         if (articleVersion === ArticleVersions["ARTICLE_V1"].key) {
+                        //             // const sectionRegex = '&regex=references|bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
+                        //             const sectionRegex = '&sections=references|bibliography|further reading|works cited|sources|external links';
+                        //             const options = '&dehydrate=false'
+                        //             return `${iariBase}/statistics/article?url=${path}${sectionRegex}${options}${refresh ? "&refresh=true" : ''}`;
+                        //         }
+                        //
+                        //         else if (articleVersion === ArticleVersions["ARTICLE_V2"].key) {
+                        //             const options = ''
+                        //             return `${iariBase}/article?url=${path}${options}${refresh ? "&refresh=true" : ''}`;
+                        //         }
+                        //
+                        //     } else if (mediaType === "pdf") {
+                        //         return `${iariBase}/statistics/pdf?url=${path}${refresh ? "&refresh=true" : ''}`;
+                        //
+                        //     } else {
+                        //         // do general case...TODO make default parser endpoint a config
+                        //         // this will produce an error right now, as IARI does not support "analyze"
+                        //         // (mojomonger) i think we _should_ have a generic "analyze" endpoint
+                        //         return `${iariBase}/statistics/analyze?url=${path}${refresh ? "&refresh=true"
+                        //             : ''}${mediaType ? `&media_type=${mediaType}` : ''}`;
+                        //     }
+                        // }
 
 
         // handle null pathName
         if (!pathName && !cacheData) {
-            console.log("APP::referenceFetch: pathName is null-ish and no cache-data specified");
+            console.log("APP::fetchArticleData: pathName is null-ish and no cache-data specified");
             setPageData(null);
             // TODO: use setMyError(null); // ??
             return;
@@ -224,9 +226,21 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
         // If so, passes it in to getPagePathEndpoint, where the endpoint is determined
         // by passed in mediaType rather than mediaType interpolated from pathName.
 
-        const myEndpoint = getPagePathEndpoint(pathName, cacheData, myMediaType, refresh);
+        console.log("APP::fetchArticleData: mediaType = ", myMediaType)
+
+        // const myEndpoint = getPagePathEndpoint(myIariSourceId, pathName, cacheData, myMediaType, refresh);
+        const myEndpoint = getPagePathEndpoint({
+            iariSourceId: myIariSourceId,
+            path: pathName,
+            cacheData: cacheData,
+            mediaType: myMediaType,
+            refresh: refresh,
+            articleVersion: articleVersion
+        })
+
+
         console.log("APP::fetchArticleData: endpoint = ", myEndpoint)
-        setEndpointPath(myEndpoint); // for display purposes only
+        setEndpointPath(myEndpoint); // for debug display purposes only
 
         // TODO: maybe always clear pageData, so components get cleared while waiting?
         setMyError(null);
@@ -324,7 +338,6 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
             + (articleVersion ? `&article_version=${articleVersion}` : '')
             + (isDebug ? '&debug=true' : '')
 
-        // window.location.href = newUrl;
         console.log("refreshPageResults: new url path = ", newUrl)
 
         // setting the page url forces page to refresh, thus a "new  component render",

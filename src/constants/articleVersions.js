@@ -9,5 +9,11 @@ export const ArticleVersions = {
         caption: 'Version 2 (/article)',
         endpoint: '/article',
     },
+    ARTICLE_XREF: {
+        key: 'ARTICLE_XREF',
+        caption: 'Version ExtractRefs (/extract_refs)',
+        endpoint: '/extract_refs',
+        params: 'page_title,domain,as_of,wikitext',
+    },
 
 }

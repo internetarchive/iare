@@ -1,12 +1,13 @@
 import React, {useCallback, useEffect, useState} from "react";
 import RefCitationDisplay from "./RefCitationDisplay";
-// import RefArticleInfo from "./RefArticleInfo";
 import RefTemplates from "./RefTemplates";
 import RefActionables from "./RefActionables";
 import RefWikitext from "./RefWikitext";
 import RefUrls from "./RefUrls";
 import {ACTIONS_IARE} from "../../../constants/actionsIare";
-import RefWikitextNew from "./RefWikitextNew";
+// import RefWikitextNew from "./RefWikitextNew";
+import RefCitationDisplayHtml from "./RefCitationDisplayHtml";
+import RefCitationClaim from "./RefCitationClaim";
 
 /*
 
@@ -32,32 +33,34 @@ function RefDetails({ refDetails,
         const myCite = {
             tagName: "",
             href: "",
-            rel: "",
-            link: ""
+            link: "",
+            // rel: "",
         }
 
         // redefine e to be closest "a" target
         const e = eRaw.target.closest('a')
 
+        if (!e) return  // dont care if click is not on a hot link
+
         try {
             myCite.TagName = e.tagName
         } catch(err) {
-            myCite.TagName = "error with tag name"
+            myCite.TagName = "TagName error"
         }
 
         if (myCite.TagName === "A") {
             try {
+                // href is raw href data; link is href starting with wiki prefix
+                // NB TODO must respect wiki language version for replacement link text
                 myCite.href = e.attributes["href"].value
                 myCite.link = myCite.href.replace(/^\.\//, "https://en.wikipedia.org/wiki/");
 
             } catch(err) {
-                myCite.href = "error with link href"
+                myCite.href = "Href error"
             }
-
-
         }
 
-        myCite.rel = e.attributes["rel"]?.value
+        // myCite.rel = e.attributes["rel"]?.value
 
         // console.log(`ref click, tagName = ${myCite.tagName}`)
         // console.log(`ref click, myRel = ${myCite.rel}`)
@@ -126,7 +129,18 @@ function RefDetails({ refDetails,
     const showWikitext = true  // allows on and off display of wikitext...under experimentation
 
     return <>
+
+        <div className={"header-all-parts"}>
+            <div className={"header-left-part"}>
+                <h3>Citation as Displayed</h3>
+            </div>
+        </div>
+
+
+        <RefCitationDisplayHtml reference={refDetails} onClick={handleCitationClick} onAction={onAction} />
+
         <RefCitationDisplay _ref={refDetails}
+                            pageData={pageData}
                             articleVersion={pageData.iariArticleVersion}
                             showDebug={showDebug}
                             onClick={handleCitationClick}
@@ -138,13 +152,15 @@ function RefDetails({ refDetails,
 
         {/*<RefArticleInfo _ref={refDetails} pageData={pageData}/>*/}
 
-        {showWikitext && <RefWikitext wikitext={refDetails?.wikitext} ref_details={refDetails} onAction={handleRefViewAction} />}
+        <RefCitationClaim reference={refDetails} />
 
         <RefUrls urls={refDetails?.urls} pageData={pageData} />
 
+        {showWikitext && <RefWikitext wikitext={refDetails?.wikitext} ref_details={refDetails} onAction={handleRefViewAction} />}
+
         <RefTemplates templates={refDetails?.templates} pageData={pageData} tooltipId={tooltipId} />
 
-        <RefWikitextNew wikitext="" onAction={handleRefViewAction} />
+        {/*<RefWikitextNew wikitext="" onAction={handleRefViewAction} />*/}
 
     </>
 

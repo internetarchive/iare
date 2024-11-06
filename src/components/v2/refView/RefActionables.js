@@ -1,28 +1,31 @@
 import React from "react";
 import {ACTIONABLE_FILTER_MAP} from "../../../constants/actionableMap";
 import RefSectionHeader from "./RefSectionHeader";
+import { useTranslation } from 'react-i18next';
 
 /*
 shows actionables for this reference
  */
 export default function RefActionables({ actionables, onAction }) {
 
+    const { t } = useTranslation();
+
     if (actionables?.length) return <>
         <div className="ref-view-section section-actionables">
 
-            <RefSectionHeader leftPart={<h3>Actionable Items</h3>} >
+            <RefSectionHeader leftPart={<h3>{t('actionable_items')}<span className={"header-small"}>{t("things that can be fixed for this citation")}</span></h3>} >
             </RefSectionHeader>
 
             <div className ="ref-view-actionables">
 
-                <div className={"ref-view-actionable-caption"}>This citation has some things that can be fixed.</div>
+                {/*<div className={"ref-view-actionable-caption"}></div>*/}
 
                 {actionables.map( (action, i) => {
                     const myAction = ACTIONABLE_FILTER_MAP[action]
                     if (!myAction) return null
                     return <div className={"ref-view-actionable"} key={i}>
 
-                        <div className={"action-desc"}><span className={"inline-heading"} >Condition:</span> {myAction.desc}</div>
+                        <div className={"action-cond"}><span className={"inline-heading"} >Condition:</span> {myAction.desc}</div>
 
                         {myAction.symptom && <div className={"action-symptom"}>
                             <span className={"inline-heading"} >Symptom:&nbsp;</span>

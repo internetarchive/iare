@@ -1,9 +1,7 @@
 import React, {useState} from "react";
-import ArrayDisplay from "../ArrayDisplay";
 import PureJson from "../utils/PureJson";
 import {convertToCSV, copyToClipboard} from "../../utils/utils";
 import {ConfigContext} from "../../contexts/ConfigContext";
-// import {UrlStatusCheckMethods} from "../../constants/checkMethods";
 
 function ClickButton( {buttonCaption=null, buttonText='', handleClick}) {
     const buttonMarkup = buttonCaption ? buttonCaption : <span>{buttonText}</span>
@@ -135,25 +133,6 @@ export default function PageInfo({ pageData }) {
         <ClickButton buttonText={"Copy UrlArray to CSV"} handleClick={handleCopyUrlArrayCsv} />
         <ClickButton buttonText={"Copy PageData to Clipboard (JSON)"} handleClick={handleCopyPageData} />
     </>
-
-    const section_details = <div className={"page-details-table"} style={{display: "flex", flexDirection: "row"}}>
-
-        <ArrayDisplay arr={[
-            {'IARI JSON version': pageData.version},
-            {'lang': pageData.lang},
-            {'site': pageData.site},
-            {'title': pageData.title},
-        ]}/>
-
-        <ArrayDisplay arr={[
-            {'wari_id': pageData.wari_id},
-            {'page id': pageData.page_id},
-
-            {'timestamp': pageData.timestamp ? new Date(pageData.timestamp * 1000).toString() : ""}, // times 1000 b/c of milliseconds
-            {'timing': pageData["timing"]},
-
-        ]} styleObj={{marginLeft: "1em"}}/>
-    </div>
 
     const pageInfoDetails = pageData
         ? <div className={'detail-section'}>

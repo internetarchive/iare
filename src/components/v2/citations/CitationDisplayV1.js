@@ -11,8 +11,9 @@ function CitationDisplayV1({ reference = null, index=0, options ={}}) {
     let hasContent = false;
     let spanCount = 0
 
-    // a helper method called from within each sub-section of reference display.
-    // by calling setSpan, hasContent is true, meaning we have a t least something
+    // setSpan is a helper method called from within each sub-section of ref display.
+    // when setSpan called, hasContent is true, and the spanCOunt is incremented,
+    // indicating we have at least some content to display.
     const setSpan = () => {
         hasContent = true
         spanCount++  // spanCount is used to give each span a unique key

@@ -21,7 +21,17 @@
 
     --g-color-reference-display-bg: hsl(211deg 65.22% 81.96%);
     --g-color-reference-display-fg: black;
-    --g-color-reference-display-selected-bg: #e3ebf9;
+    --g-color-reference-ref-list-display-bg: hsl(211, 23%, 71%);
+    /*--g-color-reference-ref-list-display-bg: hsl(211, 21%, 69%);*/
+    --g-color-reference-ref-list-display-fg: #5f5f5f;
+    --g-color-reference-ref-list-display-fg-label: #000000;
+    /*--g-color-reference-display-selected-bg: #e3ebf9;*/
+    --g-color-reference-display-selected-bg: var(--g-color-reference-display-bg);
+
+    background-color: var(--g-color-reference-ref-list-display-bg);
+    color: var(--g-color-reference-ref-list-display-fg);
+
+
 
     --xx-color-ref-bg: #d5e5f6; /* d5f6d5 */ /* d5e5f6 */ /* d5e2f6 */
 

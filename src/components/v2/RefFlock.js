@@ -198,7 +198,8 @@ function RefFlock({ pageData= {},
 
         let referenceCaption = null
 
-        if (pageData.iariArticleVersion === ArticleVersions.ARTICLE_V1.key) {
+        if (pageData.iariArticleVersion === ArticleVersions.ARTICLE_V1.key ||
+            pageData.iariArticleVersion === ArticleVersions.ARTICLE_XREF.key) {
             // eslint-disable-next-line react/jsx-pascal-case
             referenceCaption = <CitationDisplayV1 reference={_ref} index={i} />
 

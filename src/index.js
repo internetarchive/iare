@@ -1,6 +1,7 @@
 import React  from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.js';
+import './i18n'; // Import i18n configuration
 import 'react-tooltip/dist/react-tooltip.css'
 
 import "bootstrap/dist/js/bootstrap.bundle.min";

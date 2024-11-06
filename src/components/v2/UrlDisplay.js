@@ -266,6 +266,11 @@ export default function UrlDisplay ({ pageData, options } ) {
             window.open(value, "_blank")
         }
 
+        else if (action === ACTIONS_IARE.GOTO_WIKI_SECTION.key) {
+            // jump to section of wiki article indicated by "value" argument
+            window.open(value, "_blank")
+        }
+
 
         else {
             console.log(`Action "${action}" not supported.`)

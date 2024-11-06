@@ -1,4 +1,6 @@
 import {UrlStatusCheckMethods} from "../constants/checkMethods";
+import {IariSources} from "../constants/endpoints";
+import {ArticleVersions} from "../constants/articleVersions";
 
 const getArchiveStatusFromData = (data) => {  // return dict of success or failure
     /*
@@ -247,6 +249,79 @@ const fetchUrlArchive = async (iariBase, url, refresh=false) => {
 
     return { data: archiveData, status_code: endpoint_status_code };
 }
+
+
+export const getPagePathEndpoint = ({
+    iariSourceId =IariSources['iari'].key,
+    path = '',
+    as_of = '',
+    cacheData = '',
+    mediaType = 'wiki',
+    refresh = false,
+    articleVersion = "",  // NB should default to something useful
+}) => {
+
+    const iariBase = IariSources[iariSourceId]?.proxy
+    // TODO: error if iariBase is undefined or otherwise falsey
+    console.log(`getPagePathEndpoint: myIariSourceId = ${iariSourceId}, iariBase = ${iariBase}, mediaType = ${mediaType}, articleVersion = ${articleVersion}`)
+
+    if (cacheData) {
+        // use cached article result data if specified
+        // this is used (mainly?only?) for development
+        console.log(`getPagePathEndpoint: cacheData is true.`)
+        return `${iariBase}/article_cache?iari_id=${cacheData}`;
+    }
+
+    else if (mediaType === "wiki") {
+
+        console.log(`getPagePathEndpoint: wiki:article version: ${articleVersion}`)
+
+        if (articleVersion === ArticleVersions.ARTICLE_V1.key) {
+            // const sectionRegex = '&regex=references|bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
+            const sectionRegex = '&sections=references|bibliography|further reading|works cited|sources|external links';
+            const options = '&dehydrate=false'
+            return `${iariBase}/statistics/article?url=${path}${sectionRegex}${options}${refresh ? "&refresh=true" : ''}`;
+        }
+
+        else if (articleVersion === ArticleVersions.ARTICLE_V2.key) {
+            const options = ''
+            return `${iariBase}/article?url=${path}${options}${refresh ? "&refresh=true" : ''}`;
+        }
+
+        else if (articleVersion === ArticleVersions.ARTICLE_XREF.key) {
+            const endpoint = ArticleVersions.ARTICLE_XREF.endpoint
+
+            // Extract the page title
+            const pageTitleMatch = path.match(/\/wiki\/([^?#]+)/);
+            const pageTitle = pageTitleMatch ? pageTitleMatch[1] : null;
+
+            // Extract the domain
+            const domainMatch = path.match(/https?:\/\/([^/]+)/);
+            const domain = domainMatch ? domainMatch[1] : null;
+
+            return `${iariBase}${endpoint}?` +
+                `page_title=${pageTitle}` +
+                `${domain ? "&domain=" + domain : ""}` +
+                `${as_of ? "&as_of=" + as_of : ""}`;
+        }
+
+    } else if (mediaType === "pdf") {
+        console.log(`getPagePathEndpoint: pdf`)
+        return `${iariBase}/statistics/pdf?url=${path}${refresh ? "&refresh=true" : ''}`;
+
+    } else {
+        // do general case...TODO make default parser endpoint a config
+        // this will produce an error right now, as IARI does not support "analyze"
+        // (mojomonger) i think we _should_ have a generic "analyze" endpoint
+        console.log(`getPagePathEndpoint: Unknown mediaType`)
+        return `${iariBase}/statistics/analyze?url=${path}${refresh ? "&refresh=true"
+            : ''}${mediaType ? `&media_type=${mediaType}` : ''}`;
+    }
+
+    console.log(`getPagePathEndpoint: Fell through all cases!`)
+
+}
+
 
 // returns a promise containing array of results of checking archive status of urls in irlArray
 export const fetchUrlArchives = async ({

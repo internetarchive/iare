@@ -65,6 +65,10 @@ export default function RefUrls({ urls, pageData, tooltipId, showDebug=false }) 
             if (!urlObj.isArchive) urlRows.push(getUrlRow(urlObj, i))
         })
 
+        if (urlRows.length === 0) {
+            urlRows.push(<div className={"url-row"}><div>No URLs for this reference.</div></div>)
+        }
+
         return <div className={"url-list"}>
             {urlRows}
         </div>

@@ -52,6 +52,10 @@ export const ACTIONS_IARE = {
         key: "GOTO_CITE_REF"
     },
 
+    GOTO_WIKI_SECTION: {
+        key: "GOTO_WIKI_SECTION"
+    },
+
     EDIT_WIKI_SECTION: {
         key: "EDIT_WIKI_SECTION"
     },

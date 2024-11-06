@@ -1,7 +1,8 @@
 :root {
     /* candidates for global definition (for AI generated colors) */
     --color-ref-view-text: #727272;
-    --color-ref-view-inline-heading: #4e4e4e;
+    --color-ref-view-inline-heading: #878787;
+    --color-ref-view-inline-heading-alert: #ff3838;
     --color-sub-caption: #9b9a9a;
     --color-actionable-header: hsl(358 69% 65% / 1);
     /* local definitions */
@@ -22,8 +23,10 @@
     --color-bg-editable: white;
     /*--color-bg-non-editable: #e5ecf2;*/
     --color-bg-non-editable: hsl(208 11% 95% / 1);
+    --color-bg-raw-claim: hsl(51 100% 84% / 1);
 
-    --margin-ref-view-section:1.515rem;
+    /*--margin-ref-view-section:1.515rem;*/
+    --margin-ref-view-section:1.315rem;
     --margin-ref-view-section-tight:.5rem;
 
     /*--border-box-actionable: 3pt solid #ae0f3c !important;*/
@@ -33,7 +36,7 @@
 
     --border-radius-ref-section:0.42rem;
     --border-solid-light: 1px solid #ebebeb;
-;
+    --border-solid-dark: 1px solid #343232;
 
     --width-ref-view-list: 17rem;
     --height-ref-view-list-caption: 6.2rem;  /* TODO make this dynamic with resize */
@@ -238,6 +241,11 @@
 .ref-view-section {
     margin-bottom: var(--margin-ref-view-section);
 }
+.ref-view-section .header-small {
+    font-size: 67%;
+    font-style: italic;
+    margin-left:.66rem;
+}
 .ref-view-section:first-of-type .header-all-parts {
     margin-top:0;
 }
@@ -419,15 +427,18 @@
 .ref-view-actionables .ref-view-actionable .inline-heading {
     color: var(--color-ref-view-inline-heading);
 }
-.ref-view-actionables .ref-view-actionable .action-fixit > div {
-    display:inline;
-}
-.ref-view-actionables .ref-view-actionable .action-desc {
-}
-.ref-view-actionables .ref-view-actionable .action-fixit {
-    margin-top:.35rem
+.ref-view-actionables .ref-view-actionable .action-cond {
 }
 .ref-view-actionables .ref-view-actionable .action-symptom {
+}
+.ref-view-actionables .ref-view-actionable .action-fixit {
+    /*margin-top:.35rem*/
+}
+.ref-view-actionables .ref-view-actionable .action-fixit .inline-heading {
+    color: var(--color-ref-view-inline-heading-alert);
+}
+.ref-view-actionables .ref-view-actionable .action-fixit > div {
+    display:inline;
 }
 
 .ref-view-actionable-caption {
@@ -516,9 +527,27 @@
     background-color: var(--g-color-reference-display-bg);
 }
 
-.ref-citation-html-display .ref-citation-links {
+.ref-citation-links {
     margin-top: .25rem;
     padding-right: .25rem;
+}
+.ref-citation-links i {
+    color: var(--color-lolite)
+}
+
+.raw-claim {
+    font-size: .85rem;
+    color: #808080;
+    background-color: var(--color-bg-raw-claim);
+    border-radius: var(--border-radius-ref-section);
+    border:var(--border-solid-dark);
+    overflow-wrap: break-word;
+    overflow: scroll;
+    /*height: var(--height-ref-view-wikitext);*/
+    margin-bottom:0;
+    padding:.28rem .35rem;
+    width:100%;
+
 }
 
 /* uncategorized */
@@ -578,8 +607,8 @@
 }
 
 .ref-view-list .ref-button {
-    background-color: var(--g-color-reference-display-bg);
-    color: var(--g-color-reference-display-fg);
+    background-color: var(--g-color-reference-ref-list-display-bg);
+    color: var(--g-color-reference-ref-list-display-fg);
 
     /* allow room for frame hilite */
     margin-left:3px;
@@ -587,6 +616,11 @@
     width:calc(100% - 6px);
     margin-bottom: .4rem;
 }
+
+.ref-view-list .ref-button .caption {
+    color: var(--g-color-reference-ref-list-display-fg-label)
+}
+
 
 .ref-view-list .flock-box-contents {
     padding:.33rem .13rem .33rem .13rem;

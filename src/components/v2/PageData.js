@@ -184,20 +184,6 @@ export default function PageData({pageData = {}}) {
     }, [])
 
 
-                // // take the wt:value and put it straight to value:<value>
-                // const normalizeMediaWikiParams = (oldParams) => {
-                //
-                //     const newParams = {}
-                //
-                //     // Iterate through keys and build normalized return param object values
-                //     for (let key of Object.keys(oldParams)) {
-                //         // set newParams value
-                //         newParams[key] = oldParams[key].wt
-                //     }
-                //
-                //     return newParams;
-                // }
-
     /*
     algorithm:
     for each ref in wikitext:

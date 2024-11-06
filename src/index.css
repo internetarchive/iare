@@ -105,6 +105,9 @@ body.env-local .iare-view .header h1 {
 .iare-view .inferior {
     font-size:88%;
 }
+.iare-view .lolite{
+    color:var(--color-lolite);
+}
 
 .iare-view .header {
     display: flex;
