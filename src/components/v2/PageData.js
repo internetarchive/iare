@@ -1,4 +1,5 @@
 import React, {useCallback, useEffect, useState} from "react";
+// import {fetchUrls, iariPostProcessUrl, isBookUrl} from "../../utils/iariUtils.js"
 import {fetchUrls, iariPostProcessUrl} from "../../utils/iariUtils.js"
 import UrlDisplay from "./UrlDisplay";
 import RefDisplay from "./RefDisplay";
@@ -634,6 +635,7 @@ export default function PageData({pageData = {}}) {
 
     }, [rspDomains])
 
+
     const processBooksData = useCallback( pageData => {
         // come up with books data for URL
 
@@ -646,24 +648,63 @@ export default function PageData({pageData = {}}) {
 
          */
 
+        // return true if url deemed a that points to a book
+        // based on regex match of book url patterns
+        const isBookUrl = (url) => {
+
+            const regexBookGoogle = /^https?:\/\/books\.google\.com\/books\//
+            const regexBookArchiveOrg = /^https?:\/\/archive\.org\/details\//;
+            const regexGutenbergOrg = /^https?:\/\/gutenberg\.org\//;  // NB TODO is this enough???
+
+            if (regexBookGoogle.test(url)) return true
+            if (regexBookArchiveOrg.test(url)) return true
+            if (regexGutenbergOrg.test(url)) return true
+            return false
+        }
+
         if (!pageData?.urlArray) return
 
         const bookStats = {}
 
         pageData.urlArray.forEach(urlObj => {
-            if (!urlObj.reference_info?.templates) return
-            if (!urlObj.reference_info.templates.includes("cite book")) return
-            if (!urlObj.netloc) return
 
-            // if templates contains "cite book", create or increment entry for bookStats[netloc]
+            // if (!urlObj.reference_info?.templates) return
+            // if (!urlObj.reference_info.templates.includes("cite book")) return
+            // if (!urlObj.netloc) return
 
-            // set "is book" flag
-            urlObj.isBook = true
+            urlObj.isBook = false  // let's start with this assumption
 
-            // create or increment entry for bookStats[netloc]
-            const netloc = urlObj.netloc
-            if (!bookStats[netloc]) bookStats[netloc] = 0
-            bookStats[netloc] = bookStats[netloc] + 1
+            // check if there is a cite_book or ISBN template, and,
+            // if so, check if urlObj.netloc matches template.params.url
+            const refs = urlObj.refs
+            const bookTemplates = ["cite book", "isbn"]
+            if (refs) {
+                refs.forEach( ref => {
+                    ref.templates?.forEach( t => {
+                        if (bookTemplates.includes(t.name)) {
+                            if (t.parameters && "url" in t.parameters) {
+                                if (t.parameters["url"] === urlObj.netloc) {
+                                    urlObj.isBook = true
+                                }
+                            }
+                        }
+                    })
+                })
+            }
+
+            // otherwise, if url not found to be a book based on template values,
+            // check if url is a book based on its url pattern
+            if (!urlObj.isBook) {
+                urlObj.isBook = isBookUrl(urlObj.netloc)
+            }
+
+            if (urlObj.isBook === true) {
+                // create or increment entry for bookStats[netloc]
+                const netloc = urlObj.netloc
+                if (!bookStats[netloc]) bookStats[netloc] = 0
+                bookStats[netloc] = bookStats[netloc] + 1
+            }
+
         })
 
         if (!pageData["stats"]) pageData["stats"] = {}

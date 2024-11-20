@@ -57,16 +57,16 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
         setScrollY(window.scrollY);
     }
 
-    const handleResize = () => {
-        setWindowHeight(window.innerHeight);
+    // resize components when window size changed
+    const handleResize = useCallback(() => {
+        setWindowHeight(window.innerHeight);  // for window height display purposes only
 
         if (lowerSectionElementRef.current) {
             const rect = lowerSectionElementRef.current.getBoundingClientRect();
             setLowerSectionTopY(rect.top); // Get the top Y-coordinate
             setLowerSectionHeight(window.innerHeight - rect.top);// Set the new element height
         }
-
-    }
+    }, [])
 
     // production mode shows limited shortcuts
     // staging shows a little more for testing
@@ -106,7 +106,12 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
             window.removeEventListener('scroll', handleScroll);
             window.removeEventListener('resize', handleResize);
         };
-    }, []);
+    }, [handleResize]);
+
+    // when debug shows/hides, readjust onscreen component sizes
+    useEffect(() => {
+        handleResize()
+    }, [isDebug, handleResize]);
 
 
     function getIariVersion(pageData, endpointPath) {

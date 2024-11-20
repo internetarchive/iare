@@ -94,7 +94,7 @@ function RefDetails({ refDetails,
 
         console.log(`RefView: handleAction: action=${action}, value=${value}`);
 
-        if (0) {}  // allows easy else if's
+        if (0) {}  // allows easy subsequent else if's
 
         else if (action === "saveWikitext") {
             // this is where we need to asynchronously save the reference/entire page, and reload, basically
@@ -103,18 +103,22 @@ function RefDetails({ refDetails,
         }
 
         else if (action === ACTIONS_IARE.EDIT_WIKI_SECTION.key) {
-            // jumps to sectuion specified and puts in edit mode
-            const section_id = refDetails.section_id
-            // jump to edit mode with section_id
+            // NB not currently functional
 
-            /*
-            https://en.wikipedia.org/w/index.php?title=Easter_Island&action=edit&section=2
-             */
-
-            const jump_string = `https://${pageData.lang}.${pageData.site}/w/index.php?title=${pageData.title}`
-                + `&action=edit&section=${section_id}`
-
-            alert(`will jump to section ${section_id} : ${jump_string}`)
+            // // jumps to section in article specified and puts in edit mode
+            //
+            // const section_id = refDetails.section_id
+            //
+            // // jump to edit mode with section_id
+            //
+            // /*
+            // https://en.wikipedia.org/w/index.php?title=Easter_Island&action=edit&section=2
+            //  */
+            //
+            // const jump_string = `https://${pageData.lang}.${pageData.site}/w/index.php?title=${pageData.title}`
+            //     + `&action=edit&section=${section_id}`
+            //
+            // alert(`will jump to section ${section_id} : ${jump_string}`)
 
         }
 
@@ -132,7 +136,7 @@ function RefDetails({ refDetails,
 
         <div className={"header-all-parts"}>
             <div className={"header-left-part"}>
-                <h3>Citation as Displayed</h3>
+                <h3>Citation</h3>
             </div>
         </div>
 

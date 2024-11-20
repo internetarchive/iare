@@ -459,7 +459,7 @@ const urlFlock = React.memo( function UrlFlock({
                         data-actionable={u.actionable ? u.actionable[0] : null}  // return first actionable only (for now)
             >
                 <div className={"url-name"}>{u.url}</div>
-                <div className={"url-status"}>{u.status_code}</div>
+                <div className={"url-status"}>{u.status_code ? u.status_code : "?"}</div>
                 <div className={"url-archive_status"}>{getArchiveStatusInfo(u)}</div>
 
                 {/*<div className={"url-citations"}>{getCitationInfo(u)}</div>*/}

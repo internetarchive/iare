@@ -3,7 +3,7 @@ import {copyToClipboard} from "../../../utils/utils";
 // import { RichTextarea } from "rich-textarea";
 import RefSectionHeader from "./RefSectionHeader";
 import {ConfigContext} from "../../../contexts/ConfigContext";
-import {ACTIONS_IARE} from "../../../constants/actionsIare";
+// import {ACTIONS_IARE} from "../../../constants/actionsIare";
 // import refDetails from "./RefDetails";  // https://www.npmjs.com/package/rich-textarea
 // https://github.com/inokawa/rich-textarea/blob/HEAD/docs/API.md
 // https://github.com/inokawa/rich-textarea/tree/fee148effcd29e8c3e5b790774504c0f0fc0a8fe/stories
@@ -89,18 +89,11 @@ export default function RefWikitext({ wikitext, onAction }) {  // NB TODO make o
     }
 
 
-    const handleEditWikiSection = () => {
-        onAction({action:ACTIONS_IARE.EDIT_WIKI_SECTION.key})
-    }
-
     const handleOnComplete = (message) => {
         alert(message)
 
         // TODO this is where we want to set up a disappearing tooltip
     }
-
-    const buttonEditWikiSection = <button className={`utility-button`} style={{width:"6.5rem"}}
-                                   onClick={handleEditWikiSection}><span>Edit Article Section</span></button>
 
     const buttonEditSave = <button className={`utility-button`} style={{width:"6rem"}}
                                    onClick={handleEditMode}><span>{editable ? "Done Editing" : "Edit Citation Text"}</span></button>
@@ -116,7 +109,7 @@ export default function RefWikitext({ wikitext, onAction }) {  // NB TODO make o
     </button>
 
     const header = <RefSectionHeader
-        leftPart={<><h3>Wikitext</h3><span>{buttonEditSave}{buttonCancel}{buttonCopy}{false && buttonEditWikiSection}</span></>}
+        leftPart={<><h3>Wikitext</h3><span>{buttonEditSave}{buttonCancel}{buttonCopy}</span></>}
         // rightPart={buttonCopy}
         >
         {/* nothing to see here */}

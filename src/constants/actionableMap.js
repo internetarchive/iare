@@ -22,12 +22,14 @@ export const ACTIONABLE_FILTER_MAP = {
     //     desc: "no filter",
     //     filterFunction: () => () => {return true},  // NB function returns function
     // },
+
     bad_live: {
         category: "Actionable",
         name: "bad_live",
-        short_caption: "Bad Live",
-        caption: <div>Link Status: BAD,<br/>Citation Priority: Original</div>,
-        desc: "Link Status: BAD, Citation Priority: Live",
+        short_caption: "Broken Link displayed",
+        caption: <div>Live Link broken,<br/>Citation Priority: Original</div>,
+        desc: "Live Link is broken, but is being displayed as the Primary Link.",
+        // desc: "Link Status: BAD, Citation Priority: Live",
         symptom: "The bad link is shown as the primary link in the citation. Since the link is bad, the Archive link should be the primary link.",
         fixit: <div>Set the "url-status" parameter in Citation Template to "dead". This will cause the Archive Link to be the Primary Link in the citation.</div>,
         tooltip: `<div>Original URL Link Status is NOT 2XX or 3XX<br/>AND<br/>Template Parameter "url_status" is set to "live"</div>`,
@@ -177,12 +179,13 @@ export const ACTIONABLE_FILTER_MAP = {
     dead_link_no_archive: {
         category: "Actionable",
         name: "dead_link_no_archive",
-        short_caption: "Bad No Archive",
-        caption: <div>Link Status BAD,<br/>Archive Status BAD</div>,
-        desc: "URL link is broken, and Archive link is missing or broken.",
-        symptom: "The citation link is broken, and there is no Archive link to rescue it.",
+        short_caption: "Broken, No Archive",
+        caption: <div>Live Link broken,<br/>Archive Link broken</div>,
+        desc: "Live Link is broken, and Archive Link is missing or broken.",
+        symptom: "There is no valid Archive Link to rescue the citation's broken link.",
         tooltip: `<div>Original Status is NOT 2XX or 3XX<br/>AND<br/>No Archive exists in Wayback Machine</div>`,
         fixit: <div>Edit the citation by adding a Wayback Machine Archive URL</div>,
+
         filterFunction: () => (url) => {
             return (url.status_code < 200 || url.status_code >= 400)
                 &&

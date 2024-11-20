@@ -7,7 +7,7 @@ function RefCitationClaim({ reference = null, onAction}) {
 
     const claim_text = reference.claim
         ? <div>{reference.claim}</div>
-        : <div>Claim text not found.</div>
+        : <div><i>Claim text not found.</i></div>
 
     const header = <RefSectionHeader
         leftPart={<h3>Claim</h3>}

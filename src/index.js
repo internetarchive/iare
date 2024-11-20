@@ -53,21 +53,43 @@ const getMethod = (qParams, targetEnvironment) => {
     return methodKey
 }
 
+/*
+article version determines how the article data is interpreted.
+ */
 const getArticleVersion = (qParams, targetEnvironment) => {
     const defaultArticleVersionKey = ArticleVersions.ARTICLE_V1.key
 
-    if (targetEnvironment === 'env-production') return defaultArticleVersionKey
-    // else
+    // ONLY allow default version for production
+    if (targetEnvironment === 'env-production')
+        return defaultArticleVersionKey
+
+    // else respect query param setting
     const articleVersionKey = queryParameters.has("article_version")
         ? queryParameters.get("article_version")
         : defaultArticleVersionKey
 
-    // if specified article version not in our defined choices, set to default, and notify as error
-    if (!ArticleVersions[articleVersionKey]) {
-        console.error(`Article Version ${articleVersionKey} not supported.`)
-        return defaultArticleVersionKey
-    }
-    return articleVersionKey
+    // return key if OK
+    if (ArticleVersions[articleVersionKey]) return articleVersionKey
+
+    // see if specified version key is in alternate keys of defined versions
+    let altVersionKey
+    Object.keys(ArticleVersions).some(versionKey => {
+        const altKeys = ArticleVersions[versionKey].alternate_keys
+        if (altKeys && altKeys.includes(articleVersionKey)) {
+            altVersionKey = versionKey
+            return true  // slip oyt of "some" loop
+        } else {
+            return false
+        }
+    })
+
+    if (altVersionKey) return altVersionKey
+
+    // slipping thru here means specified key is not a valid key or a
+    // valid alternate key for article version; return default
+    console.error(`Article Version ${articleVersionKey} not supported.`)
+    return defaultArticleVersionKey
+
 }
 
 // ========================================

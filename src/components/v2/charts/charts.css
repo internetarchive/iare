@@ -37,7 +37,8 @@
 }
 
 .chart-legend .legend-label .lolite {
-    filter: brightness(1.65);
+    filter: brightness(1.75);
+    color: inherit;
 }
 
 .chart-legend .legend-box {

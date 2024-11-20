@@ -594,3 +594,15 @@ export const iariPostProcessUrl = (urlObj) => {
     urlObj._3ld = `${parts._3ld ? parts._3ld : ''}.${parts.sld ? parts.sld : ''}.${parts.tld ? parts.tld : ''}`
 }
 
+
+// // return true if url deemed a that points to a book
+// // based on regex match of book url patterns
+// export const isBookUrl = (url) => {
+//
+//     const regexBookGoogle = /^https?:\/\/books\.google\.com\/books\//
+//     const regexBookArchiveOrg = /^https?:\/\/archive\.org\/details\//;
+//
+//     if (regexBookGoogle.test(url)) return true
+//     if (regexBookArchiveOrg.test(url)) return true
+//     return false
+// }

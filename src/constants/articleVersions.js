@@ -11,6 +11,7 @@ export const ArticleVersions = {
     },
     ARTICLE_XREF: {
         key: 'ARTICLE_XREF',
+        alternate_keys: ['XREF'],
         caption: 'Version ExtractRefs (/extract_refs)',
         endpoint: '/extract_refs',
         params: 'page_title,domain,as_of,wikitext',

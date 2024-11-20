@@ -57,6 +57,7 @@ export const REF_FILTER_DEFS = {
         desc: "Citations containing an ISBN",
         filterFunction: () => (urlDict, ref) => {
             return ref.template_names.includes("cite book") || ref.template_names.includes("isbn");
+            // NB this should check if there is any "isbn" parameter in any of the templates
         },
     },
 

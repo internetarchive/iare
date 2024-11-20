@@ -188,7 +188,10 @@
 }
 
 .url-row.url-is-unknown .url-status {
-    color: #a5a5a5 !important;
+    /*color: #a5a5a5 !important;*/
+    color: #999999 !important;
+    font-size: 1.4em;
+    font-family: Times, serif, sans-serif;
 }
 .url-row.url-is-redirect .url-status {
     /*color: #b700ff !important;*/
@@ -242,12 +245,17 @@
     max-width: var(--width-url-templates);
 }
 .url-row .url-actionable {
-    text-align: left;
+    text-align: left !important;
     /*border-left: 1px solid black;*/
     width: var(--width-url-actionable);
     max-width: var(--width-url-actionable);
     min-width: var(--width-url-actionable);
 }
+
+.url-header-row .url-actionable {
+    text-align: center !important;
+}
+
 .url-row .url-sections {
     text-align: left;
     /*border-left: 1px solid black;*/
