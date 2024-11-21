@@ -57,7 +57,8 @@ const getMethod = (qParams, targetEnvironment) => {
 article version determines how the article data is interpreted.
  */
 const getArticleVersion = (qParams, targetEnvironment) => {
-    const defaultArticleVersionKey = ArticleVersions.ARTICLE_V1.key
+    // const defaultArticleVersionKey = ArticleVersions.ARTICLE_V1.key
+    const defaultArticleVersionKey = ArticleVersions.ARTICLE_XREF.key
 
     // ONLY allow default version for production
     if (targetEnvironment === 'env-production')
