@@ -659,6 +659,7 @@ export default function PageData({pageData = {}}) {
             if (regexBookGoogle.test(url)) return true
             if (regexBookArchiveOrg.test(url)) return true
             if (regexGutenbergOrg.test(url)) return true
+
             return false
         }
 
@@ -683,7 +684,7 @@ export default function PageData({pageData = {}}) {
                     ref.templates?.forEach( t => {
                         if (bookTemplates.includes(t.name)) {
                             if (t.parameters && "url" in t.parameters) {
-                                if (t.parameters["url"] === urlObj.netloc) {
+                                if (t.parameters["url"] === urlObj.url) {
                                     urlObj.isBook = true
                                 }
                             }
@@ -695,8 +696,9 @@ export default function PageData({pageData = {}}) {
             // otherwise, if url not found to be a book based on template values,
             // check if url is a book based on its url pattern
             if (!urlObj.isBook) {
-                urlObj.isBook = isBookUrl(urlObj.netloc)
+                urlObj.isBook = isBookUrl(urlObj.url)
             }
+
 
             if (urlObj.isBook === true) {
                 // create or increment entry for bookStats[netloc]
