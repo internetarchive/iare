@@ -16,7 +16,7 @@ export default function ConditionBox({filter = null}) {
             <div className={"cond-data"}>Showing All Items</div>
         </div>
         <div className={"fixit-row"}>
-            <div className={"cond-data"}>Click on Actionable or another filter to explore.</div>
+            <div className={"cond-data"}>Select Actionable or other filters to explore.</div>
         </div>
     </div>
 

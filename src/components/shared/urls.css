@@ -3,7 +3,7 @@
 
     --width-url-name: 20rem;
     --width-url-status: 2.0rem;
-    --width-url-archive-status: 3rem;
+    --width-url-archive-status: 3.5rem;
     --width-url-citations: 3.5rem;
     --width-url-templates: 4.0rem;
     --width-url-actionable: 8.0rem;
@@ -51,6 +51,7 @@
     --width-overview-column: 335px;
 
     --padding-url-column: .5rem;
+    --padding-url-column-small: .25rem;
 
     /*--height-filter-box-rows: 26.5rem;*/
     --height-filter-box-rows: calc(100vh - 15rem);
@@ -220,6 +221,16 @@
     max-width: var(--width-url-status);
     min-width: var(--width-url-status);
     border-right: var(--width-cell-border);
+}
+
+.url-header-row .url-archive_status
+{
+    text-align: center;
+    min-width: var(--width-url-archive-status);
+    max-width: var(--width-url-archive-status);
+    border-right: var(--width-cell-border);
+    border-right-color: var(--color-cell-border);
+    padding:.25rem 0 0;
 }
 .url-row .url-archive_status
 {

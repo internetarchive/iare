@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {ArticleVersions} from "../../constants/articleVersions";
+import {ParseMethods} from "../../constants/parseMethods";
 import {convertToCSV, copyToClipboard} from "../../utils/utils";
 import CitationDisplayV1 from "./citations/CitationDisplayV1";
 import CitationDisplayV2 from "./citations/CitationDisplayV2";
@@ -198,12 +198,12 @@ function RefFlock({ pageData= {},
 
         let referenceCaption = null
 
-        if (pageData.iariArticleVersion === ArticleVersions.ARTICLE_V1.key ||
-            pageData.iariArticleVersion === ArticleVersions.ARTICLE_XREF.key) {
+        if (pageData.iariParseMethod === ParseMethods.ARTICLE_V1.key ||
+            pageData.iariParseMethod === ParseMethods.ARTICLE_XREF.key) {
             // eslint-disable-next-line react/jsx-pascal-case
             referenceCaption = <CitationDisplayV1 reference={_ref} index={i} />
 
-        } else if (pageData.iariArticleVersion === ArticleVersions.ARTICLE_V2.key) {
+        } else if (pageData.iariParseMethod === ParseMethods.ARTICLE_V2.key) {
             // eslint-disable-next-line react/jsx-pascal-case
             referenceCaption = <CitationDisplayV2 options={options} reference={_ref} index={i} />
         }
@@ -257,8 +257,8 @@ function RefFlock({ pageData= {},
     const flockCaption = <>
         {options?.caption ? <div className={"ref-list-caption"}>{options.caption}</div> :null}
         {refCountAndCopy}
-        {filterDescription}
         {refNavigation}
+        {filterDescription}
     </>
 
 

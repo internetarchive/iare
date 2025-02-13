@@ -2,7 +2,7 @@ import React from 'react';
 import PieChart from "../../PieChart";
 import './charts.css';
 // import {generateColorFade} from "../../../utils/utils";
-import {rspMap} from "../../../constants/perennialList";
+import {reliabilityMap} from "../../../constants/perennialList";
 import ChartLegend from "./ChartLegend";
 import {ACTIONS_IARE} from "../../../constants/actionsIare";
 
@@ -19,7 +19,7 @@ const PerennialChart = ({pageData, options, onAction, currentState = null}) => {
 
     // const barColors = ["magenta", "purple", "blue", "teal","yellow","orange","red"]
 
-    const myRspMap = rspMap
+    const myRspMap = reliabilityMap
 
     const perennialData = Object.keys(pageData.rsp_statistics).map(key => {
         return {

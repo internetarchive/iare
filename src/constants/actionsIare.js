@@ -24,8 +24,8 @@ export const ACTIONS_IARE = {
         key: "SET_ACTIONABLE_FILTER"
     },
 
-    SET_DOMAIN_FILTER: {
-        key: "SET_DOMAIN_FILTER"
+    SET_PAY_LEVEL_DOMAIN_FILTER: {
+        key: "SET_PAY_LEVEL_DOMAIN_FILTER"
     },
 
     SET_PAPERS_FILTER: {

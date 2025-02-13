@@ -1,7 +1,8 @@
 :root {
     /* candidates for global definition (for AI generated colors) */
     --color-ref-view-text: #727272;
-    --color-ref-view-inline-heading: #878787;
+    /*--color-ref-view-inline-heading: #878787;*/
+    --color-ref-view-inline-heading: #c2c2c2;
     --color-ref-view-inline-heading-alert: #ff3838;
     --color-sub-caption: #9b9a9a;
     --color-actionable-header: hsl(358 69% 65% / 1);
@@ -400,6 +401,31 @@
     flex-grow: 1;
 }
 
+
+.url-row-header .url-row-label {
+    font-size: .62rem;
+    padding-bottom:0 !important;
+    color:#a0a0a0;
+    font-style:italic;
+}
+.url-row.url-row-header > div {
+    padding:var(--padding-url-column-small) 0 0;
+    text-align:center;
+}
+
+.url-row.url-row-header .url-row-label.url-name {
+    padding-left:var(--padding-url-column);
+}
+.url-row-header .url-status {
+}
+.url-row.url-row-header .url-row-label.url-archive_status {
+    /*padding-bottom:0 !important;*/
+}
+.url-row-header .url-perennial {
+}
+
+
+
 .ref-view-actionables {
     border: var(--border-box-actionable);
     border-radius: .5rem;
@@ -575,6 +601,7 @@
 
 .ref-view-list .ref-list-navigation {
     margin-top:.5rem;
+    margin-bottom:.5rem;
     display:flex;
     flex-direction: row;
     justify-content: space-between;

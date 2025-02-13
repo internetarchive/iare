@@ -8,7 +8,7 @@ import {LINK_STATUS_MAP} from "../../constants/linkStatusMap";
 import {ACTIONABLE_FILTER_MAP} from "../../constants/actionableMap";
 import {REF_FILTER_DEFS} from "../../constants/refFilterMaps";
 import {ConfigContext} from "../../contexts/ConfigContext";
-import {rspMap} from "../../constants/perennialList";
+import {reliabilityMap} from "../../constants/perennialList";
 import RefView from "./refView/RefView";
 import {Tooltip as MyTooltip} from "react-tooltip";
 import ConditionsBox from "../ConditionsBox";
@@ -195,7 +195,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             setCondition(f)
         }
 
-        else if (action === ACTIONS_IARE.SET_DOMAIN_FILTER.key) {
+        else if (action === ACTIONS_IARE.SET_PAY_LEVEL_DOMAIN_FILTER.key) {
             // filter URL and Ref list by domain specified in value
             setUrlFilters({ "domain_filter" : getUrlDomainFilter(value) })
             setRefFilter(getRefDomainFilter(value))
@@ -218,7 +218,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             setRefFilter(getRefPerennialFilter(value))
             setSelectedUrl(null)
             setFilterState(filters.perennial, value)
-            setCondition({category: "Reliability", desc: `Links with Reliability Status of: "${rspMap[value].caption}"`})
+            setCondition({category: "Reliability", desc: `Links with Reliability Status of: "${reliabilityMap[value].caption}"`})
         }
 
         else if (action === ACTIONS_IARE.SET_TLD_FILTER.key) {

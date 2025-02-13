@@ -3,17 +3,19 @@ import ListChart from "../../ListChart";
 import {ACTIONS_IARE} from "../../../constants/actionsIare";
 // import ChartLegend from "./ChartLegend";
 
-const DomainsChart = ({pageData, options, onAction, currentState = null}) => {
+const PayLevelDomainsChart = ({pageData, options, onAction, currentState = null}) => {
 
-    if (!pageData?.fld_counts) return <div>
+    if (!pageData?.pld_statistics) return <div>
         <p>No Pay Level Domains to show.</p>
     </div>
 
-    // assume fld_counts is a dict of domains with count as value
-    const itemsArray = Object.keys(pageData.fld_counts).map( domain => {
+    // assume pld_statistics is a dict of domains : count
+    // calc itemsArray to pass to charting component
+
+    const itemsArray = Object.keys(pageData.pld_statistics).map( domain => {
         return {
             label: domain,
-            count: pageData.fld_counts[domain],
+            count: pageData.pld_statistics[domain],
             link: domain,
         }
     }).sort((a, b) => {
@@ -29,13 +31,13 @@ const DomainsChart = ({pageData, options, onAction, currentState = null}) => {
     })
 
     const onClickItem = (link) => {
-        onAction({action: ACTIONS_IARE.SET_DOMAIN_FILTER.key, value: link})
+        onAction({action: ACTIONS_IARE.SET_PAY_LEVEL_DOMAIN_FILTER.key, value: link})
     }
 
     return <>
-        <ListChart data={itemsArray} className={'domains-list-chart'} currentState={currentState?.domains}
+        <ListChart data={itemsArray} className={'pay-level-domains-list-chart'} currentState={currentState?.domains}
                    options={{label:"Domain", label_count: "Count"}}
                    onClick={onClickItem} />
     </>
 }
-export default DomainsChart;
+export default PayLevelDomainsChart;

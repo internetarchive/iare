@@ -1,6 +1,6 @@
 import {UrlStatusCheckMethods} from "../constants/checkMethods";
 import {IariSources} from "../constants/endpoints";
-import {ArticleVersions} from "../constants/articleVersions";
+import {ParseMethods} from "../constants/parseMethods";
 
 const getArchiveStatusFromData = (data) => {  // return dict of success or failure
     /*
@@ -258,12 +258,12 @@ export const getPagePathEndpoint = ({
     cacheData = '',
     mediaType = 'wiki',
     refresh = false,
-    articleVersion = "",  // NB should default to something useful
+    parseMethod = "",  // NB should default to something useful
 }) => {
 
     const iariBase = IariSources[iariSourceId]?.proxy
     // TODO: error if iariBase is undefined or otherwise falsey
-    console.log(`getPagePathEndpoint: myIariSourceId = ${iariSourceId}, iariBase = ${iariBase}, mediaType = ${mediaType}, articleVersion = ${articleVersion}`)
+    console.log(`getPagePathEndpoint: myIariSourceId = ${iariSourceId}, iariBase = ${iariBase}, mediaType = ${mediaType}, articleVersion = ${parseMethod}`)
 
     if (cacheData) {
         // use cached article result data if specified
@@ -274,22 +274,22 @@ export const getPagePathEndpoint = ({
 
     else if (mediaType === "wiki") {
 
-        console.log(`getPagePathEndpoint: wiki:article version: ${articleVersion}`)
+        console.log(`getPagePathEndpoint: wiki:article version: ${parseMethod}`)
 
-        if (articleVersion === ArticleVersions.ARTICLE_V1.key) {
+        if (parseMethod === ParseMethods.ARTICLE_V1.key) {
             // const sectionRegex = '&regex=references|bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
             const sectionRegex = '&sections=references|bibliography|further reading|works cited|sources|external links';
             const options = '&dehydrate=false'
             return `${iariBase}/statistics/article?url=${path}${sectionRegex}${options}${refresh ? "&refresh=true" : ''}`;
         }
 
-        else if (articleVersion === ArticleVersions.ARTICLE_V2.key) {
+        else if (parseMethod === ParseMethods.ARTICLE_V2.key) {
             const options = ''
             return `${iariBase}/article?url=${path}${options}${refresh ? "&refresh=true" : ''}`;
         }
 
-        else if (articleVersion === ArticleVersions.ARTICLE_XREF.key) {
-            const endpoint = ArticleVersions.ARTICLE_XREF.endpoint
+        else if (parseMethod === ParseMethods.ARTICLE_XREF.key) {
+            const endpoint = ParseMethods.ARTICLE_XREF.endpoint
 
             // Extract the page title
             const pageTitleMatch = path.match(/\/wiki\/([^?#]+)/);
@@ -532,32 +532,39 @@ export const fetchUrls = async ({
 }
 
 
+/* calculates things about uURL's that IARI should have already done but doesn't, such as:
+    urlObj.isArchive
+    urlObj.hasTemplateArchive
+    urlObj.tld
+    urlObj.pld
+    urlObj._3ld
+*/
 export const iariPostProcessUrl = (urlObj) => {
-    /* does things that IARI should have already done for us but doesn't
-        urlObj.isArchive
-        urlObj.hasTemplateArchive
-        urlObj.tld
-        urlObj.sld
-        urlObj._3ld
-    */
 
     if (!urlObj?.url) return  // undefined urlObj or url property
 
     const regexWayback = new RegExp(/https?:\/\/(?:web\.)archive\.org\/web\/([\d*]+)\/(.*)/);
     const regexArchiveToday = new RegExp(/https?:\/\/archive\.today\/([\d*]+)\/(.*)/);
 
-    const getDomainParts = (url) => {  // TODO should be done in IARI
-        // top-level-domain (TLD) and second-level-domain (SLD) extraction
+    const getDomainParts = (url) => {  // TODO should be done in IARI, but isnt yet
+
+        // top-level-domain (TLD), pay-level-domain (PLD), and Third level domain (_3LD) extraction
+        // For example, for http://sscl.berkeley.edu/~oal/background/pacislands.htm:
+        //
+        // tld = edu
+        // pld = berkeley.edu
+        // _3ld = sscl.berkeley.edu
+
         const parsedUrl = new URL(url);
         const hostnameParts = parsedUrl.hostname.split('.');
 
         if (hostnameParts.length >= 2) {
-            const sld = hostnameParts[hostnameParts.length - 2];
             const tld = hostnameParts[hostnameParts.length - 1];
+            const pld = hostnameParts[hostnameParts.length - 2];
             const _3ld = hostnameParts[hostnameParts.length - 3];
-            return { sld, tld, _3ld };
+            return { pld, tld, _3ld };
         } else {
-            return { sld: null, tld: null, _3ld: null };
+            return { pld: null, tld: null, _3ld: null };
         }
     }
 
@@ -590,8 +597,8 @@ export const iariPostProcessUrl = (urlObj) => {
     // these should have been parsed by iari, but since wayback is not included in iari yet, we have to do it post-process
     const parts = getDomainParts(urlObj.url)
     urlObj.tld = `${parts.tld ? parts.tld : ''}`
-    urlObj.sld = `${parts.sld ? parts.sld : ''}.${parts.tld ? parts.tld : ''}`
-    urlObj._3ld = `${parts._3ld ? parts._3ld : ''}.${parts.sld ? parts.sld : ''}.${parts.tld ? parts.tld : ''}`
+    urlObj.pld = `${parts.pld ? parts.pld : ''}.${parts.tld ? parts.tld : ''}`
+    urlObj._3ld = `${parts._3ld ? parts._3ld : ''}.${parts.pld ? parts.pld : ''}.${parts.tld ? parts.tld : ''}`
 }
 
 

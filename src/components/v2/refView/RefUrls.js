@@ -55,6 +55,21 @@ export default function RefUrls({ urls, pageData, tooltipId, showDebug=false }) 
 
     }
 
+    const getUrlRowHeader = () => {
+
+        const classes = ('url-row-header')
+
+        return <div className={"url-row " + classes} key={0}>
+            <div className={"url-row-label url-name"}>Url</div>
+            <div className={"url-row-label url-status"}>Status</div>
+            <div className={"url-row-label url-archive_status"}>Archive</div>
+
+            {/*<div className={"url-citations"}>{getCitationInfo(u)}</div>*/}
+            <div className={"url-row-label url-perennial"}>Reliability</div>
+        </div>
+
+    }
+
     const getUrlRows = ()=> {
         const urlRows = []
 
@@ -69,7 +84,9 @@ export default function RefUrls({ urls, pageData, tooltipId, showDebug=false }) 
             urlRows.push(<div className={"url-row"}><div>No URLs for this reference.</div></div>)
         }
 
+        const urlRowHeader = getUrlRowHeader()
         return <div className={"url-list"}>
+            {urlRowHeader}
             {urlRows}
         </div>
     }

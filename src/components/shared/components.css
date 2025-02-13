@@ -44,7 +44,7 @@
     --width-category-column: 7.5rem;
 
     --width-list-entry-count: 2.5rem;
-    --color-list-header: magenta;
+    --color-list-header: #b2b2b2;
     --color-list-rows: turquoise;
     --height-list-component: 12.67rem;
 
@@ -329,7 +329,7 @@
     border-bottom: var(--border-row);
     padding-bottom:.15rem;
     margin-bottom:.15rem;
-    /*color: var(--color-list-header);*/
+    color: var(--color-list-header);
 }
 .list-chart .list-rows {
     cursor: pointer;

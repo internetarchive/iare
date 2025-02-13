@@ -1,5 +1,5 @@
 import React from "react";
-import {rspMap} from "../constants/perennialList";
+import {reliabilityMap} from "../constants/perennialList";
 
 export const getArchiveStatusInfo = (u => {
     return <span className={u.isBook
@@ -12,9 +12,9 @@ export const getArchiveStatusInfo = (u => {
 export const getPerennialInfo = (u => {
     return !u.rsp
         ? null
-        // rsp contains keys into rspMap
+        // rsp contains keys into reliabilityMap
         : u.rsp.map( (s,i) => {
-            return <div key={i}>{rspMap[s]?.shortCaption ? rspMap[s].shortCaption : ''}</div>
+            return <div key={i}>{reliabilityMap[s]?.shortCaption ? reliabilityMap[s].shortCaption : ''}</div>
         })
 })
 

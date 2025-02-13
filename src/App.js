@@ -13,12 +13,12 @@ import Dropdown from "./components/Dropdown";
 
 import {IariSources} from "./constants/endpoints";
 import {UrlStatusCheckMethods} from "./constants/checkMethods";
-import {ArticleVersions} from "./constants/articleVersions";
+import {ParseMethods} from "./constants/parseMethods";
 
 import {ConfigContext} from "./contexts/ConfigContext"
 
 
-export default function App({env, myPath, myCacheData, myRefresh, myMethod, myArticleVersion, myIariSourceId, myDebug}) {
+export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod, myParseMethod, myIariSourceId, myDebug}) {
 
     const [isDebug, setDebug] = useState(myDebug);
 
@@ -33,8 +33,8 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
     const [targetPath, setTargetPath] = useState(myPath);
     const [cacheData, setCacheData] = useState(myCacheData);
     const [refreshCheck, setRefreshCheck] = useState(myRefresh);
-    const [checkMethod, setCheckMethod] = useState(myMethod);
-    const [articleVersion, setArticleVersion] = useState(myArticleVersion);
+    const [checkMethod, setCheckMethod] = useState(myCheckMethod);
+    const [parseMethod, setParseMethod] = useState(myParseMethod);
 
     // states of page
     const [endpointPath, setEndpointPath] = useState('');
@@ -192,14 +192,14 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
                         //
                         //     else if (mediaType === "wiki") {
                         //
-                        //         if (articleVersion === ArticleVersions["ARTICLE_V1"].key) {
+                        //         if (parseMethod === ParseMethods["ARTICLE_V1"].key) {
                         //             // const sectionRegex = '&regex=references|bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
                         //             const sectionRegex = '&sections=references|bibliography|further reading|works cited|sources|external links';
                         //             const options = '&dehydrate=false'
                         //             return `${iariBase}/statistics/article?url=${path}${sectionRegex}${options}${refresh ? "&refresh=true" : ''}`;
                         //         }
                         //
-                        //         else if (articleVersion === ArticleVersions["ARTICLE_V2"].key) {
+                        //         else if (parseMethod === ParseMethods["ARTICLE_V2"].key) {
                         //             const options = ''
                         //             return `${iariBase}/article?url=${path}${options}${refresh ? "&refresh=true" : ''}`;
                         //         }
@@ -240,7 +240,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
             cacheData: cacheData,
             mediaType: myMediaType,
             refresh: refresh,
-            articleVersion: articleVersion
+            parseMethod: parseMethod
         })
 
 
@@ -269,7 +269,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
                 data.pathName = pathName;
                 data.endpoint = myEndpoint;
                 data.iariSource = IariSources[myIariSourceId]?.proxy;
-                data.iariArticleVersion = articleVersion;
+                data.iariParseMethod = parseMethod;
                 data.forceRefresh = refresh;
                 data.mediaType = myMediaType; // decorate based on mediaType?
                 data.version = getIariVersion(data, myEndpoint);  // version of pageData - determines display components
@@ -306,7 +306,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
                 setIsLoading(false);
             });
 
-    }, [myIariSourceId, articleVersion])
+    }, [myIariSourceId, parseMethod])
 
 
     // callback for PathNameFetch component
@@ -340,7 +340,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
             + (refresh ? '&refresh=true' : '')
             + (checkMethod ? `&method=${checkMethod}` : '')
             + (myIariSourceId ? `&iari-source=${iari_source}` : '')
-            + (articleVersion ? `&article_version=${articleVersion}` : '')
+            + (parseMethod ? `&parse_method=${parseMethod}` : '')
             + (isDebug ? '&debug=true' : '')
 
         console.log("refreshPageResults: new url path = ", newUrl)
@@ -386,15 +386,15 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
 
     const handleArticleVersionChange = (articleVersionId) => {
         // console.log(`handleStatusMethodChange: new method is: ${methodId}`)
-        setArticleVersion(articleVersionId);
+        setParseMethod(articleVersionId);
     };
-    const articleVersionChoices = Object.keys(ArticleVersions).map( key => {
-        return { caption: ArticleVersions[key].caption, value: ArticleVersions[key].key }
+    const articleVersionChoices = Object.keys(ParseMethods).map(key => {
+        return { caption: ParseMethods[key].caption, value: ParseMethods[key].key }
     })
     const articleVersionChoiceSelect = <div className={"choice-wrapper article-version-wrapper"}>
         <Dropdown choices={articleVersionChoices}
                   label={'Article Parser Version:'}
-                  onSelect={handleArticleVersionChange} defaultChoice={articleVersion}/>
+                  onSelect={handleArticleVersionChange} defaultChoice={parseMethod}/>
     </div>
 
 
@@ -489,7 +489,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
         <p><span className={'label'}>IARE Version:</span> {iareVersion}</p>
         <p><span className={'label'}>IARI Source:</span> {myIariSourceId} ({IariSources[myIariSourceId]?.proxy})</p>
         <p><span className={'label'}>IARI Version:</span> {pageData?.iari_version ? pageData.iari_version : "unknown"} </p>
-        <p><span className={'label'}>Article Version:</span> {ArticleVersions[articleVersion].caption}</p>
+        <p><span className={'label'}>Article Version:</span> {ParseMethods[parseMethod].caption}</p>
         <p><span className={'label'}>Check Method:</span> {UrlStatusCheckMethods[checkMethod].caption} ({checkMethod})</p>
         <p><span className={'label'}>URL from address line:</span> {myPath}</p>
         <p><span className={'label'}>Cache Data from address line:</span> {myCacheData}</p>
@@ -518,7 +518,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myMethod, myAr
         iariSource: IariSources[myIariSourceId]?.proxy,
         wikiBaseUrl: "https://en.wikipedia.org/wiki/",
         urlStatusMethod: checkMethod,
-        articleVersion: myArticleVersion,
+        articleVersion: myParseMethod,
         isDebug: !!isDebug,
         isShowUrlOverview: isShowUrlOverview,
         isShowShortcuts: isShowShortcuts,

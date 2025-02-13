@@ -145,7 +145,7 @@ function RefDetails({ refDetails,
 
         <RefCitationDisplay _ref={refDetails}
                             pageData={pageData}
-                            articleVersion={pageData.iariArticleVersion}
+                            parseMethod={pageData.iariParseMethod}
                             showDebug={showDebug}
                             onClick={handleCitationClick}
                             options = {{'hide_actionables':true }}

@@ -1,5 +1,5 @@
 import React from "react";
-import {rspMap} from "../../../constants/perennialList";
+import {reliabilityMap} from "../../../constants/perennialList";
 import {
     getArchiveStatusInfo,
 } from "../../../utils/urlUtils";
@@ -25,9 +25,9 @@ export default function RefTemplateUrl({ url, index, isSelected=false }) {
     const getPerennialInfo = (u => {
         return !u.rsp
             ? null
-            // rsp contains keys into rspMap
+            // rsp contains keys into reliabilityMap
             : u.rsp.map( (s,i) => {
-                return <div key={i}>{rspMap[s]?.shortCaption ? rspMap[s].shortCaption : ''}</div>
+                return <div key={i}>{reliabilityMap[s]?.shortCaption ? reliabilityMap[s].shortCaption : ''}</div>
             })
     })
 

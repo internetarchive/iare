@@ -181,7 +181,7 @@ export const ACTIONABLE_FILTER_MAP = {
         name: "dead_link_no_archive",
         short_caption: "Broken, No Archive",
         caption: <div>Live Link broken,<br/>Archive Link broken</div>,
-        desc: "Live Link is broken, and Archive Link is missing or broken.",
+        desc: "Live Link is broken, and Archive link is missing or broken.",
         symptom: "There is no valid Archive Link to rescue the citation's broken link.",
         tooltip: `<div>Original Status is NOT 2XX or 3XX<br/>AND<br/>No Archive exists in Wayback Machine</div>`,
         fixit: <div>Edit the citation by adding a Wayback Machine Archive URL</div>,

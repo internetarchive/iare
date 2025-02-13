@@ -10,7 +10,7 @@ import './custom.scss'; // includes bootstrap.scss
 import './index.css';
 import {UrlStatusCheckMethods} from "./constants/checkMethods";
 import {IariSources} from "./constants/endpoints";
-import {ArticleVersions} from "./constants/articleVersions";
+import {ParseMethods} from "./constants/parseMethods";
 
 const getEnvironment = () => {
     const REGEX_PRODUCTION_ENV = new RegExp(/^(?:(?:[\w-]+\.)+)?(?:[\w-]+\.)?archive\.org$/);  // if "(\.?)archive.org" at end of string
@@ -37,7 +37,7 @@ const getIariSource = (qParams, targetEnvironment) => {
     return sourceKey
 }
 
-const getMethod = (qParams, targetEnvironment) => {
+const getCheckMethod = (qParams, targetEnvironment) => {
     const temporaryDefaultKey = UrlStatusCheckMethods.WAYBACK.key  // hard-set to WAYBACK for production
     // const temporaryDefaultKey = UrlStatusCheckMethods.IABOT.key  // using IABot until LWC settles down
 
@@ -56,27 +56,27 @@ const getMethod = (qParams, targetEnvironment) => {
 /*
 article version determines how the article data is interpreted.
  */
-const getArticleVersion = (qParams, targetEnvironment) => {
-    // const defaultArticleVersionKey = ArticleVersions.ARTICLE_V1.key
-    const defaultArticleVersionKey = ArticleVersions.ARTICLE_XREF.key
+const getParseMethod = (qParams, targetEnvironment) => {
+    // const defaultParseMethodKey = ParseMethods.ARTICLE_V1.key
+    const defaultParseMethodKey = ParseMethods.ARTICLE_XREF.key
 
     // ONLY allow default version for production
     if (targetEnvironment === 'env-production')
-        return defaultArticleVersionKey
+        return defaultParseMethodKey
 
     // else respect query param setting
-    const articleVersionKey = queryParameters.has("article_version")
-        ? queryParameters.get("article_version")
-        : defaultArticleVersionKey
+    const parseMethodKey = queryParameters.has("parse_method")
+        ? queryParameters.get("parse_method")
+        : defaultParseMethodKey
 
     // return key if OK
-    if (ArticleVersions[articleVersionKey]) return articleVersionKey
+    if (ParseMethods[parseMethodKey]) return parseMethodKey
 
     // see if specified version key is in alternate keys of defined versions
     let altVersionKey
-    Object.keys(ArticleVersions).some(versionKey => {
-        const altKeys = ArticleVersions[versionKey].alternate_keys
-        if (altKeys && altKeys.includes(articleVersionKey)) {
+    Object.keys(ParseMethods).some(versionKey => {
+        const altKeys = ParseMethods[versionKey].alternate_keys
+        if (altKeys && altKeys.includes(parseMethodKey)) {
             altVersionKey = versionKey
             return true  // slip oyt of "some" loop
         } else {
@@ -88,8 +88,8 @@ const getArticleVersion = (qParams, targetEnvironment) => {
 
     // slipping thru here means specified key is not a valid key or a
     // valid alternate key for article version; return default
-    console.error(`Article Version ${articleVersionKey} not supported.`)
-    return defaultArticleVersionKey
+    console.error(`Article Version ${parseMethodKey} not supported.`)
+    return defaultParseMethodKey
 
 }
 
@@ -103,15 +103,15 @@ const myPath = queryParameters.has("url") ? queryParameters.get("url") : '';
 const myCacheData = queryParameters.has("cache_data") ? queryParameters.get("cache_data") : '';
 const myRefresh = queryParameters.has("refresh") ? queryParameters.get("refresh").toLowerCase() === 'true' : false;
 const myIariSourceId = getIariSource(queryParameters, env);
-const myMethod = getMethod(queryParameters, env);
-const myArticleVersion = getArticleVersion(queryParameters, env);
+const myCheckMethod = getCheckMethod(queryParameters, env);
+const myParseMethod = getParseMethod(queryParameters, env);
 
 root.render(<App env={env}
                  myPath={myPath}
                  myCacheData={myCacheData}
                  myRefresh={myRefresh}
-                 myMethod={myMethod}
-                 myArticleVersion={myArticleVersion}
+                 myCheckMethod={myCheckMethod}
+                 myParseMethod={myParseMethod}
                  myIariSourceId={myIariSourceId}
                  myDebug={myDebug}
 />);

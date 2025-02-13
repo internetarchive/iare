@@ -8,7 +8,7 @@ import PapersChart from "./charts/PapersChart";
 import LinkStatusChart from "./charts/LinkStatusChart";
 import ControlBox from "../ControlBox";
 import ActionableChart from "./charts/ActionableChart";
-import DomainsChart from "./charts/DomainsChart";
+import PayLevelDomainsChart from "./charts/PayLevelDomainsChart";
 import Checkbox from "../Checkbox";
 
 import {Chart, LinearScale, BarElement, ArcElement, Legend, Tooltip, Title, SubTitle, Colors,} from 'chart.js'
@@ -182,7 +182,7 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState, tool
 
                 <FilterBox name={"domains"} caption="Pay Level Domains" className={'domains-filter-box'}
                            showContents={expand.domains} onToggle={onToggleShow}>
-                    <DomainsChart pageData={pageData} onAction={onAction} currentState={currentState?.domains}/>
+                    <PayLevelDomainsChart pageData={pageData} onAction={onAction} currentState={currentState?.domains}/>
                 </FilterBox>
 
                 <FilterBox name={"reliability"} caption="Reliability Statistics" showContents={expand.reliability}

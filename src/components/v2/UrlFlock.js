@@ -2,7 +2,7 @@ import React, {useCallback, useState} from 'react';
 import {httpStatusCodes, iabotLiveStatusCodes} from "../../constants/httpStatusCodes"
 import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../constants/urlFilterMaps";
 import {convertToCSV, copyToClipboard} from "../../utils/utils";
-import {rspMap} from "../../constants/perennialList";
+import {reliabilityMap} from "../../constants/perennialList";
 import FlockBox from "../FlockBox";
 import {ACTIONS_IARE} from "../../constants/actionsIare";
 import {ACTIONABLE_FILTER_MAP} from "../../constants/actionableMap";
@@ -435,9 +435,9 @@ const urlFlock = React.memo( function UrlFlock({
         const getPerennialInfo = (u => {
             return !u.rsp
                 ? null
-                // rsp contains keys into rspMap
+                // rsp contains keys into reliabilityMap
                 : u.rsp.map( (s,i) => {
-                    return <div key={i} className={rspMap[s]?.key === "__unassigned" ? "lolite" : ""}>{rspMap[s]?.shortCaption ? rspMap[s].shortCaption : ''}</div>
+                    return <div key={i} className={reliabilityMap[s]?.key === "__unassigned" ? "lolite" : ""}>{reliabilityMap[s]?.shortCaption ? reliabilityMap[s].shortCaption : ''}</div>
                 })
         })
 

@@ -8,7 +8,7 @@ import {ConfigContext} from "../../contexts/ConfigContext";
 import {ACTIONABLE_FILTER_MAP} from "../../constants/actionableMap";
 import {URL_STATUS_FILTER_MAP} from "../../constants/urlFilterMaps";
 import {REF_FILTER_DEFS} from "../../constants/refFilterMaps";
-import {categorizedDomains, rspMap} from "../../constants/perennialList";
+import {categorizedDomains, reliabilityMap} from "../../constants/perennialList";
 import {UrlStatusCheckMethods} from "../../constants/checkMethods";
 import StatsDisplay from "./StatsDisplay";
 
@@ -65,19 +65,41 @@ export default function PageData({pageData = {}}) {
         pageData.process_errors.push( newError )
     }
 
-    // create pageData.urlDict and pageData.urlArray from urlResults
-    // called in useEffect when new url results received
+    // called in useEffect when new urlResults received
+    //
+    // from urlResults, creates:
+    //
+    //  pageData.urlDict and
+    //  pageData.urlArray
+    //
+    //
     const processUrls = useCallback( (pageData, urlResults) => {
 
-        const gatherTldStats = (urlArray) => {
+        const gatherDomainStats = (urlArray) => {
+            // calculates top level domain and pay level domain stats
+
+            if (!urlArray?.length) {
+                pageData.tld_statistics = {}
+                pageData.pld_statistics = {}
+                return
+            } // with empty  {
+
             const tldDict = {}  // stores count of each tld
-            if (urlArray?.length) {
-                urlArray.forEach( urlObj => {
-                    if (!tldDict[urlObj.tld]) tldDict[urlObj.tld] = 0
-                    tldDict[urlObj.tld] = tldDict[urlObj.tld] + 1
-                })
-            }
+            const pldDict = {}  // stores count of each tld
+            urlArray.forEach( urlObj => {
+
+                // do top level domain
+                if (!tldDict[urlObj.tld]) tldDict[urlObj.tld] = 0
+                tldDict[urlObj.tld] = tldDict[urlObj.tld] + 1
+
+                // do pay level domain stats
+                if (!pldDict[urlObj.pld]) pldDict[urlObj.pld] = 0
+                pldDict[urlObj.pld] = pldDict[urlObj.pld] + 1
+
+            })
+
             pageData.tld_statistics = tldDict
+            pageData.pld_statistics = pldDict
         }
 
         const gatherStatusStats = (urlArray) => {
@@ -86,6 +108,7 @@ export default function PageData({pageData = {}}) {
                 ? []
                 : Object.keys(URL_STATUS_FILTER_MAP).map(key => {
                     const f = URL_STATUS_FILTER_MAP[key];
+                    // get the count of the results of the filter function (f) for iterated status value (key)
                     const count = pageData.urlArray.filter((f.filterFunction)()).length; // Note the self-evaluating filterFunction!
                     return {
                         label: f.caption,
@@ -97,11 +120,14 @@ export default function PageData({pageData = {}}) {
             pageData.url_status_statistics = {urlCounts: urlCounts}
 
         }
-        // create url dict from returned results
+
+        // create urlDict from urlResults
+
         const urlDict = {}
 
         if (urlResults) {
             urlResults.forEach(d => {
+
                 // urlResults arrive from fetch routine surrounded by a "data" element:
                 // [
                 //  { data: <url data>, status_code: <result of fetch call (not the url status)> },
@@ -118,10 +144,10 @@ export default function PageData({pageData = {}}) {
                     urlDict[myUrl].urlCount = 0
                 }
 
-                // decorate the new url entry with some things that are currently  missing from IARI
-                // TODO Add these to iari! the "iariPostProcessUrl" should become obsolete
+                // use iariPostProcessUrl to add data to the url entry
+                // TODO make this step obsolete by doing it in IARI rather than here after the fact
                 try {
-                    iariPostProcessUrl(urlDict[myUrl])  // sets tld, sld, _3ld, and isArchive
+                    iariPostProcessUrl(urlDict[myUrl])  // sets tld, pld, _3ld, and isArchive
                 } catch (error) {
                     console.error(`Error processing URL: ${myUrl} (${error.message})`);
                     console.error(error.stack);
@@ -146,7 +172,7 @@ export default function PageData({pageData = {}}) {
             return urlDict[urlKey]
         })
 
-        gatherTldStats(pageData.urlArray)
+        gatherDomainStats(pageData.urlArray)
         gatherStatusStats(pageData.urlArray)
 
     }, [])
@@ -582,31 +608,31 @@ export default function PageData({pageData = {}}) {
 
     }, [])
 
-    const processRspData = useCallback( pageData => {
+    const processReliabilityData = useCallback( pageData => {
         // for each url in pageData.urlArray, set rsp[] property of urlDict entry
         // at the same time, keep track of rsp count
 
         if (!pageData?.urlArray) return
 
-        // create rspStats with nitial counts of 0
-        const rspStats = {}
-        const rspMapKeys = Object.keys(rspMap)
-        rspMapKeys.forEach( key => {
-            rspStats[key] = 0
+        // create reliabilityStats with nitial counts of 0
+        const reliabilityStats = {}
+        const reliabilityMapKeys = Object.keys(reliabilityMap)
+        reliabilityMapKeys.forEach( key => {
+            reliabilityStats[key] = 0
         })
 
         pageData.urlArray.forEach(urlObj => {
             // for each original url:
-            //      if sld or _3ld is in rsp category:
+            //      if pld or _3ld is in rsp category:
             //          - pull that category into url object's rsp[] property
-            //          - increment rsp category count in rspStats
+            //          - increment rsp category count in reliabilityStats
 
             urlObj.rsp = []  // Reliable Source / Perennial
 
             // check each rsp to see if this url is included in any of 'em
 
-            rspMapKeys.forEach(key => {
-                const rspKey = rspMap[key].rspKey
+            reliabilityMapKeys.forEach(key => {
+                const rspKey = reliabilityMap[key].rspKey
 
                 if (!rspDomains[rspKey]) {
                     // skip unhandled categories
@@ -614,24 +640,24 @@ export default function PageData({pageData = {}}) {
                     return
                 }
 
-                // if url's .sld or ._3ld included in this rsp's collection, modify urlObj and rspStats
+                // if URL's .pld or ._3ld included in this rsp's collection, modify urlObj and reliabilityStats
 
-                if (rspDomains[rspKey].includes(urlObj.sld)
+                if (rspDomains[rspKey].includes(urlObj.pld)
                     ||
                     rspDomains[rspKey].includes(urlObj._3ld)) {
                     urlObj.rsp.push( key )  // add this rsp to this url
-                    rspStats[key] = rspStats[key] + 1
+                    reliabilityStats[key] = reliabilityStats[key] + 1
                 }
 
             })
             // if not found in any rsp category, assign to "__unassigned"
             if (urlObj.rsp.length === 0) {
                 urlObj.rsp.push( "__unassigned" )  // add this rsp to this url
-                rspStats["__unassigned"] = rspStats["__unassigned"] + 1
+                reliabilityStats["__unassigned"] = reliabilityStats["__unassigned"] + 1
             }
         })
 
-        pageData.rsp_statistics = rspStats
+        pageData.rsp_statistics = reliabilityStats
 
     }, [rspDomains])
 
@@ -760,7 +786,8 @@ export default function PageData({pageData = {}}) {
                 processUrls(pageData, myUrls);  // creates pageData.urlDict and pageData.urlArray; loads pageData.errors
                 processReferences(pageData)  //
                 associateRefsWithLinks(pageData)  // associates url links with references
-                processRspData(pageData)
+
+                processReliabilityData(pageData)
                 processBooksData(pageData)
 
                 processActionables(pageData)
@@ -792,7 +819,7 @@ export default function PageData({pageData = {}}) {
             processUrls,
             associateRefsWithLinks,
             myStatusCheckMethod,
-            processRspData,
+            processReliabilityData,
             processBooksData,
             processActionables,
         ])
