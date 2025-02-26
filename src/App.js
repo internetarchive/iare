@@ -78,7 +78,8 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
             ? ['easterIsland', 'internetArchive', 'mlk', 'short_test', ]
 
             // my development shortcuts
-            : ['marcBolan', 'easterIsland', 'easter_island_short', 'hamas_israel', 'mlk', 'internetArchive', 'karen_bakker', 'short_test', 'pdfDesantis', 'pdfOneLink'];
+            // : ['marcBolan', 'easterIsland', 'easter_island_short', 'hamas_israel', 'mlk', 'internetArchive', 'karen_bakker', 'short_test', 'pdfDesantis', 'pdfOneLink'];
+            : ['marcBolan', 'easterIsland', 'easter_island_short', 'mlk', 'internetArchive'];
 
 
     // add environment tag to body element's class list to enable selective environment styling

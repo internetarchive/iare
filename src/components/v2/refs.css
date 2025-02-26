@@ -1,6 +1,6 @@
 :root {
-    --width-ref-list: 22rem;
-    --width-ref-list: 22rem;
+    /*--width-ref-list: 22rem;*/
+    --width-ref-list: 20rem;
 
     /*--color-ref-bg: #d5e5f6; !* d5f6d5 *! !* d5e5f6 *! !* d5e2f6 *!*/
     --color-ref-bg-header: var(--g-color-list-header-bg);

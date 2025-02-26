@@ -1,12 +1,14 @@
 :root {
-    --width-url-list: 43rem;
+    /*--width-url-list: 43rem;*/
+    --width-url-list: 40rem;
 
     --width-url-name: 20rem;
     --width-url-status: 2.0rem;
     --width-url-archive-status: 3.5rem;
     --width-url-citations: 3.5rem;
     --width-url-templates: 4.0rem;
-    --width-url-actionable: 8.0rem;
+    /*--width-url-actionable: 7.0rem;*/
+    --width-url-actionable: 5.0rem;
     --width-url-sections: 4.5rem;
     --width-url-perennial: 5.0rem;
 
