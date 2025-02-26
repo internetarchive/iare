@@ -276,20 +276,20 @@ export const getPagePathEndpoint = ({
 
         console.log(`getPagePathEndpoint: wiki:article version: ${parseMethod}`)
 
-        if (parseMethod === ParseMethods.ARTICLE_V1.key) {
+        if (parseMethod === ParseMethods.WIKIPARSE_V1.key) {
             // const sectionRegex = '&regex=references|bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
             const sectionRegex = '&sections=references|bibliography|further reading|works cited|sources|external links';
             const options = '&dehydrate=false'
             return `${iariBase}/statistics/article?url=${path}${sectionRegex}${options}${refresh ? "&refresh=true" : ''}`;
         }
 
-        else if (parseMethod === ParseMethods.ARTICLE_V2.key) {
+        else if (parseMethod === ParseMethods.WIKIPARSE_V2.key) {
             const options = ''
             return `${iariBase}/article?url=${path}${options}${refresh ? "&refresh=true" : ''}`;
         }
 
-        else if (parseMethod === ParseMethods.ARTICLE_XREF.key) {
-            const endpoint = ParseMethods.ARTICLE_XREF.endpoint
+        else if (parseMethod === ParseMethods.WIKIPARSE_XREF.key) {
+            const endpoint = ParseMethods.WIKIPARSE_XREF.endpoint
 
             // Extract the page title
             const pageTitleMatch = path.match(/\/wiki\/([^?#]+)/);
@@ -520,7 +520,7 @@ export const fetchUrls = async ({
     if (methods.CORENTIN.key === method) {  // special case until IARI covers corentin
         urlData = checkUrlsCorentin(urlArray, refresh, timeout)
 
-    } else if ([methods.IABOT.key, methods.WAYBACK.key].includes(method)) {
+    } else if ([methods.IABOT.key, methods.LIVEWEBCHECK.key].includes(method)) {
         urlData = fetchUrlsIari(urlArray, iariBase, method, refresh, timeout)
 
     } else {

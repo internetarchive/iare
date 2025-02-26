@@ -440,7 +440,7 @@ export default function PageData({pageData = {}}) {
                         // console.log(`Another Template found for ref id ${ref.id}: ${templateName}`)
 
                         // if template.name not set, try to pull it from parameters[template_name]
-                        // this is to fix bug in ARTICLE_V1 parser that just puts template name in
+                        // this is to fix bug in WIKIPARSE_V1 parser that just puts template name in
                         // "template_name" property of parameters object
                         if (!template.name && template.parameters) {
                             template["name"] = template.parameters["template_name"]

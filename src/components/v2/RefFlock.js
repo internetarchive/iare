@@ -198,12 +198,12 @@ function RefFlock({ pageData= {},
 
         let referenceCaption = null
 
-        if (pageData.iariParseMethod === ParseMethods.ARTICLE_V1.key ||
-            pageData.iariParseMethod === ParseMethods.ARTICLE_XREF.key) {
+        if (pageData.iariParseMethod === ParseMethods.WIKIPARSE_V1.key ||
+            pageData.iariParseMethod === ParseMethods.WIKIPARSE_XREF.key) {
             // eslint-disable-next-line react/jsx-pascal-case
             referenceCaption = <CitationDisplayV1 reference={_ref} index={i} />
 
-        } else if (pageData.iariParseMethod === ParseMethods.ARTICLE_V2.key) {
+        } else if (pageData.iariParseMethod === ParseMethods.WIKIPARSE_V2.key) {
             // eslint-disable-next-line react/jsx-pascal-case
             referenceCaption = <CitationDisplayV2 options={options} reference={_ref} index={i} />
         }

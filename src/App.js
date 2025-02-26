@@ -179,44 +179,6 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         }) => {
 
         // mediaType is "pdf", "html", "wiki", or anything else we come up with
-                        // const getPagePathEndpoint = (path = '', cacheData = '', mediaType = 'wiki', refresh = false) => {
-                        //
-                        //     const iariBase = IariSources[myIariSourceId]?.proxy
-                        //     // TODO: error if iariBase is undefined or otherwise falsey
-                        //     console.log(`getPagePathEndpoint: myIariSourceId = ${myIariSourceId}, iariBase = ${iariBase}`)
-                        //
-                        //     if (cacheData) {
-                        //         // use cached article result data if specified
-                        //         // this is used (mainly?only?) for development
-                        //         return `${iariBase}/article_cache?iari_id=${cacheData}`;
-                        //     }
-                        //
-                        //     else if (mediaType === "wiki") {
-                        //
-                        //         if (parseMethod === ParseMethods["ARTICLE_V1"].key) {
-                        //             // const sectionRegex = '&regex=references|bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
-                        //             const sectionRegex = '&sections=references|bibliography|further reading|works cited|sources|external links';
-                        //             const options = '&dehydrate=false'
-                        //             return `${iariBase}/statistics/article?url=${path}${sectionRegex}${options}${refresh ? "&refresh=true" : ''}`;
-                        //         }
-                        //
-                        //         else if (parseMethod === ParseMethods["ARTICLE_V2"].key) {
-                        //             const options = ''
-                        //             return `${iariBase}/article?url=${path}${options}${refresh ? "&refresh=true" : ''}`;
-                        //         }
-                        //
-                        //     } else if (mediaType === "pdf") {
-                        //         return `${iariBase}/statistics/pdf?url=${path}${refresh ? "&refresh=true" : ''}`;
-                        //
-                        //     } else {
-                        //         // do general case...TODO make default parser endpoint a config
-                        //         // this will produce an error right now, as IARI does not support "analyze"
-                        //         // (mojomonger) i think we _should_ have a generic "analyze" endpoint
-                        //         return `${iariBase}/statistics/analyze?url=${path}${refresh ? "&refresh=true"
-                        //             : ''}${mediaType ? `&media_type=${mediaType}` : ''}`;
-                        //     }
-                        // }
-
 
         // handle null pathName
         if (!pathName && !cacheData) {
@@ -243,7 +205,6 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
             refresh: refresh,
             parseMethod: parseMethod
         })
-
 
         console.log("APP::fetchArticleData: endpoint = ", myEndpoint)
         setEndpointPath(myEndpoint); // for debug display purposes only
@@ -486,14 +447,14 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     const debug = <div className={"debug-section " + (isDebug ? "debug-on" : "debug-off")}>
         <div style={{marginBottom:".5rem"}}
         >{iariChoiceSelect} {methodChoiceSelect} {articleVersionChoiceSelect}</div>
-        <p><span className={'label'}>Environment:</span> {env} (host: {window.location.host})</p>
+        <p><span className={'label'}>Environment:</span> {env} <span className={'lolite'}>(host: {window.location.host})</span></p>
         <p><span className={'label'}>IARE Version:</span> {iareVersion}</p>
-        <p><span className={'label'}>IARI Source:</span> {myIariSourceId} ({IariSources[myIariSourceId]?.proxy})</p>
+        <p><span className={'label'}>IARI Source:</span> {myIariSourceId} <span className={'lolite'}>({IariSources[myIariSourceId]?.proxy})</span></p>
         <p><span className={'label'}>IARI Version:</span> {pageData?.iari_version ? pageData.iari_version : "unknown"} </p>
-        <p><span className={'label'}>Article Version:</span> {ParseMethods[parseMethod].caption}</p>
-        <p><span className={'label'}>Check Method:</span> {UrlStatusCheckMethods[checkMethod].caption} ({checkMethod})</p>
-        <p><span className={'label'}>URL from address line:</span> {myPath}</p>
-        <p><span className={'label'}>Cache Data from address line:</span> {myCacheData}</p>
+        <p><span className={'label'}>Parse Method:</span> {ParseMethods[parseMethod].caption}</p>
+        <p><span className={'label'}>Check Method:</span> {checkMethod} <span className={'lolite'}>({UrlStatusCheckMethods[checkMethod].caption})</span></p>
+        <p><span className={'label'}>Target URL from query param:</span> {myPath}</p>
+        <p><span className={'label'}>Use Cache Data:</span> {myCacheData ? myCacheData : 'N/A'}</p>
         <p><span className={'label'}>Force Refresh:</span> {refreshCheck ? "TRUE" : "false"}</p>
         <div>{debugButtons}</div>
         <p><span className={'label'}>pathName:</span> <MakeLink href={targetPath}/></p>

@@ -19,7 +19,8 @@
     --g-color-flock-box-caption-fg: #FFFFFF;
     --g-color-flock-box-caption-bg: #2299e8;
 
-    --g-color-reference-display-bg: hsl(211deg 65.22% 81.96%);
+    --g-color-reference-display-bg: hsl(206deg 100% 86%);
+    /*--g-color-reference-display-bg: hsl(211deg 65.22% 81.96%);*/
     --g-color-reference-display-fg: black;
     --g-color-reference-ref-list-display-bg: hsl(211, 23%, 71%);
     --g-color-reference-ref-list-display-fg: #5f5f5f;

@@ -39,7 +39,7 @@
     --border-solid-light: 1px solid #ebebeb;
     --border-solid-dark: 1px solid #343232;
 
-    --width-ref-view-list: 17rem;
+    --width-ref-view-list: 14rem;
     --height-ref-view-list-caption: 6.2rem;  /* TODO make this dynamic with resize */
 
     --width-url-list-refview: 55rem;

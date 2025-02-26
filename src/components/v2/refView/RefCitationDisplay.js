@@ -19,10 +19,10 @@ export default function RefCitationDisplay({ _ref,
 
     let asParsed = null
     if (_ref) {
-        if (parseMethod === ParseMethods.ARTICLE_V1.key  ||
-            parseMethod === ParseMethods.ARTICLE_XREF.key) {
+        if (parseMethod === ParseMethods.WIKIPARSE_V1.key  ||
+            parseMethod === ParseMethods.WIKIPARSE_XREF.key) {
             asParsed = <CitationDisplayV1 reference={_ref} index={index} options={{ ...options, isSingleUse: true }} />
-        } else if (parseMethod === ParseMethods.ARTICLE_V2.key) {
+        } else if (parseMethod === ParseMethods.WIKIPARSE_V2.key) {
             asParsed = <CitationDisplayV2 reference={_ref} options={{hide_actionables:true, show_extra:true}} index={index} />
         } else {
             asParsed = <div>Unknown article version {parseMethod ? parseMethod : "(none)"}</div>

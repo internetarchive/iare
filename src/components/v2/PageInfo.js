@@ -115,7 +115,7 @@ export default function PageInfo({ pageData }) {
 
     const section_method = <p>Check Method: {myConfig.urlStatusMethod}</p>
 
-    const section_version = <p>Article Version: {myConfig.articleVersion}</p>
+    const section_version = <p>Parse Method: {myConfig.articleVersion}</p>
 
     const section_ores = ores_score_display
         ? <>

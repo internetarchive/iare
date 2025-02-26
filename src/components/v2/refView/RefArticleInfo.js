@@ -38,10 +38,10 @@ export default function RefArticleInfo({ _ref, pageData={}, onAction }) {
 
     let articleInfo = null
 
-    if (pageData.iariParseMethod === ParseMethods.ARTICLE_V1.key) {
+    if (pageData.iariParseMethod === ParseMethods.WIKIPARSE_V1.key) {
         articleInfo = <div>Section of Origin: {_ref.section}&nbsp;&nbsp;</div>
 
-    } else if (pageData.iariParseMethod === ParseMethods.ARTICLE_V2.key) {
+    } else if (pageData.iariParseMethod === ParseMethods.WIKIPARSE_V2.key) {
         const anchorLinkDisplay = <div className={'citation-links'}>
             <button className={`utility-button small-button`}
                     data-cite_def_link={_ref.cite_def_link}

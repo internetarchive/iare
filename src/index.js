@@ -38,17 +38,16 @@ const getIariSource = (qParams, targetEnvironment) => {
 }
 
 const getCheckMethod = (qParams, targetEnvironment) => {
-    const temporaryDefaultKey = UrlStatusCheckMethods.WAYBACK.key  // hard-set to WAYBACK for production
-    // const temporaryDefaultKey = UrlStatusCheckMethods.IABOT.key  // using IABot until LWC settles down
+    const tempDefaultKey = UrlStatusCheckMethods.LIVEWEBCHECK.key  // hard-set to LIVEWEBCHECK for production
 
-    if (targetEnvironment === 'env-production') return temporaryDefaultKey
+    if (targetEnvironment === 'env-production') return tempDefaultKey
     // else
-    const methodKey = queryParameters.has("method") ? queryParameters.get("method") : temporaryDefaultKey
+    const methodKey = queryParameters.has("method") ? queryParameters.get("method") : tempDefaultKey
 
-    // if specified method not in our defined choices, default to WAYBACK, and notify as error
+    // if specified method not in our defined choices, notify as error and default to tempDefaultKey
     if (!UrlStatusCheckMethods[methodKey]) {
         console.error(`Method ${methodKey} not supported.`)
-        return temporaryDefaultKey
+        return tempDefaultKey
     }
     return methodKey
 }
@@ -57,8 +56,8 @@ const getCheckMethod = (qParams, targetEnvironment) => {
 article version determines how the article data is interpreted.
  */
 const getParseMethod = (qParams, targetEnvironment) => {
-    // const defaultParseMethodKey = ParseMethods.ARTICLE_V1.key
-    const defaultParseMethodKey = ParseMethods.ARTICLE_XREF.key
+    // const defaultParseMethodKey = ParseMethods.WIKIPARSE_V1.key
+    const defaultParseMethodKey = ParseMethods.WIKIPARSE_XREF.key
 
     // ONLY allow default version for production
     if (targetEnvironment === 'env-production')
@@ -88,7 +87,7 @@ const getParseMethod = (qParams, targetEnvironment) => {
 
     // slipping thru here means specified key is not a valid key or a
     // valid alternate key for article version; return default
-    console.error(`Article Version ${parseMethodKey} not supported.`)
+    console.error(`Parse Method ${parseMethodKey} not supported.`)
     return defaultParseMethodKey
 
 }
