@@ -4,13 +4,15 @@
 
 // Override default variables before the default bootstrap import
 
+
+@use 'node_modules/bootstrap/scss/bootstrap' as *;
+
 // $body-bg: #e6fcee;
 $h2-font-size:                1rem * 1.25 !default;
-$h3-font-size:                1rem * 1 !default;
+$h3-font-size:                1rem * 3 !default;
 $h4-font-size:                1rem * 0.85 !default;
-
 
 // Import Bootstrap and its default variables
 
 //@import '~bootstrap/scss/bootstrap.scss';
-@import 'node_modules/bootstrap/scss/bootstrap';
+//@import 'node_modules/bootstrap/scss/bootstrap';
