@@ -112,7 +112,7 @@ export default function RefView({open,
                                   selectedRefIndex={selectedRefIndex}
 
                                   options={{
-                                      hide_header: true,
+                                      show_header: false,
                                       show_extra: false,
                                       show_ref_nav: true,
                                       show_filter_description: true,

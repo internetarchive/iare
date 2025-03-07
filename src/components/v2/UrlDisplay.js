@@ -573,7 +573,7 @@ export default function UrlDisplay ({ pageData, options } ) {
                               refFilter={refFilter}
                               onAction={handleRefClick}
                               options={{
-                                  hide_header:true,
+                                  show_header: false,
                                   show_filter_description: false,
                                   caption: "References List",
                               }}

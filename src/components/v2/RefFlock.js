@@ -186,13 +186,13 @@ function RefFlock({ pageData= {},
         </div>
         : null
 
-    const flockListHeader = options.hide_header
-        ? null
-        : <div className={"ref-list-header"} >
+    const flockListHeader = options.show_header
+        ? <div className={"ref-list-header"} >
             <div className={"list-header-row"}>
                 <div className={"list-name"}>Reference</div>
             </div>
         </div>
+        : null
 
     const filteredRows = filteredRefs.map((_ref, i) => {
 
@@ -297,7 +297,7 @@ function RefFlock({ pageData= {},
     // only log if the context is specified...otherwise ignore
     if (options.context) console.log(`RefFlock: component: before render return (context: ${options?.context}): selectedRefIndex: ${selectedRefIndex}, refFilter: ${refFilter?.caption}`)
 
-    return <FlockBox onKeyDown={options?.show_ref_nav ? handleKeyDown : null}  // only handle keydown if we specify navigation
+    return <FlockBox onKeyDown={options?.show_ref_nav ? handleKeyDown : null}  // handle keydown only if show navigation
                      caption={flockCaption}
                      className={"ref-flock"}>
 
