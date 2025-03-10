@@ -1,6 +1,6 @@
-import {UrlStatusCheckMethods} from "../constants/checkMethods";
-import {IariSources} from "../constants/endpoints";
-import {ParseMethods} from "../constants/parseMethods";
+import {UrlStatusCheckMethods} from "../constants/checkMethods.jsx";
+import {IariSources} from "../constants/endpoints.jsx";
+import {ParseMethods} from "../constants/parseMethods.jsx";
 
 const getArchiveStatusFromData = (data) => {  // return dict of success or failure
     /*
