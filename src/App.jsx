@@ -5,11 +5,11 @@ import package_json from "../package.json";
 import {debounce} from "./utils/utils.js";
 import {getPagePathEndpoint} from "./utils/iariUtils.js";
 
-import PathNameFetch from "./components/PathNameFetch.jsx";
-import Loader from "./components/Loader.jsx";
-import PageDisplay from "./components/PageDisplay.jsx";
 import MakeLink from "./components/MakeLink.jsx";
 import Dropdown from "./components/Dropdown.jsx";
+import Loader from "./components/Loader.jsx";
+import PathNameFetch from "./components/PathNameFetch.jsx";
+import PageDisplay from "./components/PageDisplay.jsx";
 
 import {IariSources} from "./constants/endpoints.jsx";
 import {UrlStatusCheckMethods} from "./constants/checkMethods.jsx";
@@ -77,7 +77,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
             // default staging shortcuts
             ? ['easterIsland', 'internetArchive', 'mlk', 'short_test', ]
 
-            // my development shortcuts
+            // shortcuts for my local or any other development
             // : ['marcBolan', 'easterIsland', 'easter_island_short', 'hamas_israel', 'mlk', 'internetArchive', 'karen_bakker', 'short_test', 'pdfDesantis', 'pdfOneLink'];
             : ['marcBolan', 'easterIsland', 'easter_island_short', 'mlk', 'internetArchive'];
 
@@ -178,8 +178,6 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
             refresh = false
         }) => {
 
-        // mediaType is "pdf", "html", "wiki", or anything else we come up with
-
         // handle null pathName
         if (!pathName && !cacheData) {
             console.log("APP::fetchArticleData: pathName is null-ish and no cache-data specified");
@@ -188,13 +186,14 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
             return;
         }
 
+        // mediaType is "pdf", "html", "wiki", or anything else we come up with
         const myMediaType = getMediaType(pathName, cacheData);
         // TODO: idea: respect a "forceMediaType",
         // where it can force a media type endpoint, no matter what getMediaType thinks it is.
         // If so, passes it in to getPagePathEndpoint, where the endpoint is determined
         // by passed in mediaType rather than mediaType interpolated from pathName.
 
-        console.log("APP::fetchArticleData: mediaType = ", myMediaType)
+        console.log("APP: fetchArticleData: mediaType = ", myMediaType)
 
         // const myEndpoint = getPagePathEndpoint(myIariSourceId, pathName, cacheData, myMediaType, refresh);
         const myEndpoint = getPagePathEndpoint({
@@ -317,12 +316,12 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     // fetch initial article specified on address bar with url param
     useEffect(() => {
 
-        console.log(`APP:::useEffect[myPath, myCacheData, myRefresh]: calling handlePathName: ${myPath}, ${myCacheData}, ${myRefresh}`)
-
-        // set these states only for debug display, essentially
+        // set these states for debug display, essentially
         setTargetPath(myPath);
         setCacheData(myCacheData)
         setRefreshCheck(myRefresh);
+
+        console.log(`APP: useEffect[myIariSourceId, myPath, myCacheData, myRefresh, fetchArticleData]: calling fetchArticleData: ${myPath}, ${myCacheData}, ${myRefresh}`)
 
         // and do the fetching for the path specified (pulled from URL address)
         fetchArticleData({
@@ -332,7 +331,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         })
 
 
-    }, [myIariSourceId, myPath, myRefresh, myCacheData, fetchArticleData])
+    }, [myIariSourceId, myPath, myCacheData, myRefresh, fetchArticleData])
 
 
     const handleCheckMethodChange = (methodId) => {
@@ -373,7 +372,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     const iariChoices = Object.keys(IariSources)
         .filter(key => {
             return env === 'env-staging'
-                ? !(key === "iari_local" || key === "iari")  // do not allow iari_local and iari on Staging
+                ? !(key === "iari_local" || key === "iari")  // filter out iari_local and iari on Staging
                 : true
         })
         .map( key => {
@@ -385,10 +384,17 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     </div>
 
     const iareVersion = `${package_json.version}`
-    const siteDisplay = (env !== 'env-production') ? ` STAGING SITE ` : ''
+    const siteDisplay = (env !== 'env-production')
+        ? (env === 'env-staging'
+            ? ` STAGING SITE `
+            : (env === 'env-local'
+                ? ` LOCAL SITE `
+                : '' + env + ' SITE')
+        )
+        : ''
     const showHideDebugButton = (env !== 'env-production') && <button className={"utility-button debug-button small-button"}
                                                                       onClick={toggleDebug} >{
-        isDebug ? <>&#8212;</> : "+"  // dash and plus sign
+        isDebug ? <>&#8212;</> : "+"  // dash (&#8212;) and plus sign
     }</button>
     // up and down triangles:  onClick={toggleDebug} >{isDebug ? <>&#9650;</> : <>&#9660;</>}</button>
 
@@ -490,12 +496,12 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         tooltipIdConfirm: "confirm-tooltip-id",
     }
 
-    console.log(`rendering App component:`, JSON.stringify({
+    console.log(`APP: Rendering App component:`, JSON.stringify({
         path: targetPath,
         refreshCheck: refreshCheck,
         statusMethod: checkMethod,
         iari_source: myIariSourceId,
-        config: config,
+        // config: config,
     }))
 
     const defaultIfEmpty = "https://en.wikipedia.org/wiki/"

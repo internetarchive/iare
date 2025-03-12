@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.2.27.0",
-  "version_name": "0.2.27.0 Bootstrap Sass update",
+  "version": "0.3.0.0",
+  "version_name": "0.3.0.0 Vite Implementation (fixes Bootstrap Sass update errors)",
   "private": true,
   "type": "module",
   "dependencies": {

@@ -1,7 +1,8 @@
 import React from 'react';
 import '../shared/components.css';
+import RawJson from "../RawJson.jsx";
 
-export default function StatsDisplay ({ options } ) {
+export default function StatsDisplay ({ pageData, options } ) {
 
     return <>
         <div className={"stats-display section-box"}>
@@ -14,6 +15,8 @@ export default function StatsDisplay ({ options } ) {
             <h3>Stats shall go here</h3>
             <div>Things like LAMP and IABot stats</div>
         </div>
+
+        <RawJson obj={pageData} />
 
     </>
 }

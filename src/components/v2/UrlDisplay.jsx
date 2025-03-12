@@ -588,7 +588,7 @@ export default function UrlDisplay ({ pageData, options } ) {
 
 
             {/* this is the popup Reference Viewer component */}
-            <RefView open={openModal}
+            <RefView isOpen={openModal}
                      onClose={() => setOpenModal(false)}
                      onAction={handleAction}
                      

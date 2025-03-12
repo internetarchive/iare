@@ -1,13 +1,16 @@
-import React, {useEffect} from "react";
-import Draggable from 'react-draggable';
+import React, {useEffect, useState} from "react";
+// import Draggable from 'react-draggable';
+import {Rnd} from 'react-rnd';
 import {ConfigContext} from "../../../contexts/ConfigContext.jsx";
 import RefFlock from "../RefFlock.jsx";
 import RefDetails from "./RefDetails.jsx";
 import "./refView.css"
 import {ACTIONS_IARE} from "../../../constants/actionsIare.jsx";
 
+const STORAGE_KEY = "modalPositionSize";
 
-export default function RefView({open,
+export default function RefView({
+                                    isOpen,
                                     onClose,
                                     onAction,
 
@@ -19,8 +22,24 @@ export default function RefView({open,
                                     tooltipId
                                 }) {
 
+    console.log("RefView: entering component")
+
+    const [modalState, setModalState] = useState(() => {
+        const savedState = localStorage.getItem(STORAGE_KEY);
+        return savedState
+            ? JSON.parse(savedState)
+            : { x: 100, y: 100, width: 400, height: 250 };
+    });
+
+
     let myConfig = React.useContext(ConfigContext);
     myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
+
+    const modalMargin = 100
+    const [modalSize, setModalSize] = useState({
+        width: window.innerWidth - modalMargin,
+        height: window.innerHeight - modalMargin,
+    });
 
     useEffect(() => {
         // adds "Escape Key closes modal" feature
@@ -37,11 +56,23 @@ export default function RefView({open,
         };
         window.addEventListener('keydown', handleKeyDown);
 
+        const handleResize = () => {
+            console.log(`RV: handleResize: width: ${window.innerWidth - modalMargin},height: ${window.innerHeight}`)
+            setModalSize({
+                width: window.innerWidth - modalMargin,
+                height: window.innerHeight - modalMargin,
+            });
+        };
+        window.addEventListener("resize", handleResize);
+
         // return value is function to call upon component close
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener("resize", handleResize);
         };
-    }, [onClose]);
+
+    }, [onClose, setModalSize]);
+
 
     const handleRefListClick = React.useCallback((result) => {
         // what happens when reference in ref list clicked:
@@ -61,24 +92,65 @@ export default function RefView({open,
         }
     }, [onAction])
 
+    useEffect(() => {
+        // Save position & size when modalState changes
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(modalState));
+    }, [modalState]);
+
     // close modal if not in open state
-    if (!open) return null;
+    if (!isOpen) return null;
 
     const debugAtTop = false && <>
         <div>Debug:</div>
         <div>Current ref index: {selectedRefIndex}</div>
         </>
 
-    return <div className='ref-modal-overlay' onClick={onClose} >
-        <Draggable
-            handle={".ref-view-title-bar"}
-            // defaultPosition={{x: 100, y: 100}}
-            position={null}
-            // grid={[25, 25]}
-            scale={1}
-            // accepts strings, like `{x: '10%', y: '10%'}`.
-            // positionOffset={{ x: "10%", y: "5%"}}
-            positionOffset={{ x: '-50%', y: '-50%' }}
+                    // const delete_me = <Draggable
+                    //     handle={".ref-view-title-bar"}
+                    //     // defaultPosition={{x: 100, y: 100}}
+                    //     position={null}
+                    //     // grid={[25, 25]}
+                    //     scale={1}
+                    //     // accepts strings, like `{x: '10%', y: '10%'}`.
+                    //     // positionOffset={{ x: "10%", y: "5%"}}
+                    //     positionOffset={{ x: '-50%', y: '-50%' }}
+                    // ></Draggable>
+
+    return <div className='ref-modal-overlay' xonClick={onClose} >
+        <Rnd
+            style={{overflow: "hidden", position: "relative"}}
+            //// ref={rndRef}
+            default={{
+                x: (modalMargin) / 2, // Center horizontally
+                y: (modalMargin) / 2, // Center vertically
+                width: modalSize.width,
+                height: modalSize.height,
+            }}
+            minWidth={500}
+            minHeight={400}
+            bounds="window"
+            //// className="bg-white shadow-lg rounded-lg"
+            enableResizing={{
+                top: true,
+                right: true,
+                bottom: true,
+                left: true,
+                topRight: true,
+                bottomRight: true,
+                bottomLeft: true,
+                topLeft: true,
+            }}
+            resizeHandleStyles={{
+                top: { height: "10px", cursor: "ns-resize" },
+                right: { width: "10px", cursor: "ew-resize" },
+                bottom: { height: "10px", cursor: "ns-resize" },
+                left: { width: "10px", cursor: "ew-resize" },
+            }}
+            resizeHandleClasses={{
+                right: "custom-resize-handle right",
+                bottom: "custom-resize-handle bottom",
+            }}
+            onResize={() => {console.log("FROM WITHIN inResize!!!")}}
         >
 
             <div className={"ref-modal-container ref-view"}
@@ -137,8 +209,7 @@ export default function RefView({open,
                 </div>
 
             </div>
-        </Draggable>
+        </Rnd>
     </div>
 
 }
-

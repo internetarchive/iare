@@ -23,13 +23,14 @@ function RefFlock({ pageData= {},
                       tooltipId='',
                       } ) {
 
-    if (options.context) console.log("RefFlock: component entrance")
+    console.log("RefFlock: component entrance")
 
-    let selectedArrayIndex = -1  // where in the filteredRefs is our current array index (not refIndex, which is the "global index" of the reference
+    let selectedArrayIndex = -1  // where in the filteredRefs list is our current array index (not refIndex, which is the "global index" of the reference
     const [tooltipHtmlRefList, setTooltipHtmlRefList] = useState( '<div>ToolTip<br />second line</div>' )
 
     // TODO catch undefined myIariBase exception
 
+    // refs used for low-level DOM element manipulation
     const flockListRef = useRef(null)
     const targetItemRef = useRef(null)
 
@@ -44,14 +45,7 @@ function RefFlock({ pageData= {},
         }
     })  // no dependencies means runs upon EVERY render
 
-    // const flockRef = React.useRef(null)
-    //
-    // React.useEffect(() => {
-    //     // Focus on the element when the component mounts to ensure keystrokes get focused
-    //     flockRef.current.focus();
-    // }, []); // Empty dependency array ensures this effect runs only once after the initial render
-
-    React.useEffect(() => {
+    useEffect(() => {
         // Focus on the element when the component mounts to ensure keystrokes get focused
         if (options?.context) {
             // console.log(`RefFlock (${options?.context}): setting focus to flockListRef`)
@@ -62,13 +56,14 @@ function RefFlock({ pageData= {},
     const handleKeyDown = (event) => {
 
         if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+            // left and up keys navigate to PREV ref in list
             event.stopPropagation()
             event.preventDefault()
-            // ??? event.preventDefault()
             console.log(`RefFlock: handleKeyDown (context: ${options?.context}): selectedRefIndex: ${selectedRefIndex}, arrowLeft or arrowUp`)
             handleNavPrev()
 
         } else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+            // right and down keys navigate to NEXT ref in list
             event.stopPropagation()
             event.preventDefault()
             console.log(`RefFlock: handleKeyDown (context: ${options?.context}): selectedRefIndex: ${selectedRefIndex}, arrowRight or arrowDown`)
@@ -78,7 +73,7 @@ function RefFlock({ pageData= {},
     };
 
     const handleListClick= (e) => {
-        console.log("handleClickList")
+        console.log("handleListClick")
         e.preventDefault()  // prevents internal <a> links from jumping automatically
 
         const refElement = e.target.closest('button.ref-button')
@@ -96,6 +91,7 @@ function RefFlock({ pageData= {},
 
     // if no references to show...
     if (!refArray) {
+        console.log("RefFlock: No references to show")
         return <FlockBox caption={"References List"} className={"ref-flock"}>
             {/*{"No references to show."}*/}
         </FlockBox>
@@ -104,6 +100,7 @@ function RefFlock({ pageData= {},
     const onHoverListItem = e => {
         // show tool tip for link status icon
         let html = ''
+            // TODO: expand ref list hover detail
             // const linkStatus = e.target.dataset['linkStatus']
             // if (linkStatus) {
             //     html = `<div>${linkDefs[linkStatus]?.desc ? linkDefs[linkStatus]?.desc : "Unknown link status"}</div>`
@@ -119,7 +116,7 @@ function RefFlock({ pageData= {},
         let refArrayData = filteredRefs
 
         // sort filtered refs by order they arrived from source
-        // and return fields forr each ref
+        // and return array of ref contents
         refArrayData = refArrayData.sort(
             (a, b) => (a.ref_index > b.ref_index) ? 1 : (a.ref_index < b.ref_index) ? -1 : 0
         ).map( r => {
@@ -194,24 +191,24 @@ function RefFlock({ pageData= {},
         </div>
         : null
 
-    const filteredRows = filteredRefs.map((_ref, i) => {
+    const filteredRows = filteredRefs.map((myRef, i) => {
 
         let referenceCaption = null
 
         if (pageData.iariParseMethod === ParseMethods.WIKIPARSE_V1.key ||
             pageData.iariParseMethod === ParseMethods.WIKIPARSE_XREF.key) {
             // eslint-disable-next-line react/jsx-pascal-case
-            referenceCaption = <CitationDisplayV1 reference={_ref} index={i} />
+            referenceCaption = <CitationDisplayV1 reference={myRef} index={i} />
 
         } else if (pageData.iariParseMethod === ParseMethods.WIKIPARSE_V2.key) {
             // eslint-disable-next-line react/jsx-pascal-case
-            referenceCaption = <CitationDisplayV2 options={options} reference={_ref} index={i} />
+            referenceCaption = <CitationDisplayV2 options={options} reference={myRef} index={i} />
         }
 
         const isSelected = (
             selectedRefIndex !== undefined
             && selectedRefIndex !== null
-            && (selectedRefIndex.toString() === _ref.ref_index.toString())
+            && (selectedRefIndex.toString() === myRef.ref_index.toString())
         )
 
         if (isSelected) selectedArrayIndex = i
@@ -219,22 +216,23 @@ function RefFlock({ pageData= {},
         let className=`ref-button${isSelected ? ' selected' : ''}`
 
         return isSelected
-            // we set a "ref" value of this is the targeted one - it allows us to scroll into view
+            // we set the "ref" value to targetItemRef
+            // - this allows us to scroll target ref into view
             ? <button ref={targetItemRef}
-                      key={_ref.ref_index}
+                      key={myRef.ref_index}
                       className={className}
-                      data-ref_index={_ref.ref_index}
-                      data-ref={_ref}
+                      data-ref_index={myRef.ref_index}
+                      data-ref={myRef}
                       data-array-index={i}
             >{referenceCaption}</button>
 
-            : <button key={_ref.ref_index}
+            : <button key={myRef.ref_index}
                       className={className}
-                      data-ref_index={_ref.ref_index}
-                      data-ref={_ref}
+                      data-ref_index={myRef.ref_index}
+                      data-ref={myRef}
                       data-array-index={i}
             >{referenceCaption}</button>
-    })
+    })  // end filteredRows
 
     const showPrev = true
     const showNext = true

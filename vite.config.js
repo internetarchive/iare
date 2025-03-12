@@ -7,6 +7,8 @@ import svgr from 'vite-plugin-svgr';
 export default defineConfig({
     build: {
         outDir: 'build',
+        sourcemap: true // Generates source maps for debugging;
+        // sourcemap: "hidden" // Keeps source maps but hides them from DevTools;
     },
 
     plugins: [

@@ -163,6 +163,7 @@ export default function PageData({pageData = {}}) {
 
         // primary urls are all those urls that are NOT archive links
         const primaryUrls = Object.keys(urlDict).filter(urlKey => {
+            // filter OUT all urls that look like archive urls
             return !(urlDict[urlKey].isArchive)
         })
 
@@ -906,7 +907,7 @@ export default function PageData({pageData = {}}) {
                             }
 
                             {selectedViewType === 'stats' &&
-                                <StatsDisplay options={{}}/>
+                                <StatsDisplay pageData={pageData} options={{}}/>
                             }
 
                         </div>
