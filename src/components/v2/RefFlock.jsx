@@ -23,7 +23,9 @@ function RefFlock({ pageData= {},
                       tooltipId='',
                       } ) {
 
-    console.log("RefFlock: component entrance")
+    const urlCount = pageData?.urlDict ? Object.keys(pageData.urlDict).length : 0
+
+    console.log(`RefFlock: component entrance  pageData urlDict count:${urlCount}`)
 
     let selectedArrayIndex = -1  // where in the filteredRefs list is our current array index (not refIndex, which is the "global index" of the reference
     const [tooltipHtmlRefList, setTooltipHtmlRefList] = useState( '<div>ToolTip<br />second line</div>' )
@@ -215,6 +217,8 @@ function RefFlock({ pageData= {},
 
         let className=`ref-button${isSelected ? ' selected' : ''}`
 
+        console.log(`Imaging ref list; key is: ${myRef.ref_index}`)
+        
         return isSelected
             // we set the "ref" value to targetItemRef
             // - this allows us to scroll target ref into view

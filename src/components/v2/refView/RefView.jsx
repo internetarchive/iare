@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 // import Draggable from 'react-draggable';
 import {Rnd} from 'react-rnd';
 import {ConfigContext} from "../../../contexts/ConfigContext.jsx";
@@ -6,6 +6,7 @@ import RefFlock from "../RefFlock.jsx";
 import RefDetails from "./RefDetails.jsx";
 import "./refView.css"
 import {ACTIONS_IARE} from "../../../constants/actionsIare.jsx";
+import {createInstance} from "i18next";
 
 const STORAGE_KEY = "modalPositionSize";
 
@@ -22,24 +23,78 @@ export default function RefView({
                                     tooltipId
                                 }) {
 
-    console.log("RefView: entering component")
+    const rndRef = useRef(null);
 
-    const [modalState, setModalState] = useState(() => {
-        const savedState = localStorage.getItem(STORAGE_KEY);
-        return savedState
-            ? JSON.parse(savedState)
-            : { x: 100, y: 100, width: 400, height: 250 };
-    });
+    const handleDragStart = (e, data) => {
+        console.log('Drag Start', data);
+    };
 
+    const handleDrag = (e, data) => {
+        console.log('Dragging', data);
+    };
+
+    const handleDragStop = (e, data) => {
+        console.log('Drag Stop', data);
+    };
+
+    const handleResizeStart = (e, dir, ref) => {
+        console.log('Resize Start', dir, ref);
+    };
+
+    const handleResize = (e, dir, ref, delta, position) => {
+        console.log('Resizing', dir, delta, position);
+        // console.log("FROM WITHIN inResize!!!")
+        // console.log(`x: ${e.x}`)
+        // console.log(`y: ${e.y}`)
+        // console.log(`screenX: ${e.screenX}`)
+        // console.log(`screenY: ${e.screenY}`)
+    }
+
+    const handleResizeStop = (e, dir, ref, delta, position) => {
+        console.log('Resize Stop', dir, delta, position);
+    };
+
+    const urlCount = pageData?.urlDict ? Object.keys(pageData.urlDict).length : 0
+    console.log(`RefView: component entrance; pageData urlDict count:${urlCount}`)
 
     let myConfig = React.useContext(ConfigContext);
-    myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
+    myConfig = myConfig ? myConfig : {} // ensure myConfig is defined; prevents "undefined.<param>" errors
+    // i wonder if this works: let myConfig = React.useContext(ConfigContext) || {};
 
-    const modalMargin = 100
-    const [modalSize, setModalSize] = useState({
-        width: window.innerWidth - modalMargin,
-        height: window.innerHeight - modalMargin,
+    const modalDefaults = {
+        margin: 100,
+        minWidth: 500,
+        minHeight: 400,
+    }
+
+    const [modalState, setModalState] = useState({
+        x: (modalDefaults.margin) / 2,
+        y: (modalDefaults.margin) / 2,
+        width: window.innerWidth - modalDefaults.margin,
+        height: window.innerHeight - modalDefaults.margin,
     });
+
+                    //     x: (modalMargin) / 2, // Center horizontally
+                    //         y: (modalMargin) / 2, // Center vertically
+                    //         width: modalState.width,
+                    //         height: modalState.height,
+                    // }}
+
+                    // minWidth={500}
+                    // minHeight={400}
+
+// const [modalState, setModalState] = useState(() => {
+    //     const savedState = localStorage.getItem(STORAGE_KEY);
+    //     return savedState
+    //         ? JSON.parse(savedState)
+    //         : { x: 100, y: 100, width: 400, height: 250 };
+    // });
+
+    // * check resize upon new createInstance
+    // * fetch savedSizeParams for modal
+    //     * if null, set defaults and save
+    // * upon resize or move, save position params
+    //     * show in console
 
     useEffect(() => {
         // adds "Escape Key closes modal" feature
@@ -56,22 +111,23 @@ export default function RefView({
         };
         window.addEventListener('keydown', handleKeyDown);
 
-        const handleResize = () => {
-            console.log(`RV: handleResize: width: ${window.innerWidth - modalMargin},height: ${window.innerHeight}`)
-            setModalSize({
-                width: window.innerWidth - modalMargin,
-                height: window.innerHeight - modalMargin,
-            });
-        };
-        window.addEventListener("resize", handleResize);
+        // const handleWindowResize = () => {
+        //     // resizing containing window resets size to new window size minus border margins
+        //     console.log(`RV: window.handleWindowResize: width: ${window.innerWidth - modalDefaults.margin}, height: ${window.innerHeight - modalDefaults.margin}`)
+        //     setModalState({
+        //         width: window.innerWidth - modalDefaults.margin,
+        //         height: window.innerHeight - modalDefaults.margin,
+        //     });
+        // };
+        // window.addEventListener("resize", handleWindowResize);
 
-        // return value is function to call upon component close
+        // return value is function to call upon component close; we unload event listeners here
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
-            window.removeEventListener("resize", handleResize);
+            // window.removeEventListener("resize", handleWindowResize);
         };
 
-    }, [onClose, setModalSize]);
+    }, [onClose, setModalState]);
 
 
     const handleRefListClick = React.useCallback((result) => {
@@ -118,16 +174,32 @@ export default function RefView({
 
     return <div className='ref-modal-overlay' xonClick={onClose} >
         <Rnd
+            ref={rndRef}
+            onDragStart={handleDragStart}
+            onDrag={handleDrag}
+            onDragStop={handleDragStop}
+            onResizeStart={handleResizeStart}
+            onResize={handleResize}
+            onResizeStop={handleResizeStop}
+
             style={{overflow: "hidden", position: "relative"}}
-            //// ref={rndRef}
+            ////ref={rndRef}
+
+            // default={{
+            //     x: (modalMargin) / 2, // Center horizontally
+            //     y: (modalMargin) / 2, // Center vertically
+            //     width: modalState.width,
+            //     height: modalState.height,
+            // }}
             default={{
-                x: (modalMargin) / 2, // Center horizontally
-                y: (modalMargin) / 2, // Center vertically
-                width: modalSize.width,
-                height: modalSize.height,
+                x: modalState.x,
+                y: modalState.y,
+                width: modalState.width,
+                height: modalState.height,
             }}
-            minWidth={500}
-            minHeight={400}
+            minWidth={modalDefaults.minWidth}
+            minHeight={modalDefaults.minHeight}
+
             bounds="window"
             //// className="bg-white shadow-lg rounded-lg"
             enableResizing={{
@@ -150,10 +222,10 @@ export default function RefView({
                 right: "custom-resize-handle right",
                 bottom: "custom-resize-handle bottom",
             }}
-            onResize={() => {console.log("FROM WITHIN inResize!!!")}}
         >
 
-            <div className={"ref-modal-container ref-view"}
+            <div className={"ref-view ref-modal-container"}
+                 // turn off all responses, as they will cause unexpected behavior
                  onClick={(e) => {e.stopPropagation()}}
                  onMouseMove={(e) => {e.stopPropagation()}}
                  onScroll={(e) => {e.stopPropagation()}}
@@ -163,7 +235,7 @@ export default function RefView({
                 <div className="ref-view-title-bar">
                     {/*<h2>Reference View<RefCitationLinks citationLinks={details.citationLinks} />*/}
                     {/*</h2>*/}
-                    <h2>Reference View</h2>
+                    <h2>Reference Details</h2>
                     <div className="modalRight">
                         <p onClick={onClose} className="closeBtn">X Close</p>
                     </div>
