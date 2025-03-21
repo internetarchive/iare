@@ -98,6 +98,7 @@ xxx.body.env-local .iare-view .header h1 {
 }
 .iare-view h3 {
     color:var(--color-h3);
+    font-size: 1.25rem;
 }
 .iare-view h4 {
     color:var(--color-h4);

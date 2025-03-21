@@ -15,9 +15,9 @@ function RefCitationDisplayHtml({ reference = null,
             : "<div class='lolite'>No HTML rendering found.</div>"
 
     return <div className={"ref-button ref-citation-button-wrapper"} onClick={onClick}>
-
+        { /* NB Note use of DANGEROUS property... */}
         <div dangerouslySetInnerHTML={{__html: cite_html}} />
-
+        { /* NB Note use of DANGEROUS property... */}
     </div>
 
 }

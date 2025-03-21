@@ -7,7 +7,7 @@
     --color-sub-caption: #9b9a9a;
     --color-actionable-header: hsl(358 69% 65% / 1);
     /* local definitions */
-    --titlebar-height: 2.5rem;
+    --ref-view-titlebar-height: 2.5rem;
     --titlebar-font-size: 1rem;
 
     --height-ref-view-wikitext: 7.5rem;
@@ -60,7 +60,7 @@
     z-index: 100;
 }
 
-.ref-modal-container {
+.ref-view-container {
     /*max-width:80vw;*/
     /*max-height:80vh;*/
 
@@ -77,13 +77,24 @@
     /*transform: translate( -50%, -50%);*/
 
     background-color: #ffffff;
-
     box-shadow: 0px 0px 18px 0px rgba(0,0,0,0.75);
 
     display: flex;
     flex-direction: column;
 
-    overflow: scroll;
+}
+
+@media screen and (max-width: 500px) {
+    .ref-view-container {
+        flex-direction: column;
+        top:0;
+        left:0;
+        transform:none;
+        width:100%;
+        height: 100vh;
+    }
+
+    /* and transform other elements for responsive */
 }
 
 .modalRight {
@@ -97,10 +108,11 @@
 .ref-view-title-bar {
     /*background-color: #565e64;*/
     /*background-color: #c54ba5;*/
-    min-height:var(--titlebar-height);
-    max-height:var(--titlebar-height);
+    min-height:var(--ref-view-titlebar-height);
+    max-height:var(--ref-view-titlebar-height);
     cursor:move;
     background: linear-gradient(to right, #005db1, #00a5e0);
+    z-index: 200;
     /* TODO AIARE make "dark-title-bar-bg programmed element */
 }
 .ref-view-title-bar h2 {
@@ -113,7 +125,7 @@
     padding: .5rem 0 .3rem .85rem;
 }
 .ref-view-title-bar .closeBtn {
-    position:fixed;
+    position:absolute;
     top:.65rem;
     right:.85rem;
     cursor: pointer;
@@ -136,6 +148,10 @@
     padding-left:.5rem;
     color:black;
     background-color: var(--g-color-body-bg);
+}
+
+.ref-view-debug * {
+    /*color:white !important;*/
 }
 
 .ref-view-contents h3 {
@@ -259,6 +275,26 @@
     font-size: .6rem;
     line-height: .7;
 }
+
+button.truth-probe-button
+{
+    margin-bottom:0;
+    height:1.8rem;
+    font-size: .6rem;
+    /*padding: .1rem .3rem .1rem .3rem;*/
+    padding: .1rem .5rem;
+    line-height: .7;
+    margin-right:.55rem;
+    background-color: var(--color-button-bg);
+    /*outline: var(--color-button-bg);*/
+    /*border: var(--color-button-bg);*/
+    border: 1pt solid black;
+    color: black;
+
+}
+
+
+
 .ref-view-wikitext .header-left-part,
 .ref-view-wikitext-new .header-left-part
 {
@@ -287,18 +323,6 @@
     background-color: var(--color-bg-editable) !important;
 }
 
-@media screen and (max-width: 500px) {
-    .ref-modal-container {
-        flex-direction: column;
-        top:0;
-        left:0;
-        transform:none;
-        width:100%;
-        height: 100vh;
-    }
-
-    /* and transform other elements for responsive */
-}
 
 .ref-note-alert {
     color: red;
@@ -545,7 +569,7 @@
     position: relative;
 }
 
-.ref-view-single-display .ref-citation-html-display {
+.ref-view-single-display {
     margin-bottom:0;
     margin-top: .35rem;
     padding: .3rem .3rem .3rem .4rem;

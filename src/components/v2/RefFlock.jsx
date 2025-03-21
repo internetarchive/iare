@@ -25,10 +25,12 @@ function RefFlock({ pageData= {},
 
     const urlCount = pageData?.urlDict ? Object.keys(pageData.urlDict).length : 0
 
-    console.log(`RefFlock: component entrance  pageData urlDict count:${urlCount}`)
+    console.log(`RefFlock: component entrance; pageData urlDict.length:${urlCount}`)
 
     let selectedArrayIndex = -1  // where in the filteredRefs list is our current array index (not refIndex, which is the "global index" of the reference
-    const [tooltipHtmlRefList, setTooltipHtmlRefList] = useState( '<div>ToolTip<br />second line</div>' )
+    // const [tooltipHtmlRefList, setTooltipHtmlRefList] = useState(
+    //     '<div>ToolTip<br>RefFlock<br />third line</div>' )
+    const [tooltipHtmlRefList, setTooltipHtmlRefList] = useState(null )
 
     // TODO catch undefined myIariBase exception
 
@@ -41,7 +43,7 @@ function RefFlock({ pageData= {},
         const container = flockListRef.current;
         const target = targetItemRef.current;
         if (container && target) {
-            console.log(`RefFlock (${options?.context}): scrolling to targetItemRef`)
+            console.log(`RefFlock (ctx: ${options?.context ? options?.context : 'nil'}): scrolling to targetItemRef`)
             target.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" })
             target.focus()
         }
@@ -100,17 +102,22 @@ function RefFlock({ pageData= {},
     }
 
     const onHoverListItem = e => {
-        // show tool tip for link status icon
-        let html = ''
-            // TODO: expand ref list hover detail
-            // const linkStatus = e.target.dataset['linkStatus']
-            // if (linkStatus) {
-            //     html = `<div>${linkDefs[linkStatus]?.desc ? linkDefs[linkStatus]?.desc : "Unknown link status"}</div>`
-            // }
-
-        // TODO: set timer for hover to wait, and then hover remove
-        // html = "Click for Reference details"
-        setTooltipHtmlRefList(html)
+        // // show tool tip for link status icon
+        // const eButton = e.target.closest('button')
+        // const ref = eButton.attributes['ref-ref']
+        //
+        // console.log("hovering over list item")
+        //
+        // let html = ``
+        //     // TODO: expand ref list hover detail
+        //     // const linkStatus = e.target.dataset['linkStatus']
+        //     // if (linkStatus) {
+        //     //     html = `<div>${linkDefs[linkStatus]?.desc ? linkDefs[linkStatus]?.desc : "Unknown link status"}</div>`
+        //     // }
+        //
+        // // TODO: set timer for hover to wait, and then hover remove
+        // // html = "Click for Reference details"
+        // setTooltipHtmlRefList(html)
     }
 
     const handleCopyRefsClick = () => { // used to copy url list and status
@@ -186,7 +193,8 @@ function RefFlock({ pageData= {},
         : null
 
     const flockListHeader = options.show_header
-        ? <div className={"ref-list-header"} >
+        ? <div className={"ref-list-header"}
+               key={"key-ref-list-header"}>
             <div className={"list-header-row"}>
                 <div className={"list-name"}>Reference</div>
             </div>
@@ -217,23 +225,21 @@ function RefFlock({ pageData= {},
 
         let className=`ref-button${isSelected ? ' selected' : ''}`
 
-        console.log(`Imaging ref list; key is: ${myRef.ref_index}`)
-        
         return isSelected
             // we set the "ref" value to targetItemRef
-            // - this allows us to scroll target ref into view
+            // - this allows us to scroll "target ref button" into view
             ? <button ref={targetItemRef}
                       key={myRef.ref_index}
                       className={className}
+                      ref-ref={myRef}
                       data-ref_index={myRef.ref_index}
-                      data-ref={myRef}
                       data-array-index={i}
             >{referenceCaption}</button>
 
             : <button key={myRef.ref_index}
                       className={className}
                       data-ref_index={myRef.ref_index}
-                      data-ref={myRef}
+                      ref-ref={myRef}
                       data-array-index={i}
             >{referenceCaption}</button>
     })  // end filteredRows
@@ -283,9 +289,10 @@ function RefFlock({ pageData= {},
     const flockList = <>
         {flockListHeader}
         <div className={"ref-list"}
+             key={"key-ref-list"}
+
              ref={flockListRef}
 
-             // data-tooltip-id="ref-list-tooltip"
              data-tooltip-id={tooltipId}
              data-tooltip-html={tooltipHtmlRefList}
 

@@ -8,7 +8,7 @@ shows actionables for this reference
  */
 export default function RefActionables({ actionables, onAction }) {
 
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
 
     if (actionables?.length) return <>
         <div className="ref-view-section section-actionables">

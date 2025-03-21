@@ -622,6 +622,36 @@ export const iariPostProcessUrl = (urlObj) => {
 }
 
 
+const getProbeResults = async (urlLinks, probeMethods, iariBase, method, refresh, timeout) => {
+    // // assumes all promises successful
+    // // TODO: error trap this promise call with a .catch
+    // return await Promise.all(urlArray.map(urlObj => {
+    //     return fetchUrl({iariBase:iariBase, url: urlObj, refresh:refresh, timeout:timeout, method:method})
+    // }));
+
+    try {
+        return await Promise.all(
+            urlLinks.map(urlLink =>
+                fetchUrl({
+                    iariBase,
+                    url: urlLink,
+                    refresh,
+                    timeout,
+                    method
+                }).catch(error => {
+                    console.error(`Error fetching ${urlLink}:`, error);
+                    return null; // Prevents entire Promise.all() from failing
+                })
+            )
+        );
+    } catch (err) {
+        console.error("Failed to fetch URLs:", err);
+        return []; // Return empty array in case of failure
+    }
+}
+
+
+
 // // return true if url deemed a that points to a book
 // // based on regex match of book url patterns
 // export const isBookUrl = (url) => {

@@ -1,5 +1,4 @@
 import React, {useEffect, useRef, useState} from "react";
-// import Draggable from 'react-draggable';
 import {Rnd} from 'react-rnd';
 import {ConfigContext} from "../../../contexts/ConfigContext.jsx";
 import RefFlock from "../RefFlock.jsx";
@@ -23,18 +22,28 @@ export default function RefView({
                                     tooltipId
                                 }) {
 
-    const rndRef = useRef(null);
+    const refRnd = useRef(null);
+    const refContainer = useRef(null);
+    const [isDragging, setIsDragging] = useState(false);
+
+
 
     const handleDragStart = (e, data) => {
+        setIsDragging(true)
         console.log('Drag Start', data);
     };
 
-    const handleDrag = (e, data) => {
-        console.log('Dragging', data);
+    const handleDragStop = (e, data) => {
+        if (!isDragging) return; // Ignore if no drag occurred
+        setIsDragging(false); // Reset dragging state
+        console.log(`Drag Stop, setting position to ${data.x}, ${data.y}`)
+        setPosition({ x: data.x, y: data.y })
     };
 
-    const handleDragStop = (e, data) => {
-        console.log('Drag Stop', data);
+    const handleMouseDown = () => {setIsDragging(false)}
+
+    const handleDrag = (e, data) => {
+        console.log('Dragging', data);
     };
 
     const handleResizeStart = (e, dir, ref) => {
@@ -51,15 +60,20 @@ export default function RefView({
     }
 
     const handleResizeStop = (e, dir, ref, delta, position) => {
-        console.log('Resize Stop', dir, delta, position);
-    };
-
-    const urlCount = pageData?.urlDict ? Object.keys(pageData.urlDict).length : 0
-    console.log(`RefView: component entrance; pageData urlDict count:${urlCount}`)
+        console.log('handle Resize Stop', dir, delta, position);
+        setSize({ width: ref.offsetWidth, height: ref.offsetHeight });
+        //// handleSetPosition(position.x, position.y)
+        // setPosition({ x: position.x, y: position.y }); // Update position if needed
+    }
 
     let myConfig = React.useContext(ConfigContext);
     myConfig = myConfig ? myConfig : {} // ensure myConfig is defined; prevents "undefined.<param>" errors
     // i wonder if this works: let myConfig = React.useContext(ConfigContext) || {};
+
+    const urlCount = pageData?.urlDict
+        ? Object.keys(pageData.urlDict).length
+        : 0
+    console.log(`RefView: component entrance; pageData.urlDict.length: ${urlCount}`)
 
     const modalDefaults = {
         margin: 100,
@@ -67,23 +81,26 @@ export default function RefView({
         minHeight: 400,
     }
 
-    const [modalState, setModalState] = useState({
-        x: (modalDefaults.margin) / 2,
-        y: (modalDefaults.margin) / 2,
-        width: window.innerWidth - modalDefaults.margin,
-        height: window.innerHeight - modalDefaults.margin,
+    // const [modalState, setModalState] = useState({
+    //     x: (modalDefaults.margin) / 2,
+    //     y: (modalDefaults.margin) / 2,
+    //     width: window.innerWidth - modalDefaults.margin,
+    //     height: window.innerHeight - modalDefaults.margin,
+    // });
+
+    const [size, setSize] = useState({
+        // width: modalDefaults.minWidth,
+        // height: modalDefaults.minHeight
+        width: window.innerWidth - (modalDefaults.margin * 2),
+        height: window.innerHeight - (modalDefaults.margin * 2),
+    });
+    const [position, setPosition] = useState({
+        x: modalDefaults.margin,
+        y: modalDefaults.margin,
     });
 
-                    //     x: (modalMargin) / 2, // Center horizontally
-                    //         y: (modalMargin) / 2, // Center vertically
-                    //         width: modalState.width,
-                    //         height: modalState.height,
-                    // }}
 
-                    // minWidth={500}
-                    // minHeight={400}
-
-// const [modalState, setModalState] = useState(() => {
+    // const [modalState, setModalState] = useState(() => {
     //     const savedState = localStorage.getItem(STORAGE_KEY);
     //     return savedState
     //         ? JSON.parse(savedState)
@@ -127,7 +144,9 @@ export default function RefView({
             // window.removeEventListener("resize", handleWindowResize);
         };
 
-    }, [onClose, setModalState]);
+    },
+        // [onClose, setModalState]);
+    [onClose]);
 
 
     const handleRefListClick = React.useCallback((result) => {
@@ -148,10 +167,10 @@ export default function RefView({
         }
     }, [onAction])
 
-    useEffect(() => {
-        // Save position & size when modalState changes
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(modalState));
-    }, [modalState]);
+                // useEffect(() => {
+                //     // Save position & size when modalState changes
+                //     localStorage.setItem(STORAGE_KEY, JSON.stringify(modalState));
+                // }, [modalState]);
 
     // close modal if not in open state
     if (!isOpen) return null;
@@ -161,46 +180,97 @@ export default function RefView({
         <div>Current ref index: {selectedRefIndex}</div>
         </>
 
-                    // const delete_me = <Draggable
-                    //     handle={".ref-view-title-bar"}
-                    //     // defaultPosition={{x: 100, y: 100}}
-                    //     position={null}
-                    //     // grid={[25, 25]}
-                    //     scale={1}
-                    //     // accepts strings, like `{x: '10%', y: '10%'}`.
-                    //     // positionOffset={{ x: "10%", y: "5%"}}
-                    //     positionOffset={{ x: '-50%', y: '-50%' }}
-                    // ></Draggable>
+                // const handleSetPosition = (x, y) => {
+                //     const container = refContainer.current
+                //
+                //     if (container) {
+                //
+                //         // const scrollLeft = container.scrollLeft;
+                //         const scrollTop = 0;  //container.scrollTop;
+                //
+                //         // // container.scrollLeft = 0;
+                //         // container.scrollTop = 0;
+                //
+                //         console.log(`handleSetPosition, setting position to ${x}, ${y}`)
+                //         setPosition({ x, y });
+                //
+                //         // container.scrollLeft = scrollLeft;
+                //         if (false && container.parentElement) {
+                //             setTimeout(() => {
+                //                 container.parentElement.scrollTop = scrollTop;
+                //             }, 0);
+                //             // container.parentElement.scrollTop = scrollTop;
+                //         }
+                //
+                //     } else {
+                //         console.log(`handleSetPosition, no container, setting position to ${x}, ${y}`)
+                //         setPosition({ x, y });
+                //     }
+                // }
 
-    return <div className='ref-modal-overlay' xonClick={onClose} >
+    const debugDisplay = false &&
+        <div className="ref-view-debug"
+             style={{backgroundColor:"green", color: "white !important", padding:"10px"}}>
+        <h3>debug</h3>
+    </div>
+
+    const refViewTitleBar = <div className="ref-view-title-bar"
+                                 style={{position: "sticky", top: 0}}
+    >
+        <h2>Reference Details</h2>
+        <div className="modalRight">
+            <p onClick={onClose} className="closeBtn">X Close</p>
+        </div>
+        {debugDisplay}
+    </div>
+
+    const stopAndShow = (e, caption) =>{
+        e.stopPropagation()
+        console.log(`stop propagation: ${caption}`)
+    }
+
+    // return <div className='ref-modal-overlay' onClick={onClose} >
+    return <div
+        className='ref-modal-overlay'
+        style={{pointerEvents: "auto"}}
+
+            // onClick={(e) => {e.stopPropagation()}}
+            // onMouseMove={(e) => {e.stopPropagation()}}
+            // onScroll={(e) => {e.stopPropagation()}}
+            // onScrollCapture={(e) => {e.stopPropagation()}}
+>
         <Rnd
-            ref={rndRef}
+            ref={refRnd}
+            // ref={refContainer}
+
             onDragStart={handleDragStart}
-            onDrag={handleDrag}
             onDragStop={handleDragStop}
-            onResizeStart={handleResizeStart}
-            onResize={handleResize}
+            // onDrag={handleDrag}
+            // onResizeStart={handleResizeStart}
+            // onResize={handleResize}
             onResizeStop={handleResizeStop}
 
-            style={{overflow: "hidden", position: "relative"}}
-            ////ref={rndRef}
+            // onMouseDown={() => setIsDragging(false)} // Reset on new click
+            onMouseDown={handleMouseDown}
 
-            // default={{
-            //     x: (modalMargin) / 2, // Center horizontally
-            //     y: (modalMargin) / 2, // Center vertically
-            //     width: modalState.width,
-            //     height: modalState.height,
-            // }}
-            default={{
-                x: modalState.x,
-                y: modalState.y,
-                width: modalState.width,
-                height: modalState.height,
+            style={{
+                overflow: "auto",
+                position: "relative",
+                pointerEvents: "auto", // Ensures interaction with the modal
             }}
+
+            // style={{overflow: "hidden", position: "relative"}}
+            // style={{position: "relative"}}
+
+            // default size and position - use state
+            size={size}
+            position={position}
+
             minWidth={modalDefaults.minWidth}
             minHeight={modalDefaults.minHeight}
 
-            bounds="window"
+            // bounds="window"
+            bounds="parent"
             //// className="bg-white shadow-lg rounded-lg"
             enableResizing={{
                 top: true,
@@ -222,24 +292,31 @@ export default function RefView({
                 right: "custom-resize-handle right",
                 bottom: "custom-resize-handle bottom",
             }}
+
+            // onScroll={(e) => {e.stopPropagation()}}
+            // onScrollCapture={(e) => {e.stopPropagation()}}
+
         >
 
-            <div className={"ref-view ref-modal-container"}
-                 // turn off all responses, as they will cause unexpected behavior
-                 onClick={(e) => {e.stopPropagation()}}
-                 onMouseMove={(e) => {e.stopPropagation()}}
-                 onScroll={(e) => {e.stopPropagation()}}
-                 onScrollCapture={(e) => {e.stopPropagation()}}
+            <div className={"ref-view ref-view-container"}
+                ref={refContainer}
+
+                // style={{overflow:"auto"}}
+                style={{overflow: "visible", position: "relative"}}
+
+                // // turn off event responses on main content, as they will cause unexpected behavior
+                onClick={(e) => {stopAndShow(e, "onClick")}}
+                onMouseMove={(e) => {stopAndShow(e, "onMouseMove")}}
+                // onMouseDown={(e) => {stopAndShow(e, "onMouseDown")}}
+                onScroll={(e) => {stopAndShow(e, "onScroll")}}
+                onScrollCapture={(e) => {stopAndShow(e, "onScrollCapture")}}
+                // onClick={(e) => {e.stopPropagation()}}
+                // onMouseMove={(e) => {e.stopPropagation()}}
+                // onScroll={(e) => {e.stopPropagation()}}
+                // onScrollCapture={(e) => {e.stopPropagation()}}
             >
 
-                <div className="ref-view-title-bar">
-                    {/*<h2>Reference View<RefCitationLinks citationLinks={details.citationLinks} />*/}
-                    {/*</h2>*/}
-                    <h2>Reference Details</h2>
-                    <div className="modalRight">
-                        <p onClick={onClose} className="closeBtn">X Close</p>
-                    </div>
-                </div>
+                {refViewTitleBar}
 
                 <div className="ref-view-contents">
 

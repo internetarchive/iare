@@ -22,7 +22,7 @@ When this component is rendered, it must "process" the pageData. This involves:
 */
 
 
-export default function PageData({pageData = {}}) {
+export default function PageData({rawPageData = {}}) {
     /*
     pageData is mainly the data from the /article endpoint fetch call,
     with a few minor decoration properties added for convenience.
@@ -30,7 +30,7 @@ export default function PageData({pageData = {}}) {
     processing starts with the fetchPageData call in the useEffect upon component instantiation.
 
     we immediately fetch the URL details for each URL in pageData.urls, which creates:
-        urlDict, a url-keyed javascript object for each url.
+        urlDict, a url-keyed javascript object for each url, and
         urlArray, an array with each entry pointing to a urlDict object.
 
     we then flatten the references list, merging all "named" references into one
@@ -52,13 +52,16 @@ export default function PageData({pageData = {}}) {
 
     let myConfig = React.useContext(ConfigContext)
     myConfig = myConfig ? myConfig : {} // prevents undefined myConfig.<param> errors
+
     const myIariBase = myConfig.iariSource
     const myStatusCheckMethod = myConfig.urlStatusMethod
     const isShowViewOptions = myConfig.isShowViewOptions
 
-    // google dev tools does not handle module level imports well, but assigning to a local var makes things work
+    // google chrome dev tools does not handle module level imports
+    // well, but assigning to a local var seems to make things work
     const rspDomains = categorizedDomains
 
+    const pageData = rawPageData
 
     const addProcessError = (pageData, newError) => {
         if (!pageData.process_errors) pageData.process_errors = []
@@ -742,6 +745,62 @@ export default function PageData({pageData = {}}) {
     }, [])
 
 
+    const processProbes = useCallback( pageData => {
+        // returns probe data from IARI for each URL in urlArray
+
+        /*
+        from stephen:
+
+        Any URL at books.google.com ...
+         harder to tell for archive.org/details since it can be anything besides a book.
+          Anything at gutenberg.org
+
+         */
+
+        // return true if url deemed a that points to a book
+        // based on regex match of book url patterns
+        const getProbeResultsForUrl = (url) => {
+
+            // return IARI results of probe for each probe type
+            return {}
+        }
+
+        if (!pageData?.urlArray) return
+
+        // const probeResults = {}
+        //
+        // pageData.urlArray.forEach(urlObj => {
+        //     ///            getProbeResultsForUrl
+        // })
+
+        if (!pageData["probes"]) pageData["probes"] = {}
+        pageData.probes = {
+            probeArray: [ "verifyi", "trust_project"],
+            probes: {
+                "verifyi" : {
+                    message: "Somewhat Reliable",
+                    level: 5,
+                    results: {
+                        thing_1: "Some things were good.",
+                        thing_2: "Some things were bad"
+                    }
+                },
+                "trust_project" : {
+                    message: "Somewhat Un-reliable",
+                    level: -5,
+                    results: {
+                        thing_1: "Some things were good.",
+                        thing_2: "More things were bad"
+                    }
+                },
+
+            }
+        }
+
+
+    }, [])
+
+
     useEffect( () => { // [myIariBase, pageData, processReferences, processUrls, myStatusCheckMethod]
 
         const fetchPageUrls = () => {
@@ -776,12 +835,14 @@ export default function PageData({pageData = {}}) {
                 // decorate pageData a little
                 pageData.statusCheckMethod = myStatusCheckMethod;
 
-                // fetch info for each url and wait for results before continuing
+                console.log(`BEFORE fetch urls, pageData.urlArray size: ${pageData.urlArray?.length}`)
+                // fetch info for all urls and wait for results before continuing
                 const myUrls = await fetchPageUrls()
+                console.log(`AFTER fetch urls, pageData.urlArray size: ${pageData.urlArray?.length}`)
 
 
-                // NB TODO: fetch article data from IARI for V2 or article parsing to get array of citerefs
-                // const newRefs = await fetchNewRefs()  // grabs article_V2 data from IARI
+                            // NB TODO: fetch article data from IARI for V2 or article parsing to get array of citerefs
+                            // const newRefs = await fetchNewRefs()  // grabs article_V2 data from IARI
 
                 // process received data - TODO this should eventually be done in IARI
                 processUrls(pageData, myUrls);  // creates pageData.urlDict and pageData.urlArray; loads pageData.errors
@@ -790,6 +851,8 @@ export default function PageData({pageData = {}}) {
 
                 processReliabilityData(pageData)
                 processBooksData(pageData)
+
+                processProbes(pageData)
 
                 processActionables(pageData)
 

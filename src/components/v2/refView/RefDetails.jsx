@@ -8,6 +8,7 @@ import {ACTIONS_IARE} from "../../../constants/actionsIare.jsx";
 // import RefWikitextNew from "./RefWikitextNew.jsx";
 import RefCitationDisplayHtml from "./RefCitationDisplayHtml.jsx";
 import RefCitationClaim from "./RefCitationClaim.jsx";
+import RefProbes from "./RefProbes.jsx";
 
 /*
 
@@ -28,6 +29,8 @@ function RefDetails({ refDetails,
 
     const handleCitationClick = (eRaw) => {
         // console.log("handleClick local ref")
+
+        // stop normal link jumping
         eRaw.preventDefault()
 
         const myCite = {
@@ -40,7 +43,7 @@ function RefDetails({ refDetails,
         // redefine e to be closest "a" target
         const e = eRaw.target.closest('a')
 
-        if (!e) return  // dont care if click is not on a hot link
+        if (!e) return  // ignore if click is not on a hot link
 
         try {
             myCite.TagName = e.tagName
@@ -49,11 +52,12 @@ function RefDetails({ refDetails,
         }
 
         if (myCite.TagName === "A") {
+            const wikiPrefix = "https://en.wikipedia.org/wiki/"
+            // NB TODO must respect wiki language version for replacement link wikiPrefix
             try {
-                // href is raw href data; link is href starting with wiki prefix
-                // NB TODO must respect wiki language version for replacement link text
+                // href is raw href data; resolved link is href with wikiPrefix
                 myCite.href = e.attributes["href"].value
-                myCite.link = myCite.href.replace(/^\.\//, "https://en.wikipedia.org/wiki/");
+                myCite.link = myCite.href.replace(/^\.\//, wikiPrefix);
 
             } catch(err) {
                 myCite.href = "Href error"
@@ -152,20 +156,13 @@ function RefDetails({ refDetails,
                             onAction={onAction}
         />
 
+        <RefProbes reference={refDetails} pageData={pageData} />
         <RefActionables actionables={refDetails?.actionable} />
-
-        {/*<RefArticleInfo _ref={refDetails} pageData={pageData}/>*/}
-
         <RefCitationClaim reference={refDetails} />
-
         <RefUrls urls={refDetails?.urls} pageData={pageData} />
-
         {showWikitext && <RefWikitext wikitext={refDetails?.wikitext} ref_details={refDetails} onAction={handleRefViewAction} />}
-
         <RefTemplates templates={refDetails?.templates} pageData={pageData} tooltipId={tooltipId} />
-
         {/*<RefWikitextNew wikitext="" onAction={handleRefViewAction} />*/}
-
     </>
 
 }

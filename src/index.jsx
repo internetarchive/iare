@@ -119,7 +119,7 @@ const myParseMethod = getParseMethod(queryParameters, env);
 // ReactDOM.createRoot(document.getElementById('root')).render(<App />)
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-    <React.StrictMode>
+    // <React.StrictMode>
         <App env={env}
          myPath={myPath}
          myCacheData={myCacheData}
@@ -128,7 +128,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
          myParseMethod={myParseMethod}
          myIariSourceId={myIariSourceId}
          myDebug={myDebug} />
-    </React.StrictMode>
+    // </React.StrictMode>
 );
 
 // ReactDOM.createRoot(document.getElementById('root'))

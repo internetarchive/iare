@@ -56,9 +56,11 @@ function CitationDisplayV2({ reference = null,
 
         {options?.show_extra && extra_info}
 
-        {!!myConfig?.isShowDebugInfo && <div> {/* protect if myConfig is not defined */}
-            #{index} {reference.id} {reference.type}
-        </div>}
+        {!!myConfig?.isShowDebugInfo &&
+            <div> {/* protect if myConfig is not defined */}
+                #{index} {reference.id} {reference.type}
+            </div>}
+
     </div>
 
 }

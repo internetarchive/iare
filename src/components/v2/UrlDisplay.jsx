@@ -30,7 +30,7 @@ export default function UrlDisplay ({ pageData, options } ) {
 
     const [currentState, setCurrentState] = useState({})  // aggregate state of filter boxes
 
-    const [openModal, setOpenModal] = useState(false)  // shows or hides RefView popup
+    const [isRefViewModalOpen, setIsRefViewModalOpen] = useState(false)  // shows or hides RefView popup
 
 
     const filters = {
@@ -87,7 +87,7 @@ export default function UrlDisplay ({ pageData, options } ) {
         // cancel any current tooltip
         // FIXME
 
-        // handle null ref, but retain 0
+        // handle null refIndex (but retain 0)
         if (!refIndex && refIndex !== 0) {
             alert(`urlDisplay: showRefView, Invalid refIndex!`)
             // TODO alert patron or show modal anyway?
@@ -95,7 +95,8 @@ export default function UrlDisplay ({ pageData, options } ) {
         }
 
         // setSelectedRefIndex(refIndex);  // default ref to select in popup
-        setOpenModal(true)
+
+        setIsRefViewModalOpen(true)
 
     }, [])
 
@@ -130,11 +131,15 @@ export default function UrlDisplay ({ pageData, options } ) {
                     //     setUrlFilters({ "url_status" : f })
                     // }
 
-        else if (action === ACTIONS_IARE.SHOW_REFERENCE_VIEWER.key) {
+        else if (action
+            === ACTIONS_IARE.SHOW_REFERENCE_VIEWER.key
+        ) {
             showRefView(value)  // value is reference index
         }
 
-        else if (action === ACTIONS_IARE.REMOVE_ALL_FILTERS.key) {
+        else if (action
+            === ACTIONS_IARE.REMOVE_ALL_FILTERS.key
+        ) {
             // clear filters (show all) for URL  and Refs list
             setUrlFilters(null)
             setRefFilter(null)
@@ -143,8 +148,10 @@ export default function UrlDisplay ({ pageData, options } ) {
             setCondition(null)
         }
 
-        else if (action === ACTIONS_IARE.SHOW_REFERENCE_VIEWER_FOR_URL.key) {
-            // value is url to show in RefView; more accurately, show the ref that "houses" the url
+        else if (action
+            === ACTIONS_IARE.SHOW_REFERENCE_VIEWER_FOR_URL.key
+        ) {
+            // value = url to show in RefView; more accurately, show the ref that "houses" the url
             const refIndex = pageData.urlDict[value]?.refs[0]?.ref_index
             const selectedRef = pageData.references.find(
                 r => {  // NB assumes ref_index and ref_index.toString() is valid
@@ -154,6 +161,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             setSelectedRefIndex(refIndex)
 
             showRefView(refIndex)
+
             setSelectedUrl(value)
         }
 
@@ -556,7 +564,8 @@ export default function UrlDisplay ({ pageData, options } ) {
                 </div>
             }
 
-            <div className={"section-box"}>
+            <div className={"section-box"}
+                 style={{ pointerEvents: isRefViewModalOpen ? "none" : "auto" }}>
 
                 <ConditionsBox caption={"Conditions"} conditions={currentConditions} onAction={handleAction}/>
 
@@ -588,8 +597,10 @@ export default function UrlDisplay ({ pageData, options } ) {
 
 
             {/* this is the popup Reference Viewer component */}
-            <RefView isOpen={openModal}
-                     onClose={() => setOpenModal(false)}
+            <RefView isOpen={isRefViewModalOpen}
+                     onClose={() => {
+                         setIsRefViewModalOpen(false)
+                     }}
                      onAction={handleAction}
                      
                      pageData={pageData}
