@@ -280,15 +280,16 @@ button.truth-probe-button
 {
     margin-bottom:0;
     height:1.8rem;
-    font-size: .6rem;
+    font-size: .75rem;
     /*padding: .1rem .3rem .1rem .3rem;*/
     padding: .1rem .5rem;
     line-height: .7;
     margin-right:.55rem;
-    background-color: var(--color-button-bg);
+    /*background-color: var(--color-button-truth-probe);*/
+    background-color: #b7e0ff;
     /*outline: var(--color-button-bg);*/
     /*border: var(--color-button-bg);*/
-    border: 1pt solid black;
+    border: 2pt solid #2199e8;
     color: black;
 
 }

@@ -20,6 +20,8 @@ import {ConfigContext} from "./contexts/ConfigContext"
 
 export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod, myParseMethod, myIariSourceId, myDebug}) {
 
+    const appTitle = "Internet Archive Reference Explorer"
+
     const [isDebug, setDebug] = useState(myDebug);
 
     // these are config values to show/hide certain UI features, available from debug info box
@@ -383,24 +385,43 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         <Dropdown choices={iariChoices} label={'Iari Source:'} onSelect={handleIariSourceIdChange} defaultChoice={myIariSourceId}/>
     </div>
 
-    const iareVersion = `${package_json.version}`
-    const siteDisplay = (env !== 'env-production')
-        ? (env === 'env-staging'
-            ? ` STAGING SITE `
-            : (env === 'env-local'
-                ? ` LOCAL SITE `
-                : '' + env + ' SITE')
-        )
+    const versionInfo = `version ${package_json.version}`
+    const siteInfo = (env !== 'env-production')  // TODO implement IareEnvironments
+        ? (env !== 'env-staging'
+            ? ` LOCAL `
+            : ` STAGING `)
         : ''
-    const showHideDebugButton = (env !== 'env-production') && <button className={"utility-button debug-button small-button"}
-                                                                      onClick={toggleDebug} >{
-        isDebug ? <>&#8212;</> : "+"  // dash (&#8212;) and plus sign
-    }</button>
-    // up and down triangles:  onClick={toggleDebug} >{isDebug ? <>&#9650;</> : <>&#9660;</>}</button>
+    const iariSourceInfo = IariSources[myIariSourceId]?.caption
+
+    // const siteInfo = (env?.key !== IareEnvironments.PROD.key)
+    //     ? (env.key !== IareEnvironments.STAGE.key
+    //         ? ` LOCAL `
+    //         : ` STAGING `)
+    //     : ''
+
+                // const iareVersion = `${package_json.version}`
+                // const siteDisplay = (env !== 'env-production')
+                //     ? (env === 'env-staging'
+                //         ? ` STAGING SITE `
+                //         : (env === 'env-local'
+                //             ? ` LOCAL SITE `
+                //             : '' + env + ' SITE')
+                //     )
+                //     : ''
+
+    const buttonShowDebug = (env !== 'env-production') &&
+        <button className={"utility-button debug-button small-button"}
+                onClick={toggleDebug} >{
+        isDebug
+            ? <>&#8212;</>
+            : "+"  // dash (&#8212;) and plus sign
+            // up triangle: <>&#9650;</>
+            // dn triangle: <>&#9660;</>
+        }</button>
 
     const heading = <div className={"header-contents"}>
-        <h1>Internet Archive Reference Explorer</h1>
-        <div className={"header-aux1"}>version {iareVersion}{siteDisplay}{showHideDebugButton}</div>
+        <h1>{appTitle}</h1>
+        <div className={"header-aux1"}>{versionInfo}{siteInfo} ({iariSourceInfo}) {buttonShowDebug}</div>
     </div>
 
     const debugButtonFilters = <button // this is the 'show urls list' button
@@ -454,7 +475,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         <div style={{marginBottom:".5rem"}}
         >{iariChoiceSelect} {methodChoiceSelect} {articleVersionChoiceSelect}</div>
         <p><span className={'label'}>Environment:</span> {env} <span className={'lolite'}>(host: {window.location.host})</span></p>
-        <p><span className={'label'}>IARE Version:</span> {iareVersion}</p>
+        <p><span className={'label'}>IARE Version:</span> {versionInfo}</p>
         <p><span className={'label'}>IARI Source:</span> {myIariSourceId} <span className={'lolite'}>({IariSources[myIariSourceId]?.proxy})</span></p>
         <p><span className={'label'}>IARI Version:</span> {pageData?.iari_version ? pageData.iari_version : "unknown"} </p>
         <p><span className={'label'}>Parse Method:</span> {ParseMethods[parseMethod].caption}</p>
@@ -465,7 +486,6 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         <div>{debugButtons}</div>
         <p><span className={'label'}>pathName:</span> <MakeLink href={targetPath}/></p>
         <p><span className={'label'}>endpointPath:</span> <MakeLink href={endpointPath}/></p>
-
     </div>
 
     const tooltipConfirm = <MyTooltip id="confirm-tooltip-id"

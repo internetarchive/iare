@@ -24,12 +24,13 @@ When this component is rendered, it must "process" the pageData. This involves:
 
 export default function PageData({rawPageData = {}}) {
     /*
-    pageData is mainly the data from the /article endpoint fetch call,
+    pageData is the data from the /article endpoint fetch call,
     with a few minor decoration properties added for convenience.
 
-    processing starts with the fetchPageData call in the useEffect upon component instantiation.
+    pageData must be processed starting with the fetchPageData call
+    in the useEffect upon component instantiation.
 
-    we immediately fetch the URL details for each URL in pageData.urls, which creates:
+    the URL details are immediately fetched for each URL in pageData.urls, which creates:
         urlDict, a url-keyed javascript object for each url, and
         urlArray, an array with each entry pointing to a urlDict object.
 
@@ -267,67 +268,6 @@ export default function PageData({rawPageData = {}}) {
     }, [])
 
 
-                // const processCiteRefs = useCallback( (refsArray, pageData) => {
-                //
-                //     const citeRefs = pageData?.cite_refs ? pageData.cite_refs : []
-                //
-                //     citeRefs.forEach( cite => {
-                //
-                //         const mwData = cite.raw_data ? JSON.parse(cite.raw_data) : {}
-                //
-                //         // console.log(`processCiteRefs: mwData[${cite.ref_index}] is `, mwData)
-                //
-                //         // if mwData has parts[0]
-                //             // if parts[0].template
-                //
-                //             // save template.target in target_type for citeref
-                //
-                //             // for each ref in uniqueRef
-                //                 // if ref.isAssigned then skip
-                //                 // else
-                //                     // if match cite.template.params
-                //                         // attach citeref to that reference
-                //                         // tag that reference as "assigned"
-                //
-                //         if (mwData.parts && mwData.parts[0].template) {
-                //
-                //             const template = mwData.parts[0].template
-                //
-                //             // mark citation as having template type
-                //             cite.template_target = template.target?.wt
-                //
-                //             const citeParams = normalizeMediaWikiParams(template.params)
-                //
-                //             // see if template.params matches any wikiText ref params; returns undefined if no mathcing ref element found
-                //             const foundRef = refsArray.find( _ref => {  // NB cannot use "ref" as a variable name as "ref" is a keyword in React
-                //                 if (!(_ref.templates && _ref.templates[0])) return false
-                //                 // TODO skip if not a footnote ref
-                //                 // TODO skip if type===footnote and footnote_subtype === named
-                //
-                //                 // remove "template_name" parameter from object
-                //                     // TODO this is an IARI bug - should not be adding template_name to wikitext parameters!!
-                //                     // TODO when fixed, must also change RefView parameter display logic
-                //                 const refParams = {..._ref.templates[0].parameters}
-                //                 delete refParams.template_name
-                //
-                //                 return areObjectsEqual(refParams, citeParams)
-                //             })
-                //
-                //             if (foundRef) {
-                //                 ////console.log(`Found matching ref for citeRef# ${cite.ref_index}`)
-                //                 foundRef.cite_refs = cite.page_refs
-                //             }
-                //
-                //         } else {
-                //             // we do not have parts[0].templates - what should we do?
-                //         }
-                //
-                //     })
-                //
-                //     // end result : anchor refs are assigned with citeref
-                // }, [])
-
-
     const processReference = useCallback( (ref, urlDict) => {
         // sets the "hasTemplateArchive" property to true if archive_url parameter found in template
 
@@ -366,10 +306,10 @@ export default function PageData({rawPageData = {}}) {
 
 
     const getAnchorReferences = (pageData) => {
-        // reduce references by eliminating repeats and collecting ref referrals
-        // "anchor refs" are defined as a reference that describes the content of a reference.
-        // If it is named, it can be referred to by another reference by that name.
-        // If it is not named, it is just a single instance of a reference.
+        // reduce references by eliminating repeats and collecting referred references
+        // "anchorRefs" refer to references that describes the original content of a reference.
+        //  - If it is named, it can be referred to by another reference by that name.
+        //  - If it is not named, it is just a single instance of a reference.
 
         // for refs, if dehydrated=true, use pageData.dehydrated_references, else use pageData.references
         const refs = (pageData?.dehydrated_references?.length)
