@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {copyToClipboard} from "../../../utils/utils.js";
+import {copyToClipboard} from "../../../utils/generalUtils.js";
 // import { RichTextarea } from "rich-textarea.jsx";
 import RefSectionHeader from "./RefSectionHeader.jsx";
 import {ConfigContext} from "../../../contexts/ConfigContext.jsx";
@@ -109,7 +109,7 @@ export default function RefWikitext({ wikitext, onAction }) {  // NB TODO make o
     </button>
 
     const header = <RefSectionHeader
-        leftPart={<><h3>Wikitext</h3><span>{buttonEditSave}{buttonCancel}{buttonCopy}</span></>}
+        leftPart={<><h3>Wikitext</h3><span style={{marginTop: ".23rem"}}>{buttonEditSave}{buttonCancel}{buttonCopy}</span></>}
         // rightPart={buttonCopy}
         >
         {/* nothing to see here */}

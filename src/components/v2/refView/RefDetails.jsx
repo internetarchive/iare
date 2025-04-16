@@ -8,7 +8,6 @@ import {ACTIONS_IARE} from "../../../constants/actionsIare.jsx";
 // import RefWikitextNew from "./RefWikitextNew.jsx";
 import RefCitationDisplayHtml from "./RefCitationDisplayHtml.jsx";
 import RefCitationClaim from "./RefCitationClaim.jsx";
-import RefProbes from "./RefProbes.jsx";
 
 /*
 
@@ -98,6 +97,13 @@ function RefDetails({ refDetails,
 
         console.log(`RefView: handleAction: action=${action}, value=${value}`);
 
+        const saveWikitext = (newText) => {
+            // for now, we just set local wikitext.
+            // soon we will insert/replace into reference data itself and resave the entire article (i think)
+            console.log(`wikitext is: ${wikitext}`)
+            setWikitext(newText)
+        }
+
         if (0) {}  // allows easy subsequent else if's
 
         else if (action === "saveWikitext") {
@@ -132,7 +138,8 @@ function RefDetails({ refDetails,
         }
 
         // eslint-disable-next-line
-    }, [saveWikitext])
+    // }, [saveWikitext])
+    }, [])
 
     const showWikitext = true  // allows on and off display of wikitext...under experimentation
 
@@ -156,7 +163,7 @@ function RefDetails({ refDetails,
                             onAction={onAction}
         />
 
-        <RefProbes reference={refDetails} pageData={pageData} />
+        {/*<RefProbes reference={refDetails} pageData={pageData} />*/}
         <RefActionables actionables={refDetails?.actionable} />
         <RefCitationClaim reference={refDetails} />
         <RefUrls urls={refDetails?.urls} pageData={pageData} />

@@ -1,6 +1,6 @@
 import React from 'react';
 import './charts.css';
-import {generateColorFade} from "../../../utils/utils.js";
+import {generateColorFade} from "../../../utils/generalUtils.js";
 import ChartLegend from "./ChartLegend.jsx";
 import {ACTIONS_IARE} from "../../../constants/actionsIare.jsx";
 

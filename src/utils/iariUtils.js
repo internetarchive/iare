@@ -1,6 +1,97 @@
 import {UrlStatusCheckMethods} from "../constants/checkMethods.jsx";
 import {IariSources} from "../constants/endpoints.jsx";
 import {ParseMethods} from "../constants/parseMethods.jsx";
+import {IariMethods} from "../constants/iariMethods.js";
+
+
+export const getPagePathEndpoint = ({
+                                        iariSourceId =IariSources['iari'].key,
+                                        path = '',
+                                        as_of = '',
+                                        cacheData = '',
+                                        mediaType = 'wiki',
+                                        refresh = false,
+                                        parseMethod = "",  // NB should default to something useful
+                                    }) => {
+
+    const iariBase = IariSources[iariSourceId]?.proxy
+    // TODO: error if iariBase is undefined or otherwise falsey
+    console.log(`getPagePathEndpoint: myIariSourceId = ${iariSourceId}, iariBase = ${iariBase}, mediaType = ${mediaType}, articleVersion = ${parseMethod}`)
+
+    if (cacheData) {
+        // use cached article result data if specified
+        // this is used (mainly?only?) for development
+        console.log(`getPagePathEndpoint: cacheData is true.`)
+        return `${iariBase}/article_cache?iari_id=${cacheData}`;
+    }
+
+    else if (mediaType === "wiki") {
+
+        console.log(`getPagePathEndpoint: wiki:article version: ${parseMethod}`)
+
+        if (parseMethod === ParseMethods.WIKIPARSE_V1.key) {
+            // this is the old, "original" IARI parsing method
+            const sectionRegex = '&sections=references|bibliography|further reading|works cited|sources|external links';
+            const options = '&dehydrate=false'
+            return `${iariBase}${ParseMethods.WIKIPARSE_V1.endpoint}?url=${path}${sectionRegex}${options}${refresh ? "&refresh=true" : ''}`;
+        }
+
+        else if (parseMethod === ParseMethods.WIKIPARSE_V2.key) {
+            // this is the new, improved parsing method
+            const options = ''
+            return `${iariBase}${ParseMethods.WIKIPARSE_V2.endpoint}?url=${path}${options}${refresh ? "&refresh=true" : ''}`;
+        }
+
+        else if (parseMethod === ParseMethods.WIKIPARSE_XREF.key) {
+            // this is James version (i believe)
+
+            // Extract the page title
+            const pageTitleMatch = path.match(/\/wiki\/([^?#]+)/);
+            const pageTitle = pageTitleMatch ? pageTitleMatch[1] : null;
+
+            // Extract the domain
+            const domainMatch = path.match(/https?:\/\/([^/]+)/);
+            const domain = domainMatch ? domainMatch[1] : null;
+
+            return `${iariBase}${ParseMethods.WIKIPARSE_XREF.endpoint}?` +
+                `page_title=${pageTitle}` +
+                `${domain ? "&domain=" + domain : ""}` +
+                `${as_of ? "&as_of=" + as_of : ""}`;
+        }
+
+    } else if (mediaType === "pdf") {
+        console.log(`getPagePathEndpoint: pdf`)
+        return `${iariBase}/statistics/pdf?url=${path}${refresh ? "&refresh=true" : ''}`;
+
+    }
+
+    console.log(`getPagePathEndpoint: Unknown mediaType - returning default endpoint!`)
+
+    // do general case...TODO make default parser endpoint a config
+    // this will produce an error right now, as IARI does not support "analyze"
+    // i (mojomonger) think we _should_ have a generic "analyze" endpoint
+    return `${iariBase}/statistics/analyze?url=${path}${
+        refresh
+            ? "&refresh=true"
+            : ''}${
+        mediaType
+            ? `&media_type=${mediaType}`
+            : ''}`;
+
+}
+
+
+export const getProbeEndpoint = (
+    {
+        url = '',
+        probes = '',
+        iariSourceId = IariSources['iari'].key,
+    }) =>
+{
+    const iariBase = IariSources[iariSourceId]?.proxy
+    return `${iariBase}${IariMethods.PROBE.endpoint}?probes=${probes}&url=${url}`;
+}
+
 
 const getArchiveStatusFromData = (data) => {  // return dict of success or failure
     /*
@@ -248,78 +339,6 @@ const fetchUrlArchive = async (iariBase, url, refresh=false) => {
         );
 
     return { data: archiveData, status_code: endpoint_status_code };
-}
-
-
-export const getPagePathEndpoint = ({
-    iariSourceId =IariSources['iari'].key,
-    path = '',
-    as_of = '',
-    cacheData = '',
-    mediaType = 'wiki',
-    refresh = false,
-    parseMethod = "",  // NB should default to something useful
-}) => {
-
-    const iariBase = IariSources[iariSourceId]?.proxy
-    // TODO: error if iariBase is undefined or otherwise falsey
-    console.log(`getPagePathEndpoint: myIariSourceId = ${iariSourceId}, iariBase = ${iariBase}, mediaType = ${mediaType}, articleVersion = ${parseMethod}`)
-
-    if (cacheData) {
-        // use cached article result data if specified
-        // this is used (mainly?only?) for development
-        console.log(`getPagePathEndpoint: cacheData is true.`)
-        return `${iariBase}/article_cache?iari_id=${cacheData}`;
-    }
-
-    else if (mediaType === "wiki") {
-
-        console.log(`getPagePathEndpoint: wiki:article version: ${parseMethod}`)
-
-        if (parseMethod === ParseMethods.WIKIPARSE_V1.key) {
-            // const sectionRegex = '&regex=references|bibliography|further reading|works cited|sources|external links'; // for now... as of 2023.04.09
-            const sectionRegex = '&sections=references|bibliography|further reading|works cited|sources|external links';
-            const options = '&dehydrate=false'
-            return `${iariBase}/statistics/article?url=${path}${sectionRegex}${options}${refresh ? "&refresh=true" : ''}`;
-        }
-
-        else if (parseMethod === ParseMethods.WIKIPARSE_V2.key) {
-            const options = ''
-            return `${iariBase}/article?url=${path}${options}${refresh ? "&refresh=true" : ''}`;
-        }
-
-        else if (parseMethod === ParseMethods.WIKIPARSE_XREF.key) {
-            const endpoint = ParseMethods.WIKIPARSE_XREF.endpoint
-
-            // Extract the page title
-            const pageTitleMatch = path.match(/\/wiki\/([^?#]+)/);
-            const pageTitle = pageTitleMatch ? pageTitleMatch[1] : null;
-
-            // Extract the domain
-            const domainMatch = path.match(/https?:\/\/([^/]+)/);
-            const domain = domainMatch ? domainMatch[1] : null;
-
-            return `${iariBase}${endpoint}?` +
-                `page_title=${pageTitle}` +
-                `${domain ? "&domain=" + domain : ""}` +
-                `${as_of ? "&as_of=" + as_of : ""}`;
-        }
-
-    } else if (mediaType === "pdf") {
-        console.log(`getPagePathEndpoint: pdf`)
-        return `${iariBase}/statistics/pdf?url=${path}${refresh ? "&refresh=true" : ''}`;
-
-    } else {
-        // do general case...TODO make default parser endpoint a config
-        // this will produce an error right now, as IARI does not support "analyze"
-        // (mojomonger) i think we _should_ have a generic "analyze" endpoint
-        console.log(`getPagePathEndpoint: Unknown mediaType`)
-        return `${iariBase}/statistics/analyze?url=${path}${refresh ? "&refresh=true"
-            : ''}${mediaType ? `&media_type=${mediaType}` : ''}`;
-    }
-
-    console.log(`getPagePathEndpoint: Fell through all cases!`)
-
 }
 
 
@@ -597,7 +616,7 @@ export const iariPostProcessUrl = (urlObj) => {
         // // let inputString = 'http://example.com:http://example2.com:some:text:with:colons';
         // const regexColon = /:(?!\/\/)/g;  // Regular expression to match colons not followed by "//"
         // // const regexEquals = /=/g;  // Regular expression to match equals signs
-        // let resultUrl
+        // let resultUrl;
         // resultUrl = targetUrl.replace(regexColon, '%3A');  // Replace solo colons with encoded "%3A"
         // // resultUrl = resultUrl.replace(regexEquals, '%3D')
         // return resultUrl
@@ -619,35 +638,6 @@ export const iariPostProcessUrl = (urlObj) => {
     urlObj.tld = `${parts.tld ? parts.tld : ''}`
     urlObj.pld = `${parts.pld ? parts.pld : ''}.${parts.tld ? parts.tld : ''}`
     urlObj._3ld = `${parts._3ld ? parts._3ld : ''}.${parts.pld ? parts.pld : ''}.${parts.tld ? parts.tld : ''}`
-}
-
-
-const getProbeResults = async (urlLinks, probeMethods, iariBase, method, refresh, timeout) => {
-    // // assumes all promises successful
-    // // TODO: error trap this promise call with a .catch
-    // return await Promise.all(urlArray.map(urlObj => {
-    //     return fetchUrl({iariBase:iariBase, url: urlObj, refresh:refresh, timeout:timeout, method:method})
-    // }));
-
-    try {
-        return await Promise.all(
-            urlLinks.map(urlLink =>
-                fetchUrl({
-                    iariBase,
-                    url: urlLink,
-                    refresh,
-                    timeout,
-                    method
-                }).catch(error => {
-                    console.error(`Error fetching ${urlLink}:`, error);
-                    return null; // Prevents entire Promise.all() from failing
-                })
-            )
-        );
-    } catch (err) {
-        console.error("Failed to fetch URLs:", err);
-        return []; // Return empty array in case of failure
-    }
 }
 
 

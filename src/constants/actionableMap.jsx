@@ -1,4 +1,4 @@
-import {isLinkStatusGood} from "../utils/utils.js";
+import {isLinkStatusGood} from "../utils/generalUtils.js";
 
 const isLinkStatusBad = (statusCode) => {
     return statusCode < 200 || statusCode >= 400

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {copyToClipboard} from "../../../utils/utils.js";
+import {copyToClipboard} from "../../../utils/generalUtils.js";
 // import { RichTextarea } from "rich-textarea.jsx";
 import RefSectionHeader from "./RefSectionHeader.jsx";
 import {ConfigContext} from "../../../contexts/ConfigContext.jsx";

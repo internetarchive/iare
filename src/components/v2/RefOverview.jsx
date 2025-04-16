@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Tooltip as MyTooltip } from 'react-tooltip'
 import BarChart from "../BarChart.jsx";
-import {getColorFromIndex} from "../../utils/utils.js"
+import {getColorFromIndex} from "../../utils/generalUtils.js"
 // we may want to include filter buttons as well...
 // import FilterButtons from "../FilterButtons.jsx";
 // import FilterButton from "../FilterButton.jsx";

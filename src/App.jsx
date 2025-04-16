@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState, useRef} from "react";
 import {Tooltip as MyTooltip} from "react-tooltip";
 import package_json from "../package.json";
 
-import {debounce} from "./utils/utils.js";
+import {debounce} from "./utils/generalUtils.js";
 import {getPagePathEndpoint} from "./utils/iariUtils.js";
 
 import MakeLink from "./components/MakeLink.jsx";
@@ -504,6 +504,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     const config = {
         environment: env,
         iariSource: IariSources[myIariSourceId]?.proxy,
+        iariSourceId: myIariSourceId,
         wikiBaseUrl: "https://en.wikipedia.org/wiki/",
         urlStatusMethod: checkMethod,
         articleVersion: myParseMethod,

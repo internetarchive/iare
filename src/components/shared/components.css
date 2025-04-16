@@ -335,7 +335,9 @@
     cursor: pointer;
     margin-bottom:.15rem;
     /*color: var(--color-list-rows);*/
-    height: var(--height-list-component);
+
+    /*height: var(--height-list-component);*/
+
     overflow: auto;
 }
 .list-chart .list-entry {
@@ -351,6 +353,12 @@
     /*background-color:green;*/
     text-align: center;
 }
+
+.list-chart.pay-level-domains-list-chart {
+    height: 100% !important;
+    overflow: hidden;
+}
+
 
 /* FilterConditionBox */
 

@@ -1,12 +1,13 @@
 // ParseMethods dictate how the article is parsed.
 // Each parsing method makes a different IARI endpoint call
-export const ProbeMethods = {
-    PROBE_VERIFYI: {
+export const ProbeDefs = {
+    verifyi: {
         // Uses Chris' from New York's verifyi.cc thing to generate info data on link.
         //
-        key: 'PROBE_VERIFYI',
+        key: 'verifyi',
         name: 'Verifyi',
         caption: 'Verifyi reliability data',
+        short_caption: 'Ve',
         endpoint: '/probe/verifyi',
         /*
         endpoint params: url, (probe_method=verifyi,) (options)
@@ -24,10 +25,11 @@ export const ProbeMethods = {
          */
     },
 
-    PROBE_TRUST: {
-        key: 'PROBE_TRUST',
+    trust_project: {
+        key: 'trust_project',
         name: 'Trust Project',
         caption: 'The Trust Project reliability data',
+        short_caption: 'Tr',
         endpoint: '/probe/trust-project',
         /*
         endpoint params: url, probe_method=default, (options)
@@ -35,11 +37,12 @@ export const ProbeMethods = {
     },
 
 
-    PROBE_DEFAULT: {
+    default: {
         // Use default probe method. Let IARI decide what that is.
         // Could be All probes
-        key: 'PROBE_DEFAULT',
+        key: 'default',
         caption: 'Default IARI reliability data',
+        short_caption: 'Xx',
         endpoint: '/probe/',
         /*
         endpoint params: url, probe_method=default, (options)

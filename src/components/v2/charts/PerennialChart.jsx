@@ -1,7 +1,7 @@
 import React from 'react';
 import PieChart from "../../PieChart.jsx";
 import './charts.css';
-// import {generateColorFade} from "../../../utils/utils.js";
+// import {generateColorFade} from "../../../utils/generalUtils.js";
 import {reliabilityMap} from "../../../constants/perennialList.jsx";
 import ChartLegend from "./ChartLegend.jsx";
 import {ACTIONS_IARE} from "../../../constants/actionsIare.jsx";

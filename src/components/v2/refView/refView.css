@@ -1,4 +1,5 @@
 :root {
+
     /* candidates for global definition (for AI generated colors) */
     --color-ref-view-text: #727272;
     /*--color-ref-view-inline-heading: #878787;*/
@@ -6,17 +7,15 @@
     --color-ref-view-inline-heading-alert: #ff3838;
     --color-sub-caption: #9b9a9a;
     --color-actionable-header: hsl(358 69% 65% / 1);
+
     /* local definitions */
     --ref-view-titlebar-height: 2.5rem;
     --titlebar-font-size: 1rem;
 
     --height-ref-view-wikitext: 7.5rem;
 
-    /*--width-col-url: 25rem;*/
-    /*--width-col-status: 25rem;*/
     --width-col-url: 27.5rem;
     --width-col-status: 4.5rem;
-    /*--width-col-iabotdb-status: 6rem;*/
 
     --spacing-heading-top: 1rem;
     --color-hilite: var(--bs-primary-rgb);
@@ -30,8 +29,6 @@
     --margin-ref-view-section:1.315rem;
     --margin-ref-view-section-tight:.5rem;
 
-    /*--border-box-actionable: 3pt solid #ae0f3c !important;*/
-    /*--border-box-actionable: 3pt solid #dc295c !important;*/
     --border-box-actionable-color: hsl(358 81% 67% / 1);
     --border-box-actionable: 2pt solid var(--border-box-actionable-color) !important;
 
@@ -47,8 +44,24 @@
 
     --width-param-name: 10rem;
 
+    --width-url-name: 20rem;
+    --width-url-status: 4.0rem;
+    --width-url-archive-status: 3.5rem;
+    --width-url-citations: 3.5rem;
+    --width-url-templates: 4.0rem;
+    /*--width-url-actionable: 7.0rem;*/
+    --width-url-actionable: 5.0rem;
+    --width-url-sections: 4.5rem;
+    --width-url-perennial: 5.0rem;
+    --width-url-probes: 6.0rem;
 
 }
+
+
+.ref-view {
+}
+
+/* modal popup styling */
 
 .ref-modal-overlay {
     background-color: rgba(0,0,0,0.5);
@@ -60,32 +73,29 @@
     z-index: 100;
 }
 
-.ref-view-container {
-    /*max-width:80vw;*/
-    /*max-height:80vh;*/
-
-    /*max-width:1000px;*/
-    /*max-height:650px;*/
-
-    /*width:100%;*/
-    /*height:100%;*/
-    /*position:fixed;*/
-
-    /*top: 50%;*/
-    /*left:50%;*/
-
-    /*transform: translate( -50%, -50%);*/
-
+.rnd-modal-ref-view {
+    z-index: 1000;
+}
+.rnd-modal-ref-view-contents {
     background-color: #ffffff;
     box-shadow: 0px 0px 18px 0px rgba(0,0,0,0.75);
 
     display: flex;
     flex-direction: column;
+}
 
+.rnd-modal-popup {
+    background-color: #f0f0f0;
+    /*background-color: chartreuse;*/
+    border:2px solid black;
+    z-index: 1100;
+}
+.rnd-modal-popup-contents {
+    padding:.5rem;
 }
 
 @media screen and (max-width: 500px) {
-    .ref-view-container {
+    .rnd-modal-ref-view-contents {
         flex-direction: column;
         top:0;
         left:0;
@@ -94,16 +104,13 @@
         height: 100vh;
     }
 
-    /* and transform other elements for responsive */
+    /* ...and transform other elements for responsive */
 }
 
 .modalRight {
     width:100%;
 }
 
-
-.ref-view {
-}
 
 .ref-view-title-bar {
     /*background-color: #565e64;*/
@@ -144,8 +151,7 @@
     flex-direction: row;
     overflow:scroll;
     /*padding:0.5rem .85rem .85rem .85rem;*/
-    padding:0.5rem;
-    padding-left:.5rem;
+    padding: 0.5rem 0.5rem 0.5rem .5rem;
     color:black;
     background-color: var(--g-color-body-bg);
 }
@@ -395,6 +401,7 @@ button.truth-probe-button
 .ref-view-url .url-header-row .url-templates,
 .ref-view-url .url-header-row .url-sections,
 .ref-view-url .url-header-row .url-perennial
+.ref-view-url .url-header-row .url-probes
 {
     padding-top: .15rem !important;
     padding-bottom: .15rem !important;
@@ -762,5 +769,17 @@ button.truth-probe-button
     background-color: #31adff;
 }
 
-
-
+.probe-badges {
+    display:flex;
+    flex-direction: row;
+}
+.probe-badge {
+    border:1px solid darkgray;
+    padding:1pt 3pt;
+    margin-right: .3rem;
+    border-radius: 3pt;
+    cursor: pointer;
+}
+.probe-badge:hover {
+    background-color: #d1d2d4;
+}

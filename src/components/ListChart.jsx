@@ -16,10 +16,11 @@ export default function ListChart ({data, options={}, colors=["#af22e8"], classN
     })
 
     const sortFunction = (a,b) => {
-        // TODO make this recursive to do collection of sort definitions as described in a "sort.sortOrder" array of key names for sort methods
-        // TODO e.g: sort.sortOrder = ["references", "archive_status", "name"]
+        // TODO make this recursive to travers collection of sort definitions
+        //  as described in a "sort.sortOrder" array of sort method key names
+        //  e.g: sort.sortOrder = ["references", "archive_status", "name"]
         if(sort.sortOrder[0] === "label") {
-            // respect sortDir and protecting null values
+            // respect sortDir and protect null values
             if (a?.label < b?.label) return sort.sorts['label'].dir * -1;
             if (a?.label > b?.label) return sort.sorts['label'].dir;
             return 0;
@@ -40,6 +41,7 @@ export default function ListChart ({data, options={}, colors=["#af22e8"], classN
             return 0;
         }
         else {
+            // sort order described in state variable "sort" is not handled
             return 0  //
         }
     }

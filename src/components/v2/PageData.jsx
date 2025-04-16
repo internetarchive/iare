@@ -688,19 +688,7 @@ export default function PageData({rawPageData = {}}) {
     const processProbes = useCallback( pageData => {
         // returns probe data from IARI for each URL in urlArray
 
-        /*
-        from stephen:
-
-        Any URL at books.google.com ...
-         harder to tell for archive.org/details since it can be anything besides a book.
-          Anything at gutenberg.org
-
-         */
-
-        // return true if url deemed a that points to a book
-        // based on regex match of book url patterns
         const getProbeResultsForUrl = (url) => {
-
             // return IARI results of probe for each probe type
             return {}
         }
@@ -714,6 +702,7 @@ export default function PageData({rawPageData = {}}) {
         // })
 
         if (!pageData["probes"]) pageData["probes"] = {}
+        // fake the data...
         pageData.probes = {
             probeArray: [ "verifyi", "trust_project"],
             probes: {
@@ -731,6 +720,15 @@ export default function PageData({rawPageData = {}}) {
                     results: {
                         thing_1: "Some things were good.",
                         thing_2: "More things were bad"
+                    }
+                },
+                "bad_actor" : {
+                    message: "Un-reliable",
+                    level: -99,
+                    results: {
+                        thing_1: "Some things were bad.",
+                        thing_2: "More things were really bad.",
+                        thing_3: "This should ring some bells!",
                     }
                 },
 

@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import PureJson from "../utils/PureJson.jsx";
-import {convertToCSV, copyToClipboard} from "../../utils/utils.js";
+import {convertToCSV, copyToClipboard} from "../../utils/generalUtils.js";
 import {ConfigContext} from "../../contexts/ConfigContext.jsx";
 
 function ClickButton( {buttonCaption=null, buttonText='', handleClick}) {

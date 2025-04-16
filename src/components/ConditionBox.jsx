@@ -11,14 +11,16 @@ export default function ConditionBox({filter = null}) {
 
     console.log(`ConditionBox: filter: ${filter ? filter.caption : ""}`)
 
-    if (!filter) return <div className={`condition-box`}>
-        <div className={"category-row"}>
-            <div className={"cond-data"}>Showing All Items</div>
+    // If no filter declared, display all items
+    if (!filter)
+        return <div className={`condition-box`}>
+            <div className={"category-row"}>
+                <div className={"cond-data"}>Showing All Items</div>
+            </div>
+            <div className={"fixit-row"}>
+                <div className={"cond-data"}>Use filters to narrow selection.</div>
+            </div>
         </div>
-        <div className={"fixit-row"}>
-            <div className={"cond-data"}>Select Actionable or other filters to explore.</div>
-        </div>
-    </div>
 
     return <>
         <div className={`condition-box`}>

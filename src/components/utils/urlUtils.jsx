@@ -1,5 +1,5 @@
 import React from "react";
-import {reliabilityMap} from "../constants/perennialList.jsx";
+import {reliabilityMap} from "../../constants/perennialList.jsx";
 
 export const getArchiveStatusInfo = (u => {
     return <span className={u.isBook
@@ -8,6 +8,7 @@ export const getArchiveStatusInfo = (u => {
             ? "archive-yes"
             : "archive-no" }></span>
 } )
+
 
 export const getPerennialInfo = (u => {
     return !u.rsp

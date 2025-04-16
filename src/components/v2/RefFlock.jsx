@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {ParseMethods} from "../../constants/parseMethods.jsx";
-import {convertToCSV, copyToClipboard} from "../../utils/utils.js";
+import {convertToCSV, copyToClipboard} from "../../utils/generalUtils.js";
 import CitationDisplayV1 from "./citations/CitationDisplayV1.jsx";
 import CitationDisplayV2 from "./citations/CitationDisplayV2.jsx";
 import FilterConditionBox from "../FilterConditionBox.jsx";
