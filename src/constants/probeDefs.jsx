@@ -25,6 +25,18 @@ export const ProbeDefs = {
          */
     },
 
+    iffy: {
+        key: 'iffy',
+        name: 'Iffy',
+        caption: 'The Iffy Project',
+        short_caption: 'If',
+        endpoint: '/probe/iffy',
+        /*
+        endpoint params: url, probe_method=default, (options)
+         */
+    },
+
+
     trust_project: {
         key: 'trust_project',
         name: 'Trust Project',

@@ -491,7 +491,7 @@ const urlFlock = React.memo( function UrlFlock({
             {/* second header row - contains column labels */}
             <div className={"url-row url-header-row"}>
 
-                {/*<div className={"url-name"} onClick={() => {handleSortClick("name")}}*/}
+                {/*<div className={"url-name"} onProbeClick={() => {handleSortClick("name")}}*/}
                 {/*><span className={"pull-right"} sxxtyle={{float:"right"}}>Method used to Check Status: {checkMethodDisplay}</span><br/>URL Link</div>*/}
                 <div className={"url-name"} onClick={() => {handleSortClick("name")}}
                 ><br/>URL Link</div>
@@ -502,10 +502,10 @@ const urlFlock = React.memo( function UrlFlock({
                 <div className={"url-archive_status"} onClick={() => { handleSortClick("archive_status"); } }
                 >{archiveFilterDefs['iabot']._.name}</div>
 
-                {/*<div className={"url-citations"} onClick={() => { handleSortClick("references"); } }*/}
+                {/*<div className={"url-citations"} onProbeClick={() => { handleSortClick("references"); } }*/}
                 {/*>Citation<br/>Priority</div>*/}
 
-                {/*<div className={"url-templates"} onClick={() => { handleSortClick("templates"); } }*/}
+                {/*<div className={"url-templates"} onProbeClick={() => { handleSortClick("templates"); } }*/}
                 {/*>Template<br/>Type</div>*/}
                 <div className={"url-actionable"} onClick={() => { handleSortClick("actionable"); } }
                 >Actionable<br/>Items</div>
@@ -625,15 +625,20 @@ const urlFlock = React.memo( function UrlFlock({
 
     // render flock surrounded by FlockBox
 
-    return <FlockBox caption={flockCaption} className={"url-flock"}>
+    // return <FlockBox caption={flockCaption} className={"url-flock"}>
+    //
+    //     <div data-tooltip-id={tooltipId}  // id of tooltip for entire url display (not just this flock)
+    //          data-tooltip-html={urlTooltipHtml}
+    //          onMouseOver={onHoverUrlFlock}
+    //     >{flock}</div>
+    //
+    // </FlockBox>
 
-        <div data-tooltip-id={tooltipId}  // id of tooltip for entire url display (not just this flock)
-             data-tooltip-html={urlTooltipHtml}
-             onMouseOver={onHoverUrlFlock}
-        >{flock}</div>
-
-    </FlockBox>
-
+    return <div data-tooltip-id={tooltipId}  // id of tooltip for entire url display (not just this flock)
+                data-tooltip-html={urlTooltipHtml}
+                onMouseOver={onHoverUrlFlock}>
+        <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>
+    </div>
 })
 
 export default urlFlock

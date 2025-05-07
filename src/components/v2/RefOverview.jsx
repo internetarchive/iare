@@ -82,7 +82,7 @@ export default function RefOverview ({ refArray, summary, onAction, selectedFilt
                 //         flock = {refArray}
                 //         filterMap = {summary.filterSets[0]}
                 //         filterList ={[]}
-                //         onClick ={ (e) => {
+                //         onProbeClick ={ (e) => {
                 //             handleAction(e, "set-0")
                 //         }}
                 //         caption = "Reference Types"
@@ -93,7 +93,7 @@ export default function RefOverview ({ refArray, summary, onAction, selectedFilt
                 //         flock = {refArray}
                 //         filterMap = {summary.filterSets[1]}
                 //         filterList ={[]}
-                //         onClick ={ (e) => {
+                //         onProbeClick ={ (e) => {
                 //             handleAction(e, "set-1")
                 //         }}
                 //         caption = "Reference Filters"

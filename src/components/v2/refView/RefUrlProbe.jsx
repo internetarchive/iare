@@ -8,153 +8,148 @@ import {getProbeEndpoint} from "../../../utils/iariUtils.js";
 import loaderImage from "../../../images/threedots.gif";
 import ProbesDisplay from "../ProbesDisplay.jsx";
 import {ConfigContext} from "../../../contexts/ConfigContext.jsx";
+import {setUrlProbeResults} from "../../utils/urlUtils.jsx";
 
-const probesToLoad = "verifyi|trust_project"  // for now...shall be defined higher up in a configgy way"
+const probesToLoad = "verifyi|trust_project"  // for now...shall be defined higher up in a configgy way
 
+
+// shows "loading" icon
 const ProbeLoader = ({startTime, message}) => {
     console.log("ProbeLoader: ", message)
     return <div style={{display:"block", margin:"0 auto"}}>
             <img src={loaderImage} alt={'Loading'}
-                 // style={{ width:'120px', margin:'auto', display:'block' }}
                  style={{ margin:'auto', display:'block' }}
             />
         </div>
 }
 
 
+/*
+probeData is a state property that contains probe results of the urlObj
+
+            `if urlObj.probes is null, we interpret to mean no data has yet been set...show a "fetch" button
+            - while fetching probe info, ProbeLoading icon is active
+            - when fetch action returns, ProbesDisplay is active
+`
+when urlObj.probes is not null
+- should be an array of probe objects/dicts (including empty array possibility)
+- display contents of urlObj.probes with <ProbesDisplay>
+    - takes an onProbeClick, which will display a popup with details for clicked probe
+
+- show refresh/refetch button to refresh data
+
+                    -
+                    url.probe is set:
+                    - display info
+                    3 things this does:
+                    - keep track of probe state:
+                    - nodata, which means more data fetchable, so show "Fetch" buttin
+                    - fetching - "fetch" was clicked and is now waiting for return
+                    - fetched - data from fetch process is returned and can be/is interpreted as display
+
+                    null: nodata
+                    true: is loading, is fetching, waiting for return
+                    false: is NOT loading - data should be valid
+*/
+
 export default function RefUrlProbe(
     {
         urlObj= {},
-        pageData = {},
-        onClick,  // function call when little probe icon clicked
+        pageData = {},  // FIXME may not need this so may delete
+        onProbeClick,  // function call when little probe icon clicked
     }) {
 
     let myConfig = React.useContext(ConfigContext)
     myConfig = myConfig ? myConfig : {} // prevents undefined myConfig.<param> errors
 
-    /*
-    probeData is a state property that contains probe data concerning the urlObj
-
-    if urlObj.probes is null, we interpret to mean no data has yet been set...show a "fetch" button
-    - while fetching probe info, ProbeLoading icon is active
-    - when fetch action returns, ProbesDisplay is active
-
-    when urlObj.probes is not null
-    - should be an array of probe objects/dicts (including empty array)
-    - display contents of urlObj.probes with <ProbesDisplay>
-        - takes an onClick, which will display a popup with details for clicked probe
-        -
-
-                    url.probe is set:
-                    - display info
-                    3 things this does:
-                    - keep track of probe state:
-                        - nodata, which means more data fetchable, so show "Fetch" buttin
-                        - fetching - "fetch" was clicked and is now waiting for return
-                        - fetched - data from fetch process is returned and can be/is interpreted as display
-
-                        null: nodata
-                        true: is loading, is fetching, waiting for return
-                        false: is NOT loading - data should be valid
-    */
-
-
     const [isLoading, setIsLoading] = useState(false)
-    const [probeData, setProbeData] = useState(urlObj.probe_results?.raw)
+    // const [probeData, setProbeData] = useState(urlObj.probe_results)
 
-    const fetchProbeData = useCallback((
-        {
-            url = '',
-            refresh = false
-        }) => {
-
-        // fetch article reference data
-        //
-        // TODO: account for error conditions, like wrong file format, not found, etc
-
-        // handle null pathName
-        if (!url) {
-            console.log("RefUrlProbe::fetchProbeData: url is falsey.");
-            setProbeData(null);
-            return;
-        }
-
-        console.log("RefUrlProbe::fetchProbeData: url is: ", url)
-
-        const myEndpoint = getProbeEndpoint( {
-            url: url,
-            probes: probesToLoad,  // which probes to search for
-            iariSourceId: myConfig.iariSourceId,
-        })
-
-        const processProbeData = (newProbeData) => {
-            urlObj.probe_status = newProbeData["probe_status"]
-            urlObj.probe_results = {
-                raw: newProbeData["probe_results"]
-                // eventually, we will put:
-                // data: processedRawResults
-            }
-
-            // set probeData to be displayed with <ProbesDisplay>
-            setProbeData(urlObj.probe_results.raw)
-        }
-
-        console.log("RefUrlProbe::fetchProbeData: endpoint = ", myEndpoint)
-
-        setIsLoading(true);
-
-        // fetch the probe data for the url
-        fetch(myEndpoint, {})
-
-            .then((res) => {
-                if (!res.ok) {
-                    // throw error that will be caught in .catch()
-                    throw new Error(res.statusText ? res.statusText : res.status);
-                }
-                return res.json();
-            })
-
-            .then((data) => {
-                processProbeData( data )  // sets probeData state variable
-            })
-
-            .catch((err) => {
-                // TODO: set fake probeData for display?
-
-                if (false) {
-                    // placeholder condition to easily allow insertion of other conditions
-
-                    // } else if (other condition) {
-                        // some error possibilities:
-                        // err.name === "404"
-                        // err.name === "TypeError"
-                        // err.message === "Failed to fetch"
-                    // }
-
-                } else {
-                    // generic error
-                }
-
-                const errProbeData = {
-                    errors: ["Encountered probe error"]
-                }
-                setProbeData(errProbeData);
-
-            })
-
-            .finally(() => {
-                // console.log("fetch finally")
-                setIsLoading(false);
-
-            });
-
-    }, [])
+    // const fetchProbeData = useCallback((
+    //     {
+    //         url = '',
+    //         refresh = false
+    //     }) => {
+    //
+    //     const processProbeResults = (probeResults) => {
+    //         setUrlProbeResults(urlObj, probeResults)  // set in url data
+    //         setProbeData(urlObj.probe_results)  // set probeData for component display
+    //     }
+    //
+    //     // fetch article reference data
+    //     //
+    //     // TODO: account for error conditions, like wrong file format, not found, etc
+    //
+    //     // handle null pathName
+    //     if (!url) {
+    //         console.log("RefUrlProbe::fetchProbeData: url is falsey.");
+    //         setProbeData(null);
+    //         return;
+    //     }
+    //
+    //     const myEndpoint = getProbeEndpoint( {
+    //         url: url,
+    //         probes: probesToLoad,  // which probes to search for
+    //         iariSourceId: myConfig.iariSourceId,
+    //         refresh: refresh
+    //     })
+    //
+    //     console.log("RefUrlProbe::fetchProbeData: url is: ", url)
+    //     console.log("RefUrlProbe::fetchProbeData: endpoint is: ", myEndpoint)
+    //
+    //     setIsLoading(true);
+    //
+    //     // fetch the probe data for the url
+    //     fetch(myEndpoint, {})
+    //
+    //         .then((res) => {
+    //             if (!res.ok) {  // error if response problem
+    //                 throw new Error(res.statusText ? res.statusText : res.status);
+    //             }
+    //             return res.json()  // pass json data to next step
+    //         })
+    //
+    //         .then((data) => {
+    //             processProbeResults( data["probe_results"] )  // sets probe results for data and display
+    //         })
+    //
+    //         .catch((err) => {
+    //             // TODO: set fake probeData for display?
+    //
+    //             if (false) {
+    //                 // placeholder condition to easily allow insertion of other conditions
+    //
+    //                 // } else if (other condition) {
+    //                     // some error possibilities:
+    //                     // err.name === "404"
+    //                     // err.name === "TypeError"
+    //                     // err.message === "Failed to fetch"
+    //                 // }
+    //
+    //             } else {
+    //                 // generic error
+    //             }
+    //
+    //             const errProbeData = {
+    //                 errors: ["Encountered probe error"]
+    //             }
+    //             setProbeData(errProbeData);
+    //
+    //         })
+    //
+    //         .finally(() => {
+    //             // console.log("fetch finally")
+    //             setIsLoading(false);
+    //
+    //         });
+    //
+    // }, [])
 
 
-    const handleProbeSeek = (e) => {
-        // when Seek Truth clicked when no data
-        fetchProbeData( {url: urlObj.url, refresh:false} )
-    }
+    // const handleProbeSeek = (e) => {
+    //     // when Seek Truth clicked when no data
+    //     fetchProbeData( {url: urlObj.url, refresh:false} )
+    // }
 
     /*
     u.probes is:
@@ -165,20 +160,23 @@ export default function RefUrlProbe(
     if null, no data was yet fetched, so provide a button to do so
     */
 
+
     return <>
-        {isLoading
-            ? <ProbeLoader message={"Probing url for truth..."}/>
+        <ProbesDisplay probeData={urlObj.probe_results} onProbeClick={onProbeClick}/>
 
-            : (urlObj.probe_results === undefined || urlObj.probe_results === null)
+        {/*{isLoading*/}
+        {/*    ? <ProbeLoader message={"Probing url for truth..."}/>*/}
 
-                // if probe_results was not yet fetched, provide a button to do so
-                ? <button className={"in-row-button"} onClick={handleProbeSeek}>
-                    <scan>Seek Truth</scan>
-                </button>
+        {/*    : (urlObj.probe_results === undefined || urlObj.probe_results === null)*/}
 
-                // else display current probe data
-                : <ProbesDisplay probeData={probeData} onClick={onClick}/>
-        }
+        {/*        // if probe_results was not yet fetched, provide a button to do so*/}
+        {/*        ? <button className={"in-row-button"} onClick={handleProbeSeek}>*/}
+        {/*            <scan>Seek Truth</scan>*/}
+        {/*        </button>*/}
+
+        {/*        // else display current probe data*/}
+        {/*        : <ProbesDisplay probeData={probeData} onProbeClick={onProbeClick}/>*/}
+        {/*}*/}
     </>
 }
 

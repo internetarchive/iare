@@ -94,8 +94,8 @@
 .url-list {
     max-height: var(--height-list);
     height: var(--height-list);
-    overflow: scroll;
-    overflow-x: auto;
+    /*overflow: scroll;*/
+    /*overflow-x: auto;*/
 }
 .url-list-header {
     /*background-color: #cccccc;*/

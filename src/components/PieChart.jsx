@@ -6,7 +6,7 @@ import { getRelativePosition } from 'chart.js/helpers';
 expects dataset(s) to have a links property, an array of corresponding "link" keys
 associated with each data value. When a pie slice is clicked, the onCLick callback
 is call with the associated link value.
-If the pie is clicked in the center of the donut hole, onClick is called with "all"
+If the pie is clicked in the center of the donut hole, onProbeClick is called with "all"
 */
 export default function PieChart({ chartData, options, onClick }) {
     const chartRef = useRef();

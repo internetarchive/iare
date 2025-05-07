@@ -31,50 +31,48 @@ shows template urls and their status codes in a tabular form
 export default function RefUrls({ urls, pageData, tooltipId, showDebug=false }) {
 
     const [isProbeOpen, setIsProbeOpen] = useState(false)
-    const [modalTitle, setModalTitle] = useState('Modal Title');
+    const [modalTitle, setModalTitle] = useState(<>Modal Title</>);
     // const [modalData, setModalData] = useState('Modal Data');
     const [modalData, setModalData] = useState(null);
 
     const handleProbeClick = (e) => {
+        // displays popup describing probe details of url
+        // - url determined by row clicked
+        // - probe determined by probe badge (small icon) clicked
 
-        const probeElement = e.target
-        const probeKey = probeElement.dataset.probeKey
-        const urlElement = probeElement.closest('.url-row')
+        const targetElement = e.target
+
+        const urlElement = targetElement.closest('.url-row')
         const urlLink = urlElement.dataset.url
-
-        let probeData = null
         const urlObj = pageData.urlDict[urlLink]
-        if (urlObj) {
-            probeData = urlObj.probe_results?.raw?.[probeKey] ?? null
-        }
+
+        const probeKey = targetElement.dataset.probeKey
+        const probeData = urlObj?.probe_results?.probes?.[probeKey] ?? null
 
         console.log(`Clicked ${probeKey} probe details for url: ${urlLink}, probeData is: ${JSON.stringify(probeData, null, 2 )}`)
-        // alert(`Clicked ${probeKey} probe details for url: ${urlLink},\n probeData is: ${JSON.stringify(probeData, null, 2 )}`)
 
-        // assume urlObj.probes is set (otherwise wouldnt be able to be clicked on it)
-        // and we setModalData to pageData.urlDict[url].probes[probeName].details
+        const formattedProbeData = <pre>{JSON.stringify(probeData, null, 2)}</pre>
 
-        // set Modal Popup state values TODO: make modalState have a title and data
-
-        setModalTitle(`Probe results for ${probeKey}`)
-
-
-        // setModalTitle(<div>
-        //     <div>Probe results for {probeKey}</div>
-        //     <div>Url probed: ${urlLink}</div>
-        // </div>)
-
-        //probeData
-
-        const formattedData =
+        setModalTitle(<>
+            <div>{probeKey} probe results for URL:</div>
+            <div style={{fontWeight: "normal"}}> {urlLink}</div>
+        </>)
+        // setModalTitle(<>
+        //     <div>Probe results:</div>
+        //     <div>URL: <span style={{fontWeight: "normal"}}> {urlLink}</span></div>
+        //     <div>Probe: {probeKey}</div>
+        // </>)
 
         setModalData(<div>
-            <div style={{fontStyle: "italic", marginBottom:".42em"}}>Url probed:</div>
-            <div>{urlLink}</div>
-            <br/>
-            <div style={{fontStyle: "italic", marginBottom:"0.42em"}}>Results of probe:</div>
-            <div><pre>{JSON.stringify(probeData, null, 2)}</pre></div>
+            <div>{formattedProbeData}</div>
         </div>)
+        // setModalData(<div>
+        //     <div style={{fontStyle: "italic", marginBottom:".42em"}}>Url probed:</div>
+        //     <div>{urlLink}</div>
+        //     <br/>
+        //     <div style={{fontStyle: "italic", marginBottom:"0.42em"}}>Results of probe:</div>
+        //     <div>{formattedProbeData}</div>
+        // </div>)
 
         setIsProbeOpen(true)
 
@@ -139,7 +137,7 @@ export default function RefUrls({ urls, pageData, tooltipId, showDebug=false }) 
             {/*<div className={"url-citations"}>{getCitationInfo(u)}</div>*/}
             <div className={"url-perennial"}>{getPerennialInfo(u)}</div>
             <div className={"url-probes"}>
-                <RefUrlProbe urlObj={u} pageData={pageData} onClick={handleProbeClick} />
+                <RefUrlProbe urlObj={u} pageData={pageData} onProbeClick={handleProbeClick} />
             </div>
 
         </div>

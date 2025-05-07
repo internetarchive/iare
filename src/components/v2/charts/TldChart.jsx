@@ -93,7 +93,7 @@ const TldChart = ({pageData, options, onAction, currentState = null}) => {
                 //         size: 16
                 //     },
                 // },
-                // onClick: onClickChartLegend,
+                // onProbeClick: onClickChartLegend,
             },
         },
     }

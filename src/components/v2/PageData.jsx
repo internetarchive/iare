@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from "react";
 // import {fetchUrls, iariPostProcessUrl, isBookUrl} from "../../utils/iariUtils.js"
-import {fetchUrls, iariPostProcessUrl} from "../../utils/iariUtils.js"
+import {fetchUrls, iariPostProcessUrl, fetchUrlsInfo} from "../../utils/iariUtils.js"
 import UrlDisplay from "./UrlDisplay.jsx";
 import RefDisplay from "./RefDisplay.jsx";
 import Loader from "../Loader.jsx";
@@ -52,7 +52,7 @@ export default function PageData({rawPageData = {}}) {
     const [urlStatusLoadingMessage, setUrlStatusLoadingMessage] = useState('')
 
     let myConfig = React.useContext(ConfigContext)
-    myConfig = myConfig ? myConfig : {} // prevents undefined myConfig.<param> errors
+    myConfig = myConfig ? myConfig : {} // prevents myConfig.<undefined param> errors
 
     const myIariBase = myConfig.iariSource
     const myStatusCheckMethod = myConfig.urlStatusMethod
@@ -62,22 +62,25 @@ export default function PageData({rawPageData = {}}) {
     // well, but assigning to a local var seems to make things work
     const rspDomains = categorizedDomains
 
-    const pageData = rawPageData
+    const pageData = rawPageData  // TODO ehy this reassign??
 
     const addProcessError = (pageData, newError) => {
         if (!pageData.process_errors) pageData.process_errors = []
         pageData.process_errors.push( newError )
     }
 
+    const processUrls = useCallback( (pageData, urlResults) => {
     // called in useEffect when new urlResults received
     //
-    // from urlResults, creates:
+    // creates:
     //
     //  pageData.urlDict and
     //  pageData.urlArray
     //
+    // from urlResults.
     //
-    const processUrls = useCallback( (pageData, urlResults) => {
+    // It also does some extraction processing of url data and creates
+    // some statistical data regarding all the urls
 
         const gatherDomainStats = (urlArray) => {
             // calculates top level domain and pay level domain stats
@@ -132,17 +135,17 @@ export default function PageData({rawPageData = {}}) {
         if (urlResults) {
             urlResults.forEach(d => {
 
+                const myUrl = d.data.url
                 // urlResults arrive from fetch routine surrounded by a "data" element:
+                //
                 // [
                 //  { data: <url data>, status_code: <result of fetch call (not the url status)> },
                 //  . . .
                 // ]
                 //
-                // we remove that level of indirection here
+                // so we remove that level of indirection here
 
-                const myUrl = d.data.url
-
-                // add entry for url if not there yet
+                // add urlDict entry for url if not yet present
                 if (!urlDict[myUrl]) {
                     urlDict[myUrl] = d.data  // initialize with result data
                     urlDict[myUrl].urlCount = 0
@@ -177,6 +180,7 @@ export default function PageData({rawPageData = {}}) {
             return urlDict[urlKey]
         })
 
+        // generate some page-wide statistics
         gatherDomainStats(pageData.urlArray)
         gatherStatusStats(pageData.urlArray)
 
@@ -200,7 +204,8 @@ export default function PageData({rawPageData = {}}) {
             })
         })
 
-        pageData.references.forEach(_ref => {
+        // TODO what if references is nil?
+        pageData.references.forEach( _ref => {
             // for each url:
             // if url is actionable, add to url.actionable list
             _ref.actionable = []
@@ -291,7 +296,8 @@ export default function PageData({rawPageData = {}}) {
             // if link referenced by archive_url exists and archiveLinkStatus is good,
             // set the hasTemplateArchive property of the primaryUrl to true
             if (archiveUrl && urlDict[primaryUrl]) {
-                urlDict[primaryUrl].hasTemplateArchive = true  // this needs work, as there can be more than one template where this url is used.
+                urlDict[primaryUrl].hasTemplateArchive = true
+                // TODO this needs fixing, as there can be more than one template where this url is used.
                 // TODO maybe this is covered when we attach the associated reference objects to the URL...
             }
         })
@@ -431,17 +437,17 @@ export default function PageData({rawPageData = {}}) {
         }
 
 
-                    // const anchorRefs = getAnchorReferences(pageData)
-        // re-define references as just the anchor references
+        // re-define references property as just the anchor references
         pageData.references = getAnchorReferences(pageData)
-
 
         // process all anchor references
         pageData.references.forEach( (ref, index) => {
-            processReference(ref, pageData.urlDict)
 
-            // assign dynamic ref_index property to each reference.
-            // this gives us the ability to index each reference internally.
+            processReference(ref, pageData.urlDict)
+            // pretty much just sets "hasTemplateArchive" property of urls found in reference
+
+            // assign dynamic ref_index property to each reference,
+            // giving us the ability to index each reference internally.
             ref.ref_index = index
 
         })
@@ -685,54 +691,31 @@ export default function PageData({rawPageData = {}}) {
     }, [])
 
 
-    const processProbes = useCallback( pageData => {
-        // returns probe data from IARI for each URL in urlArray
-
-        const getProbeResultsForUrl = (url) => {
-            // return IARI results of probe for each probe type
-            return {}
-        }
-
-        if (!pageData?.urlArray) return
-
-        // const probeResults = {}
+    const processUrlsInfo = useCallback( (pageData, urlResults) => {
+        // urlResults is array of result objects from get_url_info results
+        // we loop through urlResults, and append info to e=corresponding
+        // pageData.urlDict entry
         //
-        // pageData.urlArray.forEach(urlObj => {
-        //     ///            getProbeResultsForUrl
-        // })
+        // we are focussing on probe results only right now
 
-        if (!pageData["probes"]) pageData["probes"] = {}
-        // fake the data...
-        pageData.probes = {
-            probeArray: [ "verifyi", "trust_project"],
-            probes: {
-                "verifyi" : {
-                    message: "Somewhat Reliable",
-                    level: 5,
-                    results: {
-                        thing_1: "Some things were good.",
-                        thing_2: "Some things were bad"
-                    }
-                },
-                "trust_project" : {
-                    message: "Somewhat Un-reliable",
-                    level: -5,
-                    results: {
-                        thing_1: "Some things were good.",
-                        thing_2: "More things were bad"
-                    }
-                },
-                "bad_actor" : {
-                    message: "Un-reliable",
-                    level: -99,
-                    results: {
-                        thing_1: "Some things were bad.",
-                        thing_2: "More things were really bad.",
-                        thing_3: "This should ring some bells!",
-                    }
-                },
+        if (!pageData?.urlDict) return
+        const urlDict = pageData.urlDict
 
-            }
+        if (urlResults) {
+            urlResults.forEach(d => {
+
+                // NB assumes d.data is valid
+
+                // must account for results "d.data" level of hierarchy
+                const myUrl = d.data.url
+                const probe_results = d.data.results?.probe_results
+
+                // add probe_data to urlDict entry for url
+                if (urlDict[myUrl]) {
+                    urlDict[myUrl]["probe_results"] = probe_results
+                }
+
+            })
         }
 
 
@@ -751,16 +734,18 @@ export default function PageData({rawPageData = {}}) {
             })
         }
 
-        // NB TODO make this work for V2
-        // const fetchNewRefs = () => {
-        //     // return fetchUrls( {
-        //     //     iariBase: myIariBase,
-        //     //     urlArray: pageData.urls,
-        //     //     refresh: pageData.forceRefresh,
-        //     //     timeout: 60,
-        //     //     method: myStatusCheckMethod
-        //     // })
-        // }
+        const fetchPageUrlsInfo = (urlDict) => {
+
+            const myUrlArray = Object.keys(urlDict)
+
+            return fetchUrlsInfo( {
+                iariBase: myIariBase,
+                urlArray: myUrlArray,
+                refresh: pageData.forceRefresh,
+                timeout: 60,
+                probes: "verifyi|trust_project|iffy"
+            })
+        }
 
         const fetchPageData = async () => {
 
@@ -770,27 +755,25 @@ export default function PageData({rawPageData = {}}) {
                 setIsDataReady(false);
                 setIsLoadingUrls(true);
 
-                // decorate pageData a little
-                pageData.statusCheckMethod = myStatusCheckMethod;
+                pageData.statusCheckMethod = myStatusCheckMethod  // decorate pageData a little
 
-                console.log(`BEFORE fetch urls, pageData.urlArray size: ${pageData.urlArray?.length}`)
-                // fetch info for all urls and wait for results before continuing
+                // fetch url data for each url and process received data - TODO this should eventually be done in IARI
                 const myUrls = await fetchPageUrls()
-                console.log(`AFTER fetch urls, pageData.urlArray size: ${pageData.urlArray?.length}`)
+                processUrls(pageData, myUrls)  // creates pageData.urlDict and pageData.urlArray; loads pageData.errors
+
+                const myNewUrls = await fetchPageUrlsInfo(pageData.urlDict)
+                // for each URL in urlDict, fetch probe info and assign to probe property of url
+                // this is temporary, as eventually the probe data will be included with the url
+                // data when initially retrieved (with get_url_info vs. check_url IARI endpoint)
+                processUrlsInfo(pageData, myNewUrls)
 
 
-                            // NB TODO: fetch article data from IARI for V2 or article parsing to get array of citerefs
-                            // const newRefs = await fetchNewRefs()  // grabs article_V2 data from IARI
-
-                // process received data - TODO this should eventually be done in IARI
-                processUrls(pageData, myUrls);  // creates pageData.urlDict and pageData.urlArray; loads pageData.errors
-                processReferences(pageData)  //
+                // now that all info is fetched from IARI API, process local info
+                processReferences(pageData)
                 associateRefsWithLinks(pageData)  // associates url links with references
 
                 processReliabilityData(pageData)
                 processBooksData(pageData)
-
-                processProbes(pageData)
 
                 processActionables(pageData)
 

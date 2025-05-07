@@ -73,7 +73,7 @@ export default function RefView({
     };
 
     const handleResize = (e, dir, ref, delta, position) => {
-        console.log('Resizing', dir, delta, position);
+        console.log('RefView Resizing', dir, delta, position);
         // console.log("FROM WITHIN inResize!!!")
         // console.log(`x: ${e.x}`)
         // console.log(`y: ${e.y}`)
@@ -236,7 +236,7 @@ export default function RefView({
         console.log(`RefView:Rnd: ${eventName} (stopped propagation)`)
     }
 
-    // return <div className='ref-modal-overlay' onClick={onClose} >
+    // return <div className='ref-modal-overlay' onProbeClick={onClose} >
     return <div
         className='ref-modal-overlay'
 
@@ -247,7 +247,7 @@ export default function RefView({
         }}
         // style={{pointerEvents: "auto"}}
 
-            // onClick={(e) => {e.stopPropagation()}}
+            // onProbeClick={(e) => {e.stopPropagation()}}
             // onMouseMove={(e) => {e.stopPropagation()}}
             // onScroll={(e) => {e.stopPropagation()}}
             // onScrollCapture={(e) => {e.stopPropagation()}}
@@ -280,7 +280,7 @@ export default function RefView({
             onMouseDown={handleMouseDown}
                         // onDrag={handleDrag}
                         // onResizeStart={handleResizeStart}
-                        // onResize={handleResize}
+            onResize={handleResize}
                         // onScroll={(e) => {e.stopPropagation()}}
                         // onScrollCapture={(e) => {e.stopPropagation()}}
 
@@ -318,8 +318,10 @@ export default function RefView({
                 }}
 
                 // turn off event responses on main content, as they will cause unexpected behavior
-                onClick={(e) => {stopAndShow(e, "contents:onClick")}}
-                onMouseMove={(e) => {stopAndShow(e, "contents::onMouseMove")}}
+                onClick={(e) => {stopAndShow(e, "contents:onProbeClick")}}
+
+                 // onMouseMove={(e) => {stopAndShow(e, "contents::onMouseMove")}}
+
                 // onMouseDown={(e) => {stopAndShow(e, "onMouseDown")}}
                 onScroll={(e) => {stopAndShow(e, "contents:onScroll")}}
                 onScrollCapture={(e) => {stopAndShow(e, "contents:onScrollCapture")}}

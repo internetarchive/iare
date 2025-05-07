@@ -96,7 +96,7 @@ const ReferenceStats = ({pageData, options, onAction}) => {
     //                     family: '"Century Gothic", Futura, sans-serif',
     //                 },
     //             },
-    //             onClick: onClickPieLegend,
+    //             onProbeClick: onClickPieLegend,
     //         },
     //     },
     // }
@@ -107,7 +107,7 @@ const ReferenceStats = ({pageData, options, onAction}) => {
 
         {/*<div className={"url-chart-display"}>*/}
         {/*    {chartData.datasets[0].data.length > 0 ?*/}
-        {/*        <PieChart chartData={chartData} options={chartOptions} onClick={onClickPieChart}/>*/}
+        {/*        <PieChart chartData={chartData} options={chartOptions} onProbeClick={onClickPieChart}/>*/}
         {/*        : <p>No Pie</p>}*/}
         {/*</div>*/}
     </>

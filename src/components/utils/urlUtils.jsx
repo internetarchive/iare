@@ -1,6 +1,13 @@
 import React from "react";
 import {reliabilityMap} from "../../constants/perennialList.jsx";
 
+
+export const setUrlProbeResults = ( (urlObj, rawProbeResults) => {
+    // for now, just pass results directly, no parsing or tree shaking
+    urlObj.probe_results = rawProbeResults
+} )
+
+
 export const getArchiveStatusInfo = (u => {
     return <span className={u.isBook
         ? "archive-book"

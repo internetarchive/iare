@@ -94,7 +94,7 @@ const PayLevelDomainsChart = ({pageData, options, onAction, currentState = null}
                            className={'pay-level-domains-list-chart'}
                            currentState={currentState?.domains}
                            options={{label:"Domain", label_count: "Count"}}
-                           onClick={onClickItem} />
+                           onProbeClick={onClickItem} />
         </div>
     </>
     */

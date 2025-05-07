@@ -40,7 +40,7 @@ export default function UrlFlockPdf({ urlArray, urlFilterDef, originFilterDef, i
 
     // const [selectedUrl, setSelectedUrl] = useState('' ); // selected url in list
 
-    // const onClick = (evt) => {
+    // const onProbeClick = (evt) => {
     //     const url = evt.target.parentNode.dataset["url"];
     //     onAction( {
     //         "action": "setUrlFilter",

@@ -93,6 +93,14 @@
 .rnd-modal-popup-contents {
     padding:.5rem;
 }
+.rnd-modal-popup .debug{
+    color: #699191;
+    background-color: #d3e9e9;
+    border: 1px solid #b1bdbd;
+    border-radius: 4pt;
+    padding: 2pt 3pt;
+    margin-bottom: 4pt;
+}
 
 @media screen and (max-width: 500px) {
     .rnd-modal-ref-view-contents {
@@ -596,17 +604,18 @@ button.truth-probe-button
 
 .raw-claim {
     font-size: .85rem;
-    color: #808080;
+    color: #5787b7; /* #808080; */
     background-color: var(--color-bg-raw-claim);
     border-radius: var(--border-radius-ref-section);
-    border:var(--border-solid-dark);
+    /*border:var(--border-solid-dark);*/
+    border:#5787b7 solid 2px;
     overflow-wrap: break-word;
     overflow: scroll;
     /*height: var(--height-ref-view-wikitext);*/
     margin-bottom:0;
     padding:.28rem .35rem;
     width:100%;
-
+    /*box-shadow: chocolate 2pt 3pt 2pt 0px;*/
 }
 
 /* uncategorized */

@@ -1,11 +1,29 @@
 
+
+export const isEmpty = (o) => {
+    // // return true if null or undefined, empty object (no keys) or empty array
+    // if (o === null || o === undefined) return true
+    // if (typeof o === 'object' && Object.keys(o).length === 0) return true
+    // if (Array.isArray(o) && o.length === 0) return true
+    //
+    // return false
+
+    // return true if null or undefined, empty object (no keys) or empty array
+    return (o === null || o === undefined)
+        || (typeof o === 'object' && Object.keys(o).length === 0)
+        || (Array.isArray(o) && o.length === 0)
+
+}
+
 export const isLinkStatusGood = (statusCode) => {
     return statusCode >= 200 && statusCode < 400
 }
 
+
 export const isLinkStatusBad = (statusCode) => {
     return statusCode < 200 || statusCode >= 400
 }
+
 
 export const normalizeUrlArray = (urlArray=[]) => {
     // transform urlArray, which is an array of url objects wrapped in a "data" property,

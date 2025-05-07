@@ -4,8 +4,9 @@ import { Rnd } from 'react-rnd';
 
 const Popup = ({ isOpen, onClose, title, children }) => {
 
-    const [size, setSize] = useState({ width: 400, height: 300 });
-    const [position, setPosition] = useState({ x: 100, y: 100 });
+    const [size, setSize] = useState({ width: 600, height: 400 });
+    const [position, setPosition] = useState({ x: 200, y: 200 });
+    const [resizeText, setResizeText] = useState("xxx");
     const [isDragging, setIsDragging] = useState(false);
 
     if (!isOpen) {
@@ -14,11 +15,17 @@ const Popup = ({ isOpen, onClose, title, children }) => {
 
 
     const handleResize = (e, direction, ref, delta, position) => {
+        console.log("Popup:: handleResize")
+        e.stopPropagation()
+        e.preventDefault()
+
+        setResizeText(`"Resize: width: ${ref.offsetWidth}, height: ${ref.offsetHeight}, x:${position.x}, y:${position.y}`)
+
         setSize({
             width: ref.offsetWidth,
             height: ref.offsetHeight,
-        });
-        setPosition(position);
+        })
+        setPosition(position)
     };
 
 
@@ -39,11 +46,19 @@ const Popup = ({ isOpen, onClose, title, children }) => {
         // set new position to data[x,y]
         setIsDragging(false); // Reset dragging state
         setPosition({ x: data.x, y: data.y })
+        e.preventDefault()
         e.stopPropagation()
+
     };
 
+    const handleResizeStop = (e, direction, ref, delta, position) => {
+        setSize({
+            width: ref.offsetWidth,
+            height: ref.offsetHeight,
+        })
+    }
+
     const handleMouseDown = (e) => {
-        // e.stopPropagation()
         console.log("Popup:Rnd: onMouseDown")
         setIsDragging(false)
         e.stopPropagation()
@@ -59,7 +74,7 @@ const Popup = ({ isOpen, onClose, title, children }) => {
         <Rnd
             className={"rnd-modal-popup"}
             style={{
-                pointerEvents: "auto"
+                pointerEvents: "auto",
             }}
 
             size={size}
@@ -73,11 +88,17 @@ const Popup = ({ isOpen, onClose, title, children }) => {
             onDragStart={handleDragStart}
             onDragStop={handleDragStop}
             onMouseDown={handleMouseDown}
-            onDrag={(e, d) => {
-                console.log("Popup:Rnd: Dragging to", d.x, d.y);
-            }}
+            // onMouseMove={ e => {
+            //     const now = new Date()
+            //     console.log(`Popup: onMouseMove ${now.toString()}`)
+            // }}
 
-            // onResizeStop={handleResizeStop}
+            // onDrag={(e, d) => {
+            //     console.log("Popup:Rnd: Dragging to", d.x, d.y);
+            // }}
+
+
+            onResizeStop={handleResizeStop}
             disableDragging={false} // make sure this is false!
             enableResizing={{
                 top: false,
@@ -105,7 +126,7 @@ const Popup = ({ isOpen, onClose, title, children }) => {
                     pointerEvents: "auto",
                 }}
 
-                onClick={(e) => {stopAndShow(e, "contents:onClick")}}
+                onClick={(e) => {stopAndShow(e, "contents:onProbeClick")}}
                 // onMouseMove={(e) => {stopAndShow(e, "contents:onMouseMove")}}
                 // onMouseDown={(e) => {stopAndShow(e, "onMouseDown")}}
                 onScroll={(e) => {stopAndShow(e, "contents:onScroll")}}
@@ -115,7 +136,9 @@ const Popup = ({ isOpen, onClose, title, children }) => {
 
                 <div className="modal-header"
                      style={{
-                         backgroundColor: '#eee',
+                         backgroundColor: '#bde2cf',
+                         border:'1pt solid black',
+                         borderRadius:'3pt',
                          padding: '5px',
                          cursor: 'move',
                          display: 'flex',
@@ -128,6 +151,11 @@ const Popup = ({ isOpen, onClose, title, children }) => {
                         <button style={{position:"absolute", right:"10px", top:"10px"}} onClick={onClose}>Close</button>
                     </div>
                 </div>
+
+                {false && <div className={"debug"}>
+                    <div>{isDragging ? "isDragging: true" : "isDragging: false"}</div>
+                    <div>ResizeText: {resizeText}</div>
+                </div>}
 
                 <div style={{ flex: 1, overflow: 'auto', padding:"0 .3rem .2rem .3rem" }}>
                     {children}

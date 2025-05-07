@@ -86,10 +86,11 @@ export const getProbeEndpoint = (
         url = '',
         probes = '',
         iariSourceId = IariSources['iari'].key,
+        refresh = false
     }) =>
 {
     const iariBase = IariSources[iariSourceId]?.proxy
-    return `${iariBase}${IariMethods.PROBE.endpoint}?probes=${probes}&url=${url}`;
+    return `${iariBase}${IariMethods.PROBE.endpoint}?probes=${probes}&url=${url}${refresh?"&refresh=true":""}`;
 }
 
 
@@ -534,14 +535,15 @@ const checkUrlsCorentin = async (urlArray, refresh, timeout) => {
     return urlData;
 }
 
+
 // returns a promise, enholding array of urls
 export const fetchUrls = async ({
-                iariBase= '',
-                urlArray=[],  // list of flat url links (not url objects)
-                refresh=false,
-                timeout=10,
-                method = UrlStatusCheckMethods.IABOT.key
-            } = {}) => {
+                                    iariBase= '',
+                                    urlArray=[],  // list of flat url links (not url objects)
+                                    refresh=false,
+                                    timeout=10,
+                                    method = UrlStatusCheckMethods.IABOT.key
+                                } = {}) => {
 
     console.log(`iariUtils::fetchUrls: iariBase=${iariBase} method=${method} refresh=${refresh}, timeout=${timeout}`)
 
@@ -567,6 +569,117 @@ export const fetchUrls = async ({
     }
 
     return urlData
+
+}
+
+
+const fetchUrlInfo = async ({iariBase, url, refresh=false, timeout=0, probes=''}) => {
+
+    // probe?refresh=true&probes=x|y|verifyi&url=www.x.com
+
+    const endpoint = `${iariBase}/probe`
+        + `?url=${encodeURIComponent(url)}`
+        + (refresh ? "&refresh=true" : '')
+        + (timeout > 0 ? `&timeout=${timeout}` : '')
+        + `&probes=${probes}`
+
+    let endpoint_status_code = 0;
+
+    const resolveProbeResults = (data) => {
+        // "data" includes all url fields from iari check-url endpoint
+        return {
+            url: url,
+            results: (data)
+        }
+    }
+
+    const resolveErrorResults = (response) => {
+        return {
+            url: url,
+
+            error_code: response.status,
+            error_text: response.statusText ? response.statusText : "error from server",
+            // TODO: would be nice to use response.statusText, but as of 2023.04.08, response.statusText is empty
+        }
+    }
+
+    console.log(`fetchUrlInfo: endpoint: ${endpoint}`)
+
+    // TODO: do we want no-cache, even if no refresh?
+    const urlData = await fetch(endpoint, {cache: "no-cache"})
+
+        .then( response => {
+
+            endpoint_status_code = response.status
+
+            if (response.ok) {
+                return response.json().then(data => {
+                    return Promise.resolve(resolveProbeResults(data))
+                })
+
+            } else {
+                // we may have a 504 or other erroneous status_code on the check-url call
+                console.warn(`fetchUrl: Error fetching url ${url}.`)
+                return Promise.resolve(resolveErrorResults(response))
+
+            }
+        })
+
+        .catch( (_e) => { // if something bad happened, return fake synthesized url object
+
+                console.warn(`utils::fetchStatusUrl: Something went wrong when fetching url: ${url}`)
+
+                // return fake url data object so URL display interface is not broken
+                return Promise.resolve({
+                    url: url,
+                    error_code: -1, // we don't know why this happened
+                    error_text: "Failure doing probe", // is there an error message available here?
+                })
+            }
+        );
+
+    return { data: urlData, status_code: endpoint_status_code };
+}
+
+
+// returns a promise, holding array of urls with info
+export const fetchUrlsInfo = async ({
+                iariBase= '',
+                urlArray=[],  // list of flat url links (strings, not url objects)
+                refresh=false,
+                timeout=10,  // seconds
+                probes = "verifyi|trust_project|iffy"
+                // may want to add "method" parameter eventually
+} = {}) => {
+
+    console.log(`iariUtils::fetchUrlsInfo: iariBase=${iariBase} probes=${probes} refresh=${refresh}, timeout=${timeout}`)
+
+    // return empty array if urlArray is empty
+    if (!urlArray || !urlArray.length)  // TODO use IsEmpty() utility function here
+    {
+        return Promise.resolve([])
+    }
+
+    try {
+        return await Promise.all(
+            urlArray.map(urlLink =>
+                fetchUrlInfo({
+                    iariBase,
+                    url: urlLink,
+                    refresh,
+                    timeout,
+                    probes
+                }).catch(error => {
+                    console.error(`Error fetching url info for ${urlLink}:`, error);
+                    return null; // Prevents entire Promise.all() from failing
+                })
+            )
+        );
+
+    } catch (err) {
+        console.error("Failed to fetch url info for URLs:", err);
+        return []; // Return empty array in case of failure
+    }
 
 }
 
