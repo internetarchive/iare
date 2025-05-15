@@ -4,7 +4,7 @@ import { Rnd } from 'react-rnd';
 
 const Popup = ({ isOpen, onClose, title, children }) => {
 
-    const [size, setSize] = useState({ width: 600, height: 400 });
+    const [size, setSize] = useState({ width: 600, height: 480 });
     const [position, setPosition] = useState({ x: 200, y: 200 });
     const [resizeText, setResizeText] = useState("xxx");
     const [isDragging, setIsDragging] = useState(false);
@@ -116,7 +116,7 @@ const Popup = ({ isOpen, onClose, title, children }) => {
                 className="rnd-modal-popup-contents"
                 style={{
                     // position: "absolute",
-                    border: '2px solid black',
+                    border: '1pt solid black',
                     padding: '.35rem',
                     width: '100%',
                     height: '100%',
@@ -136,7 +136,9 @@ const Popup = ({ isOpen, onClose, title, children }) => {
 
                 <div className="modal-header"
                      style={{
-                         backgroundColor: '#bde2cf',
+                         // backgroundColor: '#bde2cf',
+                         // backgroundColor: '#b1dbf7',
+                         backgroundColor: 'hsl(204deg 81.4% 83.14%)',
                          border:'1pt solid black',
                          borderRadius:'3pt',
                          padding: '5px',
@@ -148,7 +150,16 @@ const Popup = ({ isOpen, onClose, title, children }) => {
                      }}>
                     <div style={{overflow:"hidden"}}>
                         <span style={{fontWeight: "bold", overflow:"hidden"}}>{title ? title : "Popup"}</span>
-                        <button style={{position:"absolute", right:"10px", top:"10px"}} onClick={onClose}>Close</button>
+                        <button style={{
+                            position:"absolute",
+                            borderRadius:"8pt",
+                            border:"1px solid grey",
+                            right:"10pt",
+                            top:"10pt",
+                            opacity:"0.85",
+                            fontSize:"88%",
+                            padding:"1pt 4pt"
+                        }} onClick={onClose}>Close</button>
                     </div>
                 </div>
 

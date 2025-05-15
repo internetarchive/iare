@@ -18,9 +18,12 @@ const defaultRenderFunc = (props) => {
     return <>
         <span>{props.caption}{
             (props.count || props.count === 0)
-                ? <span className={"lolite"}> [{props.count}]</span> : ''}
+                ? <span className={"lolite"}> [{props.count}]</span>
+                : ''}
         </span>
-        {props.useDesc ? <><br/><span className={"btn-description"}>{props.desc}</span></> : null}
+        {props.useDesc
+            ? <><br/><span className={"btn-description"}>{props.desc}</span></>
+            : null}
     </>
 }
 export default function FilterButton(props) {

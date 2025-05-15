@@ -50,7 +50,8 @@
     --width-url-citations: 3.5rem;
     --width-url-templates: 4.0rem;
     /*--width-url-actionable: 7.0rem;*/
-    --width-url-actionable: 5.0rem;
+    /*--width-url-actionable: 5.0rem;*/
+    --width-url-actionable: 3.5rem;
     --width-url-sections: 4.5rem;
     --width-url-perennial: 5.0rem;
     --width-url-probes: 6.0rem;
@@ -87,8 +88,9 @@
 .rnd-modal-popup {
     background-color: #f0f0f0;
     /*background-color: chartreuse;*/
-    border:2px solid black;
+    border:1pt solid black;
     z-index: 1100;
+    box-shadow: 2px 2px 8px #8a8a8a;
 }
 .rnd-modal-popup-contents {
     padding:.5rem;
@@ -100,6 +102,16 @@
     border-radius: 4pt;
     padding: 2pt 3pt;
     margin-bottom: 4pt;
+}
+
+.rnd-modal-popup pre {
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    /*white-space: -moz-pre-wrap;  !* Mozilla, since 1999 *!*/
+    /*white-space: -pre-wrap;      !* Opera 4-6 *!*/
+    /*white-space: -o-pre-wrap;    !* Opera 7 *!*/
+    /*word-wrap: break-word;*/
+
+    /*text-wrap: wrap;*/
 }
 
 @media screen and (max-width: 500px) {
@@ -778,17 +790,3 @@ button.truth-probe-button
     background-color: #31adff;
 }
 
-.probe-badges {
-    display:flex;
-    flex-direction: row;
-}
-.probe-badge {
-    border:1px solid darkgray;
-    padding:1pt 3pt;
-    margin-right: .3rem;
-    border-radius: 3pt;
-    cursor: pointer;
-}
-.probe-badge:hover {
-    background-color: #d1d2d4;
-}

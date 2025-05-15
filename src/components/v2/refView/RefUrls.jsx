@@ -30,10 +30,10 @@ shows template urls and their status codes in a tabular form
  */
 export default function RefUrls({ urls, pageData, tooltipId, showDebug=false }) {
 
-    const [isProbeOpen, setIsProbeOpen] = useState(false)
-    const [modalTitle, setModalTitle] = useState(<>Modal Title</>);
+    const [isProbePopupOpen, setIsProbePopupOpen] = useState(false)
+    const [probePopupTitle, setProbePopupTitle] = useState(<>Modal Title</>);
     // const [modalData, setModalData] = useState('Modal Data');
-    const [modalData, setModalData] = useState(null);
+    const [probePopupData, setProbePopupData] = useState(null);
 
     const handleProbeClick = (e) => {
         // displays popup describing probe details of url
@@ -46,35 +46,28 @@ export default function RefUrls({ urls, pageData, tooltipId, showDebug=false }) 
         const urlLink = urlElement.dataset.url
         const urlObj = pageData.urlDict[urlLink]
 
+        const urlLinkFromData = targetElement.dataset.url
+        console.log(`Url from ProbeBadge data is: ${urlLinkFromData}`)
+
         const probeKey = targetElement.dataset.probeKey
         const probeData = urlObj?.probe_results?.probes?.[probeKey] ?? null
 
         console.log(`Clicked ${probeKey} probe details for url: ${urlLink}, probeData is: ${JSON.stringify(probeData, null, 2 )}`)
 
-        const formattedProbeData = <pre>{JSON.stringify(probeData, null, 2)}</pre>
+        const rawProbeData = <pre>{JSON.stringify(probeData, null, 2)}</pre>
+        const score = probeData ? probeData.score : "?"
 
-        setModalTitle(<>
+        setProbePopupTitle(<>
             <div>{probeKey} probe results for URL:</div>
             <div style={{fontWeight: "normal"}}> {urlLink}</div>
         </>)
-        // setModalTitle(<>
-        //     <div>Probe results:</div>
-        //     <div>URL: <span style={{fontWeight: "normal"}}> {urlLink}</span></div>
-        //     <div>Probe: {probeKey}</div>
-        // </>)
 
-        setModalData(<div>
-            <div>{formattedProbeData}</div>
+        setProbePopupData(<div>
+            <div className={"probe-score"}>Score: {score}</div>
+            <div>{rawProbeData}</div>
         </div>)
-        // setModalData(<div>
-        //     <div style={{fontStyle: "italic", marginBottom:".42em"}}>Url probed:</div>
-        //     <div>{urlLink}</div>
-        //     <br/>
-        //     <div style={{fontStyle: "italic", marginBottom:"0.42em"}}>Results of probe:</div>
-        //     <div>{formattedProbeData}</div>
-        // </div>)
 
-        setIsProbeOpen(true)
+        setIsProbePopupOpen(true)
 
     }
 
@@ -181,7 +174,7 @@ export default function RefUrls({ urls, pageData, tooltipId, showDebug=false }) 
 
     const urlRows = getUrlRows(urls)
 
-    const probeButton = <Button
+    const probeButton = null && <Button
         className={"btn truth-probe-button"}
         // key={pKey}
         onClick={() => alert("will probe for truth and display in URL info below.")}
@@ -197,10 +190,10 @@ export default function RefUrls({ urls, pageData, tooltipId, showDebug=false }) 
 
         </div>
 
-        <Popup isOpen={isProbeOpen}
-               onClose={() => { setIsProbeOpen(false) }}
-               title={modalTitle}>
-            {modalData}
+        <Popup isOpen={isProbePopupOpen}
+               onClose={() => { setIsProbePopupOpen(false) }}
+               title={probePopupTitle}>
+            {probePopupData}
         </Popup>
 
     </>

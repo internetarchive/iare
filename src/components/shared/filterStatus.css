@@ -1,0 +1,77 @@
+/* special filter status buttons */
+
+.filter-icon.archive-yes.filter-on { content: url('../../images/true_on.png'); }
+.filter-icon.archive-yes.filter-off { content: url('../../images/true_off.png'); }
+.filter-icon.archive-no.filter-on { content: url('../../images/false_on.png'); }
+.filter-icon.archive-no.filter-off { content: url('../../images/false_off.png'); }
+.filter-icon.archive-all.filter-on { content: url('../../images/all_on.png'); }
+.filter-icon.archive-all.filter-off { content: url('../../images/all_off.png'); }
+
+.archive-row .filter-icon {
+    /*width:var(--width-filter-icon);*/
+    height:var(--height-filter-icon);
+}
+.archive-row .filter-group-name {
+    padding-top:.5rem;
+    width: var(--width-filter-caption)
+}
+
+.filters-archive-status ul {
+    padding-left:0;
+}
+.filters-archive-status li {
+    list-style-type: none; /* Remove bullets */
+}
+.filters-archive-status input[type=checkbox] {
+    display:none; /* faking radio buttons for now */
+}
+.archive-status-filter-buttons button:hover {
+    color:var(--color-list-fg-hover);
+    background-color: var(--color-list-bg-hover);
+    border-color: black;
+}
+.filters-archive-status button {
+    position:relative;
+
+    font-size:.75rem;
+    text-align:left;
+    /*font-weight: bold;*/
+    padding:.3rem .5rem;
+    margin-bottom:.3rem;
+}
+
+.filters-archive-status .filter-count {
+    position:absolute;
+    top:.4rem;
+    right:3.5rem;
+    display:block;
+    /*font-weight:bold;*/
+    font-size:120%;
+}
+
+li.archive-row {
+    display:inline-flex;
+    display:flex;
+}
+.archive-row ul {
+    /*display:inline-block;*/
+    display:block;
+}
+.archive-row li {
+    padding: 0; /* Remove padding */
+    margin: 0; /* Remove margins */
+    display:inline-block;
+    width: var(--width-filter-choice)
+}
+.archive-row input[type=checkbox] {
+    vertical-align: middle;
+    position: relative;
+    bottom: .5rem;
+}
+
+.archive-status-yes_archive {
+    content: url('../../images/yes_check.png');
+}
+.archive-status-no_archive {
+    content: url('../../images/no_x.png');
+}

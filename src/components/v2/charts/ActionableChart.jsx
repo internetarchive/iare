@@ -46,7 +46,16 @@ const ActionableChart = ({pageData, options, onAction, currentState = "", toolti
         // TODO Question: where does tool tip come from? is it generic tooltip for the page?
         return <>
             <div>{props.filter?.caption}</div>
-            <div className={'filter-count'}>{props.filter?.count} items</div>
+            <div className={'filter-count'}>{
+                props.filter?.count
+                    ? props.filter.count + ' ' +
+                    (  // 1 or more
+                        props.filter.count === 1
+                            ? "item"
+                            : "items"
+                    )
+                    : "No items" // 0 or null items
+            }</div>
         </>
     }
 

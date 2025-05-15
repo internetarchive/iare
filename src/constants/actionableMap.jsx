@@ -1,21 +1,19 @@
 import {isLinkStatusGood} from "../utils/generalUtils.js";
 
-const isLinkStatusBad = (statusCode) => {
-    return statusCode < 200 || statusCode >= 400
-}
 
 export const ACTIONABLE_FILTER_MAP = {
 
-    /* ideas for more:
-    * source BAD; no archive present
+    /*
+    ideas for more:
+    - source BAD; no archive present
         - if free reference, then check for webarchive
         * if source from template, check for archive_url and url_status
-    * source ANY, no archive protection (either through webarchive or template:archive_url
+    - source ANY, no archive protection (either through webarchive or template:archive_url
 
-    * other non-actionable ideas:
-    = call the url_status parameter something like "Citation Priority" in user presentation
+    other non-actionable ideas:
+    - call the url_status parameter something like "Citation Priority" in user presentation
 
-         */
+    */
 
     // all: {
     //     caption: "Show All",
@@ -28,11 +26,10 @@ export const ACTIONABLE_FILTER_MAP = {
         name: "bad_live",
         short_caption: "Broken Link displayed",
         caption: <div>Live Link broken,<br/>Citation Priority: Original</div>,
-        desc: "Live Link is broken, but is being displayed as the Primary Link.",
-        // desc: "Link Status: BAD, Citation Priority: Live",
+        desc: "Live link is broken, but is being displayed as the Primary link.",
         symptom: "The bad link is shown as the primary link in the citation. Since the link is bad, the Archive link should be the primary link.",
         fixit: <div>Set the "url-status" parameter in Citation Template to "dead". This will cause the Archive Link to be the Primary Link in the citation.</div>,
-        tooltip: `<div>Original URL Link Status is NOT 2XX or 3XX<br/>AND<br/>Template Parameter "url_status" is set to "live"</div>`,
+        tooltip: `<div>Original URL link status is NOT 2XX or 3XX<br/>AND<br/>"url_status" template parameter is set to "live"</div>`,
 
         filterFunction: () => (u) => {
             // reference_info.statuses is an aggregate of
@@ -45,11 +42,11 @@ export const ACTIONABLE_FILTER_MAP = {
             return ref.templates.some( template => {
                 const url = template.parameters['url']
                 if (!url) return false
-                const urlObject = urlDict[url]
-                if (!urlObject) return false
-                return (isLinkStatusBad(urlObject.status_code)
+                const urlObj = urlDict[url]
+                if (!urlObj) return false
+                return (urlObj.status_code < 200 || urlObj.status_code >= 400)
                     &&
-                    template.parameters['url_status'] === 'live');
+                    (template.parameters['url_status'] === 'live');
             })
         },
     },
@@ -92,40 +89,38 @@ export const ACTIONABLE_FILTER_MAP = {
 
         filterFunction: () => (url) => {
 
-            if (isLinkStatusGood(url.status_code)) {
-                // source link GOOD, check templates for archive and citation status
+            if (!isLinkStatusGood(url.status_code)) return false
 
-                if (!url.refs) return false
+            // check templates for archive and citation status
+            if (!url.refs) return false
 
-                // return true if ANY of the url's have a ref that meets condition...
-                return url.refs.some(r => {
+            // return true if ANY of the url's have a ref that meets condition...
+            return url.refs.some(r => {
 
-                    // return true if any of the ref's have templates that meet condition...
-                    return r.templates.some(t => {
+                // return true if any of the ref's have templates that meet condition...
+                return r.templates.some(t => {
 
-                        // if d.url matches the url parameter in this template, continue checking...
-                        if (t.parameters && (t.parameters.url === url.url)) {
+                    // if d.url matches the url parameter in this template, continue checking...
+                    if (t.parameters && (t.parameters.url === url.url)) {
 
-                            // return true if archive_url is there and t.parameters.url_status !== "live"
-                            return (t.parameters.archive_url && (
-                                (t.parameters.url_status !== undefined)
-                                &&
-                                (t.parameters.url_status !== "live")
-                            ))
-                        } else {
-                            return false
-                        }
-                    })
+                        // return true if archive_url is there and t.parameters.url_status !== "live"
+                        return (t.parameters.archive_url && (
+                            (t.parameters.url_status !== undefined)
+                            &&
+                            (t.parameters.url_status !== "live")
+                        ))
+                    } else {
+                        return false
+                    }
                 })
-            } else {
-                return false
-            }
+            })
+
         },
 
         refFilterFunction: () => (urlDict, _ref) => {  // NB inclusion of urlDict when filter function called with .bind
 
             // console.log(`good_not_live refFilterFunction: _ref: ${_ref.id}, urlDict count: ${urlDict?.length}`)
-            return _ref.templates.some( t => {
+            return _ref.templates.some(t => {
 
                 const url = t.parameters['url']
                 if (!url) return false
@@ -136,72 +131,46 @@ export const ACTIONABLE_FILTER_MAP = {
                 if (!isLinkStatusGood(myUrl.status_code)) return false
 
                 // return true if archive_url is there and t.parameters.url_status !== "live"
-                return (t.parameters.archive_url && (
-                    (t.parameters.url_status !== undefined)
-                    &&
-                    (t.parameters.url_status !== "live")
-                ))
+                return (t.parameters.archive_url &&
+                    (
+                        (t.parameters.url_status !== undefined)
+                        &&
+                        (t.parameters.url_status !== "live")
+                    )
+                )
             })
         },
-
-        // refFilterFunction: () => (ref) => {
-        //     // go thru refs - if their urls and templates match conditions, then return true
-        //
-        //     return true
-        //
-        //     // return ref.urlObjects.some(url => {
-        //     //
-        //     //     if (isLinkStatusGood(url.status_code)) {
-        //     //         // source link GOOD, check templates for archive and citation status
-        //     //         return url.refs.some(r => {
-        //     //             // if any of the ref's templates return true...
-        //     //             return r.templates.some(t => {
-        //     //                 // if d.url matches the url parameter in this template, continue checking...
-        //     //                 if (t.parameters && (t.parameters.url === url.url)) {
-        //     //                     // return true if archive_url is there and t.parameters.url_status !== "live"
-        //     //                     return (t.parameters.archive_url && (
-        //     //                         (t.parameters.url_status !== undefined)
-        //     //                         &&
-        //     //                         (t.parameters.url_status !== "live")
-        //     //                     ))
-        //     //                 } else {
-        //     //                     return false
-        //     //                 }
-        //     //             })
-        //     //         })
-        //     //     } else {
-        //     //         return false
-        //     //     }
-        //     // })
-        // },
     },
         
     dead_link_no_archive: {
         category: "Actionable",
         name: "dead_link_no_archive",
         short_caption: "Broken, No Archive",
-        caption: <div>Live Link broken,<br/>Archive Link broken</div>,
+        caption: <div>Live Link broken,<br/>Archive Link missing or broken</div>,
         desc: "Live Link is broken, and Archive link is missing or broken.",
         symptom: "There is no valid Archive link to rescue the citation's broken link.",
         tooltip: `<div>Original Status is NOT 2XX or 3XX<br/>AND<br/>No Archive exists in Wayback Machine</div>`,
         fixit: <div>Edit the citation by adding a Wayback Machine Archive URL</div>,
 
         filterFunction: () => (url) => {
-            return (url.status_code < 200 || url.status_code >= 400)
+            return (!url.isBook)
+                &&
+                (url.status_code < 200 || url.status_code >= 400)
                 &&
                 (!url.archive_status?.hasArchive)
         },
 
         refFilterFunction: () => (urlDict, ref) => {
-            // go thru refs - return true if any of ref.urls match conditions
-            return ref.urls.some(url => {  // ref.urls is array of strings
-                const myUrl = urlDict[url]  // grab url object from urlDict
-                if (!myUrl) return false  // if url not in urlDict, it is probably an archive link, so dont check it
-                if (myUrl.isArchive) return false  // if url is an archive, dont check it
-                return (myUrl.status_code < 200 || myUrl.status_code >= 400)  // is it bad?
+            // return true if any urls of this ref match conditions
+            return ref.urls.some(myUrl => {  // ref.urls is array of strings
+                const url = urlDict[myUrl]  // get urlDict object from url string
+                if (!url) return false  // if url not in urlDict, it is probably an archive link, so dont check it
+                if (url.isArchive) return false  // if url is an archive, dont check it
+                return (!url.isBook)
                     &&
-                    (!myUrl.archive_status?.hasArchive)  // is it missing an archive?
-                    // TODO check i
+                    (url.status_code < 200 || url.status_code >= 400)  // is it bad?
+                    &&
+                    (!url.archive_status?.hasArchive)  // and missing an archive?
             })
         },
     },

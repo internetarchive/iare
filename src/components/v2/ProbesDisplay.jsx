@@ -1,10 +1,11 @@
-import React, {useCallback, useState} from "react";
+import React from "react";
 import {ProbeDefs} from "./../../constants/probeDefs.jsx";
 import {isEmpty} from "../../utils/generalUtils.js";
 
 
 export default function ProbesDisplay({
-        probeData = {},
+        urlObj={},
+        // probeData = {},
         onProbeClick,
     }) {
 
@@ -49,36 +50,52 @@ export default function ProbesDisplay({
 
     */
 
-    const handleProbeClick = (e) => {
-        onProbeClick(e)  // pass it on up to caller parent component for now...
-        // ...later we could add in some preprocessing if we had to
-    }
+    const probeData = urlObj?.probe_results
 
-    const probeItems = (isEmpty(probeData) || isEmpty(probeData.probes))
-        ? <div>No Probe Data</div>
-        : Object.keys(probeData?.probes).map( (pName, i) => {
-            const pDef = ProbeDefs[pName]  // ProbeDefs is globally defied probes
-            if (pDef) {
-                return <div className={"probe-badge"}
-                            key={pDef.key}
-                            onClick={handleProbeClick}
-                            data-probe-key={pDef.key}
-                >{pDef.short_caption}</div>
+    const probeBadges = (isEmpty(probeData?.probes))
+        ? <div className={"lolite"}>N/A</div>
+
+        : Object.keys(probeData?.probes).map( (probeName, i) => {
+            const probeDef = ProbeDefs[probeName]  // ProbeDefs is global probe definitions
+            if (probeDef) {
+
+                // get class based on score
+                const probe = probeData.probes[probeName]
+                const score = probe["score"]
+                let badgeClass = ""
+                if (score === null) {
+                    badgeClass = "probe-null"
+                } else if (score > 0) {
+                    badgeClass = "probe-good"
+                } else if (score < 0) {
+                    badgeClass = "probe-bad"
+                } else {
+                    badgeClass = "probe-zero"
+                }
+
+                // display badge for this Probe
+
+                return <div className={`probe-badge ${badgeClass}`}
+                            key={probeDef.key}
+                            onClick={onProbeClick}
+                            data-probe-key={probeDef.key}
+                            data-probe-score={score}
+                >{probeDef.short_caption}</div>
 
             } else {
-                // Question mark for unknown probe key
+                // Display as Question Mark for unknown probeName
                 return <div className={"probe-badge"}
-                            key={`${i}-${pName}`}
-                            onClick={handleProbeClick}
-                            data-probe-key={`unknown-${pName}`}
-                >{pName}</div>
+                            key={`${i}-${probeName}`}
+                            onClick={onProbeClick}
+                            data-probe-key={`unknown-${probeName}`}
+                >{probeName}</div>
             }
         })
 
 
     return <>
         <div className={"probe-results probe-badges probes-display"}>
-            {probeItems}
+            {probeBadges}
         </div>
     </>
 

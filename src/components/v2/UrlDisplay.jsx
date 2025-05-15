@@ -559,8 +559,11 @@ export default function UrlDisplay ({ pageData, options } ) {
 
             {myConfig.isShowUrlOverview &&
                 <div className={"section-box url-overview-column"}>
-                    <UrlOverview pageData={pageData} options={{}} onAction={handleAction}
-                                 currentState={currentState} tooltipId={"url-display-tooltip"}/>
+                    <UrlOverview pageData={pageData}
+                                 options={{}}
+                                 onAction={handleAction}
+                                 currentState={currentState}
+                                 tooltipId={"url-display-tooltip"}/>
                 </div>
             }
 
@@ -570,7 +573,8 @@ export default function UrlDisplay ({ pageData, options } ) {
                 <ConditionsBox caption={"Conditions"} conditions={currentConditions} onAction={handleAction}/>
 
                 <div style={{display: "flex"}}>
-                    <UrlFlock urlArray={pageData.urlArray}
+                    <UrlFlock urlDict={pageData.urlDict}
+                              urlArray={pageData.urlArray}
                               urlFilters={urlFilters}
                               onAction={handleAction}
                               selectedUrl={selectedUrl}

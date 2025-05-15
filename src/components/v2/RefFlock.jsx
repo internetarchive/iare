@@ -28,8 +28,6 @@ function RefFlock({ pageData= {},
     console.log(`RefFlock: component entrance; pageData urlDict.length:${urlCount}`)
 
     let selectedArrayIndex = -1  // where in the filteredRefs list is our current array index (not refIndex, which is the "global index" of the reference
-    // const [tooltipHtmlRefList, setTooltipHtmlRefList] = useState(
-    //     '<div>ToolTip<br>RefFlock<br />third line</div>' )
     const [tooltipHtmlRefList, setTooltipHtmlRefList] = useState(null )
 
     // TODO catch undefined myIariBase exception

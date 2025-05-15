@@ -24,34 +24,39 @@ export default function FilterButtons ( {
         onClick(e); // might want to decorate this later...
     }
 
+    let totalFilterItems = 0  // cumulative count of active filters
+
+    const buttonDisplay = includeList.map( name => {
+
+        let f = filterMap[name]  // why let and not const?
+
+        // calc count of filter results as applied to flock
+        f.count = flock ? flock.filter((f.filterFunction)()).length : 0;
+        f.name = name // for render function
+        totalFilterItems += f.count
+
+        return f.count === 0
+            ? null
+            :<FilterButton key={name}
+                           name={name}
+                           caption={f.caption}
+                           count={f.count}
+                           isPressed={name === currentFilterName}
+                           onClick={handleClick}
+
+                           desc={f.desc}
+                           tooltip={f.tooltip}
+                           useDesc={false}
+                           onRender={onRender}
+                           tooltipId={tooltipId}
+                           filter={f}
+            />
+        })
+
     return <div className={"filter-group" + (className ? ' ' + className : '')}>
         {caption?<h4>{caption}</h4>:null}
         <div className={`filter-buttons`}>
-
-            {includeList.map( name => {
-
-                let f = filterMap[name];
-
-                // calc count of filter results as applied to flock
-                f.count = flock ? flock.filter((f.filterFunction)()).length : 0;
-                f.name = name // for render function
-
-                return f.count === 0 ? null :<FilterButton key={name}
-                    name={name}
-                    caption={f.caption}
-                    count={f.count}
-                    isPressed={name === currentFilterName}
-                    onClick={handleClick}
-
-                    desc={f.desc}
-                    tooltip={f.tooltip}
-                    useDesc={false}
-                    onRender={onRender}
-                    tooltipId={tooltipId}
-                    filter={f}
-                    />
-            })}
-
+            {buttonDisplay}
         </div>
     </div>
 

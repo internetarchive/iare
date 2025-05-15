@@ -162,7 +162,7 @@ export default function RefUrlProbe(
 
 
     return <>
-        <ProbesDisplay probeData={urlObj.probe_results} onProbeClick={onProbeClick}/>
+        <ProbesDisplay urlObj={urlObj} onProbeClick={onProbeClick}/>
 
         {/*{isLoading*/}
         {/*    ? <ProbeLoader message={"Probing url for truth..."}/>*/}

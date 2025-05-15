@@ -1,16 +1,18 @@
 import React, {useCallback, useEffect, useState} from "react";
 // import {fetchUrls, iariPostProcessUrl, isBookUrl} from "../../utils/iariUtils.js"
-import {fetchUrls, iariPostProcessUrl, fetchUrlsInfo} from "../../utils/iariUtils.js"
+import {fetchUrls, iariPostProcessUrl, fetchUrlsInfo, calcProbeScores} from "../../utils/iariUtils.js"
+
+import Loader from "../Loader.jsx";
 import UrlDisplay from "./UrlDisplay.jsx";
 import RefDisplay from "./RefDisplay.jsx";
-import Loader from "../Loader.jsx";
+import StatsDisplay from "./StatsDisplay.jsx";
+
 import {ConfigContext} from "../../contexts/ConfigContext.jsx";
 import {ACTIONABLE_FILTER_MAP} from "../../constants/actionableMap.jsx";
 import {URL_STATUS_FILTER_MAP} from "../../constants/urlFilterMaps.jsx";
 import {REF_FILTER_DEFS} from "../../constants/refFilterMaps.jsx";
 import {categorizedDomains, reliabilityMap} from "../../constants/perennialList.jsx";
 import {UrlStatusCheckMethods} from "../../constants/checkMethods.jsx";
-import StatsDisplay from "./StatsDisplay.jsx";
 
 /*
 When this component is rendered, it must "process" the pageData. This involves:
@@ -45,11 +47,13 @@ export default function PageData({rawPageData = {}}) {
         NB is established what needs to happen.
     */
 
+    const defaultProbesString = "verifyi|trust_project|iffy"
+
     const [selectedViewType, setSelectedViewType] = useState('urls')
     const [isLoadingUrls, setIsLoadingUrls] = useState(false)
     const [isDataReady, setIsDataReady] = useState(false)
     const [pageErrors, setPageErrors] = useState('')
-    const [urlStatusLoadingMessage, setUrlStatusLoadingMessage] = useState('')
+    const [urlStatusLoadingMessage, setUrlStatusLoadingMessage] = useState(null)
 
     let myConfig = React.useContext(ConfigContext)
     myConfig = myConfig ? myConfig : {} // prevents myConfig.<undefined param> errors
@@ -619,16 +623,16 @@ export default function PageData({rawPageData = {}}) {
         from stephen:
 
         Any URL at books.google.com ...
-         harder to tell for archive.org/details since it can be anything besides a book.
-          Anything at gutenberg.org
+        harder to tell for archive.org/details since it can be anything besides a book.
+        Anything at gutenberg.org
 
          */
 
-        // return true if url deemed a that points to a book
+        // return true if url deemed a link that points to a book
         // based on regex match of book url patterns
         const isBookUrl = (url) => {
 
-            const regexBookGoogle = /^https?:\/\/books\.google\.com\/books\//
+            const regexBookGoogle = /^https?:\/\/books\.google\.com\/books\?/
             const regexBookArchiveOrg = /^https?:\/\/archive\.org\/details\//;
             const regexGutenbergOrg = /^https?:\/\/gutenberg\.org\//;  // NB TODO is this enough???
 
@@ -668,6 +672,10 @@ export default function PageData({rawPageData = {}}) {
                     })
                 })
             }
+            // NB TODO we should catch book references that do NOT have a link
+            //  set isBook to true, but "netloc" should be set to "no link" or something
+            //  so it shows up in book chart as "book with no link"
+            // That should trigger an "Action" item in the Reference, but not a URL
 
             // otherwise, if url not found to be a book based on template values,
             // check if url is a book based on its url pattern
@@ -691,7 +699,7 @@ export default function PageData({rawPageData = {}}) {
     }, [])
 
 
-    const processUrlsInfo = useCallback( (pageData, urlResults) => {
+    const processProbes = useCallback( (pageData, urlResults) => {
         // urlResults is array of result objects from get_url_info results
         // we loop through urlResults, and append info to e=corresponding
         // pageData.urlDict entry
@@ -710,9 +718,15 @@ export default function PageData({rawPageData = {}}) {
                 const myUrl = d.data.url
                 const probe_results = d.data.results?.probe_results
 
+                // calc score for each probe in probe
+                if (probe_results) {
+                    calcProbeScores(probe_results)
+                }
+
                 // add probe_data to urlDict entry for url
-                if (urlDict[myUrl]) {
-                    urlDict[myUrl]["probe_results"] = probe_results
+                const urlObj = urlDict[myUrl]
+                if (urlObj) {
+                    urlObj["probe_results"] = urlObj.isBook ? null : probe_results
                 }
 
             })
@@ -734,7 +748,7 @@ export default function PageData({rawPageData = {}}) {
             })
         }
 
-        const fetchPageUrlsInfo = (urlDict) => {
+        const fetchProbeInfo = (urlDict, probesString="") => {
 
             const myUrlArray = Object.keys(urlDict)
 
@@ -743,7 +757,7 @@ export default function PageData({rawPageData = {}}) {
                 urlArray: myUrlArray,
                 refresh: pageData.forceRefresh,
                 timeout: 60,
-                probes: "verifyi|trust_project|iffy"
+                probes: probesString,
             })
         }
 
@@ -751,7 +765,13 @@ export default function PageData({rawPageData = {}}) {
 
             try {
 
-                setUrlStatusLoadingMessage(`Retrieving URL status codes with ${UrlStatusCheckMethods[myStatusCheckMethod].caption} method`)
+                // setUrlStatusLoadingMessage(`Retrieving URL info status codes with ${UrlStatusCheckMethods[myStatusCheckMethod].caption} method`)
+                setUrlStatusLoadingMessage(<>
+                    <div>Retrieving URL info.</div>
+                    <div>Status code checking with {UrlStatusCheckMethods[myStatusCheckMethod].caption} method</div>
+                    <div>Probe status checks: {defaultProbesString}</div>
+                </>)
+
                 setIsDataReady(false);
                 setIsLoadingUrls(true);
 
@@ -761,19 +781,21 @@ export default function PageData({rawPageData = {}}) {
                 const myUrls = await fetchPageUrls()
                 processUrls(pageData, myUrls)  // creates pageData.urlDict and pageData.urlArray; loads pageData.errors
 
-                const myNewUrls = await fetchPageUrlsInfo(pageData.urlDict)
-                // for each URL in urlDict, fetch probe info and assign to probe property of url
-                // this is temporary, as eventually the probe data will be included with the url
-                // data when initially retrieved (with get_url_info vs. check_url IARI endpoint)
-                processUrlsInfo(pageData, myNewUrls)
+                processBooksData(pageData)
 
+                if (1) {  // make it easy to turn on and off while developing
+                    const myUrlsInfo = await fetchProbeInfo(pageData.urlDict, defaultProbesString)
+                    // for each URL in urlDict, fetch probe info and assign to probe property of url
+                    // this is temporary, as eventually the probe data will be included with the url
+                    // data when initially retrieved (with get_url_info vs. check_url IARI endpoint)
+                    processProbes(pageData, myUrlsInfo)
+                }
 
                 // now that all info is fetched from IARI API, process local info
                 processReferences(pageData)
                 associateRefsWithLinks(pageData)  // associates url links with references
 
                 processReliabilityData(pageData)
-                processBooksData(pageData)
 
                 processActionables(pageData)
 
@@ -800,14 +822,14 @@ export default function PageData({rawPageData = {}}) {
         },   [
             myIariBase,
             pageData,
-            processReferences,
-            processUrls,
-            associateRefsWithLinks,
             myStatusCheckMethod,
+            processUrls,
+            processReferences,
+            associateRefsWithLinks,
             processReliabilityData,
             processBooksData,
             processActionables,
-        ])
+    ])
 
 
     const handleViewTypeChange = (event) => {
@@ -867,6 +889,7 @@ export default function PageData({rawPageData = {}}) {
 
     const errorDisplay = getErrorDisplay(pageErrors)
 
+    console.log(`PageData: rendering...${new Date().toISOString().slice(11, 23)}`)
     return <>
         {isLoadingUrls
             ? <Loader message={urlStatusLoadingMessage}/>

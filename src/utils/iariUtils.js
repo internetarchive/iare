@@ -2,6 +2,7 @@ import {UrlStatusCheckMethods} from "../constants/checkMethods.jsx";
 import {IariSources} from "../constants/endpoints.jsx";
 import {ParseMethods} from "../constants/parseMethods.jsx";
 import {IariMethods} from "../constants/iariMethods.js";
+import {ProbeDefs} from "../constants/probeDefs.jsx";
 
 
 export const getPagePathEndpoint = ({
@@ -573,7 +574,134 @@ export const fetchUrls = async ({
 }
 
 
-const fetchUrlInfo = async ({iariBase, url, refresh=false, timeout=0, probes=''}) => {
+const getProbeScore = (probe, probeKey) => {
+    // calc score for probe - returns integer or
+    // null if
+    //   errors in probe or
+    //   probeKey not recognized
+    //   no probe.raw
+
+    let score = 0
+
+
+    if (probeKey === ProbeDefs.verifyi.key) {
+        // calc score for verifyi
+
+        // if probe.errors, return
+        if (probe.errors) return null
+
+        // else check various parts:
+        /*
+        "raw": {
+            "MBFC": {
+                "bias": "left-center",
+                    "credibility": "high-credibility",
+                    "name": "New York Times",
+                    "reporting": "high"
+            },
+            "WikipediaEnglishPerennialSources": {
+                    "source": {
+                        "294": "The New York Times (NYT)"
+                    },
+                    "status": {
+                        "294": "Generally reliable"
+                    }
+                },
+            "Decodex": {
+                "credibility": "Generally reliable in principle"
+            }
+        */
+        if (!probe.raw) return null
+
+        Object.keys(probe.raw).forEach( sectionName => {
+            const section = probe.raw[sectionName]
+
+            if (sectionName === "MBFC") {
+                if (section["credibility"] === "high-credibility") {
+                    score += 1
+                }
+                else if (section["credibility"] === "low-credibility") {
+                    score -= 1
+                }
+            }
+            else if (sectionName === "WikipediaEnglishPerennialSources") {
+                /*
+                "WikipediaEnglishPerennialSources": {
+                    "source": {
+                        "294": "The New York Times (NYT)"
+                    },
+                    "status": {
+                        "294": "Generally reliable"
+                    }
+                },
+                */
+                const entries = Object.entries(section["status"]);
+                if (entries.length > 0) {
+                    const [firstKey, firstValue] = entries[0];
+                    if (firstValue === "Generally reliable") {
+                        score += 1
+                    }
+                }
+
+            }
+            else if (sectionName === "Decodex") {
+                /*
+                "Decodex": {
+                    "credibility": "Generally reliable in principle"
+                }
+                */
+                if (section["credibility"] === "Generally reliable in principle") {
+                    score += 1
+                }
+            }
+        })
+
+    }
+
+    else if (probeKey === ProbeDefs.iffy.key) {
+        // calc score for iffy
+        if (probe.errors) return null
+    }
+
+    else if (probeKey === ProbeDefs.trust_project.key) {
+        // calc score for trust project
+        if (probe.errors) return null
+
+    }
+
+    else {
+        return null  // unknown key
+    }
+
+    return score
+
+}
+
+// NB this should (maybe?) be done in IARI before returning probe data.
+// it should calculate the score AFTER retrieved data from cache,
+// if score is not provided in results
+export const calcProbeScores = (probe_results) => {
+    // for each probe in probe_results.probes:
+    //  if no "score" field:
+    //      calc score for probe
+    //      add score field
+
+    if (!probe_results?.probes) return false
+
+    Object.keys(probe_results.probes).forEach( probeKey => {
+        const probe = probe_results.probes[probeKey]
+
+        if (!Object.hasOwn(probe, 'score')) {
+            // score not defined - add it
+            probe["score"] = getProbeScore(probe, probeKey)
+        }
+    })
+
+    return true  // success
+}
+
+
+const fetchUrlInfo = async ({iariBase, url, refresh=false, timeout=0, probes='', tag = ''}) => {
 
     // probe?refresh=true&probes=x|y|verifyi&url=www.x.com
 
@@ -582,6 +710,7 @@ const fetchUrlInfo = async ({iariBase, url, refresh=false, timeout=0, probes=''}
         + (refresh ? "&refresh=true" : '')
         + (timeout > 0 ? `&timeout=${timeout}` : '')
         + `&probes=${probes}`
+        + `${tag ? `&tag=${tag}` : '' }`
 
     let endpoint_status_code = 0;
 
@@ -603,7 +732,7 @@ const fetchUrlInfo = async ({iariBase, url, refresh=false, timeout=0, probes=''}
         }
     }
 
-    console.log(`fetchUrlInfo: endpoint: ${endpoint}`)
+    // console.log(`fetchUrlInfo: endpoint: ${endpoint}`)
 
     // TODO: do we want no-cache, even if no refresh?
     const urlData = await fetch(endpoint, {cache: "no-cache"})
@@ -621,7 +750,6 @@ const fetchUrlInfo = async ({iariBase, url, refresh=false, timeout=0, probes=''}
                 // we may have a 504 or other erroneous status_code on the check-url call
                 console.warn(`fetchUrl: Error fetching url ${url}.`)
                 return Promise.resolve(resolveErrorResults(response))
-
             }
         })
 
