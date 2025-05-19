@@ -324,66 +324,8 @@ table.single-detail tr td:not(:first-child) {
 
 
 .iare-view .path-fetch {
-    padding: 1rem 1rem 0;
     margin-top:.5rem;
     margin-bottom:.25rem;
-
-    border:1px solid black;
-}
-.path-fetch-wrap {
-    display: inline-flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    margin-bottom: .5rem;
-}
-.path-fetch #pathInput {
-    width:29rem;
-    font-size: .9rem;
-    padding: 2pt 2pt 2pt 4pt;
-    border:1px solid dimgrey;
-}
-.path-fetch #pathInput::placeholder {
-    color: #a0a0a0;
-}
-
-.path-input-wrapper {
-    margin-bottom: .5rem;
-    display:contents;  /* NB chatGPT says display: contents is not supported by IE */
-}
-
-@media screen and (max-width: 800px) {
-    /*.path-input-wrapper {*/
-    /*    marginBottom: .5rem;*/
-    /*    display:contents;*/
-    /*}*/
-
-    .path-fetch #pathInput {
-        width:100%;
-    }
-}
-
-.path-fetch #pathInput-label {
-    color:dimgrey;
-    margin-right:.25em;
-    font-size:.9rem;
-    padding-top: 0.175rem;
-}
-
-.path-fetch .path-shortcut {
-    margin-left:10px;
-}
-
-.path-fetch-wrap button {
-    margin-top:.35em;
-}
-
-.path-fetch-wrap .chk-force-refresh {
-    margin-top:.65em;
-    margin-left: .5rem;
-    margin-right: .25rem;
-}
-.path-fetch-wrap .chk-force-refresh input[type=checkbox] {
-    margin-right: .25rem;
 }
 
 /* defaults for ChoiceFetch component */

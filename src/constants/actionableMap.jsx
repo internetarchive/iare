@@ -26,9 +26,9 @@ export const ACTIONABLE_FILTER_MAP = {
         name: "bad_live",
         short_caption: "Broken Link displayed",
         caption: <div>Live Link broken,<br/>Citation Priority: Original</div>,
-        desc: "Live link is broken, but is being displayed as the Primary link.",
+        desc: "Live link is broken, but is being displayed as the Primary link in a citation.",
         symptom: "The bad link is shown as the primary link in the citation. Since the link is bad, the Archive link should be the primary link.",
-        fixit: <div>Set the "url-status" parameter in Citation Template to "dead". This will cause the Archive Link to be the Primary Link in the citation.</div>,
+        fixit: <div>Set the "url-status" parameter in Citation Template to "dead". This will cause the Archive link to be the Primary link in the citation.</div>,
         tooltip: `<div>Original URL link status is NOT 2XX or 3XX<br/>AND<br/>"url_status" template parameter is set to "live"</div>`,
 
         filterFunction: () => (u) => {

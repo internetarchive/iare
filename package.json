@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.3.0.2",
-  "version_name": "0.3.0.2 Fix Changes for github serving",
+  "version": "0.3.0.3",
+  "version_name": "0.3.0.3",
   "private": true,
   "type": "module",
   "dependencies": {

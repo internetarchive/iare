@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ButtonFetch from './ButtonFetch.jsx';
 import Checkbox from "./Checkbox.jsx";
 import ShortcutDefs from "../constants/ShortcutDefs.jsx";
+import "./shared/pathFetch.css"
 
 /*
 expected props

@@ -31,7 +31,8 @@ export default defineConfig({
             scss: {
                 quietDeps: true  // suppress deprecation warnings (mostly from sass/bootstrap)
             }
-        }
+        },
+        devSourcemap: true, // ensures CSS sourcemaps in dev
     }
 
     // esbuild: {

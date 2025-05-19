@@ -1,8 +1,3 @@
-import React from "react";
-// import './shared/components.css';
-import './shared/flockbox.css';
-// import Draggable from "react-draggable.jsx";
-
 /* FilterBox component
 
 - surrounds children elements with a "filter-box" treatment, which currently includes:
@@ -10,6 +5,8 @@ import './shared/flockbox.css';
     - (maybe in future:) draggable box capabilities
 
  */
+import React from "react";
+
 export default function FilterBox({
                                       name = '',
                                       caption = null,
