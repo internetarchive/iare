@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - vite_build
 
 jobs:
   build:
