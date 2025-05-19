@@ -1,7 +1,7 @@
 const ShortcutDefs = {
     "easter_island_short"  : {
         label : "Easter Island Short",
-        value : "https://en.wikipedia.org/wiki/User:Iamojo/testcase/EasterIsland_short"
+        value : "https://en.wikipedia.org/wiki/User:Iamojo/testcase/EasterIslandShort"
     },
     "hamas_israel"  : {
         label : "hamas_israel",
