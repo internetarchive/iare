@@ -347,8 +347,8 @@ table.single-detail tr td:not(:first-child) {
 }
 
 .path-input-wrapper {
-    marginBottom: .5rem;
-    display:contents;  /* NB chatGPT syas display: copntents is not supported by IE */
+    margin-bottom: .5rem;
+    display:contents;  /* NB chatGPT says display: contents is not supported by IE */
 }
 
 @media screen and (max-width: 800px) {

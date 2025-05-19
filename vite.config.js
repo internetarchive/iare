@@ -27,7 +27,7 @@ export default defineConfig({
     css: {
         preprocessorOptions: {
             scss: {
-                quietDeps: true  // suppress deprecation warnings (mostly from sass/bootstrap
+                quietDeps: true  // suppress deprecation warnings (mostly from sass/bootstrap)
             }
         }
     }
