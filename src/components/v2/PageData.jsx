@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from "react";
 // import {fetchUrls, iariPostProcessUrl, isBookUrl} from "../../utils/iariUtils.js"
-import {fetchUrls, iariPostProcessUrl, fetchUrlsInfo, calcProbeScores} from "../../utils/iariUtils.js"
+import {fetchUrls, iariPostProcessUrl, fetchUrlsInfo, calcProbeScores, isBook} from "../../utils/iariUtils.js"
 
 import Loader from "../Loader.jsx";
 import UrlDisplay from "./UrlDisplay.jsx";
@@ -619,70 +619,13 @@ export default function PageData({rawPageData = {}}) {
     const processBooksData = useCallback( pageData => {
         // come up with books data for URL
 
-        /*
-        from stephen:
-
-        Any URL at books.google.com ...
-        harder to tell for archive.org/details since it can be anything besides a book.
-        Anything at gutenberg.org
-
-         */
-
-        // return true if url deemed a link that points to a book
-        // based on regex match of book url patterns
-        const isBookUrl = (url) => {
-
-            const regexBookGoogle = /^https?:\/\/books\.google\.com\/books\?/
-            const regexBookArchiveOrg = /^https?:\/\/archive\.org\/details\//;
-            const regexGutenbergOrg = /^https?:\/\/gutenberg\.org\//;  // NB TODO is this enough???
-
-            if (regexBookGoogle.test(url)) return true
-            if (regexBookArchiveOrg.test(url)) return true
-            if (regexGutenbergOrg.test(url)) return true
-
-            return false
-        }
-
         if (!pageData?.urlArray) return
 
         const bookStats = {}
 
         pageData.urlArray.forEach(urlObj => {
 
-            // if (!urlObj.reference_info?.templates) return
-            // if (!urlObj.reference_info.templates.includes("cite book")) return
-            // if (!urlObj.netloc) return
-
-            urlObj.isBook = false  // let's start with this assumption
-
-            // check if there is a cite_book or ISBN template, and,
-            // if so, check if urlObj.netloc matches template.params.url
-            const refs = urlObj.refs
-            const bookTemplates = ["cite book", "isbn"]
-            if (refs) {
-                refs.forEach( ref => {
-                    ref.templates?.forEach( t => {
-                        if (bookTemplates.includes(t.name)) {
-                            if (t.parameters && "url" in t.parameters) {
-                                if (t.parameters["url"] === urlObj.url) {
-                                    urlObj.isBook = true
-                                }
-                            }
-                        }
-                    })
-                })
-            }
-            // NB TODO we should catch book references that do NOT have a link
-            //  set isBook to true, but "netloc" should be set to "no link" or something
-            //  so it shows up in book chart as "book with no link"
-            // That should trigger an "Action" item in the Reference, but not a URL
-
-            // otherwise, if url not found to be a book based on template values,
-            // check if url is a book based on its url pattern
-            if (!urlObj.isBook) {
-                urlObj.isBook = isBookUrl(urlObj.url)
-            }
-
+            urlObj.isBook = isBook(urlObj)
 
             if (urlObj.isBook === true) {
                 // create or increment entry for bookStats[netloc]

@@ -113,9 +113,9 @@ export default function PageInfo({ pageData }) {
 
     const section_type = <p>media type: {pageData.mediaType}</p>
 
-    const section_method = <p>Check Method: {myConfig.urlStatusMethod}</p>
+    const section_method = <p>URL Status Check Method: {myConfig.urlStatusMethod}</p>
 
-    const section_version = <p>Parse Method: {myConfig.articleVersion}</p>
+    const section_version = <p>Page Parse Method: {myConfig.articleVersion}</p>
 
     const section_ores = ores_score_display
         ? <>
@@ -124,7 +124,7 @@ export default function PageInfo({ pageData }) {
         </>
         : null
 
-    const section_endpoint = <p>endpoint: <a href={pageData.endpoint} target={"_blank"} rel={"noreferrer"}>{pageData.endpoint}</a></p>
+    const section_endpoint = <p>Page Fetch endpoint: <a href={pageData.endpoint} target={"_blank"} rel={"noreferrer"}>{pageData.endpoint}</a></p>
 
     const section_buttons = <>
         <ClickButton buttonText={"Copy CiteRefs to CSV"} handleClick={handleCopyCiteRefs} />

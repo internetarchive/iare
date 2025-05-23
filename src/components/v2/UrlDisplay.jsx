@@ -15,6 +15,7 @@ import ConditionsBox from "../ConditionsBox.jsx";
 import {Tooltip as MyTooltip} from "react-tooltip";
 import {REFERENCE_STATS_MAP} from "../../constants/referenceStatsMap.jsx";
 import {ACTIONS_IARE} from "../../constants/actionsIare.jsx";
+import {isBook} from "../../utils/iariUtils.js";
 
 // export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {}, urlArchiveFilterMap = {} } ) {
 export default function UrlDisplay ({ pageData, options } ) {
@@ -360,10 +361,10 @@ export default function UrlDisplay ({ pageData, options } ) {
 
             caption: <span>{`Contains Books from "${bookDomain}"`}</span>,
 
-            filterFunction: () => (url) => {
-                if (!(url.reference_info.templates.includes("cite book"))) return false
+            filterFunction: () => (urlObj) => {
+                if (!isBook(urlObj)) return false
                 // return true if this url's netloc matches the bookDomain
-                return (url.netloc === bookDomain)
+                return (urlObj.netloc === bookDomain)
             },
         }
     }
