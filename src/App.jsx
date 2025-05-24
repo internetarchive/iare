@@ -52,9 +52,9 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     const [lowerSectionHeight, setLowerSectionHeight] = useState(0);
 
     const shortcutDefs = {
-        prod: ['easterIsland', 'internetArchive', 'pdfCovid',],
-        stage: ['easterIsland', 'easter_island_short', 'internetArchive', 'mlk', 'short_test', ],
-        other: ['marcBolan', 'easterIsland', 'easter_island_short', 'mlk', 'internetArchive', 'short_test'],
+        prod: ['easterIsland', 'internetArchive', 'pdfCovid',],  // production mode limited shortcuts
+        stage: ['easterIsland', 'easter_island_short', 'internetArchive', 'mlk', 'short_test', ],  // staging shows a little more for testing
+        other: ['marcBolan', 'easterIsland', 'easter_island_short', 'mlk', 'internetArchive', 'short_test'],  // everything else (my dev env, e.g.) shows lots more
     }
 
     const toggleDebug = () => {
@@ -76,23 +76,10 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         }
     }, [])
 
-    // production mode shows limited shortcuts
-    // staging shows a little more for testing
-    // everything else (my dev env, e.g.) shows lots more
-    // const shortcuts = env === 'env-production'
-    //     ? ['easterIsland', 'internetArchive', 'pdfCovid',]
-    //     : env === 'env-staging'
-    //         // default staging shortcuts
-    //         ? ['easterIsland', 'internetArchive', 'mlk', 'short_test', ]
-    //
-    //         // shortcuts for my local or any other development
-    //         // : ['marcBolan', 'easterIsland', 'easter_island_short', 'hamas_israel', 'mlk', 'internetArchive', 'karen_bakker', 'short_test', 'pdfDesantis', 'pdfOneLink'];
-    //         : ['marcBolan', 'easterIsland', 'easter_island_short', 'mlk', 'internetArchive', 'short_test'];
-    //
     const shortcuts = env === 'env-production'
         ? shortcutDefs.prod
         : env === 'env-staging'
-            ? shortcutDefs.prod
+            ? shortcutDefs.stage
             : shortcutDefs.other
 
     // add environment tag to body element's class list to enable selective environment styling
