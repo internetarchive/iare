@@ -51,6 +51,12 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     const [lowerSectionTopY, setLowerSectionTopY] = useState(0);
     const [lowerSectionHeight, setLowerSectionHeight] = useState(0);
 
+    const shortcutDefs = {
+        prod: ['easterIsland', 'internetArchive', 'pdfCovid',],
+        stage: ['easterIsland', 'easter_island_short', 'internetArchive', 'mlk', 'short_test', ],
+        other: ['marcBolan', 'easterIsland', 'easter_island_short', 'mlk', 'internetArchive', 'short_test'],
+    }
+
     const toggleDebug = () => {
         setDebug(!isDebug);
     }
@@ -73,16 +79,21 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     // production mode shows limited shortcuts
     // staging shows a little more for testing
     // everything else (my dev env, e.g.) shows lots more
+    // const shortcuts = env === 'env-production'
+    //     ? ['easterIsland', 'internetArchive', 'pdfCovid',]
+    //     : env === 'env-staging'
+    //         // default staging shortcuts
+    //         ? ['easterIsland', 'internetArchive', 'mlk', 'short_test', ]
+    //
+    //         // shortcuts for my local or any other development
+    //         // : ['marcBolan', 'easterIsland', 'easter_island_short', 'hamas_israel', 'mlk', 'internetArchive', 'karen_bakker', 'short_test', 'pdfDesantis', 'pdfOneLink'];
+    //         : ['marcBolan', 'easterIsland', 'easter_island_short', 'mlk', 'internetArchive', 'short_test'];
+    //
     const shortcuts = env === 'env-production'
-        ? ['easterIsland', 'internetArchive', 'pdfCovid',]
+        ? shortcutDefs.prod
         : env === 'env-staging'
-            // default staging shortcuts
-            ? ['easterIsland', 'internetArchive', 'mlk', 'short_test', ]
-
-            // shortcuts for my local or any other development
-            // : ['marcBolan', 'easterIsland', 'easter_island_short', 'hamas_israel', 'mlk', 'internetArchive', 'karen_bakker', 'short_test', 'pdfDesantis', 'pdfOneLink'];
-            : ['marcBolan', 'easterIsland', 'easter_island_short', 'mlk', 'internetArchive', 'short_test'];
-
+            ? shortcutDefs.prod
+            : shortcutDefs.other
 
     // add environment tag to body element's class list to enable selective environment styling
     useEffect(() => {
