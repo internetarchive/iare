@@ -2,7 +2,7 @@ import React, {useCallback, useState} from 'react';
 import FlockBox from "../FlockBox.jsx";
 
 import {convertToCSV, copyToClipboard} from "../../utils/generalUtils.js";
-import {getArchiveStatusInfo} from "../utils/urlUtils.jsx";
+import {getArchiveStatusInfo, getProbePopupData} from "../utils/urlUtils.jsx";
 
 import {ACTIONS_IARE} from "../../constants/actionsIare.jsx";
 import {ACTIONABLE_FILTER_MAP} from "../../constants/actionableMap.jsx";
@@ -106,20 +106,9 @@ const urlFlock = React.memo(function UrlFlock({
         const rawProbeData = <pre>{JSON.stringify(probeData, null, 2)}</pre>
         const score = probeData ? probeData.score : "?"
 
-        setProbePopupTitle(<>
-            <div>{probeKey} probe results for URL:</div>
-            <div style={{fontWeight: "normal"}}> {urlLink}</div>
-        </>)
-
-        setProbePopupData(<div>
-            <div className={"probe-score"}>Score: {score}</div>
-            <hr/>
-            <div>
-                <div className={"raw-title"}>Raw data:</div>
-                <div>{rawProbeData}</div>
-            </div>
-        </div>)
-
+        const [pTitle, pContents] = getProbePopupData(probeKey, urlLink, score, rawProbeData)
+        setProbePopupTitle(pTitle)
+        setProbePopupData(pContents)
         setIsProbePopupOpen(true)
 
     }
@@ -338,8 +327,12 @@ const urlFlock = React.memo(function UrlFlock({
             if (e.target.classList.contains("probe-badge")) {
                 const probeKey = e.target.dataset.probeKey
                 const probeScore = e.target.dataset.probeScore
-                const url = row.dataset.url
-                html = `<div>${probeKey} score is ${probeScore}</div>`
+                html = probeScore === "error"
+                    ? "Error with probe data"
+                    : probeScore === "nodata"
+                        ? "No probe data for this URL"
+                        :`<div>${probeKey} score is ${probeScore}</div>`
+                // const url = row.dataset.url
                 // html = `<div>Show ${probeKey} info for ${url}</div>`
             }
 

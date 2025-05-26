@@ -5,6 +5,7 @@ import {
     getArchiveStatusInfo,
     getPerennialInfo,
     // getProbeInfo,
+    getProbePopupData,
 } from "../../utils/urlUtils.jsx";
 import {Button} from "react-bootstrap";
 import Popup from "../../Popup.jsx";
@@ -32,7 +33,6 @@ export default function RefUrls({ urls, pageData, tooltipId, showDebug=false }) 
 
     const [isProbePopupOpen, setIsProbePopupOpen] = useState(false)
     const [probePopupTitle, setProbePopupTitle] = useState(<>Modal Title</>);
-    // const [modalData, setModalData] = useState('Modal Data');
     const [probePopupData, setProbePopupData] = useState(null);
 
     const handleProbeClick = (e) => {
@@ -57,15 +57,22 @@ export default function RefUrls({ urls, pageData, tooltipId, showDebug=false }) 
         const rawProbeData = <pre>{JSON.stringify(probeData, null, 2)}</pre>
         const score = probeData ? probeData.score : "?"
 
-        setProbePopupTitle(<>
-            <div>{probeKey} probe results for URL:</div>
-            <div style={{fontWeight: "normal"}}> {urlLink}</div>
-        </>)
+        const [pTitle, pContents] = getProbePopupData(probeKey, urlLink, score, rawProbeData)
 
-        setProbePopupData(<div>
-            <div className={"probe-score"}>Score: {score}</div>
-            <div>{rawProbeData}</div>
-        </div>)
+        setProbePopupTitle(pTitle)
+        setProbePopupData(pContents)
+
+        //
+        //
+        // setProbePopupTitle(<>
+        //     <div>{probeKey} probe results for URL:</div>
+        //     <div style={{fontWeight: "normal"}}> {urlLink}</div>
+        // </>)
+        //
+        // setProbePopupData(<div>
+        //     <div className={"probe-score"}>Score: {score}</div>
+        //     <div>{rawProbeData}</div>
+        // </div>)
 
         setIsProbePopupOpen(true)
 

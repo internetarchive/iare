@@ -36,12 +36,19 @@
     --color-rating-multi: hsl(204.07deg 81.98% 88%);
 
     --color-badge-fg: #4a4a4a;
+    --color-badge-border: #555;
+
+    --color-badge-nodata-fg: lightgrey;
+    --color-badge-nodata-bg: #ffffff;
+    --color-badge-error-fg: #fc7a7a; /*lightgrey*/;
+    --color-badge-error-bg: transparent;
+    --color-badge-error-border: #fc7a7a; /* #c64040; */
     --color-badge-good-fg: var(--color-badge-fg);
-    --color-badge-good-bg: #69ec4d;/*#24890f;*/
+    --color-badge-good-bg: #69ec4d;
     --color-badge-bad-fg: var(--color-badge-fg);
-    --color-badge-bad-bg: #fc7a7a;;
-    --color-badge-zero-fg: var(--color-badge-fg);/*#888888;*/
-    --color-badge-zero-bg: #fff82e; /*#dddddd;*/
+    --color-badge-bad-bg: #fc7a7a;
+    --color-badge-zero-fg: var(--color-badge-fg);
+    --color-badge-zero-bg: #fff82e;
 
 /* archive status filter */ /* deprecated? */
     --width-filter-icon: 1.5rem;     /* size of check / x icons in list */
@@ -299,7 +306,7 @@
 }
 .probe-badge {
     min-width:1.25rem;
-    border:1.5pt solid #555;
+    border:1.5pt solid var(--color-badge-border);
     padding:1pt 3pt;
     margin-right: .3rem;
     border-radius: 3pt;
@@ -308,11 +315,17 @@
 .probe-badge:hover {
     background-color: #d1d2d4;
 }
-.probe-badge.probe-null {
-    /*color: var(--color-lolite);*/
-    color: lightgrey;
-    border-color: lightgrey;
+.probe-badge.probe-nodata {
+    color: var(--color-badge-nodata-fg);
+    background-color: var(--color-badge-nodata-bg);
+    border-color: var(--color-badge-nodata-fg);
 }
+.probe-badge.probe-error {
+    color: var(--color-badge-error-fg);
+    background-color: var(--color-badge-error-bg);
+    border-color: var(--color-badge-error-border);
+}
+
 .probe-badge.probe-good {
     color: var(--color-badge-good-fg);
     background-color: var(--color-badge-good-bg);
@@ -324,6 +337,11 @@
 .probe-badge.probe-zero {
     color: var(--color-badge-zero-fg);
     background-color: var(--color-badge-zero-bg);
+}
+/* this may go away */
+.probe-badge.probe-null {
+    color: lightgrey;
+    border-color: lightgrey;
 }
 
 

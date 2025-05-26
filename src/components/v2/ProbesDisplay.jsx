@@ -61,9 +61,17 @@ export default function ProbesDisplay({
 
                 // get class based on score
                 const probe = probeData.probes[probeName]
-                const score = probe["score"]
+                const score = probe["score"] ?? 0
+                const nodata = probe["nodata"] ?? false
+                const isError = probe["errors"] ?? false
+
                 let badgeClass = ""
-                if (score === null) {
+
+                if (nodata) {
+                    badgeClass = "probe-nodata"
+                } else if (isError) {
+                    badgeClass = "probe-error"
+                } else if (score === null) {
                     badgeClass = "probe-null"
                 } else if (score > 0) {
                     badgeClass = "probe-good"
@@ -79,7 +87,11 @@ export default function ProbesDisplay({
                             key={probeDef.key}
                             onClick={onProbeClick}
                             data-probe-key={probeDef.key}
-                            data-probe-score={score}
+                            data-probe-score={isError
+                                ? "error"
+                                : nodata
+                                    ? "nodata"
+                                    : score}
                 >{probeDef.short_caption}</div>
 
             } else {
