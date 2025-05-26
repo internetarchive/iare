@@ -56,8 +56,8 @@ export const ACTIONABLE_FILTER_MAP = {
         name: "good_not_live",
         /*
         if there is an "archive_url" parameter in the template, there should be a "url_status" parameter as well. This
-        "url_status" parameter, whose value is usually one of "live" or "dead", indicates whether to display the original link
-        or the archive link first in the citation.
+        "url_status" parameter, whose value is usually one of "live" or "dead", indicates which link to display as the
+        primary link in the citation, live showing the original link and "dead" showing the archive link.
 
         - if an archive_url exists, then must have a "url_status" parameter
         - if original link is BAD, then, url_status should not be "live"
@@ -71,14 +71,8 @@ export const ACTIONABLE_FILTER_MAP = {
             |date=3 April 2014 }}. ''National Geographic''.</ref>
 
         In this case, the raw ref has source link but is "saved" by {{webarchive}} template.
-        I suppose this could be a case where we have "BAD source" and no protection, whether it be from an archive_url parameter in the
-        reference or an associated {{webarchive}} additional template in the ref that protects the source
-
-        suggestion:
-        source-status
-        archive-status (WBM only?)
-        citation-priority - indicated by url-status
-
+        I suppose this could be a case where we have "BAD source" and no protection, whether it be from an
+        archive_url parameter in the reference, or a {{webarchive}} template in the ref
         */
 
         short_caption: "Good Not Live",
@@ -87,23 +81,24 @@ export const ACTIONABLE_FILTER_MAP = {
         tooltip: `<div>Original URL Status IS 2XX or 3XX<br/>AND<br/>An archive exists<br/>AND<br/>Template Parameter "url_status" is NOT set to "live"</div>`,
         fixit: <div>Add or change Citation Template Parameter "url-status" to "live"</div>,
 
-        filterFunction: () => (url) => {
+        filterFunction: () => (urlObj) => {
 
-            if (!isLinkStatusGood(url.status_code)) return false
+            // bail if live l;ink status is not good
+            if (!isLinkStatusGood(urlObj.status_code)) return false
 
             // check templates for archive and citation status
-            if (!url.refs) return false
+            if (!urlObj.refs) return false
 
             // return true if ANY of the url's have a ref that meets condition...
-            return url.refs.some(r => {
+            return urlObj.refs.some(r => {
 
                 // return true if any of the ref's have templates that meet condition...
                 return r.templates.some(t => {
 
                     // if d.url matches the url parameter in this template, continue checking...
-                    if (t.parameters && (t.parameters.url === url.url)) {
+                    if (t.parameters && (t.parameters.url === urlObj.url)) {
 
-                        // return true if archive_url is there and t.parameters.url_status !== "live"
+                        // return true if template's archive_url is valid and url_status is not "live"
                         return (t.parameters.archive_url && (
                             (t.parameters.url_status !== undefined)
                             &&
@@ -119,7 +114,6 @@ export const ACTIONABLE_FILTER_MAP = {
 
         refFilterFunction: () => (urlDict, _ref) => {  // NB inclusion of urlDict when filter function called with .bind
 
-            // console.log(`good_not_live refFilterFunction: _ref: ${_ref.id}, urlDict count: ${urlDict?.length}`)
             return _ref.templates.some(t => {
 
                 const url = t.parameters['url']

@@ -522,7 +522,8 @@ export default function PageData({rawPageData = {}}) {
                 return
             }
 
-            myUrl.refs.forEach( r => {  // traverse each reference this url is involved in
+            // traverse each reference this url is associated with
+            myUrl.refs.forEach( r => {
 
                 // process url_status's
                 if (r.templates) {
@@ -537,9 +538,9 @@ export default function PageData({rawPageData = {}}) {
 
                 // process template names
                 if (r.template_names) {
-                    r.template_names.forEach(tn => {
-                        if (!templates.includes(tn)) {
-                            templates.push(tn)
+                    r.template_names.forEach(tName => {
+                        if (!templates.includes(tName)) {
+                            templates.push(tName)
                         }
                     })
                 }
@@ -628,7 +629,7 @@ export default function PageData({rawPageData = {}}) {
             urlObj.isBook = isBook(urlObj)
 
             if (urlObj.isBook === true) {
-                // create or increment entry for bookStats[netloc]
+                // create or increment netloc entry in bookStats
                 const netloc = urlObj.netloc
                 if (!bookStats[netloc]) bookStats[netloc] = 0
                 bookStats[netloc] = bookStats[netloc] + 1

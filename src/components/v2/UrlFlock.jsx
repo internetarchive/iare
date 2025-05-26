@@ -114,7 +114,9 @@ const urlFlock = React.memo(function UrlFlock({
     }
 
     const handleSortClick = (sortKey) => {
-        // toggle sort direction of specified sort and set new sort state with setSort
+        // set new sort State:
+        // - toggle sort direction of specified sort
+        // - set new sort state with setSort
 
         // selectively change the specified sort type
         // https://stackoverflow.com/questions/43638938/updating-an-object-with-setstate-in-react
@@ -132,7 +134,8 @@ const urlFlock = React.memo(function UrlFlock({
                         dir: -1 * prevState.sorts[sortKey].dir
                     }
                 },
-                sortOrder: [sortKey]  // set only one for now...TODO implement so that sortOrder array accumulates sortKey
+                sortOrder: [sortKey]  // set only one for now...
+                // TODO implement so that sortOrder contains an array of a list of sortKey's, not just one
             }
         })
     }
@@ -161,10 +164,17 @@ const urlFlock = React.memo(function UrlFlock({
     const sortByArchiveStatus = (a, b) => {
         const archiveA = a?.archive_status.hasArchive ? 1 : 0;
         const archiveB = b?.archive_status.hasArchive ? 1 : 0;
+        const bookA = a?.isBook ? 1 : 0;
+        const bookB = b?.isBook ? 1 : 0;
 
-        // respect sortDir
-        if (archiveA < archiveB) return sort.sorts['archive_status'].dir * -1;
-        if (archiveA > archiveB) return sort.sorts['archive_status'].dir;
+        // sort by book status first, respect sortDir
+        // NB: ignoring book type (e.g. google or archive.org) for now
+        if (bookA) return sort.sorts['archive_status'].dir * -1
+        if (bookB) return sort.sorts['archive_status'].dir
+
+        // if neither a or b is a book, sort by archive status, respect sortDir
+        if (archiveA > archiveB) return sort.sorts['archive_status'].dir * -1;
+        if (archiveA < archiveB) return sort.sorts['archive_status'].dir;
         return 0;
     }
 
@@ -332,8 +342,6 @@ const urlFlock = React.memo(function UrlFlock({
                     : probeScore === "nodata"
                         ? "No probe data for this URL"
                         :`<div>${probeKey} score is ${probeScore}</div>`
-                // const url = row.dataset.url
-                // html = `<div>Show ${probeKey} info for ${url}</div>`
             }
 
         } else {
@@ -570,12 +578,8 @@ const urlFlock = React.memo(function UrlFlock({
             onClick={onClickHeader}
             onMouseOver={onHoverHeaderRow}>
 
-            {/* second header row - contains column labels */}
-            {/*<div className={"url-row url-header-row"}>*/}
             <div className={"url-header-row"}>
 
-                {/*<div className={"url-name"} onProbeClick={() => {handleSortClick("name")}}*/}
-                {/*><span className={"pull-right"} sxxtyle={{float:"right"}}>Method used to Check Status: {checkMethodDisplay}</span><br/>URL Link</div>*/}
                 <div className={"url-name"} onClick={() => {handleSortClick("name")}}
                 ><br/>URL Link
                 </div>

@@ -245,7 +245,11 @@ export default function UrlDisplay ({ pageData, options } ) {
             setRefFilter(getRefBooksFilter(value))
             setSelectedUrl(null)
             setFilterState(filters.books, value)
-            setCondition({category: "Books", desc: `Links to books from "${value}"`})
+            setCondition({
+                category: "Books",
+                desc: `Links to books from "${value}"`,
+                caption: "Books"
+            })
         }
 
         else if (action === ACTIONS_IARE.SET_TEMPLATE_FILTER.key) {
@@ -354,10 +358,12 @@ export default function UrlDisplay ({ pageData, options } ) {
             return null; // no bookDomain means all filter
         }
 
-        // return synthetic filter showing only URLs that have bookDomain as their netloc if contains cite book template
+        // return synthetic filter showing URLs that are
+        // - "isBook"
+        // - url netloc (i.e., top domain) matches bookDomain
         return {
 
-            desc: `URLs from References that contain "${bookDomain}" in a Cite Book template"`,
+            desc: `URLs referencing books from "${bookDomain}", either alone or in a Cite Book template.`,
 
             caption: <span>{`Contains Books from "${bookDomain}"`}</span>,
 
@@ -370,23 +376,30 @@ export default function UrlDisplay ({ pageData, options } ) {
     }
 
     const getRefBooksFilter = (bookDomain) => {
+        console.log(`getRefBooksFilter for ${bookDomain}`)
+
         if (!bookDomain?.length) {
             return null; // no bookDomain means all filter
         }
         return {
             desc: `References that contain "${bookDomain}" in a Cite Book template"`,
             caption: <span>{`Contains Books from "${bookDomain}"`}</span>,
+
             filterFunction: () => (urlDict, ref) => {
-                if (!ref.template_names.includes("cite book")) return false  // block if no book template
+                console.log(`filter ref function for bookDomain:${bookDomain}`)
+
+                // include this reference if any of its urls are "isBook" and match bookDomain
                 return ref.urls.some( url => {
-                    const urlObject = urlDict[url]
-                    if (!urlObject?.netloc) return false  // block if no netloc
+                    const urlObj = urlDict[url]
+                    console.log(`filter ref: url is: ${url}, bookDomain:${bookDomain}`)
+                    if (!urlObj) return false  // filter out if no urlObject
+                    if (!urlObj.isBook) return false
+                    console.log(`filter result: ${urlObj.netloc === bookDomain ? "true" : "false"}`)
 
-                    // TODO This is questionable
-
-                    return (urlObject.netloc === bookDomain)
+                    return (urlObj.netloc === bookDomain)
                 })
             },
+
         }
     }
 
@@ -506,16 +519,11 @@ export default function UrlDisplay ({ pageData, options } ) {
             caption: <span>{`Contains Template "${templateName}"`}</span>,
             filterFunction: () => (urlDict, ref) => {
                 // loop thru refs
-                // if any of those refs contain templateName, return true anf exit
+                // if any of those refs contain templateName, return true and exit
                 if (!templateName?.length) return true  // always let reference through if templateName is empty
 
                 if (!ref.template_names) return false  // if ref does not have template_mames property...
                 return ref.template_names.includes(templateName)  // return true of templateName represented
-                            // return url.refs.some(r => {
-                            //     // if any of the ref's templates contain the target templateName, return true...
-                            //     if (!r.template_names) return false  // if ref does not have template_mames property...
-                            //     return r.template_names.includes(templateName)  // return true of templateName represented
-                            // })
 
             },
         }
@@ -571,7 +579,10 @@ export default function UrlDisplay ({ pageData, options } ) {
             <div className={"section-box"}
                  style={{ pointerEvents: isRefViewModalOpen ? "none" : "auto" }}>
 
-                <ConditionsBox caption={"Conditions"} conditions={currentConditions} onAction={handleAction}/>
+                <ConditionsBox
+                    caption={"Conditions"}
+                    conditions={currentConditions}
+                    onAction={handleAction}/>
 
                 <div style={{display: "flex"}}>
                     <UrlFlock urlDict={pageData.urlDict}
