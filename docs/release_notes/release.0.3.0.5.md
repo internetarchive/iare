@@ -1,4 +1,8 @@
-Iffy credibility implemented as working Probe
-- "If" badge visible in If a URL has something "Iffy" about it, Iffy probe badge in URL list will shwo up
-- data valid as of May 13. 2025
+Iffy credibility service implemented as a working Probe
+- "If" badge appears in URL list under Probe Results
+- If URL has something "Iffy" about it, "If" probe badge will light up
+- iffy data valid as of May 13, 2025
+
+In URL Links list, Books now sorted in Archive Status column
+ 
 
