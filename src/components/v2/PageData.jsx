@@ -47,7 +47,8 @@ export default function PageData({rawPageData = {}}) {
         NB is established what needs to happen.
     */
 
-    const defaultProbesString = "verifyi|trust_project|iffy"
+    // const defaultProbesString = "verifyi|trust_project|iffy"
+    const defaultProbesString = "verifyi|iffy"
 
     const [selectedViewType, setSelectedViewType] = useState('urls')
     const [isLoadingUrls, setIsLoadingUrls] = useState(false)
