@@ -1,4 +1,11 @@
-const ShortcutDefs = {
+export const envShortcutLists = {
+    prod: ['easterIsland', 'internetArchive', 'pdfCovid',],  // production mode limited shortcuts
+    stage: ['easterIsland', 'easter_island_short', 'internetArchive', 'mlk', 'short_test', ],  // staging shows a little more for testing
+    other: ['marc_bolan', 'easterIsland', 'easter_island_short', 'kennewick_man', 'mlk', 'internetArchive', 'short_test'],  // everything else (my dev env, e.g.) shows lots more
+}
+
+
+export const ShortcutDefs = {
     "easter_island_short"  : {
         label : "Easter Island Short",
         value : "https://en.wikipedia.org/wiki/User:Iamojo/testcase/EasterIslandShort"
@@ -37,9 +44,13 @@ const ShortcutDefs = {
         label : "James Webb Shortcut",
         value : "https://en.wikipedia.org/wiki/James_Webb_Space_Telescope"
     },
-    "marcBolan"  : {
+    "marc_bolan"  : {
         label : "Marc Bolan",
         value : "https://en.wikipedia.org/wiki/Marc_Bolan"
+    },
+    "kennewick_man"  : {
+        label : "Kennewick Man",
+        value : "https://en.wikipedia.org/wiki/Kennewick_Man"
     },
 
 
@@ -77,4 +88,3 @@ const ShortcutDefs = {
         value : "https://ia601600.us.archive.org/31/items/Book_URLs/DeSantis.pdf"
     },
 }
-export default ShortcutDefs;
