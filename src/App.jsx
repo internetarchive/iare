@@ -16,6 +16,7 @@ import {UrlStatusCheckMethods} from "./constants/checkMethods.jsx";
 import {ParseMethods} from "./constants/parseMethods.jsx";
 
 import {ConfigContext} from "./contexts/ConfigContext"
+import {ShortcutDefs, envShortcutLists} from "./constants/shortcutDefs.jsx";
 
 
 export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod, myParseMethod, myIariSourceId, myDebug}) {
@@ -51,11 +52,6 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     const [lowerSectionTopY, setLowerSectionTopY] = useState(0);
     const [lowerSectionHeight, setLowerSectionHeight] = useState(0);
 
-    const shortcutDefs = {
-        prod: ['easterIsland', 'internetArchive', 'pdfCovid',],  // production mode limited shortcuts
-        stage: ['easterIsland', 'easter_island_short', 'internetArchive', 'mlk', 'short_test', ],  // staging shows a little more for testing
-        other: ['marcBolan', 'easterIsland', 'easter_island_short', 'mlk', 'internetArchive', 'short_test'],  // everything else (my dev env, e.g.) shows lots more
-    }
 
     const toggleDebug = () => {
         setDebug(!isDebug);
@@ -76,11 +72,52 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         }
     }, [])
 
-    const shortcuts = env === 'env-production'
-        ? shortcutDefs.prod
-        : env === 'env-staging'
-            ? shortcutDefs.stage
-            : shortcutDefs.other
+
+    // const myShortcutList = React.useMemo(() => {
+    //     return env === 'env-production'
+    //         ? envShortcutLists.prod
+    //         : env === 'env-staging'
+    //             ? envShortcutLists.stage
+    //             : envShortcutLists.other
+    // }, [env, envShortcutLists])
+    //
+    // const shortcuts = React.useMemo(() => {
+    //     return myShortcutList
+    //         // output array of objects with label and value props (to send to PathNameFetch)
+    //         ? myShortcutList.map( sKey => {
+    //             return ShortcutDefs[sKey]
+    //                 ? ShortcutDefs[sKey]
+    //                 : {
+    //                     label: "Unknown Shortcut '" + sKey + "'",
+    //                     value: "unknown"
+    //                 }
+    //         }).filter( sc => {return sc.value !== "unknown"}) // filter out the unknown ones
+    //         : []
+    // }, [myShortcutList, ShortcutDefs]);
+
+
+    // const myShortcuts = useMemo(() => {
+    //     return env === 'env-production'
+    //         ? myShortcutDefs.prod
+    //         : env === 'env-staging'
+    //             ? myShortcutDefs.stage
+    //             : myShortcutDefs.other;
+    // }, [env, myShortcutDefs]);
+    //
+    // const shortcuts = useMemo(() => {
+    //     return myShortcuts
+    //         ? myShortcuts.map(sKey => {
+    //             return ShortcutDefs[sKey]
+    //                 ? ShortcutDefs[sKey]
+    //                 : {
+    //                     label: "Unknown Shortcut '" + sKey + "'",
+    //                     value: "unknown"
+    //                 };
+    //         }).filter(sc => sc.value !== "unknown")
+    //         : [];
+    // }, [myShortcuts, ShortcutDefs]);
+
+
 
     // add environment tag to body element's class list to enable selective environment styling
     useEffect(() => {
@@ -397,16 +434,6 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     //         : ` STAGING `)
     //     : ''
 
-                // const iareVersion = `${package_json.version}`
-                // const siteDisplay = (env !== 'env-production')
-                //     ? (env === 'env-staging'
-                //         ? ` STAGING SITE `
-                //         : (env === 'env-local'
-                //             ? ` LOCAL SITE `
-                //             : '' + env + ' SITE')
-                //     )
-                //     : ''
-
     const buttonShowDebug = (env !== 'env-production') &&
         <button className={"utility-button debug-button small-button"}
                 onClick={toggleDebug} >{
@@ -546,7 +573,8 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
                     <PathNameFetch pathInitial={targetPath?.length > 0 ? targetPath : defaultIfEmpty}
                                    checkInitial={refreshCheck}
                                    placeholder={"Enter a Wikipedia article or PDF url here"}
-                                   shortcuts={shortcuts}
+                                   // shortcuts={shortcuts}
+                                   shortcuts={['marc_bolan', 'easterIsland', 'easter_island_short', 'kennewick_man', 'mlk', 'internetArchive', 'short_test']}
                                    showShortcuts={isShowShortcuts}
                                    handlePathResults={handlePathResults}
                     />

@@ -1,5 +1,4 @@
 import React, {useCallback, useEffect, useState} from "react";
-// import {fetchUrls, iariPostProcessUrl, isBookUrl} from "../../utils/iariUtils.js"
 import {fetchUrls, iariPostProcessUrl, fetchUrlsInfo, calcProbeScores, isBook} from "../../utils/iariUtils.js"
 
 import Loader from "../Loader.jsx";
@@ -601,6 +600,7 @@ export default function PageData({rawPageData = {}}) {
                 if (rspDomains[rspKey].includes(urlObj.pld)
                     ||
                     rspDomains[rspKey].includes(urlObj._3ld)) {
+
                     urlObj.rsp.push( key )  // add this rsp to this url
                     reliabilityStats[key] = reliabilityStats[key] + 1
                 }
