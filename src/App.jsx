@@ -73,50 +73,27 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     }, [])
 
 
-    // const myShortcutList = React.useMemo(() => {
-    //     return env === 'env-production'
-    //         ? envShortcutLists.prod
-    //         : env === 'env-staging'
-    //             ? envShortcutLists.stage
-    //             : envShortcutLists.other
-    // }, [env, envShortcutLists])
-    //
-    // const shortcuts = React.useMemo(() => {
-    //     return myShortcutList
-    //         // output array of objects with label and value props (to send to PathNameFetch)
-    //         ? myShortcutList.map( sKey => {
-    //             return ShortcutDefs[sKey]
-    //                 ? ShortcutDefs[sKey]
-    //                 : {
-    //                     label: "Unknown Shortcut '" + sKey + "'",
-    //                     value: "unknown"
-    //                 }
-    //         }).filter( sc => {return sc.value !== "unknown"}) // filter out the unknown ones
-    //         : []
-    // }, [myShortcutList, ShortcutDefs]);
+    const myShortcutList = React.useMemo(() => {
+        return env === 'env-production'
+            ? envShortcutLists.prod
+            : env === 'env-staging'
+                ? envShortcutLists.stage
+                : envShortcutLists.other
+    }, [env, envShortcutLists])
 
-
-    // const myShortcuts = useMemo(() => {
-    //     return env === 'env-production'
-    //         ? myShortcutDefs.prod
-    //         : env === 'env-staging'
-    //             ? myShortcutDefs.stage
-    //             : myShortcutDefs.other;
-    // }, [env, myShortcutDefs]);
-    //
-    // const shortcuts = useMemo(() => {
-    //     return myShortcuts
-    //         ? myShortcuts.map(sKey => {
-    //             return ShortcutDefs[sKey]
-    //                 ? ShortcutDefs[sKey]
-    //                 : {
-    //                     label: "Unknown Shortcut '" + sKey + "'",
-    //                     value: "unknown"
-    //                 };
-    //         }).filter(sc => sc.value !== "unknown")
-    //         : [];
-    // }, [myShortcuts, ShortcutDefs]);
-
+    const shortcuts = React.useMemo(() => {
+        return myShortcutList
+            // output array of objects with label and value props (to send to PathNameFetch)
+            ? myShortcutList.map( sKey => {
+                return ShortcutDefs[sKey]
+                    ? ShortcutDefs[sKey]
+                    : {
+                        label: "Unknown Shortcut '" + sKey + "'",
+                        value: "unknown"
+                    }
+            }).filter( sc => {return sc.value !== "unknown"}) // filter out the unknown ones
+            : []
+    }, [myShortcutList, ShortcutDefs]);
 
 
     // add environment tag to body element's class list to enable selective environment styling
@@ -551,6 +528,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     }))
 
     const defaultIfEmpty = "https://en.wikipedia.org/wiki/"
+    // TODO candidate for language strings
 
     return <>
 
@@ -573,8 +551,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
                     <PathNameFetch pathInitial={targetPath?.length > 0 ? targetPath : defaultIfEmpty}
                                    checkInitial={refreshCheck}
                                    placeholder={"Enter a Wikipedia article or PDF url here"}
-                                   // shortcuts={shortcuts}
-                                   shortcuts={['marc_bolan', 'easterIsland', 'easter_island_short', 'kennewick_man', 'mlk', 'internetArchive', 'short_test']}
+                                   shortcuts={shortcuts}
                                    showShortcuts={isShowShortcuts}
                                    handlePathResults={handlePathResults}
                     />

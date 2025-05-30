@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import ButtonFetch from './ButtonFetch.jsx';
 import Checkbox from "./Checkbox.jsx";
 import "./shared/pathFetch.css"
-import {ShortcutDefs, envShortcutLists} from "../constants/shortcutDefs.jsx";
 
 /*
 expected props
@@ -57,23 +56,11 @@ export default function PathNameFetch({
     //     return !data.some( d => d.label === text );
     // }, [text]);
 
-    // const shortcutsDisplay = showShortcuts && shortcuts?.length
-    //     ? <div style={{display: "block"}}>
-    //         &nbsp;
-    //         {shortcuts.map ( shortCutDef => {
-    //             return <ButtonFetch key={shortCutDef.value} buttonKeyDef={shortCutDef} onClick={setPathName} className={"path-shortcut"}/>
-    //         })
-    //         }
-    //     </div>
-    //     : null
-
     const shortcutsDisplay = showShortcuts && shortcuts?.length
         ? <div style={{display: "block"}}>
             &nbsp;
-            {shortcuts.map ( scKey => {
-                // const shortCutDef = ShortcutDefs[scKey]
-                // return <ButtonFetch key={shortCutDef.value} buttonKeyDef={shortCutDef} onClick={setPathName} className={"path-shortcut"}/>
-                return <ButtonFetch key={scKey} buttonKeyDef={scKey} onClick={setPathName} className={"path-shortcut"}/>
+            {shortcuts.map ( shortCutDef => {
+                return <ButtonFetch key={shortCutDef.value} buttonDef={shortCutDef} onClick={setPathName} className={"path-shortcut"}/>
             })
             }
         </div>
