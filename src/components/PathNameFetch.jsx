@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import ButtonFetch from './ButtonFetch.jsx';
 import Checkbox from "./Checkbox.jsx";
-import ShortcutDefs from "../constants/ShortcutDefs.jsx";
 import "./shared/pathFetch.css"
 
 /*
@@ -9,7 +8,7 @@ expected props
     pathInitial            path string to put in input field
     checkInitial           initial checkbox state for "Force Refresh"
     handlePathResults      callback "Load" button clicked; expects 2 element array: [pathName, checked]
-    shortcuts              array of keys into global ShortcutDefs, describing shortcut buttons to show
+    shortcuts              array of ShortcutDefs, describing shortcut buttons to show
  */
 export default function PathNameFetch({
         pathInitial='',
@@ -57,17 +56,15 @@ export default function PathNameFetch({
     //     return !data.some( d => d.label === text );
     // }, [text]);
 
-    const shortcutData = shortcuts
-        ? shortcuts.map( sKey => {
-            // shortcut has a .label and a .value props, which is what datalist needs
-            return ShortcutDefs[sKey]
-                ? ShortcutDefs[sKey]
-                : {
-                    label: "Unknown Shortcut '" + sKey + "'",
-                    value: "unknown"
-                }
-        }).filter( sc => {return sc.value !== "unknown"})
-        : []
+    const shortcutsDisplay = showShortcuts && shortcuts?.length
+        ? <div style={{display: "block"}}>
+            &nbsp;
+            {shortcuts.map ( shortCutDef => {
+                return <ButtonFetch key={shortCutDef.value} buttonDef={shortCutDef} onClick={setPathName} className={"path-shortcut"}/>
+            })
+            }
+        </div>
+        : null
 
     return <div className={"path-fetch"}>
 
@@ -84,9 +81,10 @@ export default function PathNameFetch({
                     onChange={myHandlePath.handleChange}
                     onKeyPress={myHandlePath.handleKeyPress} // TODO deprecated - should change to onKeyDown
                     placeholder = {placeholder ? placeholder : ''}
-                /><datalist id="shortcuts-list">
-                    { shortcutData.map( d => <option key={d.value} value={d.value} /> )}
-                </datalist>
+                />
+                {/*<datalist id="shortcuts-list">*/}
+                {/*    { shortcuts.map( sc => <option key={sc.value} value={sc.value} /> )}*/}
+                {/*</datalist>*/}
 
             </div>
 
@@ -97,15 +95,8 @@ export default function PathNameFetch({
                 ><Checkbox className={"chk-force-refresh"} label={"Force Refresh"} value={checked} onChange={handleCheckChange}/>
             </div>
 
-            {showShortcuts && shortcuts?.length ?
-                <div style={{display: "block"}}>
-                    &nbsp;
-                    { shortcuts.map ( key => {
-                        return <ButtonFetch key={key} buttonKey={key} onClick={setPathName} className={"path-shortcut"}/>
-                        })
-                    }
-                </div>
-            : null }
+            {shortcutsDisplay}
+
         </div>
 
     </div>

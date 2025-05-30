@@ -1,21 +1,17 @@
 import React from "react";
-import ShortcutDefs from "../constants/ShortcutDefs.jsx";
-
 /*
-relies on global; ShortcutDefs for the button for buttonKey key
-
     expected props:
-        buttonKey
+        buttonDef       a {label, value} object
         onCLick         <button>.value as a parameter value
         className
- */
-export default function ButtonFetch( {buttonKey, onClick, className=''}) {
-    const buttonObj = ShortcutDefs[buttonKey]
-        ? ShortcutDefs[buttonKey]
-        : {
-            label : "Unknown Key '" + buttonKey + "'",
+*/
+export default function ButtonFetch( {buttonDef, onClick, className=''}) {
+
+    // catch case where button is ill-defined
+    const buttonObj = buttonDef ? buttonDef : {
+            label : "Unknown",
             value : ""
-            };
+        };
 
     const handleClick = buttonObj
         ? () => {onClick(buttonObj.value)}

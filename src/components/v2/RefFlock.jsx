@@ -256,7 +256,7 @@ function RefFlock({ pageData= {},
     const refCountAndCopy = !options.show_ref_nav
         ? <div className={"sub-caption"}>
             <div>{filteredRefs.length} {filteredRefs.length === 1 ? 'Reference' : 'References'}</div>
-            <button onClick={handleCopyRefsClick} className={'utility-button small-button'} ><span>Copy to Clipboard</span></button>
+            <button onClick={handleCopyRefsClick} className={'utility-button small-button'} ><span>Copy References</span></button>
         </div>
         :null
 

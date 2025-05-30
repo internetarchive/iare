@@ -823,7 +823,7 @@ export const iariPostProcessUrl = (urlObj) => {
 
     if (!urlObj?.url) return  // undefined urlObj or url property
 
-    const regexWayback = new RegExp(/https?:\/\/(?:web\.)archive\.org\/web\/([\d*]+)\/(.*)/);
+    const regexWayback = new RegExp(/https?:\/\/(?:web\.)archive\.org\/web\/([\d*]+)(?:if_)?\/(.*)/);
     const regexArchiveToday = new RegExp(/https?:\/\/archive\.today\/([\d*]+)\/(.*)/);
 
     const getDomainParts = (url) => {  // TODO should be done in IARI, but isnt yet

@@ -331,7 +331,7 @@ const urlFlock = React.memo(function UrlFlock({
             const desc = ACTIONABLE_FILTER_MAP[actionableKey]?.desc
             html = desc
                 ? `<div>${desc}</div>`
-                : "No Action required" //urlColumnDefs.columns[columnClass]?.ttData
+                : ""
 
         } else if (columnClass === "url-probes") {
             if (e.target.classList.contains("probe-badge")) {
