@@ -2,7 +2,6 @@
 
     /* candidates for global definition (for AI generated colors) */
     --color-ref-view-text: #727272;
-    /*--color-ref-view-inline-heading: #878787;*/
     --color-ref-view-inline-heading: #c2c2c2;
     --color-ref-view-inline-heading-alert: #ff3838;
     --color-sub-caption: #9b9a9a;
@@ -23,7 +22,10 @@
     --color-bg-editable: white;
     /*--color-bg-non-editable: #e5ecf2;*/
     --color-bg-non-editable: hsl(208 11% 95% / 1);
-    --color-bg-raw-claim: hsl(51 100% 84% / 1);
+
+    --color-raw-claim-fg: #5f5f5f;
+    --color-raw-claim-bg: hsl(51deg 89.36% 85.81%);
+    --color-raw-claim-border: #d9bc31;
 
     /*--margin-ref-view-section:1.515rem;*/
     --margin-ref-view-section:1.315rem;
@@ -49,8 +51,6 @@
     --width-url-archive-status: 3.5rem;
     --width-url-citations: 3.5rem;
     --width-url-templates: 4.0rem;
-    /*--width-url-actionable: 7.0rem;*/
-    /*--width-url-actionable: 5.0rem;*/
     --width-url-actionable: 3.5rem;
     --width-url-sections: 4.5rem;
     --width-url-perennial: 5.0rem;
@@ -58,9 +58,9 @@
 
 }
 
-
 .ref-view {
 }
+
 
 /* modal popup styling */
 
@@ -80,14 +80,12 @@
 .rnd-modal-ref-view-contents {
     background-color: #ffffff;
     box-shadow: 0px 0px 18px 0px rgba(0,0,0,0.75);
-
     display: flex;
     flex-direction: column;
 }
 
 .rnd-modal-popup {
     background-color: #f0f0f0;
-    /*background-color: chartreuse;*/
     border:1pt solid black;
     z-index: 1100;
     box-shadow: 2px 2px 8px #8a8a8a;
@@ -170,7 +168,6 @@
     display:flex;
     flex-direction: row;
     overflow:scroll;
-    /*padding:0.5rem .85rem .85rem .85rem;*/
     padding: 0.5rem 0.5rem 0.5rem .5rem;
     color:black;
     background-color: var(--g-color-body-bg);
@@ -262,9 +259,6 @@
 }
 
 
-
-/* ref view wikitext */
-
 .ref-view-wikitext {
     margin-top:.5rem;
     /*background-color: var(--color-debug-background);*/
@@ -277,8 +271,6 @@
     flex-wrap:wrap;
     justify-content: space-between;
     margin-bottom:.35rem;
-
-
     /*background-color: #a188ae;*/
 }
 
@@ -321,7 +313,6 @@ button.truth-probe-button
 }
 
 
-
 .ref-view-wikitext .header-left-part,
 .ref-view-wikitext-new .header-left-part
 {
@@ -342,7 +333,6 @@ button.truth-probe-button
     padding:.28rem .35rem;
     width:100%;
 
-    /*border-radius: var(--border-radius-ref-section);*/
     border: var(--border-box-light);
     border-radius: var(--border-radius-ref-section);
 }
@@ -616,18 +606,15 @@ button.truth-probe-button
 
 .raw-claim {
     font-size: .85rem;
-    color: #5787b7; /* #808080; */
-    background-color: var(--color-bg-raw-claim);
+    color: var(--color-raw-claim-fg);
+    background-color: var(--color-raw-claim-bg);
+    border:var(--color-raw-claim-border) solid 2px;
     border-radius: var(--border-radius-ref-section);
-    /*border:var(--border-solid-dark);*/
-    border:#5787b7 solid 2px;
     overflow-wrap: break-word;
     overflow: scroll;
-    /*height: var(--height-ref-view-wikitext);*/
     margin-bottom:0;
     padding:.28rem .35rem;
     width:100%;
-    /*box-shadow: chocolate 2pt 3pt 2pt 0px;*/
 }
 
 /* uncategorized */
@@ -682,7 +669,6 @@ button.truth-probe-button
 
 .ref-view-list .ref-list {
     padding-top: .15rem;
-    /*padding-top: 3px;*/
     margin-top: -3px;
     height:100%;
 }
@@ -711,7 +697,6 @@ button.truth-probe-button
     margin-top: .3rem;
 }
 .ref-view-list .ref-button.selected {
-    /*background-color: #e3ebf9; !* hsl(222 77% 92% / 1); *! !* #d3def8; *!*/
     background-color: var(--g-color-reference-display-selected-bg);
 
     /*width: 22rem;*/

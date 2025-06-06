@@ -551,7 +551,7 @@ export default function UrlDisplay ({ pageData, options } ) {
     console.log(`UrlDisplay: render; refFilter.caption = ${refFilter?.caption}`);
 
 
-    const tooltipUrlDisplay = <MyTooltip id="url-display-tooltip"
+    const tooltipForUrlDisplay = <MyTooltip id="url-display-tooltip"
                                     float={true}
                                     closeOnEsc={true}
                                     delayShow={420}
@@ -627,7 +627,7 @@ export default function UrlDisplay ({ pageData, options } ) {
                      
                      tooltipId={"url-display-tooltip"}/>
 
-            {tooltipUrlDisplay}
+            {tooltipForUrlDisplay}
 
         </div>
     </>
