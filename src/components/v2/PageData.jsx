@@ -1,5 +1,12 @@
 import React, {useCallback, useEffect, useState} from "react";
-import {fetchUrls, iariPostProcessUrl, fetchUrlsInfo, calcProbeScores, isBook} from "../../utils/iariUtils.js"
+import {
+    fetchUrls,
+    iariPostProcessUrl,
+    fetchUrlsInfo,
+    calcProbeScores,
+    isBookUrl,
+    listBookTemplates, noBookLink
+} from "../../utils/iariUtils.js"
 
 import Loader from "../Loader.jsx";
 import UrlDisplay from "./UrlDisplay.jsx";
@@ -58,11 +65,11 @@ export default function PageData({rawPageData = {}}) {
     let myConfig = React.useContext(ConfigContext)
     myConfig = myConfig ? myConfig : {} // prevents myConfig.<undefined param> errors
 
-    const myIariBase = myConfig.iariSource
-    const myStatusCheckMethod = myConfig.urlStatusMethod
+    const myIariBase = myConfig.iariSource  // TODO: grab from pageData.iariSource
+    const myStatusCheckMethod = myConfig.urlStatusMethod  // TODO grab from pageData.checkStatusMethod
     const isShowViewOptions = myConfig.isShowViewOptions
 
-    // google chrome dev tools does not handle module level imports
+    // Google Chrome dev tools does not handle module level imports
     // well, but assigning to a local var seems to make things work
     const rspDomains = categorizedDomains
 
@@ -73,18 +80,77 @@ export default function PageData({rawPageData = {}}) {
         pageData.process_errors.push( newError )
     }
 
-    const processUrls = useCallback( (pageData, urlResults) => {
-    // called in useEffect when new urlResults received
-    //
-    // creates:
-    //
+    // from urlResults, creates:
     //  pageData.urlDict and
     //  pageData.urlArray
     //
-    // from urlResults.
-    //
-    // It also does some extraction processing of url data and creates
-    // some statistical data regarding all the urls
+    const processUrls = useCallback( (pageData, urlResults) => {
+        // callback function defined upon component instantiation
+        //
+        // called in useEffect when new urlResults received
+        //
+
+
+        // create urlDict from urlResults
+
+        const urlDict = {}
+
+        if (urlResults) {
+            urlResults.forEach(d => {
+
+                const myUrl = d.data.url
+                    // urlResults arrive from fetch routine surrounded by a "data" element:
+                    //
+                    // [
+                    //  { data: <url data>, status_code: <result of fetch call (not the url status)> },
+                    //  . . .
+                    // ]
+                    //
+                    // so we remove that level of indirection here
+
+                // add urlDict entry for url if not yet present
+                if (!urlDict[myUrl]) {
+                    urlDict[myUrl] = d.data  // initialize with result data
+                    urlDict[myUrl].urlCount = 0
+                }
+
+                // use iariPostProcessUrl to add data to the url entry
+                // TODO make this step obsolete by doing it in IARI rather than here after the fact
+                try {
+                    iariPostProcessUrl(urlDict[myUrl])  // sets tld, pld, _3ld, and isArchive
+
+                } catch (error) {
+                    console.error(`Error processing URL: ${myUrl} (${error.message})`);
+                    console.error(error.stack);
+                    addProcessError(pageData, `Error processing URL: ${myUrl} (${error.message})`)
+                    // try to fix this urlDict entry?
+                    urlDict[myUrl].error = error.message
+                }
+
+                // increase usage count of this url by 1; keeps track of repeats
+                urlDict[myUrl].urlCount++
+            })
+        }
+
+        // primary urls are all those urls that are NOT archive links
+        const primaryUrls = Object.keys(urlDict).filter(urlKey => {
+            return !(urlDict[urlKey].isArchive)  // filter OUT urls that are archive links
+        })
+
+        // append urlDict and urlArray to pageData
+        pageData.urlDict = urlDict
+        pageData.urlArray = primaryUrls.map(urlKey => {
+            return urlDict[urlKey]
+        })
+
+                    // // generate some page-wide statistics
+                    // gatherDomainStats(pageData.urlArray)
+                    // gatherStatusStats(pageData.urlArray)
+
+    }, [])
+
+
+    const processUrlStats = useCallback( (pageData) => {
 
         const gatherDomainStats = (urlArray) => {
             // calculates top level domain and pay level domain stats
@@ -132,63 +198,12 @@ export default function PageData({rawPageData = {}}) {
 
         }
 
-        // create urlDict from urlResults
-
-        const urlDict = {}
-
-        if (urlResults) {
-            urlResults.forEach(d => {
-
-                const myUrl = d.data.url
-                // urlResults arrive from fetch routine surrounded by a "data" element:
-                //
-                // [
-                //  { data: <url data>, status_code: <result of fetch call (not the url status)> },
-                //  . . .
-                // ]
-                //
-                // so we remove that level of indirection here
-
-                // add urlDict entry for url if not yet present
-                if (!urlDict[myUrl]) {
-                    urlDict[myUrl] = d.data  // initialize with result data
-                    urlDict[myUrl].urlCount = 0
-                }
-
-                // use iariPostProcessUrl to add data to the url entry
-                // TODO make this step obsolete by doing it in IARI rather than here after the fact
-                try {
-                    iariPostProcessUrl(urlDict[myUrl])  // sets tld, pld, _3ld, and isArchive
-                } catch (error) {
-                    console.error(`Error processing URL: ${myUrl} (${error.message})`);
-                    console.error(error.stack);
-                    addProcessError(pageData, `Error processing URL: ${myUrl} (${error.message})`)
-                    // try to fix this urlDict entry?
-                    urlDict[myUrl].error = error.message
-                }
-
-                // increase usage count of this url by 1; keeps track of repeats
-                urlDict[myUrl].urlCount++
-            })
-        }
-
-        // primary urls are all those urls that are NOT archive links
-        const primaryUrls = Object.keys(urlDict).filter(urlKey => {
-            // filter OUT all urls that look like archive urls
-            return !(urlDict[urlKey].isArchive)
-        })
-
-        // append urlDict and urlArray to pageData
-        pageData.urlDict = urlDict
-        pageData.urlArray = primaryUrls.map(urlKey => {
-            return urlDict[urlKey]
-        })
-
         // generate some page-wide statistics
         gatherDomainStats(pageData.urlArray)
         gatherStatusStats(pageData.urlArray)
 
     }, [])
+
 
     const processActionables = useCallback( (pageData) => {
         // for each url in urlResults, check if it is actionable
@@ -278,7 +293,10 @@ export default function PageData({rawPageData = {}}) {
 
 
     const processReference = useCallback( (ref, urlDict) => {
+        // NB TODO Does this do anything useful???
+
         // sets the "hasTemplateArchive" property to true if archive_url parameter found in template
+        // sets url.hasTemplateArchive" of url found in template "ur'"parameter if ther
 
         const templates = ref?.templates ? ref.templates : []
         const templateUrls = {}
@@ -425,12 +443,14 @@ export default function PageData({rawPageData = {}}) {
             // use filter def from references filter def
             const paperFilterDefinitions = ["hasDoi"]
             const papersStats = paperFilterDefinitions.map(key => {
-                const f = REF_FILTER_DEFS[key];
+                const myFilter = REF_FILTER_DEFS[key];
 
                 // NB: must use bind here to pass urlDict to filter function
-                const count = pageData.references.filter((f.filterFunction)().bind(null, pageData.urlDict)).length; // Note the self-evaluating filterFunction!
+                const count = pageData.references
+                    .filter((myFilter.filterFunction)()
+                        .bind(null, pageData.urlDict)).length; // Note the self-evaluating filterFunction!
                 return {
-                    label: f.caption,
+                    label: myFilter.caption,
                     count: count,
                     link: key
                 }
@@ -444,7 +464,8 @@ export default function PageData({rawPageData = {}}) {
         // re-define references property as just the anchor references
         pageData.references = getAnchorReferences(pageData)
 
-        // process all anchor references
+
+        // process all "anchor" or primary references
         pageData.references.forEach( (ref, index) => {
 
             processReference(ref, pageData.urlDict)
@@ -468,7 +489,7 @@ export default function PageData({rawPageData = {}}) {
 
 
 
-    const associateRefsWithLinks = useCallback( pageData => {
+    const associateUrlsWithRefs = useCallback( pageData => {
         // for each reference in pageData.references
         //  - for each url link
         //      - add ref to url's refs list
@@ -476,28 +497,28 @@ export default function PageData({rawPageData = {}}) {
         if (!pageData?.references) return
 
         pageData.references.forEach(ref => {
-            // process each url link
+            // process each url link in reference
             ref.urls.forEach(url => {
-                const myUrl = pageData.urlDict[url]
+                const urlObj = pageData.urlDict[url]
 
-                if (!myUrl) return  // skip if no entry
+                if (!urlObj) return  // skip if no entry
 
                 // TODO what to do if url not in urlDict?
-                // TODO we should send and display a notice...shouldnt happen
-                // TODO add to test case: associateRefsWithLinks w/ bad urlDict
+                // TODO we should send and display a notice...shouldn't happen
+                // TODO add to test case: associateUrlsWithRefs w/ bad urlDict
 
                 // if url does not have current reference in it's associated reference list, add it now
 
                 // create refs and ref_ids array properties if not there
-                if (!(myUrl["ref_ids"])) myUrl["ref_ids"] = []
-                if (!(myUrl["refs"])) myUrl["refs"] = []
+                urlObj.ref_ids = urlObj.ref_ids ?? [];
+                urlObj.refs = urlObj.refs ?? [];
 
                 // TODO check and debug here if ref.id will be reliable
-                // TODO it might change over time, and then havoc may be iontroduced
+                // TODO it might change over time, and then havoc may be introduced
                 // TODO but maybe not, as it is unique to each wikitext
-                if (!myUrl["ref_ids"].includes(ref.id)) {
-                    myUrl["ref_ids"].push(ref.id)
-                    myUrl["refs"].push(ref)
+                if (!urlObj["ref_ids"].includes(ref.id)) {
+                    urlObj["ref_ids"].push(ref.id)
+                    urlObj["refs"].push(ref)
                 }
 
             })
@@ -518,7 +539,7 @@ export default function PageData({rawPageData = {}}) {
             const sections = []
 
             if (!myUrl || !myUrl.refs) {
-                console.log(`associateRefsWithLinks: no urlDict for: ${link}`)
+                console.log(`associateUrlsWithRefs: no urlDict for: ${link}`)
                 return
             }
 
@@ -563,7 +584,7 @@ export default function PageData({rawPageData = {}}) {
 
     }, [])
 
-    const processReliabilityData = useCallback( pageData => {
+    const processReliabilityStats = useCallback( pageData => {
         // for each url in pageData.urlArray, set rsp[] property of urlDict entry
         // at the same time, keep track of rsp count
 
@@ -618,16 +639,17 @@ export default function PageData({rawPageData = {}}) {
     }, [rspDomains])
 
 
-    const processBooksData = useCallback( pageData => {
+    const processBookStats = useCallback( pageData => {
         // come up with books data for URL
 
         if (!pageData?.urlArray) return
 
         const bookStats = {}
 
+        // accumulate all url links that are books
         pageData.urlArray.forEach(urlObj => {
 
-            urlObj.isBook = isBook(urlObj)
+            urlObj.isBook = isBookUrl(urlObj)
 
             if (urlObj.isBook === true) {
                 // create or increment netloc entry in bookStats
@@ -638,7 +660,52 @@ export default function PageData({rawPageData = {}}) {
 
         })
 
-        if (!pageData["stats"]) pageData["stats"] = {}
+        // indicate for each ref if it has a book or not.
+        // it may be a book reference but not have a book link
+        if (pageData.references) {
+            pageData.references.forEach( _ref => {
+
+                // true if any of the ref's urls are books
+                let hasBook = _ref.urls.some(url => {
+                    const urlObj = pageData.urlDict[url]
+                    return urlObj?.isBook
+                })
+
+                // If none of url's indicate a book reference, check
+                // for "book-like" templates in this ref that indicate
+                // this is a book citation.
+                // If a book template is found, then:
+                // - set reference.hasBook = true,
+                // - increment bookStats counter for "references with Books but no book links"
+                // This will allow us to trigger subset for citations that have
+                // books but have no links for that book
+
+                if (!hasBook) {
+                    // check if any of the templates are of book type
+                    hasBook = _ref.templates?.some( t => {
+                        return listBookTemplates.includes(t.name)
+                    })
+                    if (hasBook) {
+                        // add to count of books with no url links
+                        if (!bookStats[noBookLink]) bookStats[noBookLink] = 0
+                        bookStats[noBookLink] = bookStats[noBookLink] + 1
+                    }
+
+                    // if (_ref.templates?.some( t => {return listBookTemplates.includes(t.name)})) {
+                    //     // add to count of books with no links if ref has book with no url book links
+                    //     if (!bookStats[noBookLink]) bookStats[noBookLink] = 0
+                    //     bookStats[noBookLink] = bookStats[noBookLink] + 1
+                    // }
+                }
+
+                _ref.hasBook = hasBook
+
+            })
+        }
+
+
+
+        pageData["stats"] = pageData["stats"] ?? {}
         pageData.stats["books"] = bookStats
 
     }, [])
@@ -716,7 +783,6 @@ export default function PageData({rawPageData = {}}) {
                     <div>Status code checking with {UrlStatusCheckMethods[myStatusCheckMethod].caption} method</div>
                     <div>Probe status checks: {defaultProbesString}</div>
                 </>)
-
                 setIsDataReady(false);
                 setIsLoadingUrls(true);
 
@@ -725,27 +791,30 @@ export default function PageData({rawPageData = {}}) {
                 // fetch url data for each url and process received data - TODO this should eventually be done in IARI
                 const myUrls = await fetchPageUrls()
                 processUrls(pageData, myUrls)  // creates pageData.urlDict and pageData.urlArray; loads pageData.errors
+                associateUrlsWithRefs(pageData)  // associates url links with references
 
-                processBooksData(pageData)
+                processUrlStats(pageData)  // aggregates statistical info on urls
 
-                if (1) {  // make it easy to turn on and off while developing
-                    const myUrlsInfo = await fetchProbeInfo(pageData.urlDict, defaultProbesString)
-                    // for each URL in urlDict, fetch probe info and assign to probe property of url
-                    // this is temporary, as eventually the probe data will be included with the url
-                    // data when initially retrieved (with get_url_info vs. check_url IARI endpoint)
-                    processProbes(pageData, myUrlsInfo)
-                }
+                processBookStats(pageData)
+
+                const myUrlsInfo = await fetchProbeInfo(pageData.urlDict, defaultProbesString)
+                // for each URL in urlDict, fetch probe info and assign to probe property of url
+                // this is temporary, as eventually the probe data will be included with the url
+                // data when initially retrieved (with get_url_info vs. check_url IARI endpoint)
+                processProbes(pageData, myUrlsInfo)
 
                 // now that all info is fetched from IARI API, process local info
                 processReferences(pageData)
-                associateRefsWithLinks(pageData)  // associates url links with references
 
-                processReliabilityData(pageData)
+                // associateUrlsWithRefs(pageData)  // associates url links with references
 
+                processReliabilityStats(pageData)
                 processActionables(pageData)
 
                 // if any errors, display
-                if (pageData.process_errors?.length > 0) setPageErrors(pageData.process_errors)
+                if (pageData.process_errors?.length > 0) {
+                    setPageErrors(pageData.process_errors)
+                }
 
                 // announce to UI all is ready
                 setIsDataReady(true);
@@ -769,10 +838,11 @@ export default function PageData({rawPageData = {}}) {
             pageData,
             myStatusCheckMethod,
             processUrls,
+            processUrlStats,
             processReferences,
-            associateRefsWithLinks,
-            processReliabilityData,
-            processBooksData,
+            associateUrlsWithRefs,
+            processReliabilityStats,
+            processBookStats,
             processActionables,
     ])
 

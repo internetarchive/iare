@@ -14,6 +14,7 @@ import Checkbox from "../Checkbox.jsx";
 import {Chart, LinearScale, BarElement, ArcElement, Legend, Tooltip, Title, SubTitle, Colors,} from 'chart.js'
 import ReferenceStats from "./charts/ReferenceStats.jsx";
 import {ConfigContext} from "../../contexts/ConfigContext.jsx";
+import {noBookLink} from "../../utils/iariUtils.js";
 Chart.register(LinearScale, BarElement, ArcElement, Legend, Tooltip, Title, SubTitle, Colors,);
 
 // displays overview stats of article data
@@ -178,7 +179,13 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState, tool
                 <FilterBox name={"books"} caption="Links to Books"
                            showContents={expand.books}
                            onToggle={onToggleShow}>
-                    <BooksChart pageData={pageData} options={{colors: iareColors}} onAction={onAction}
+                    <BooksChart pageData={pageData}
+                                options={{
+                                    colors: iareColors,
+                                    no_book_link_caption: "Books with no links",
+                                    no_book_link_key: noBookLink,
+                    }}
+                                onAction={onAction}
                                 currentState={currentState?.books}/>
                 </FilterBox>
 

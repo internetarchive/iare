@@ -15,7 +15,7 @@ import ConditionsBox from "../ConditionsBox.jsx";
 import {Tooltip as MyTooltip} from "react-tooltip";
 import {REFERENCE_STATS_MAP} from "../../constants/referenceStatsMap.jsx";
 import {ACTIONS_IARE} from "../../constants/actionsIare.jsx";
-import {isBook} from "../../utils/iariUtils.js";
+import {isBookUrl, listBookTemplates, noBookLink} from "../../utils/iariUtils.js";
 
 // export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {}, urlArchiveFilterMap = {} } ) {
 export default function UrlDisplay ({ pageData, options } ) {
@@ -247,7 +247,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             setFilterState(filters.books, value)
             setCondition({
                 category: "Books",
-                desc: `Links to books from "${value}"`,
+                desc: `Links to Books${value === null ? "" : ` from ${value}`}`,
                 caption: "Books"
             })
         }
@@ -354,12 +354,26 @@ export default function UrlDisplay ({ pageData, options } ) {
 
     const getUrlBooksFilter = (bookDomain) => {
 
+        // null bookDomain means show all url's that are books
+        if (bookDomain === null) {
+            return {
+                desc: `URLs referencing books either alone or in a Cite Book template.`,
+                caption: <span>{`Contains Books`}</span>,
+
+                filterFunction: () => (urlObj) => {
+                    // return true if this url's netloc matches the bookDomain
+                    return (urlObj?.isBook)
+                },
+            }
+        }
+
+        // interpret no bookDomain to mean "all" filter
         if (!bookDomain?.length) {
-            return null; // no bookDomain means all filter
+            return null;
         }
 
         // return synthetic filter showing URLs that are
-        // - "isBook"
+        // - "isBookUrl"
         // - url netloc (i.e., top domain) matches bookDomain
         return {
 
@@ -368,15 +382,25 @@ export default function UrlDisplay ({ pageData, options } ) {
             caption: <span>{`Contains Books from "${bookDomain}"`}</span>,
 
             filterFunction: () => (urlObj) => {
-                if (!isBook(urlObj)) return false
                 // return true if this url's netloc matches the bookDomain
-                return (urlObj.netloc === bookDomain)
+                return (urlObj?.isBook && urlObj.netloc === bookDomain)
             },
         }
     }
 
     const getRefBooksFilter = (bookDomain) => {
         console.log(`getRefBooksFilter for ${bookDomain}`)
+
+        // null bookDomain means show all ref that have books
+        if (bookDomain === null) {
+            return {
+                desc: `References containing books.`,
+                caption: <span>{`Contains Books`}</span>,
+                filterFunction: () => (urlDict, _ref) => {
+                    return _ref.hasBook
+                },
+            }
+        }
 
         if (!bookDomain?.length) {
             return null; // no bookDomain means all filter
@@ -385,19 +409,39 @@ export default function UrlDisplay ({ pageData, options } ) {
             desc: `References that contain "${bookDomain}" in a Cite Book template"`,
             caption: <span>{`Contains Books from "${bookDomain}"`}</span>,
 
-            filterFunction: () => (urlDict, ref) => {
+            filterFunction: () => (urlDict, _ref) => {
                 console.log(`filter ref function for bookDomain:${bookDomain}`)
 
-                // include this reference if any of its urls are "isBook" and match bookDomain
-                return ref.urls.some( url => {
+                // if book domain is noBookLink
+                // - return true if:
+                //   - ref.hasBooks AND
+                //   - url param is missing from book-like template
+                if (bookDomain === noBookLink) {
+                    if (!_ref.hasBook) return false
+                    if (!_ref.templates) return true  // true means no books are described in this ref's templates
+                    // return true if any of the templates of this ref are missing the "url" parameter
+                    return _ref.templates?.some( t => {
+                        if (listBookTemplates.includes(t.name)) {
+                            // we found a book template
+                            // return true if some of the book templates DO NOT contain the "url" parameter
+                            return !(t.parameters && "url" in t.parameters)
+                        } else {
+                            return false
+                        }
+                    })
+                }
+
+                // else return true if bookDomain matches any of the ref's urls.netloc
+                return _ref.urls.some( url => {
                     const urlObj = urlDict[url]
-                    console.log(`filter ref: url is: ${url}, bookDomain:${bookDomain}`)
+                    // console.log(`filter ref: url is: ${url}, bookDomain:${bookDomain}`)
                     if (!urlObj) return false  // filter out if no urlObject
                     if (!urlObj.isBook) return false
-                    console.log(`filter result: ${urlObj.netloc === bookDomain ? "true" : "false"}`)
+                    // console.log(`filter result: ${urlObj.netloc === bookDomain ? "true" : "false"}`)
 
                     return (urlObj.netloc === bookDomain)
                 })
+
             },
 
         }

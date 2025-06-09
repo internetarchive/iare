@@ -5,15 +5,24 @@ import {generateColorFade} from "../../../utils/generalUtils.js";
 import ChartLegend from "./ChartLegend.jsx";
 import {ACTIONS_IARE} from "../../../constants/actionsIare.jsx";
 
+
 const BooksChart = ({pageData, options, onAction, currentState = null}) => {
 
     if (!pageData?.stats?.books) return <div>
         <p>No Books statistics to show.</p>
     </div>
 
+    const no_link_label = options?.no_book_link_caption
+        ? options?.no_book_link_caption
+        : "Books with no links"
+
+    const no_link_key = options?.no_book_link_key
+        ? options?.no_book_link_key
+        : ""
+
     const booksData = Object.keys(pageData.stats.books).map(key => {
         return {
-            label: key,
+            label: (key === no_link_key ? no_link_label : key),
             count: pageData.stats.books[key],
             link: key
         }

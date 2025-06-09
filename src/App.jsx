@@ -245,6 +245,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
                 data.endpoint = myEndpoint;
                 data.iariSource = IariSources[myIariSourceId]?.proxy;
                 data.iariParseMethod = parseMethod;
+                data.checkStatusMethod = checkMethod;
                 data.forceRefresh = refresh;
                 data.mediaType = myMediaType; // decorate based on mediaType?
                 data.version = getIariVersion(data, myEndpoint);  // version of pageData - determines display components

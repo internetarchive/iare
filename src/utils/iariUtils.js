@@ -812,69 +812,84 @@ export const fetchUrlsInfo = async ({
 }
 
 
+const regexWayback = new RegExp(/https?:\/\/(?:web\.)archive\.org\/web\/([\d*]+)(?:if_)?\/(.*)/);
+const regexArchiveToday = new RegExp(/https?:\/\/archive\.today\/([\d*]+)\/(.*)/);
+
+const regexBookGoogle = /^https?:\/\/books\.google\.com\/books\?/
+const regexBookArchiveOrg = /^https?:\/\/archive\.org\/details\//;
+const regexGutenbergOrg = /^https?:\/\/gutenberg\.org\//;  // NB TODO is this enough???
+
+export const listBookTemplates = ["cite book", "isbn"]
+export const noBookLink = "no_book_link"
+
+
+// does nothing for now...
+const sanitizeUrlForArchive = (targetUrl) => {
+    // TODO ongoing, as checking if archive can be tricky
+    // TODO Also must consider other archiving services
+    // TODO may use IABot's isArchive function...
+
+    // NB not doing anything right now...
+    // // let inputString = 'http://example.com:http://example2.com:some:text:with:colons';
+    // const regexColon = /:(?!\/\/)/g;  // Regular expression to match colons not followed by "//"
+    // // const regexEquals = /=/g;  // Regular expression to match equals signs
+    // let resultUrl;
+    // resultUrl = targetUrl.replace(regexColon, '%3A');  // Replace solo colons with encoded "%3A"
+    // // resultUrl = resultUrl.replace(regexEquals, '%3D')
+    // return resultUrl
+    return targetUrl  // for now - trying to debug and see if it is necessary
+}
+
+
+const isArchiveUrl = (url) => {
+    // TODO use IABot's isArchive thing that MAX wrote
+    const sanitizedUrl = sanitizeUrlForArchive(url)
+    return !!(sanitizedUrl.match(regexWayback))
+        ? true
+        : !!(sanitizedUrl.match(regexArchiveToday))
+}
+
+
+const getDomainParts = (url) => {  // TODO should be done in IARI, but isnt yet
+
+    // top-level-domain (TLD), pay-level-domain (PLD), and Third level domain (_3LD) extraction
+    // For example, for http://sscl.berkeley.edu/~oal/background/pacislands.htm:
+    //
+    // tld = edu
+    // pld = berkeley.edu
+    // _3ld = sscl.berkeley.edu
+
+    const parsedUrl = new URL(url);
+    const hostnameParts = parsedUrl.hostname.split('.');
+
+    if (hostnameParts.length >= 2) {
+        const tld = hostnameParts[hostnameParts.length - 1];
+        const pld = hostnameParts[hostnameParts.length - 2];
+        const _3ld = hostnameParts[hostnameParts.length - 3];
+        return { pld, tld, _3ld };
+    } else {
+        return { pld: null, tld: null, _3ld: null };
+    }
+}
+
+
+
 /* calculates things about uURL's that IARI should have already done but doesn't, such as:
     urlObj.isArchive
+    urlObj.isBookUrl
     urlObj.hasTemplateArchive
     urlObj.tld
     urlObj.pld
     urlObj._3ld
 */
 export const iariPostProcessUrl = (urlObj) => {
+    // these should be done by iari, but doing it post-process here until then
 
     if (!urlObj?.url) return  // undefined urlObj or url property
 
-    const regexWayback = new RegExp(/https?:\/\/(?:web\.)archive\.org\/web\/([\d*]+)(?:if_)?\/(.*)/);
-    const regexArchiveToday = new RegExp(/https?:\/\/archive\.today\/([\d*]+)\/(.*)/);
-
-    const getDomainParts = (url) => {  // TODO should be done in IARI, but isnt yet
-
-        // top-level-domain (TLD), pay-level-domain (PLD), and Third level domain (_3LD) extraction
-        // For example, for http://sscl.berkeley.edu/~oal/background/pacislands.htm:
-        //
-        // tld = edu
-        // pld = berkeley.edu
-        // _3ld = sscl.berkeley.edu
-
-        const parsedUrl = new URL(url);
-        const hostnameParts = parsedUrl.hostname.split('.');
-
-        if (hostnameParts.length >= 2) {
-            const tld = hostnameParts[hostnameParts.length - 1];
-            const pld = hostnameParts[hostnameParts.length - 2];
-            const _3ld = hostnameParts[hostnameParts.length - 3];
-            return { pld, tld, _3ld };
-        } else {
-            return { pld: null, tld: null, _3ld: null };
-        }
-    }
-
-
-    const sanitizeUrlForArchive = (targetUrl) => {
-        // TODO ongoing, as checking if archive can be tricky
-        // TODO Also must consider other archiving services
-        // TODO may use IABot's isArchive function...
-
-        // // let inputString = 'http://example.com:http://example2.com:some:text:with:colons';
-        // const regexColon = /:(?!\/\/)/g;  // Regular expression to match colons not followed by "//"
-        // // const regexEquals = /=/g;  // Regular expression to match equals signs
-        // let resultUrl;
-        // resultUrl = targetUrl.replace(regexColon, '%3A');  // Replace solo colons with encoded "%3A"
-        // // resultUrl = resultUrl.replace(regexEquals, '%3D')
-        // return resultUrl
-        return targetUrl  // for now - trying to debug and see if it is necessary
-    }
-
-    const isArchive = (targetUrl) => {
-        // TODO use IABot's isArchive thing that MAX wrote
-        return !!(sanitizeUrlForArchive(targetUrl).match(regexWayback))
-            ? true
-            : !!(sanitizeUrlForArchive(targetUrl).match(regexArchiveToday))
-    }
-
-    urlObj.isArchive = isArchive(urlObj.url)
+    urlObj.isArchive = isArchiveUrl(urlObj.url)
     urlObj.hasTemplateArchive = false  // TODO: this will be recalculated when processing references
 
-    // these should have been parsed by iari, but since wayback is not included in iari yet, we have to do it post-process
     const parts = getDomainParts(urlObj.url)
     urlObj.tld = `${parts.tld ? parts.tld : ''}`
     urlObj.pld = `${parts.pld ? parts.pld : ''}.${parts.tld ? parts.tld : ''}`
@@ -882,12 +897,7 @@ export const iariPostProcessUrl = (urlObj) => {
 }
 
 
-const regexBookGoogle = /^https?:\/\/books\.google\.com\/books\?/
-const regexBookArchiveOrg = /^https?:\/\/archive\.org\/details\//;
-const regexGutenbergOrg = /^https?:\/\/gutenberg\.org\//;  // NB TODO is this enough???
-const listBookTemplates = ["cite book", "isbn"]
-
-export const isBook = (urlObj) => {
+export const isBookUrl = (urlObj) => {
     /*
     from stephen:
 
@@ -898,7 +908,7 @@ export const isBook = (urlObj) => {
 
     // return true if url deemed a link that points to a book
     // based on regex match of book url patterns
-    const isBookUrl = (url) => {
+    const isBookLink = (url) => {
 
         if (regexBookGoogle.test(url)) return true
         if (regexBookArchiveOrg.test(url)) return true
@@ -911,7 +921,7 @@ export const isBook = (urlObj) => {
     let isBook = false  // let's start with this assumption
 
     // check if any references this url is part of contains a book template
-    // with a url paramter matching tha if the queried url link
+    // with a url parameter matching that of the queried url link
     const refs = urlObj.refs
     if (refs) {
         refs.forEach( ref => {
@@ -930,34 +940,22 @@ export const isBook = (urlObj) => {
     }
 
     // NB TODO we should catch book references that do NOT have a link
-    //  set isBook to true, but "netloc" should be set to "no link" or something
+    //  set isBookUrl to true, but "netloc" should be set to "no link" or something
     //  so it shows up in book chart as "book with no link"
     // That should trigger an "Action" item in the Reference, but not a URL
     // NB: this means that there Books that belong to references, but not URLS (cuz there
     //  are no links to link).
     //  This means when Books chart is clicked:
-    //  - URL list filter checks for isBook based on URL
+    //  - URL list filter checks for isBookUrl based on URL
     //  - Reference List filter checks
-    //    - does ref have its owwn "isBook" flag?
+    //    - does ref have its owwn "isBookUrl" flag?
 
     // If url not found to be a book based on template values,
     // check if url is a book based on its url pattern
     if (!isBook) {
-        isBook = isBookUrl(urlObj.url)
+        isBook = isBookLink(urlObj.url)
         // TODO add urlObj.book_details here
     }
 
     return isBook
 }
-
-// // return true if url deemed a that points to a book
-// // based on regex match of book url patterns
-// export const isBookUrl = (url) => {
-//
-//     const regexBookGoogle = /^https?:\/\/books\.google\.com\/books\//
-//     const regexBookArchiveOrg = /^https?:\/\/archive\.org\/details\//;
-//
-//     if (regexBookGoogle.test(url)) return true
-//     if (regexBookArchiveOrg.test(url)) return true
-//     return false
-// }

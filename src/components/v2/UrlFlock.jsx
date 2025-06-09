@@ -317,8 +317,8 @@ const urlFlock = React.memo(function UrlFlock({
         } else if (columnClass === "url-archive_status") {
             html = row.dataset.live_state
                 ? `<div>${row.dataset.archive_status === "true" ? 'Archived' : 'Not Archived'}` +
-                `<br/>` +
-                `IABot live_state: ${row.dataset.live_state} - ${iabotLiveStatusCodes[row.dataset.live_state]}</div>`
+                    `<br/>` +
+                    `IABot live_state: ${row.dataset.live_state} - ${iabotLiveStatusCodes[row.dataset.live_state]}</div>`
                 : `IABot archive_status = ${row.dataset.archive_status}<br/>IABot live_state = ${row.dataset.live_state}`
 
         } else if (columnClass === "url-citations") {
