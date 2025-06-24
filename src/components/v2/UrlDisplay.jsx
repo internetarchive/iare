@@ -247,7 +247,9 @@ export default function UrlDisplay ({ pageData, options } ) {
             setFilterState(filters.books, value)
             setCondition({
                 category: "Books",
-                desc: `Links to Books${value === null ? "" : ` from ${value}`}`,
+                desc: value === noBookLink
+                    ? "Books with no links"
+                    :(`Links to Books${value === null ? "" : ` from ${value}`}`),
                 caption: "Books"
             })
         }
@@ -412,13 +414,19 @@ export default function UrlDisplay ({ pageData, options } ) {
             filterFunction: () => (urlDict, _ref) => {
                 console.log(`filter ref function for bookDomain:${bookDomain}`)
 
-                // if book domain is noBookLink
-                // - return true if:
-                //   - ref.hasBooks AND
-                //   - url param is missing from book-like template
                 if (bookDomain === noBookLink) {
+
                     if (!_ref.hasBook) return false
+
+                    // if some of the urls for this ref are books, then exclude from filter
+                    if (_ref.urls.some( url => {
+                        const urlObject = urlDict[url]
+                        return isBookUrl(urlObject)  // the "some" criteria is met
+                    })) return false
+
+                    // return true if no "url" parameters in template(s)
                     if (!_ref.templates) return true  // true means no books are described in this ref's templates
+
                     // return true if any of the templates of this ref are missing the "url" parameter
                     return _ref.templates?.some( t => {
                         if (listBookTemplates.includes(t.name)) {
