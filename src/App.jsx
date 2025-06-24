@@ -11,7 +11,7 @@ import Loader from "./components/Loader.jsx";
 import PathNameFetch from "./components/PathNameFetch.jsx";
 import PageDisplay from "./components/PageDisplay.jsx";
 
-import {IariSources} from "./constants/endpoints.jsx";
+import {IariSources} from "./constants/iariSources.jsx";
 import {UrlStatusCheckMethods} from "./constants/checkMethods.jsx";
 import {ParseMethods} from "./constants/parseMethods.jsx";
 

@@ -29,7 +29,7 @@ export const IariSources = {
     iari_local: {
         key: 'iari_local',
         caption: 'IARI Local',
-        proxy: 'http://localhost:5000/v2',
+        proxy: 'http://localhost:5001/v2',
     },
 }
 

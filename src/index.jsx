@@ -10,7 +10,7 @@ import './custom.scss'; // includes bootstrap.scss
 
 import './index.css';
 import {UrlStatusCheckMethods} from "./constants/checkMethods.jsx";
-import {IariSources} from "./constants/endpoints.jsx";
+import {IariSources} from "./constants/iariSources.jsx";
 import {ParseMethods} from "./constants/parseMethods.jsx";
 
 const getEnvironment = () => {

@@ -6,6 +6,8 @@ This project uses the React.js framework.
 
 ## Development Scripts
 
+*Note:* Build process is now with ___vite___. Build instructions coming soon.
+
 Builds are accomplished with standard node/React scripts.
 
 From the project directory:
@@ -25,8 +27,7 @@ The build is minified and ready to be deployed for testing purposes.
 
 ## Automatic deployment
 
-Whenever a new commit is uploaded to the IARE repo, a GitHub Action is automatically performed that
-creates a production-ready version of the IARE app, and made available at the address:
+Whenever a new commit is uploaded to the main branch of the IARE repo, a GitHub action is triggered to create a stable version of the IARE app. This is considered a STAGING release and is available via this url:
 
 ```
 https://internetarchive.github.io/iare/
@@ -47,20 +48,22 @@ Run a container from the newly built image:
 $ docker container run --rm -it -p 3000:3000 iare
 ````
 
-If you are running this locally, you casn open the application in a web browser at http://localhost:3000
+If you are running this locally, you can open the application in a web browser at http://localhost:3000
 
 ## Under the Hood
 
 ### General Coding Notes
 
-Throughout the code you may see "NB ..." in a comment. NB stands for "Nota Bene", meaning "note well" in latin, and is 
-used to call out certain aspects in the code worth calling out. See https://en.wikipedia.org/wiki/Nota_bene.
+#### NB
 
-#### Warning! 
+Throughout the code you may see "NB ..." in a comment. NB stands for ["Nota Bene"](https://en.wikipedia.org/wiki/Nota_bene), meaning "note well" in latin, and is 
+used to call out certain aspects in the code that aren't necessarily "TODO"s to be fixed.
+
+#### Using "ref" as a parameter name 
 
 You cannot use "ref" as a component parameter name in a react javascript project -
-it will give you strange errors. If you need to use a variable to 
-represent a reference, use "_ref"...I found this out the hard way!
+it will give strange errors. If you need to use a variable to 
+represent a reference, use "_ref". (I found this out the hard way!)
 
 ### External components used
 
@@ -71,33 +74,41 @@ represent a reference, use "_ref"...I found this out the hard way!
 * chart.js options
 * chartjs-plugin-datalabels
 
-### React Component Architecture
+### Component Architecture
 
 When page data is received from the fetch, it is rendered with the src/components/PageDisplay component, eventually resolving to the src/components/v2/PageDisplayV2 component for typical wiki pages.
 
-The PageDisplayV2 contains the PageInfo component (which displays some top-level page retrieval information) and the PageData component, which does the actual work of displaying the retrieved page data.
+The PageDisplayV2 component combines the PageInfo (top-level page retrieval information) component and the PageData component. The PageData component does the heavy lifting of displaying the retrieved page data.
 
 ```
-<PageDisplayV2>
+<PageDisplayV2 pageData={pageData} >
     <PageInfo pageData={pageData} />
     <PageData pageData={pageData} />
 ```
-Within the PageData component, the raw data is massaged and decorated with anything needed for further rendering. These decorationg actions include:
+#### PageData component
+
+Within the PageData component, the raw data is decorated with anything useful for further rendering, including:
 - fetching the status code of all the URLs
+- fetching the probe status info for all the URLs
 - transforming the references so that they can be filtered and displayed in a more comfortable manner.
 
-#### The PageData component
+"Awaiting..." icon displayed while data is being fetched:
+
 ```
-<Loader/> // displays while data is being fetched
-
-One of the following views is displayed, showing the information in different ways:
-
-    <FldDisplay pageData={pageData} />
-    <UrlDisplay pageData={pageData} <options> />
-    <RefDisplay pageData={pageData} <options> />
+<Loader message="..."/> 
 ```
 
-#### UrlDisplay
+Once the data is retrieved, it is displayed with the UrlDisplay component:
+ ```
+ <UrlDisplay pageData={pageData} <options> />
+```
+
+There are other display components that can be used to display the page data in different ways from different perspectives. These are less developed than UrlDisplay, but present a rich future of display possibilities. For example:
+```
+<RefDisplay pageData={pageData} <options> />
+```
+
+#### UrlDisplay component
 ```
 <UrlDisplay>
     <UrlOverview>
@@ -105,18 +116,18 @@ One of the following views is displayed, showing the information in different wa
     <RefFlock>
 ```
 
-#### UrlOverview
+###### UrlOverview
 
-Contains the graphs and charts depicting URL statistics. Clicking on these charts produces a filter upon the URL List (represented by UrlFlock)
+Contains the graphs and charts depicting URL statistics. Clicking on these charts produces a filter that is applied the URL List (represented by UrlFlock) and the References list (represented by RefFlock)
 
-#### FldDisplay
+###### FldDisplay
 _(Fld is the legacy moniker for "First Level Domain". It just means the Domains view)_:
 ```
 <FldDisplay>
     <FldFlock>
     <RefFlock>
 ```
-#### RefDisplay
+###### RefDisplay
 ```
 <RefDisplay>
     <RefOverview>

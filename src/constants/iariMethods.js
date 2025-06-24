@@ -2,7 +2,7 @@
 export const IariMethods = {
     PROBE: {
         key: 'PROBE',
-        caption: 'Probe url for truth data',
+        caption: 'Probe url for credibility data',
         endpoint: '/probe',
         params: [
             {
@@ -14,6 +14,11 @@ export const IariMethods = {
                 name: "probes",
                 type: "string",
                 desc: "pipe delimited strings describing probe methods to execute"
+            },
+            {
+                name: "refresh",
+                type: "boolean",
+                desc: "whether to pull fresh data or use what is in cache"
             }
         ]
     },
