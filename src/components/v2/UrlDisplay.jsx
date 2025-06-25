@@ -15,7 +15,7 @@ import ConditionsBox from "../ConditionsBox.jsx";
 import {Tooltip as MyTooltip} from "react-tooltip";
 import {REFERENCE_STATS_MAP} from "../../constants/referenceStatsMap.jsx";
 import {ACTIONS_IARE} from "../../constants/actionsIare.jsx";
-import {isBookUrl, listBookTemplates, noBookLink} from "../../utils/iariUtils.js";
+import {isBookUrl, bookTemplates, noBookLink, bookDefs} from "../../utils/iariUtils.js";
 
 // export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {}, urlArchiveFilterMap = {} } ) {
 export default function UrlDisplay ({ pageData, options } ) {
@@ -241,6 +241,7 @@ export default function UrlDisplay ({ pageData, options } ) {
         }
 
         else if (action === ACTIONS_IARE.SET_BOOKS_FILTER.key) {
+            // value is netloc associated with Book
             setUrlFilters({ "url_book_filter" : getUrlBooksFilter(value) })
             setRefFilter(getRefBooksFilter(value))
             setSelectedUrl(null)
@@ -248,7 +249,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             setCondition({
                 category: "Books",
                 desc: value === noBookLink
-                    ? "Books with no links"
+                    ? "Citations with no Book links"
                     :(`Links to Books${value === null ? "" : ` from ${value}`}`),
                 caption: "Books"
             })
@@ -393,7 +394,7 @@ export default function UrlDisplay ({ pageData, options } ) {
     const getRefBooksFilter = (bookDomain) => {
         console.log(`getRefBooksFilter for ${bookDomain}`)
 
-        // null bookDomain means show all ref that have books
+        // if bookDomain null, return function that reveals all refs that have books
         if (bookDomain === null) {
             return {
                 desc: `References containing books.`,
@@ -404,37 +405,41 @@ export default function UrlDisplay ({ pageData, options } ) {
             }
         }
 
+        // if bookDomain empty string, indicate "All" filter by returning null for filtyer value
+        // TODO when will this ever happen?
         if (!bookDomain?.length) {
-            return null; // no bookDomain means all filter
+            return null;
         }
+
+        // otherwise return function that filters based on bookDomain provided
         return {
             desc: `References that contain "${bookDomain}" in a Cite Book template"`,
             caption: <span>{`Contains Books from "${bookDomain}"`}</span>,
 
             filterFunction: () => (urlDict, _ref) => {
-                console.log(`filter ref function for bookDomain:${bookDomain}`)
+                console.log(`getRefBooksFilter: bookDomain: ${bookDomain}`)
 
                 if (bookDomain === noBookLink) {
 
                     if (!_ref.hasBook) return false
 
-                    // if some of the urls for this ref are books, then exclude from filter
+                    // if any (some) of the urls for this ref are book links, then exclude this ref
+                    // from filter, as this filter wants only those references that do NOT have a book link
                     if (_ref.urls.some( url => {
                         const urlObject = urlDict[url]
-                        return isBookUrl(urlObject)  // the "some" criteria is met
-                    })) return false
+                        return isBookUrl(urlObject)  // if isBookUrl true for ANY of the urls, then ".some()" is true
+                    })) return false  // has links, so not a candidate for "no book link" inclusion
 
-                    // return true if no "url" parameters in template(s)
-                    if (!_ref.templates) return true  // true means no books are described in this ref's templates
+                    // return true if no template(s), as there are obviously no book links defined if there are no templates
+                    // TODO investigate case where there are no templates but possibly ref parameters that indicate links
+                    if (!_ref.templates) return true
 
-                    // return true if any of the templates of this ref are missing the "url" parameter
-                    return _ref.templates?.some( t => {
-                        if (listBookTemplates.includes(t.name)) {
-                            // we found a book template
-                            // return true if some of the book templates DO NOT contain the "url" parameter
-                            return !(t.parameters && "url" in t.parameters)
+                    // return true if any of this ref's book templates' "url" parameter is empty or missing
+                    return _ref.templates?.some( myTemplate => {
+                        if (bookTemplates.includes(myTemplate.name)) {
+                            return !myTemplate.parameters?.url;
                         } else {
-                            return false
+                            return false  // this is not a book template so dont bother including in "no books link" filter
                         }
                     })
                 }

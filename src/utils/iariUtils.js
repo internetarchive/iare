@@ -811,16 +811,29 @@ export const fetchUrlsInfo = async ({
 
 }
 
-
 const regexWayback = new RegExp(/https?:\/\/(?:web\.)archive\.org\/web\/([\d*]+)(?:if_)?\/(.*)/);
 const regexArchiveToday = new RegExp(/https?:\/\/archive\.today\/([\d*]+)\/(.*)/);
 
-const regexBookGoogle = /^https?:\/\/books\.google\.com\/books\?/
-const regexBookArchiveOrg = /^https?:\/\/archive\.org\/details\//;
-const regexGutenbergOrg = /^https?:\/\/gutenberg\.org\//;  // NB TODO is this enough???
-
-export const listBookTemplates = ["cite book", "isbn"]
-export const noBookLink = "no_book_link"
+export const bookTemplates = ["cite book", "isbn"]
+export const noBookLink = "__no_book_link__"
+export const bookDefs = {
+    [noBookLink]: {
+        regex_url: /^$/,
+        caption: "Citations with no Book links",
+    },
+    google: {
+        regex_url: /^https?:\/\/books\.google\.com\/books\?/,
+        caption: "Google Books",
+    },
+    archive: {
+        regex_url: /^https?:\/\/archive\.org\/details\//,
+        caption: "Internet Archive Open Library",
+    },
+    gutenberg: {
+        regex_url: /^https?:\/\/gutenberg\.org\//,
+        caption: "Project Gutenberg",
+    },
+}
 
 
 // does nothing for now...
@@ -844,9 +857,9 @@ const sanitizeUrlForArchive = (targetUrl) => {
 const isArchiveUrl = (url) => {
     // TODO use IABot's isArchive thing that MAX wrote
     const sanitizedUrl = sanitizeUrlForArchive(url)
-    return !!(sanitizedUrl.match(regexWayback))
-        ? true
-        : !!(sanitizedUrl.match(regexArchiveToday))
+    return regexWayback.test(sanitizedUrl)
+        ||
+        regexArchiveToday.test(sanitizedUrl);
 }
 
 
@@ -906,15 +919,11 @@ export const isBookUrl = (urlObj) => {
     Anything at gutenberg.org
     */
 
-    // return true if url deemed a link that points to a book
-    // based on regex match of book url patterns
     const isBookLink = (url) => {
-
-        if (regexBookGoogle.test(url)) return true
-        if (regexBookArchiveOrg.test(url)) return true
-        if (regexGutenbergOrg.test(url)) return true
-
-        return false
+        // return true if url matches any Book url pattern
+        return Object.entries(bookDefs).some(([key, def]) => {
+            return def.regex_url.test(url)
+        });
     }
 
 
@@ -926,7 +935,7 @@ export const isBookUrl = (urlObj) => {
     if (refs) {
         refs.forEach( ref => {
             ref.templates?.forEach( t => {
-                if (listBookTemplates.includes(t.name)) {
+                if (bookTemplates.includes(t.name)) {
                     if (t.parameters && "url" in t.parameters) {
                         if (t.parameters["url"] === urlObj.url) {
                             // template parameter url matches given url: positive for "book-ness"
@@ -947,8 +956,7 @@ export const isBookUrl = (urlObj) => {
     //  are no links to link).
     //  This means when Books chart is clicked:
     //  - URL list filter checks for isBookUrl based on URL
-    //  - Reference List filter checks
-    //    - does ref have its owwn "isBookUrl" flag?
+    //  - Reference List filter checks ref.hasBook
 
     // If url not found to be a book based on template values,
     // check if url is a book based on its url pattern

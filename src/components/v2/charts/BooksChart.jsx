@@ -14,7 +14,7 @@ const BooksChart = ({pageData, options, onAction, currentState = null}) => {
 
     const no_link_label = options?.no_book_link_caption
         ? options?.no_book_link_caption
-        : "Books with no links"
+        : "Book Citations with no links"
 
     const no_link_key = options?.no_book_link_key
         ? options?.no_book_link_key

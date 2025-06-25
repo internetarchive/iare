@@ -5,7 +5,7 @@ import {
     fetchUrlsInfo,
     calcProbeScores,
     isBookUrl,
-    listBookTemplates, noBookLink
+    bookTemplates, noBookLink
 } from "../../utils/iariUtils.js"
 
 import Loader from "../Loader.jsx";
@@ -683,12 +683,14 @@ export default function PageData({rawPageData = {}}) {
                 if (!hasBook) {
                     // check if any of the templates are of book type
                     hasBook = _ref.templates?.some( t => {
-                        return listBookTemplates.includes(t.name)
+                        return bookTemplates.includes(t.name)
                     })
                     if (hasBook) {
                         // add to count of books with no url links
                         if (!bookStats[noBookLink]) bookStats[noBookLink] = 0
                         bookStats[noBookLink] = bookStats[noBookLink] + 1
+
+                        console.log(`bookStats added; wikitext: ${_ref.wikitext}`)
                     }
 
                     // if (_ref.templates?.some( t => {return listBookTemplates.includes(t.name)})) {

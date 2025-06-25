@@ -1,7 +1,7 @@
 export const envShortcutLists = {
     prod: ['easterIsland', 'internetArchive', 'pdfCovid',],  // production mode limited shortcuts
     stage: ['easterIsland', 'easter_island_short', 'internetArchive', 'mlk', 'short_test', ],  // staging shows a little more for testing
-    other: ['marc_bolan', 'easterIsland', 'easter_island_short', 'kennewick_man', 'mlk', 'internetArchive', 'short_test'],  // everything else (my dev env, e.g.) shows lots more
+    other: ['assam', 'marc_bolan', 'easterIsland', 'easter_island_short', 'kennewick_man', 'mlk', 'internetArchive', 'short_test'],  // everything else (my dev env, e.g.) shows lots more
 }
 
 
@@ -37,6 +37,10 @@ export const ShortcutDefs = {
     "internetArchive"  : {
         label : "Internet Archive",
         value : "https://en.wikipedia.org/wiki/Internet_Archive"
+    },
+    "assam" : {
+        label: "Assam",
+        value: "https://en.wikipedia.org/wiki/Assam"
     },
 
 
