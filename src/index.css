@@ -268,6 +268,12 @@ button.utility-button.small-button {
 
 /* OTHER ELEMENTS - to be organized as time goes on */
 
+.section-caption {
+    font-size: 1.0rem;
+    text-align: left;
+    font-weight: bold;
+}
+
 .detail-section {
     background-color: #aad4d8;
     border-radius:.8rem;

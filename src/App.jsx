@@ -30,7 +30,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     const [isShowShortcuts, setIsShowShortcuts] = useState(true);
     const [isShowDebugInfo, setIsShowDebugInfo] = useState(false);
     const [isShowDebugComponents, setIsShowDebugComponents] = useState(false);
-    const [isShowViewOptions, setIsShowViewOptions] = useState(false);
+    const [isShowViewOptions, setIsShowViewOptions] = useState(true);
 
     // params settable from from address url
     const [targetPath, setTargetPath] = useState(myPath);

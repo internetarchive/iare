@@ -159,7 +159,7 @@
     z-index: 1000;
 }
 
-.section-caption,
+/*.section-caption,*/
 .filter-box-caption {
     border: 2px solid var(--g-color-function-box-caption-outline);
     /*border: var(--border-box);*/

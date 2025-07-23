@@ -442,6 +442,7 @@ button.truth-probe-button
     min-width: inherit;
     max-width: inherit;
     flex-grow: 1;
+    flex-shrink: 0;
 }
 
 
