@@ -13,6 +13,7 @@ expected props
 export default function PathNameFetch({
         pathInitial='',
         checkInitial= false,
+        className= null,
         handlePathResults,
         shortcuts=[],
         showShortcuts=false,
@@ -56,17 +57,25 @@ export default function PathNameFetch({
     //     return !data.some( d => d.label === text );
     // }, [text]);
 
+    // const shortcutsDisplay = showShortcuts && shortcuts?.length
+    //     ? <div style={{display: "block"}}>
+    //         &nbsp;
+    //         {shortcuts.map ( shortCutDef => {
+    //             return <ButtonFetch key={shortCutDef.value} buttonDef={shortCutDef} onClick={setPathName} className={"path-shortcut"}/>
+    //         })
+    //         }
+    //     </div>
+    //     : null
     const shortcutsDisplay = showShortcuts && shortcuts?.length
-        ? <div style={{display: "block"}}>
-            &nbsp;
+        ? <div className="shortcuts-display">
             {shortcuts.map ( shortCutDef => {
-                return <ButtonFetch key={shortCutDef.value} buttonDef={shortCutDef} onClick={setPathName} className={"path-shortcut"}/>
-            })
+                    return <ButtonFetch key={shortCutDef.value} buttonDef={shortCutDef} onClick={setPathName} className={"path-shortcut"}/>
+                })
             }
         </div>
         : null
 
-    return <div className={"path-fetch"}>
+    return <div className={`path-fetch iare-focus-box${className ? ` ${className}` : ''}`}>
 
         <div className={"path-fetch-wrap"}>
 
@@ -75,6 +84,7 @@ export default function PathNameFetch({
                 ><input
                     id="pathInput" name="pathInput"
                     type="search"
+                    className="iare-input"
                     list="shortcuts-list"
                     autoComplete="on"
                     value={pathName}

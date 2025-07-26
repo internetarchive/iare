@@ -48,9 +48,9 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     // values of screen elements
     const [scrollY, setScrollY] = useState(0);
     const [windowHeight, setWindowHeight] = useState(window.innerHeight);
-    const lowerSectionElementRef = useRef(null);
+    // const lowerSectionElementRef = useRef(null);
     const [lowerSectionTopY, setLowerSectionTopY] = useState(0);
-    const [lowerSectionHeight, setLowerSectionHeight] = useState(0);
+    // const [lowerSectionHeight, setLowerSectionHeight] = useState(0);
 
 
     const toggleDebug = () => {
@@ -61,16 +61,16 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         setScrollY(window.scrollY);
     }
 
-    // resize components when window size changed
-    const handleResize = useCallback(() => {
-        setWindowHeight(window.innerHeight);  // for window height display purposes only
-
-        if (lowerSectionElementRef.current) {
-            const rect = lowerSectionElementRef.current.getBoundingClientRect();
-            setLowerSectionTopY(rect.top); // Get the top Y-coordinate
-            setLowerSectionHeight(window.innerHeight - rect.top);// Set the new element height
-        }
-    }, [])
+                // // resize components when window size changed
+                // const handleResize = useCallback(() => {
+                //     setWindowHeight(window.innerHeight);  // for window height display purposes only
+                //
+                //     if (lowerSectionElementRef.current) {
+                //         const rect = lowerSectionElementRef.current.getBoundingClientRect();
+                //         setLowerSectionTopY(rect.top); // Get the top Y-coordinate
+                //         setLowerSectionHeight(window.innerHeight - rect.top);// Set the new element height
+                //     }
+                // }, [])
 
 
     const myShortcutList = React.useMemo(() => {
@@ -102,31 +102,31 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         document.body.classList.add(env);
     }, [env])
 
-    // add event listener for scroll and resize events
-    useEffect(() => {
+                // add event listener for scroll and resize events
+                // useEffect(() => {
+                //
+                //     const debounceHandleResize = debounce(() => {
+                //         handleResize();
+                //     }, 200);
+                //
+                //     // Update the Y-coordinate when the component mounts
+                //     handleResize();
+                //
+                //     // listen for events on window
+                //     window.addEventListener('scroll', handleScroll);
+                //     window.addEventListener('resize', debounceHandleResize);
+                //
+                //     // Clean up the event listener on component unmount
+                //     return () => {
+                //         window.removeEventListener('scroll', handleScroll);
+                //         window.removeEventListener('resize', handleResize);
+                //     };
+                // }, [handleResize]);
 
-        const debounceHandleResize = debounce(() => {
-            handleResize();
-        }, 200);
-
-        // Update the Y-coordinate when the component mounts
-        handleResize();
-
-        // listen for events on window
-        window.addEventListener('scroll', handleScroll);
-        window.addEventListener('resize', debounceHandleResize);
-
-        // Clean up the event listener on component unmount
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-            window.removeEventListener('resize', handleResize);
-        };
-    }, [handleResize]);
-
-    // when debug shows/hides, readjust onscreen component sizes
-    useEffect(() => {
-        handleResize()
-    }, [isDebug, handleResize]);
+                // // when debug shows/hides, readjust onscreen component sizes
+                // useEffect(() => {
+                //     handleResize()
+                // }, [isDebug, handleResize]);
 
 
     function getIariVersion(pageData, endpointPath) {
@@ -422,10 +422,10 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
             // dn triangle: <>&#9660;</>
         }</button>
 
-    const heading = <div className={"header-contents"}>
-        <h1>{appTitle}</h1>
-        <div className={"header-aux1"}>{versionInfo}{siteInfo} ({iariSourceInfo}) {buttonShowDebug}</div>
-    </div>
+    // const heading = <div className={"header-contents"}>
+    //     <h1>{appTitle}</h1>
+    //     <div className={"iare-header-aux1"}>{versionInfo}{siteInfo} ({iariSourceInfo}) {buttonShowDebug}</div>
+    // </div>
 
     const debugButtonFilters = <button // this is the 'show urls list' button
         className={"utility-button debug-button"}
@@ -475,8 +475,9 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     </>
 
     const debug = <div className={"debug-section " + (isDebug ? "debug-on" : "debug-off")}>
-        <div style={{marginBottom:".5rem"}}
-        >{iariChoiceSelect} {methodChoiceSelect} {articleVersionChoiceSelect}</div>
+        {/*<div style={{marginBottom:".5rem"}}*/}
+        {/*>{iariChoiceSelect} {methodChoiceSelect} {articleVersionChoiceSelect}</div>*/}
+        <p>{iariChoiceSelect} {methodChoiceSelect} {articleVersionChoiceSelect}</p>
         <p><span className={'label'}>Environment:</span> {env} <span className={'lolite'}>(host: {window.location.host})</span></p>
         <p><span className={'label'}>IARE Version:</span> {versionInfo}</p>
         <p><span className={'label'}>IARI Source:</span> {myIariSourceId} <span className={'lolite'}>({IariSources[myIariSourceId]?.proxy})</span></p>
@@ -531,54 +532,96 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     const defaultIfEmpty = "https://en.wikipedia.org/wiki/"
     // TODO candidate for language strings
 
+    const debugStaticDisplay = <div className="debug-static-display">
+        Scroll Y: {scrollY}<br/>
+        Window H: {windowHeight}<br/>
+        LowerSection Top: {lowerSectionTopY}
+    </div>
+
+
+    useEffect( () => {
+        // setMyError("Fake Error here!")
+    }, [])
+
     return <>
+
+        {debugStaticDisplay}
 
         <ConfigContext.Provider value={config}>
 
-            <div className="static-display">
-                Scroll Y: {scrollY}<br/>
-                Window H: {windowHeight}<br/>
-                LowerSection Top: {lowerSectionTopY}
-            </div>
+            {/*<div className="iare-view">*/}
 
-            <div className="iare-view">
+                <div className={"iare-ux-container main-container"}>
 
-                <div className={"header"}>
-                    {heading}
-                    {debug}
+                    <div className={"iare-ux-header main-header"}>
+
+                        <div className={"main-header-contents"}>
+                            {/*{Array.from({length: 3}, (_, i) => {return <div>Header Here!</div>})}*/}
+
+                            {/*<div className={"iare-header-contents"}>*/}
+                                <h1 className={"app-title"}>{appTitle}</h1>
+                                <div className={"iare-header-aux1"}>{versionInfo}{siteInfo} ({iariSourceInfo}) {buttonShowDebug}</div>
+                            {/*</div>*/}
+
+                        </div>
+
+
+                        {/*{debug}*/}
+                        {/*{myError*/}
+                        {/*    ? <div className={myError ? "error-display" : "error-display-none"}>*/}
+                        {/*        {myError}*/}
+                        {/*    </div>*/}
+                        {/*    : ""*/}
+                        {/*}*/}
+                    </div>
+
+                    <div className={"iare-ux-body main-body"}>
+
+                        {/*<div className={"iare-ux-body-wrapper"} >*/}
+
+                            {/*<h2>iare-ux-body-wrapper</h2>*/}
+
+                            <div className={"test-contents"} >
+                                <h2>test-contents</h2>
+                                {Array.from({length: 20}, (_, i) => {return <p>Body Here!</p>})}
+                            </div>
+                        {/*</div>*/}
+
+                        {/*<div className={"iare-ux-container iare-page-container"}>*/}
+
+                        {/*    <div className={"iare-ux-header iare-page-header"}>*/}
+
+                        {/*        <PathNameFetch pathInitial={targetPath?.length > 0 ? targetPath : defaultIfEmpty}*/}
+                        {/*                       className={"iare-path-fetch"}*/}
+                        {/*                       checkInitial={refreshCheck}*/}
+                        {/*                       placeholder={"Enter a Wikipedia article or PDF url here"}*/}
+                        {/*                       shortcuts={shortcuts}*/}
+                        {/*                       showShortcuts={isShowShortcuts}*/}
+                        {/*                       handlePathResults={handlePathResults}*/}
+                        {/*        />*/}
+                        {/*    </div>*/}
+
+                        {/*    <div className={"iare-ux-body iare-page-body"}*/}
+                        {/*        style={{backgroundColor: "lawngreen"}}>*/}
+
+                        {/*        {isLoading*/}
+                        {/*            ? <Loader message={"Analyzing Page References..."}/>*/}
+                        {/*            : <>*/}
+                        {/*                { /* component is re-rendered when pageData changes, which is*/}
+                        {/*     only once per URL invocation, really *!/*/}
+                        {/*                <PageDisplay pageData={pageData}/>*/}
+                        {/*                { /* TODO: pass in an error callback here? *!/*/}
+                        {/*            </>*/}
+                        {/*        }*/}
+                        {/*    </div>*/}
+
+                        {/*</div>*/}
+
+                    </div>
+
                 </div>
 
-                <div className={"upper_section"}>
-                    <PathNameFetch pathInitial={targetPath?.length > 0 ? targetPath : defaultIfEmpty}
-                                   checkInitial={refreshCheck}
-                                   placeholder={"Enter a Wikipedia article or PDF url here"}
-                                   shortcuts={shortcuts}
-                                   showShortcuts={isShowShortcuts}
-                                   handlePathResults={handlePathResults}
-                    />
-                </div>
-
-
-                {myError ? <div className={myError ? "error-display" : "error-display-none"}>
-                    {myError}
-                </div> : ""}
-
-                <div className={"lower_section"}
-                     ref={lowerSectionElementRef}
-                     style={{ height: `${lowerSectionHeight}px` }}
-                >
-                    {isLoading
-                        ? <Loader message={"Analyzing Page References..."}/>
-                        : <>
-                            { /* component is re-rendered when pageData changes, which is
-                             only once per URL invocation, really */}
-                            <PageDisplay pageData={pageData}/>
-                            { /* TODO: pass in an error callback here? */}
-                        </>
-                    }
-                </div>
-
-            </div>
+            {/*</div>*/}
 
             {tooltipConfirm}
 

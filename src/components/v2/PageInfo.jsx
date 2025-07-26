@@ -134,6 +134,11 @@ export default function PageInfo({ pageData }) {
         <ClickButton buttonText={"Copy PageData to Clipboard (JSON)"} handleClick={handleCopyPageData} />
     </>
 
+    const section_extra = <p><br/>ideas: Alert when No Books at all in article</p>
+    // that is IARI Alert - that should be defined in iare dispersal, not calculated in IARE (anymore)
+    //
+
+
     const pageInfoDetails = pageData
         ? <div className={'detail-section'}>
         {section_type}
@@ -142,6 +147,7 @@ export default function PageInfo({ pageData }) {
         {section_version}
         {section_ores}
         {section_buttons}
+        {section_extra}
         </div>
         : <p>Nothing to display - pageData is missing.</p>
 

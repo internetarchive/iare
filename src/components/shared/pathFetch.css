@@ -1,30 +1,31 @@
 
 .path-fetch {
-    padding: .85rem 1rem;
+    padding: .7rem .65rem;
     border:2pt solid #d6d6d6;
-    border-radius: .45rem;
+    border-radius: var(--iare-radius-medium);
 }
 
 .path-fetch-wrap {
     display: inline-flex;
     flex-direction: row;
     flex-wrap: wrap;
-    /*margin-bottom: .5rem;*/
+    row-gap: .5rem;
+}
+.path-input-wrapper {
+    margin-bottom: .5rem;
+    display:contents;  /* NB chatGPT says display: contents is not supported by IE */
 }
 .path-fetch #pathInput {
     width:29rem;
     font-size: .9rem;
     padding: 2pt 2pt 2pt 4pt;
     border:1px solid dimgrey;
+    border-radius: var(--iare-radius-tiny);
 }
 .path-fetch #pathInput::placeholder {
     color: #a0a0a0;
 }
 
-.path-input-wrapper {
-    margin-bottom: .5rem;
-    display:contents;  /* NB chatGPT says display: contents is not supported by IE */
-}
 
 @media screen and (max-width: 800px) {
     /*.path-input-wrapper {*/
@@ -44,9 +45,13 @@
     padding-top: 0.175rem;
 }
 
-.path-fetch .path-shortcut {
+.path-fetch .path-shortcut:not(:first-child) {
     margin-left:10px;
 }
+.path-fetch .shortcuts-display {
+    /*margin-left:1rem;*/
+}
+
 
 .path-fetch-wrap button {
     margin-top:.35em;
@@ -55,7 +60,7 @@
 .path-fetch-wrap .chk-force-refresh {
     margin-top:.65em;
     margin-left: .5rem;
-    margin-right: .25rem;
+    margin-right: .75rem;
 }
 .path-fetch-wrap .chk-force-refresh input[type=checkbox] {
     margin-right: .25rem;
