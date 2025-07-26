@@ -477,7 +477,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     const debug = <div className={"debug-section " + (isDebug ? "debug-on" : "debug-off")}>
         {/*<div style={{marginBottom:".5rem"}}*/}
         {/*>{iariChoiceSelect} {methodChoiceSelect} {articleVersionChoiceSelect}</div>*/}
-        <p>{iariChoiceSelect} {methodChoiceSelect} {articleVersionChoiceSelect}</p>
+        <div>{iariChoiceSelect} {methodChoiceSelect} {articleVersionChoiceSelect}</div>
         <p><span className={'label'}>Environment:</span> {env} <span className={'lolite'}>(host: {window.location.host})</span></p>
         <p><span className={'label'}>IARE Version:</span> {versionInfo}</p>
         <p><span className={'label'}>IARI Source:</span> {myIariSourceId} <span className={'lolite'}>({IariSources[myIariSourceId]?.proxy})</span></p>
@@ -565,14 +565,8 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
 
                         </div>
 
-
                         {debug}
-                        {false && myError
-                            ? <div className={myError ? "error-display" : "error-display-none"}>
-                                {myError}
-                            </div>
-                            : ""
-                        }
+
                     </div>
 
                     <div className={"iare-ux-body main-body"}>
@@ -589,23 +583,31 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
                                                showShortcuts={isShowShortcuts}
                                                handlePathResults={handlePathResults}
                                 />
+
+                                {myError
+                                    ? <div className={myError ? "error-display" : "error-display-none"}>
+                                        {myError}
+                                    </div>
+                                    : ""
+                                }
+                                
                             </div>
 
                             <div className={"iare-ux-body page-body"}>
 
-                                <div className={"test-contents"} >
-                                    <h2>test-contents</h2>
-                                    {Array.from({length: 20}, (_, i) => {return <p>Body Here!</p>})}
-                                </div>
-                        {/*        {isLoading*/}
-                        {/*            ? <Loader message={"Analyzing Page References..."}/>*/}
-                        {/*            : <>*/}
-                        {/*                { /* component is re-rendered when pageData changes, which is*/}
-                        {/*     only once per URL invocation, really *!/*/}
-                        {/*                <PageDisplay pageData={pageData}/>*/}
-                        {/*                { /* TODO: pass in an error callback here? *!/*/}
-                        {/*            </>*/}
-                        {/*        }*/}
+                                {/*<div className={"test-contents"} >*/}
+                                {/*    <h2>test-contents</h2>*/}
+                                {/*    {Array.from({length: 20}, (_, i) => {return <p>Body Here!</p>})}*/}
+                                {/*</div>*/}
+                                {isLoading
+                                    ? <Loader message={"Analyzing Page References..."}/>
+                                    : <>
+                                        { /* component is re-rendered when pageData changes, which is
+                             only once per URL invocation, really */}
+                                        <PageDisplay pageData={pageData}/>
+                                        { /* TODO: pass in an error callback here? */}
+                                    </>
+                                }
                             </div>
 
                         </div>
