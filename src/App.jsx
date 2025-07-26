@@ -566,44 +566,37 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
                         </div>
 
 
-                        {/*{debug}*/}
-                        {/*{myError*/}
-                        {/*    ? <div className={myError ? "error-display" : "error-display-none"}>*/}
-                        {/*        {myError}*/}
-                        {/*    </div>*/}
-                        {/*    : ""*/}
-                        {/*}*/}
+                        {debug}
+                        {false && myError
+                            ? <div className={myError ? "error-display" : "error-display-none"}>
+                                {myError}
+                            </div>
+                            : ""
+                        }
                     </div>
 
                     <div className={"iare-ux-body main-body"}>
 
-                        {/*<div className={"iare-ux-body-wrapper"} >*/}
+                        <div className={"iare-ux-container page-container"}>
 
-                            {/*<h2>iare-ux-body-wrapper</h2>*/}
+                            <div className={"iare-ux-header page-header"}>
 
-                            <div className={"test-contents"} >
-                                <h2>test-contents</h2>
-                                {Array.from({length: 20}, (_, i) => {return <p>Body Here!</p>})}
+                                <PathNameFetch pathInitial={targetPath?.length > 0 ? targetPath : defaultIfEmpty}
+                                               className={"iare-path-fetch"}
+                                               checkInitial={refreshCheck}
+                                               placeholder={"Enter a Wikipedia article or PDF url here"}
+                                               shortcuts={shortcuts}
+                                               showShortcuts={isShowShortcuts}
+                                               handlePathResults={handlePathResults}
+                                />
                             </div>
-                        {/*</div>*/}
 
-                        {/*<div className={"iare-ux-container iare-page-container"}>*/}
+                            <div className={"iare-ux-body page-body"}>
 
-                        {/*    <div className={"iare-ux-header iare-page-header"}>*/}
-
-                        {/*        <PathNameFetch pathInitial={targetPath?.length > 0 ? targetPath : defaultIfEmpty}*/}
-                        {/*                       className={"iare-path-fetch"}*/}
-                        {/*                       checkInitial={refreshCheck}*/}
-                        {/*                       placeholder={"Enter a Wikipedia article or PDF url here"}*/}
-                        {/*                       shortcuts={shortcuts}*/}
-                        {/*                       showShortcuts={isShowShortcuts}*/}
-                        {/*                       handlePathResults={handlePathResults}*/}
-                        {/*        />*/}
-                        {/*    </div>*/}
-
-                        {/*    <div className={"iare-ux-body iare-page-body"}*/}
-                        {/*        style={{backgroundColor: "lawngreen"}}>*/}
-
+                                <div className={"test-contents"} >
+                                    <h2>test-contents</h2>
+                                    {Array.from({length: 20}, (_, i) => {return <p>Body Here!</p>})}
+                                </div>
                         {/*        {isLoading*/}
                         {/*            ? <Loader message={"Analyzing Page References..."}/>*/}
                         {/*            : <>*/}
@@ -613,9 +606,9 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
                         {/*                { /* TODO: pass in an error callback here? *!/*/}
                         {/*            </>*/}
                         {/*        }*/}
-                        {/*    </div>*/}
+                            </div>
 
-                        {/*</div>*/}
+                        </div>
 
                     </div>
 
