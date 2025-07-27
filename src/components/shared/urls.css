@@ -477,12 +477,12 @@ boneyard
  */
 
 
-.filter-box-rows {
-    height:var(--height-filter-box-rows);
-    min-height:var(--height-filter-box-rows);
-    max-height:var(--height-filter-box-rows);
-    overflow: scroll;
-}
+            /*.filter-box-rows {*/
+            /*    height:var(--height-filter-box-rows);*/
+            /*    min-height:var(--height-filter-box-rows);*/
+            /*    max-height:var(--height-filter-box-rows);*/
+            /*    overflow: scroll;*/
+            /*}*/
 
 
 
