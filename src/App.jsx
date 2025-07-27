@@ -590,7 +590,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
                                     </div>
                                     : ""
                                 }
-                                
+
                             </div>
 
                             <div className={"iare-ux-body page-body"}>

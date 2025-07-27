@@ -10,22 +10,6 @@
     color: var(--color-text-muted);
 }
 
-.page-data {
-    /*display:flex;*/
-    /*flex-direction: row;*/
-
-    /*border-top:1px solid black;*/
-    /*padding-top:.5rem;*/
-    padding-top:.25rem;
-    height:20rem;
-    min-height:20rem;
-    max-height:20rem;
-
-}
-.page-data .display-content {
-    margin-top:0;
-}
-
 /* *******************
  section-box is common component class for sections
  - see UrlDisplay and RefDisplay e.g.

@@ -916,11 +916,13 @@ export default function PageData({rawPageData = {}}) {
                 {!isDataReady
                     ? <p>Data Not Ready</p>
 
-                    : <div className={"page-data"} xxstyle={{backgroundColor:"grey"}}>
+                    : <div className={"page-data iare-ux-container"}>
 
-                        {isShowViewOptions && viewOptions}
+                        <div className={`iare-ux-header`}>
+                            {isShowViewOptions && viewOptions}
+                        </div>
 
-                        <div className={`display-content`}>
+                        <div className={`iare-ux-body`}>
 
                             {selectedViewType === 'urls' &&
                                 <UrlDisplay pageData={pageData} options={{refresh: pageData.forceRefresh}} />

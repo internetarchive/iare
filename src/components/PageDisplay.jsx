@@ -16,19 +16,11 @@ const PageDisplay = React.memo( ({ pageData }) => {
     const message = 'Please enter a URL and click "Load References"'
 
     if (!pageData) return <p className={'text-primary'}>{message}</p>
-                // if (!pageData) return <>
-                //     {Array.from({length: 40}, (_, i) => {return <p>{message}</p>})}
-                // </>
-
 
     if (pageData.version === "v2") {
+
         if (pageData.mediaType === "wiki")
             return <PageDisplayV2 pageData={pageData} />;
-
-            // return <>
-            //     {Array.from({length: 40}, (_, i) => {return <p>Paragraph {i + 1}</p>})}
-            //     </>
-
 
         if (pageData.mediaType === "pdf")
             return <PageDisplayV2PDF pageData={pageData} />;

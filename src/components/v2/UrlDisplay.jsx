@@ -621,7 +621,7 @@ export default function UrlDisplay ({ pageData, options } ) {
 
     return <>
 
-        <div className={'section-content'}>
+        <div className={'section-content iare-url-display'}>
 
             {myConfig.isShowUrlOverview &&
                 <div className={"section-box url-overview-column"}>

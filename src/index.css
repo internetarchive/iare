@@ -202,21 +202,8 @@ body.env-other .iare-header-aux1-display span.non-production {
 }
 
 .iare-ux-body {
-    /*!*flex: 1; !* grow: 1 shrink: 1 basis: 0 *!*!*/
-    /*!*flex-grow: 1; !* grow: 1 shrink: 1 basis: 0 *!*!*/
-    /*!*flex: 1 1 auto; !* fill remaining space *!*!*/
-    /*!*overflow-y: auto;*!*/
-    /*!*overflow: scroll;*!*/
-    /*overflow-y: auto;*/
-    /*height:100%;*/
-    /*flex-grow: 1;*/
-
-    /*!*margin:.85rem;*!*/
-    /*background-color:hotpink;*/
-
     flex: 1 1 auto;  /* grow to fill remaining space */
     overflow-y: auto; /* scrolls when content overflows */
-    /*padding: 1rem;*/
     background: #c1b4ec;
     height: 100%;
 }
