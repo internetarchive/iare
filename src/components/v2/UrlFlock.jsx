@@ -495,11 +495,10 @@ const urlFlock = React.memo(function UrlFlock({
                     : null
                 }
 
-                {/* component to use when columns are dynamically described */}
+                {/* idea: use UrlDataCol component when columns become dynamically described (in the future) */}
                 {/* <UrlDataCol urlObj={u} column_name={"probes"} options={{onProbeClick: handleProbeClick}}/> */}
 
                 <div className={"url-probes"}>
-                    {/*<ProbesDisplay urlObj={u} probeData={u.probe_results} onProbeClick={handleProbeClick} />*/}
                     <ProbesDisplay urlObj={u} onProbeClick={handleProbeClick} />
                 </div>
 

@@ -633,37 +633,45 @@ export default function UrlDisplay ({ pageData, options } ) {
                 </div>
             }
 
-            <div className={"section-box"}
+            <div className={"section-box iare-ux-container"}
                  style={{ pointerEvents: isRefViewModalOpen ? "none" : "auto" }}>
 
-                <ConditionsBox
-                    caption={"Conditions"}
-                    conditions={currentConditions}
-                    onAction={handleAction}/>
+                <div className={"iare-ux-header"}>
 
-                <div style={{display: "flex"}}>
-                    <UrlFlock urlDict={pageData.urlDict}
-                              urlArray={pageData.urlArray}
-                              urlFilters={urlFilters}
-                              onAction={handleAction}
-                              selectedUrl={selectedUrl}
-                              fetchMethod={myConfig.urlStatusMethod}
-                              tooltipId={"url-display-tooltip"}
-                    />
+                    <ConditionsBox
+                        caption={"Conditions"}
+                        conditions={currentConditions}
+                        onAction={handleAction}/>
 
-                    <RefFlock pageData={pageData}
-                              refArray={refArray}
-                              refFilter={refFilter}
-                              onAction={handleRefClick}
-                              options={{
-                                  show_header: false,
-                                  show_filter_description: false,
-                                  caption: "References List",
-                              }}
-                              tooltipId={"url-display-tooltip"}
-                              context={"UrlDisplay"}
+                </div>
 
-                    />
+                <div className={"iare-ux-body"}>
+
+                    <div style={{display: "flex", height:'100%'}}>
+
+                        <UrlFlock urlDict={pageData.urlDict}
+                                  urlArray={pageData.urlArray}
+                                  urlFilters={urlFilters}
+                                  onAction={handleAction}
+                                  selectedUrl={selectedUrl}
+                                  fetchMethod={myConfig.urlStatusMethod}
+                                  tooltipId={"url-display-tooltip"}
+                        />
+
+                        <RefFlock pageData={pageData}
+                                  refArray={refArray}
+                                  refFilter={refFilter}
+                                  onAction={handleRefClick}
+                                  options={{
+                                      show_header: false,
+                                      show_filter_description: false,
+                                      caption: "References List",
+                                  }}
+                                  tooltipId={"url-display-tooltip"}
+                                  context={"UrlDisplay"}
+
+                        />
+                    </div>
                 </div>
 
             </div>

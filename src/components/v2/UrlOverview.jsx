@@ -70,8 +70,7 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState, tool
     const accordionCheckbox = <Checkbox className={"auto-expand"} label={"Accordion Mode"} value={autoExpand}
         onChange={() => setAutoExpand(prevState => !prevState)}
         tooltipId={tooltipId}
-        // tooltipContent={"Only one Filter at a time will be expanded.<br/>Click on a Filter caption to show or hide."}
-        tooltipContent={"In Accordion Mode, one filter is visible at a time.<br/>Clicking one filter will automatically hide the others."}
+        tooltipContent={"In Accordion Mode, one filter is visible at a time.<br/>Clicking a filter will hide all others."}
     />
 
     const filterButtonRow = <div className={"button-row"}>
@@ -155,83 +154,75 @@ const UrlOverview = React.memo(({pageData, options, onAction, currentState, tool
 
         <div className={"iare-ux-body"}>
 
-            {/*<div className={"row filter-box-rows"}>*/}
-            {/*<div className={"row"}>*/}
+            {/* the old URL status pie chart */}
+            {/*<FilterBox caption="URL Status Codes" showContents={true}>*/}
+            {/*    <UrlStatusChart pageData={pageData} colors={colors} onAction={onAction} currentState={currentState?. } />*/}
+            {/*</FilterBox>*/}
 
-            {/*    <div className={"col col-12"}>*/}
+            {debugFilters}  {/* eventually all filters will be in one variable with config-controlled inclusion */}
 
-                    {/* the old URL status pie chart */}
-                    {/*<FilterBox caption="URL Status Codes" showContents={true}>*/}
-                    {/*    <UrlStatusChart pageData={pageData} colors={colors} onAction={onAction} currentState={currentState?. } />*/}
-                    {/*</FilterBox>*/}
+            <FilterBox name={"actionable"} caption={"Actionable"} className={'actionable-filter-box'}
+                       showContents={expand.actionable}
+                       onToggle={onToggleShow}>
+                <ActionableChart pageData={pageData} onAction={onAction}
+                                 currentState={currentState?.actionable}
+                                 tooltipId={tooltipId}/>
+            </FilterBox>
 
-                    {debugFilters}  {/* eventually all filters will be in one variable with config-controlled inclusion */}
-
-                    <FilterBox name={"actionable"} caption={"Actionable"} className={'actionable-filter-box'}
-                               showContents={expand.actionable}
-                               onToggle={onToggleShow}>
-                        <ActionableChart pageData={pageData} onAction={onAction}
-                                         currentState={currentState?.actionable}
-                                         tooltipId={tooltipId}/>
-                    </FilterBox>
-
-                    <FilterBox name={"link_status"} caption="Link Status Codes"
-                               showContents={expand.link_status}
-                               onToggle={onToggleShow}>
-                        <LinkStatusChart pageData={pageData} onAction={onAction}
-                                         currentState={currentState?.link_status}/>
-                    </FilterBox>
+            <FilterBox name={"link_status"} caption="Link Status Codes"
+                       showContents={expand.link_status}
+                       onToggle={onToggleShow}>
+                <LinkStatusChart pageData={pageData} onAction={onAction}
+                                 currentState={currentState?.link_status}/>
+            </FilterBox>
 
 
-                    <FilterBox name={"books"} caption="Links to Books"
-                               showContents={expand.books}
-                               onToggle={onToggleShow}>
-                        <BooksChart pageData={pageData}
-                                    options={{
-                                        colors: iareColors,
-                                        no_book_link_caption: bookDefs[noBookLink]?.caption,
-                                        no_book_link_key: noBookLink,
-                        }}
-                                    onAction={onAction}
-                                    currentState={currentState?.books}/>
-                    </FilterBox>
+            <FilterBox name={"books"} caption="Links to Books"
+                       showContents={expand.books}
+                       onToggle={onToggleShow}>
+                <BooksChart pageData={pageData}
+                            options={{
+                                colors: iareColors,
+                                no_book_link_caption: bookDefs[noBookLink]?.caption,
+                                no_book_link_key: noBookLink,
+                }}
+                            onAction={onAction}
+                            currentState={currentState?.books}/>
+            </FilterBox>
 
 
-                    <FilterBox name={"papers"} caption="Links to Papers and DOIs"
-                               showContents={expand.papers}
-                               onToggle={onToggleShow}>
-                        <PapersChart pageData={pageData} onAction={onAction}
-                                     currentState={currentState?.papers}/>
-                    </FilterBox>
+            <FilterBox name={"papers"} caption="Links to Papers and DOIs"
+                       showContents={expand.papers}
+                       onToggle={onToggleShow}>
+                <PapersChart pageData={pageData} onAction={onAction}
+                             currentState={currentState?.papers}/>
+            </FilterBox>
 
 
-                    <FilterBox name={"domains"} caption="Pay Level Domains" className={'domains-filter-box'}
-                               showContents={expand.domains}
-                               onToggle={onToggleShow}>
-                        <PayLevelDomainsChart pageData={pageData} onAction={onAction}
-                                              currentState={currentState?.domains}/>
-                    </FilterBox>
+            <FilterBox name={"domains"} caption="Pay Level Domains" className={'domains-filter-box'}
+                       showContents={expand.domains}
+                       onToggle={onToggleShow}>
+                <PayLevelDomainsChart pageData={pageData} onAction={onAction}
+                                      currentState={currentState?.domains}/>
+            </FilterBox>
 
-                    <FilterBox name={"reliability"} caption="Reliability Statistics" showContents={expand.reliability}
-                               onToggle={onToggleShow}>
-                        <PerennialChart pageData={pageData} onAction={onAction}
-                                        currentState={currentState?.perennial}/>
-                    </FilterBox>
+            <FilterBox name={"reliability"} caption="Reliability Statistics" showContents={expand.reliability}
+                       onToggle={onToggleShow}>
+                <PerennialChart pageData={pageData} onAction={onAction}
+                                currentState={currentState?.perennial}/>
+            </FilterBox>
 
-                    <FilterBox name={"tld"} caption="Top Level Domains" showContents={expand.tld} onToggle={onToggleShow}>
-                        <TldChart pageData={pageData} onAction={onAction}
-                                  currentState={currentState?.tld}/>
-                    </FilterBox>
+            <FilterBox name={"tld"} caption="Top Level Domains" showContents={expand.tld} onToggle={onToggleShow}>
+                <TldChart pageData={pageData} onAction={onAction}
+                          currentState={currentState?.tld}/>
+            </FilterBox>
 
-                    <FilterBox name={"templates"} caption="Template Occurrences" showContents={expand.templates}
-                               onToggle={onToggleShow}>
-                        <TemplateChart pageData={pageData} onAction={onAction}
-                                       currentState={currentState?.templates}/>
-                    </FilterBox>
+            <FilterBox name={"templates"} caption="Template Occurrences" showContents={expand.templates}
+                       onToggle={onToggleShow}>
+                <TemplateChart pageData={pageData} onAction={onAction}
+                               currentState={currentState?.templates}/>
+            </FilterBox>
 
-            {/*    </div>*/}
-
-            {/*</div>*/}
         </div>
 
     </div>

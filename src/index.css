@@ -204,7 +204,7 @@ body.env-other .iare-header-aux1-display span.non-production {
 .iare-ux-body {
     flex: 1 1 auto;  /* grow to fill remaining space */
     overflow-y: auto; /* scrolls when content overflows */
-    background: #c1b4ec;
+    /*background: #c1b4ec;*/
     height: 100%;
 }
 xxx.iare-ux-body:before {
