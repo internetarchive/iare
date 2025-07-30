@@ -1,0 +1,24 @@
+.url-display-container {
+    display: flex;
+    flex-direction: row;
+    /*height: 100vh;*/
+    height: 100%;
+    width: 100%;
+}
+
+.url-display-header {
+    flex: 0 0 auto; /* don’t grow or shrink */
+}
+
+.url-display-contents {
+    /*flex: 0 0 auto; !* don’t grow or shrink *!*/
+    flex: 1 1 auto;  /* grow to fill remaining space */
+    /*flex: 0 0 auto;  !* grow to fill remaining space *!*/
+    /*overflow-y: auto; !* scrolls when content overflows *!*/
+    /*background: #c1b4ec;*/
+    width: 100%;
+    overflow-x:scroll;
+
+    margin-left: var(--iare-spacing-small)
+}
+

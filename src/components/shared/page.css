@@ -10,23 +10,29 @@
     color: var(--color-text-muted);
 }
 
+/* page data component layout */
+
 /* *******************
  section-box is common component class for sections
  - see UrlDisplay and RefDisplay e.g.
  ********************* */
-.section-content {
-    display:flex;
-    flex-direction: row;
+.page-data-wrapper {
+    /*display:flex;*/
+    /*flex-direction: row;*/
+    /*height: 100%;*/
+    /*width: 100%;*/
+    width: 100%;
     height: 100%;
 }
 
-.section-box {
-    margin-left: .5rem;
-    z-index: 1;
-}
-.section-box:first-child {
-    margin-left: 0;
-}
+/*.section-box {*/
+/*    margin-left: .5rem;*/
+/*    z-index: 1;*/
+/*}*/
+/*.section-box:first-child {*/
+/*    margin-left: 0;*/
+/*}*/
+
 .section-box h3, .section-box h4 {
     margin-top:0;
     margin-bottom:.5rem;

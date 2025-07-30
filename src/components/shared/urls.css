@@ -83,7 +83,7 @@
 }
 
 .url-overview-column {
-    overflow: hidden;
+    /*overflow: hidden;*/
     width: var(--width-overview-column);
     min-width: var(--width-overview-column);
 }

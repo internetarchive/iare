@@ -4,6 +4,7 @@ import RefFlock from "./RefFlock.jsx";
 import UrlOverview from "./UrlOverview.jsx";
 import '../shared/urls.css';
 import '../shared/components.css';
+import './urlDisplay.css';
 import {LINK_STATUS_MAP} from "../../constants/linkStatusMap.jsx";
 import {ACTIONABLE_FILTER_MAP} from "../../constants/actionableMap.jsx";
 import {REF_FILTER_DEFS} from "../../constants/refFilterMaps.jsx";
@@ -60,10 +61,10 @@ export default function UrlDisplay ({ pageData, options } ) {
     }
 
     // sets the current "state of the filters". Each filter has its own
-    // state of what it's current "value" is that it is filtering upon.
+    // state of which it's current "value" is that which it is filtering upon.
     // The filter boxes respond to currentState by adjusting the displayed state.
     // If "whichFilter" is null, all filter states reset to null
-
+    //
     // NB Currently only 1 filter at a time can be active, so, we set the state
     //  of all filters except the one specified to be null. Only 1 filter at a
     //  time will be in a "selected" state
@@ -126,20 +127,15 @@ export default function UrlDisplay ({ pageData, options } ) {
         if (0) {
             // allows for easy addition of "else if"
         }
-                    // else if (action === "setUrlStatusFilter") {  // soon to be deprecated
-                    //     // value is filter key name
-                    //     const f = value ? urlStatusFilterMap[value] : null
-                    //     setUrlFilters({ "url_status" : f })
-                    // }
 
-        else if (action
-            === ACTIONS_IARE.SHOW_REFERENCE_VIEWER.key
+        else if (action ===
+            ACTIONS_IARE.SHOW_REFERENCE_VIEWER.key
         ) {
             showRefView(value)  // value is reference index
         }
 
-        else if (action
-            === ACTIONS_IARE.REMOVE_ALL_FILTERS.key
+        else if (action ===
+            ACTIONS_IARE.REMOVE_ALL_FILTERS.key
         ) {
             // clear filters (show all) for URL  and Refs list
             setUrlFilters(null)
@@ -149,8 +145,8 @@ export default function UrlDisplay ({ pageData, options } ) {
             setCondition(null)
         }
 
-        else if (action
-            === ACTIONS_IARE.SHOW_REFERENCE_VIEWER_FOR_URL.key
+        else if (action ===
+            ACTIONS_IARE.SHOW_REFERENCE_VIEWER_FOR_URL.key
         ) {
             // value = url to show in RefView; more accurately, show the ref that "houses" the url
             const refIndex = pageData.urlDict[value]?.refs[0]?.ref_index
@@ -164,20 +160,20 @@ export default function UrlDisplay ({ pageData, options } ) {
             showRefView(refIndex)
 
             setSelectedUrl(value)
-        }
-
-        else if (action === ACTIONS_IARE.FILTER_BY_REFERENCE_STATS.key) {
+        } else if (action ===
+            ACTIONS_IARE.FILTER_BY_REFERENCE_STATS.key
+        ) {
             // filter REF List by stats specified by REFERENCE_STATS_MAP[ref_stats_key]
             const f = value ? REFERENCE_STATS_MAP[value] : null
             setUrlFilters({"url_filter": f})
             setRefFilter(f?.refFilterFunction
-                ? { filterFunction: f.refFilterFunction }
+                ? {filterFunction: f.refFilterFunction}
                 : null)
             setFilterState(filters.reference_stats, value)  // select reference stat's filter value
             setCondition(f)
-        }
-
-        else if (action === ACTIONS_IARE.CHANGE_REF_VIEW_SELECTION.key) {
+        } else if (action ===
+            ACTIONS_IARE.CHANGE_REF_VIEW_SELECTION.key
+        ) {
             const refIndex = result.value
             const selectedRef = pageData.references.find(
                 r => {  // assume ref_index and ref_index.toString() is valid
@@ -186,10 +182,9 @@ export default function UrlDisplay ({ pageData, options } ) {
             setRefDetails(selectedRef)
             setSelectedRefIndex(refIndex)
             showRefView(refIndex)  // value is reference index
-        }
-
-
-        else if (action === ACTIONS_IARE.SET_ACTIONABLE_FILTER.key) {
+        } else if (action ===
+            ACTIONS_IARE.SET_ACTIONABLE_FILTER.key
+        ) {
             // filter URL List by actionable filter determined by value as key
             const f = value ? ACTIONABLE_FILTER_MAP[value] : null
 
@@ -203,46 +198,53 @@ export default function UrlDisplay ({ pageData, options } ) {
                 : null)
             setFilterState(filters.actionable, value)
             setCondition(f)
-        }
-
-        else if (action === ACTIONS_IARE.SET_PAY_LEVEL_DOMAIN_FILTER.key) {
+        } else if (action ===
+            ACTIONS_IARE.SET_PAY_LEVEL_DOMAIN_FILTER.key
+        ) {
             // filter URL and Ref list by domain specified in value
-            setUrlFilters({ "domain_filter" : getUrlDomainFilter(value) })
+            setUrlFilters({"domain_filter": getUrlDomainFilter(value)})
             setRefFilter(getRefDomainFilter(value))
             setFilterState(filters.domains, value)
             setCondition({category: "Pay Level Domains", desc: `Links of domain: "${value}"`})
-        }
 
-        else if (action === ACTIONS_IARE.SET_PAPERS_FILTER.key) {
+        } else if (action ===
+            ACTIONS_IARE.SET_PAPERS_FILTER.key
+        ) {
             // value is filter key name
             const f = value ? REF_FILTER_DEFS[value] : null
             setRefFilter(f)
             setUrlFilters(noneFilter)
             setFilterState(filters.papers, value)
             setCondition({category: "Papers", desc: `References with papers of type "${value}"`})
-        }
 
-        else if (action === ACTIONS_IARE.SET_PERENNIAL_FILTER.key) {
+        } else if (action ===
+            ACTIONS_IARE.SET_PERENNIAL_FILTER.key
+        ) {
             // value is perennial to filter by
-            setUrlFilters({ "url_perennial_filter" : getUrlPerennialFilter(value) })
+            setUrlFilters({"url_perennial_filter": getUrlPerennialFilter(value)})
             setRefFilter(getRefPerennialFilter(value))
             setSelectedUrl(null)
             setFilterState(filters.perennial, value)
-            setCondition({category: "Reliability", desc: `Links with Reliability Status of: "${reliabilityMap[value].caption}"`})
-        }
+            setCondition({
+                category: "Reliability",
+                desc: `Links with Reliability Status of: "${reliabilityMap[value].caption}"`
+            })
 
-        else if (action === ACTIONS_IARE.SET_TLD_FILTER.key) {
+        } else if (action ===
+            ACTIONS_IARE.SET_TLD_FILTER.key
+        ) {
             // value is tld
-            setUrlFilters({ "url_tld_filter" : getUrlTldFilter(value) })
+            setUrlFilters({"url_tld_filter": getUrlTldFilter(value)})
             setRefFilter(getRefTldFilter(value))
             setSelectedUrl(null)
             setFilterState(filters.tld, value)
             setCondition({category: "Top Level Domain", desc: `Links with Top Level Domain of: "${value}"`})
-        }
 
-        else if (action === ACTIONS_IARE.SET_BOOKS_FILTER.key) {
+        } else if (action ===
+            ACTIONS_IARE.SET_BOOKS_FILTER.key
+        ) {
             // value is netloc associated with Book
-            setUrlFilters({ "url_book_filter" : getUrlBooksFilter(value) })
+            setUrlFilters({"url_book_filter": getUrlBooksFilter(value)})
             setRefFilter(getRefBooksFilter(value))
             setSelectedUrl(null)
             setFilterState(filters.books, value)
@@ -250,40 +252,45 @@ export default function UrlDisplay ({ pageData, options } ) {
                 category: "Books",
                 desc: value === noBookLink
                     ? "Citations with no Book links"
-                    :(`Links to Books${value === null ? "" : ` from ${value}`}`),
+                    : (`Links to Books${value === null ? "" : ` from ${value}`}`),
                 caption: "Books"
             })
-        }
 
-        else if (action === ACTIONS_IARE.SET_TEMPLATE_FILTER.key) {
+        } else if (action ===
+            ACTIONS_IARE.SET_TEMPLATE_FILTER.key
+        ) {
             // filter URLs (and references?) by template indicated by "value" argument
-            setUrlFilters({ "url_template_filter" : getUrlTemplateFilter(value) })
+            setUrlFilters({"url_template_filter": getUrlTemplateFilter(value)})
             setRefFilter(getRefTemplateFilter(value))
             setSelectedUrl(null)
             setCondition({category: "Template", desc: `Utilizes template "${value}"`})
             setFilterState(filters.templates, value)
-        }
 
-        else if (action === "setLinkStatusFilter") {
+        } else if (action ===
+            "setLinkStatusFilter"
+        ) {
             // value is key into LINK_STATUS_MAP
             const f = value ? LINK_STATUS_MAP[value] : null
-            setUrlFilters({ "link_status" : f })
+            setUrlFilters({"link_status": f})
             setRefFilter(f?.refFilterFunction
-                ? { caption: f.caption,
+                ? {
+                    caption: f.caption,
                     desc: f.desc,
                     filterFunction: f.refFilterFunction
                 }
-                : null )
+                : null)
             setFilterState(filters.link_status, value)
             setCondition(f)
-        }
 
-        else if (action === ACTIONS_IARE.GOTO_CITE_REF.key) {
+        } else if (action ===
+            ACTIONS_IARE.GOTO_CITE_REF.key
+        ) {
             // jump to cite ref indicated by "value" argument
             window.open(value, "_blank")
-        }
 
-        else if (action === ACTIONS_IARE.GOTO_WIKI_SECTION.key) {
+        } else if (action ===
+            ACTIONS_IARE.GOTO_WIKI_SECTION.key
+        ) {
             // jump to section of wiki article indicated by "value" argument
             window.open(value, "_blank")
         }
@@ -619,9 +626,28 @@ export default function UrlDisplay ({ pageData, options } ) {
                                     style={{ zIndex: 999 }}
                             />
 
-    return <>
+    const testData = <>
+        <div>
+            <h2>test-contents</h2>
+            {Array.from({length: 20}, (_, i) => {
+                return <div style={{
+                    display: "inline",
+                    padding: ".5rem",
+                    border: "1pt solid black",
+                    borderRadius: ".35rem",
+                    marginRight: ".35rem"
+                }}>Spacer</div>
+            })}
 
-        <div className={'section-content iare-url-display'}>
+            {Array.from({length: 20}, (_, i) => {
+                return <p>test data test data test data test data test data test data test data test data test data test data test data test data test data test data test data test data test data test data test data test data URL links Here!</p>
+            })}
+        </div>
+        </>
+
+    return <div className={"url-display-container"}>
+
+        <div className={"url-display-header"}>
 
             {myConfig.isShowUrlOverview &&
                 <div className={"section-box url-overview-column"}>
@@ -633,67 +659,78 @@ export default function UrlDisplay ({ pageData, options } ) {
                 </div>
             }
 
-            <div className={"section-box iare-ux-container"}
-                 style={{ pointerEvents: isRefViewModalOpen ? "none" : "auto" }}>
+        </div>
 
-                <div className={"iare-ux-header"}>
+        <div className={"url-display-contents"}>
 
-                    <ConditionsBox
-                        caption={"Conditions"}
-                        conditions={currentConditions}
-                        onAction={handleAction}/>
-
-                </div>
-
-                <div className={"iare-ux-body"}>
-
-                    <div style={{display: "flex", height:'100%'}}>
-
-                        <UrlFlock urlDict={pageData.urlDict}
-                                  urlArray={pageData.urlArray}
-                                  urlFilters={urlFilters}
-                                  onAction={handleAction}
-                                  selectedUrl={selectedUrl}
-                                  fetchMethod={myConfig.urlStatusMethod}
-                                  tooltipId={"url-display-tooltip"}
-                        />
-
-                        <RefFlock pageData={pageData}
-                                  refArray={refArray}
-                                  refFilter={refFilter}
-                                  onAction={handleRefClick}
-                                  options={{
-                                      show_header: false,
-                                      show_filter_description: false,
-                                      caption: "References List",
-                                  }}
-                                  tooltipId={"url-display-tooltip"}
-                                  context={"UrlDisplay"}
-
-                        />
-                    </div>
-                </div>
-
+            {0
+            ? <div className={"section-box"}>
+                {testData}
             </div>
 
+            : <div className={"section-box"}
+                    style={{ pointerEvents: isRefViewModalOpen ? "none" : "auto" }}>
 
-            {/* this is the popup Reference Viewer component */}
-            <RefView isOpen={isRefViewModalOpen}
-                     onClose={() => {
-                         setIsRefViewModalOpen(false)
-                     }}
-                     onAction={handleAction}
-                     
-                     pageData={pageData}
-                     refDetails={refDetails}
+                <div className={"iare-ux-container"}>
 
-                     selectedRefIndex={selectedRefIndex}
-                     refFilter={refFilter}
-                     
-                     tooltipId={"url-display-tooltip"}/>
+                    <div className={"iare-ux-header"}>
 
-            {tooltipForUrlDisplay}
+                        <ConditionsBox
+                            caption={"Conditions"}
+                            conditions={currentConditions}
+                            onAction={handleAction}/>
 
-        </div>
-    </>
+                    </div>
+
+                    <div className={"iare-ux-body"}>
+
+                        <div style={{display: "flex", height:'100%'}}>
+
+                            <UrlFlock urlDict={pageData.urlDict}
+                                      urlArray={pageData.urlArray}
+                                      urlFilters={urlFilters}
+                                      onAction={handleAction}
+                                      selectedUrl={selectedUrl}
+                                      fetchMethod={myConfig.urlStatusMethod}
+                                      tooltipId={"url-display-tooltip"}
+                            />
+
+                            <RefFlock pageData={pageData}
+                                      refArray={refArray}
+                                      refFilter={refFilter}
+                                      onAction={handleRefClick}
+                                      options={{
+                                          show_header: false,
+                                          show_filter_description: false,
+                                          caption: "References List",
+                                      }}
+                                      tooltipId={"url-display-tooltip"}
+                                      context={"UrlDisplay"}
+
+                            />
+                        </div>
+                    </div> {/* iare-ux-body */}
+                </div> {/* iare-ux-container */}
+
+            </div>}
+         </div>
+
+        {/* this is the popup Reference Viewer component */}
+        <RefView isOpen={isRefViewModalOpen}
+                 onClose={() => {
+                     setIsRefViewModalOpen(false)
+                 }}
+                 onAction={handleAction}
+
+                 pageData={pageData}
+                 refDetails={refDetails}
+
+                 selectedRefIndex={selectedRefIndex}
+                 refFilter={refFilter}
+
+                 tooltipId={"url-display-tooltip"}/>
+
+        {tooltipForUrlDisplay}
+
+    </div>
 }

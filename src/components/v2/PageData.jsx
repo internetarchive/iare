@@ -866,6 +866,7 @@ export default function PageData({rawPageData = {}}) {
     }
 
     const viewOptions = <div className={"view-options-selection"}>
+            <div style={{display:"inline", color: "blue"}}>View Options:</div>
             {Object.keys(viewTypes).map(viewType => {
                 return <div key={viewType} >
                     <label>
@@ -923,19 +924,21 @@ export default function PageData({rawPageData = {}}) {
                         </div>
 
                         <div className={`iare-ux-body`}>
+                            <div className={'page-data-wrapper'}>
 
-                            {selectedViewType === 'urls' &&
-                                <UrlDisplay pageData={pageData} options={{refresh: pageData.forceRefresh}} />
-                            }
+                                {selectedViewType === 'urls' &&
+                                    <UrlDisplay pageData={pageData} options={{refresh: pageData.forceRefresh}} />
+                                }
 
-                            {selectedViewType === 'refs' &&
-                                <RefDisplay pageData={pageData} options={{}}/>
-                            }
+                                {selectedViewType === 'refs' &&
+                                    <RefDisplay pageData={pageData} options={{}}/>
+                                }
 
-                            {selectedViewType === 'stats' &&
-                                <StatsDisplay pageData={pageData} options={{}}/>
-                            }
+                                {selectedViewType === 'stats' &&
+                                    <StatsDisplay pageData={pageData} options={{}}/>
+                                }
 
+                            </div>
                         </div>
 
                     </div>
