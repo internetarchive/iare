@@ -72,10 +72,10 @@ export default function RefDisplay ({ pageData, options } ) {
             />
         </div>
 
-        <div className={"section-box"}>
-            <h3>References List</h3>
-            <RefFlock refArray={refArray} refFilter={refFilter} onAction={handleAction} />
-        </div>
+        {/*<div className={"section-box"}>*/}
+        {/*    <h3>References List</h3>*/}
+        {/*    <RefFlock refArray={refArray} refFilter={refFilter} onAction={handleAction} />*/}
+        {/*</div>*/}
 
     </>
 }

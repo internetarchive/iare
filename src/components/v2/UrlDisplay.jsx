@@ -645,20 +645,37 @@ export default function UrlDisplay ({ pageData, options } ) {
         </div>
         </>
 
+    const overviewColumn = myConfig.isShowUrlOverview && true
+        ? <div className={"section-box url-overview-column"}>
+                <UrlOverview pageData={pageData}
+                             options={{}}
+                             onAction={handleAction}
+                             currentState={currentState}
+                             tooltipId={"url-display-tooltip"}/>
+            </div>
+        : <div className={"overview-column"} style={{backgroundColor: "chartreuse"}}>
+            <h2>test-contents</h2>
+            {Array.from({length: 3}, (_, i) => {
+                return <div style={{
+                    display: "inline",
+                    padding: ".5rem",
+                    border: "1pt solid black",
+                    borderRadius: ".35rem",
+                    marginRight: ".35rem"
+                }}>Spacer</div>
+            })}
+
+            {Array.from({length: 20}, (_, i) => {
+                return <p>test data</p>
+            })}
+
+        </div>
+
+
     return <div className={"url-display-container"}>
 
         <div className={"url-display-header"}>
-
-            {myConfig.isShowUrlOverview &&
-                <div className={"section-box url-overview-column"}>
-                    <UrlOverview pageData={pageData}
-                                 options={{}}
-                                 onAction={handleAction}
-                                 currentState={currentState}
-                                 tooltipId={"url-display-tooltip"}/>
-                </div>
-            }
-
+            {overviewColumn}
         </div>
 
         <div className={"url-display-contents"}>
