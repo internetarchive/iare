@@ -20,6 +20,9 @@
     --iari-app-padding: var(--iare-spacing-medium);
     --color-debug-background: #b4df5e;
 
+    --color-h3: #666666;
+    --color-h4: #808080;
+
     --color-text: black;
     --color-text-muted: grey;
 
@@ -32,12 +35,11 @@
     /*--color-list-bg-hover: #CFF0FF;*/
     /*--color-list-bg-hover: #cfdeff;*/
 
+    --color-list-label: grey;
+
     --color-button-bg: #81c8e7;
     --color-button-bg-hover: white;
     --color-button-border: #2199e8;
-
-    --color-h3: #666666;
-    --color-h4: #808080;
 
     --color-debug-lite: #a8a8a8;
 
@@ -397,6 +399,10 @@ button.utility-button.small-button {
     font-size: .65rem;
 }
 
+.list-label {
+    display: inline;
+    color: var(--color-list-label)
+}
 
 /* OTHER ELEMENTS - to be organized as time goes on */
 

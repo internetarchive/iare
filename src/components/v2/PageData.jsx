@@ -866,7 +866,7 @@ export default function PageData({rawPageData = {}}) {
     }
 
     const viewOptions = <div className={"view-options-selection"}>
-            <div style={{display:"inline", color: "blue"}}>View Options:</div>
+            <div className={'list-label'}>View Options:</div>
             {Object.keys(viewTypes).map(viewType => {
                 return <div key={viewType} >
                     <label>
