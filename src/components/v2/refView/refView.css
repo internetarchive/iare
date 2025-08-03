@@ -28,7 +28,8 @@
     --color-raw-claim-border: #d9bc31;
 
     /*--margin-ref-view-section:1.515rem;*/
-    --margin-ref-view-section:1.315rem;
+    /*--margin-ref-view-section:1.315rem;*/
+    --margin-ref-view-section:1.2rem;
     --margin-ref-view-section-tight:.5rem;
 
     --border-box-actionable-color: hsl(358 81% 67% / 1);
@@ -59,6 +60,7 @@
 }
 
 .ref-view {
+    height: 100%;
 }
 
 
@@ -164,31 +166,41 @@
     color:red;
 }
 
-.ref-view-contents {
-    display:flex;
-    flex-direction: row;
-    overflow:scroll;
-    padding: 0.5rem 0.5rem 0.5rem .5rem;
-    color:black;
-    background-color: var(--g-color-body-bg);
-}
-
 .ref-view-debug * {
     /*color:white !important;*/
 }
 
-.ref-view-contents h3 {
-    font-weight:bold !important;
-    color:#aaaaaa !important;
-    margin-bottom: 0;
+.ref-view-container {
+    display:flex;
+    flex-direction: row;
+    overflow:scroll;
+    height: 100%;
+    padding: 0.5rem 0.5rem 0.5rem .5rem;
+    color:black;
+    background-color: var(--g-color-body-bg);
+}
+.ref-view-header {
+    height:100%);
 }
 
-.ref-view-list {
+.ref-view-container h3,
+.ref-view-body h3 {
+    font-weight:bold !important;
+    color:#aaaaaa !important;
+    margin-bottom: 0 !important;
+    font-size:1.15rem !important;
+
+}
+
+.ref-view-ref-list {
     flex-shrink:1;
 }
-.ref-view-details {
+.ref-view-body {
     flex-shrink:1;
+
     width:100%;
+    height: 100%;
+
     margin-left: .75rem;
     margin-right: .35rem;
     overflow: scroll;
@@ -264,7 +276,7 @@
     /*background-color: var(--color-debug-background);*/
 }
 
-.ref-view-details .header-all-parts {
+.ref-view-body .header-all-parts {
     position:relative;
     display: flex;
     flex-direction: row;
@@ -635,13 +647,13 @@ button.truth-probe-button
     margin-right: .35rem;
 }
 
-.ref-view-list .ref-flock {
+.ref-view-ref-list .ref-flock {
     width: var(--width-ref-view-list);
     max-width: var(--width-ref-view-list);
     height:100%;
 }
 
-.ref-view-list .ref-list-navigation {
+.ref-view-ref-list .ref-list-navigation {
     margin-top:.5rem;
     margin-bottom:.5rem;
     display:flex;
@@ -649,7 +661,7 @@ button.truth-probe-button
     justify-content: space-between;
 
 }
-.ref-view-list .ref-list-caption {
+.ref-view-ref-list .ref-list-caption {
     text-align: center;
     margin-bottom: .25rem;
 }
@@ -668,13 +680,13 @@ button.truth-probe-button
     content: url('../../../images/arrow_left.svg');
 }
 
-.ref-view-list .ref-list {
+.ref-view-ref-list .ref-list {
     padding-top: .15rem;
     margin-top: -3px;
     height:100%;
 }
 
-.ref-view-list .ref-button {
+.ref-view-ref-list .ref-button {
     background-color: var(--g-color-reference-ref-list-display-bg);
     color: var(--g-color-reference-ref-list-display-fg);
 
@@ -685,19 +697,22 @@ button.truth-probe-button
     margin-bottom: .4rem;
 }
 
-.ref-view-list .ref-button .caption {
+.ref-view-ref-list .ref-button .caption {
     color: var(--g-color-reference-ref-list-display-fg-label)
 }
 
 
-.ref-view-list .flock-box-contents {
-    padding:.33rem .13rem .33rem .13rem;
+.ref-view-ref-list .flock-box-contents {
+    padding:.0rem .13rem .33rem .13rem;
     /*height: calc(100% - 145px);*/
     /*height: calc(100% - 6.2rem);*/
-    height: calc(100% - var(--height-ref-view-list-caption));
+    /*height: calc(100% - var(--height-ref-view-list-caption));*/
+    height: 100%;
     margin-top: .3rem;
+
 }
-.ref-view-list .ref-button.selected {
+
+.ref-view-ref-list .ref-button.selected {
     background-color: var(--g-color-reference-display-selected-bg);
 
     /*width: 22rem;*/
@@ -759,7 +774,7 @@ button.truth-probe-button
     font-size:.75rem;
 }
 
-.ref-view-list .flock-box-caption {
+.ref-view-ref-list .flock-box-caption {
     border-radius: var(--border-radius-ref-section);
     /*height: var(--height-ref-view-list-caption);*/
     margin-left:3px;
@@ -767,12 +782,7 @@ button.truth-probe-button
     width:calc(100% - 6px);
     margin-bottom: .35rem;
 }
-.ref-view-list .flock-box-contents {
-    border:none;
-    padding:0;
-    background-color: inherit;
-}
-.ref-view-list .filter-condition-box {
+.ref-view-ref-list .filter-condition-box {
     background-color: #31adff;
 }
 

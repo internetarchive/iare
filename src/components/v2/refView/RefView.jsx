@@ -329,19 +329,22 @@ export default function RefView({
 
                 {refViewTitleBar}
 
-                <div className="ref-view-contents">
+                <div className="ref-view-container">
 
-                    <div className={"ref-view-list"}>
-                        {/* show Ref Flock at left of ref view for navigation */}
+                    {/*<div className={"ref-view-ref-list"}>*/}
+                    {/* show Ref Flock at left of ref view for navigation */}
+                    <div className={"ref-view-header"}>
                         <RefFlock pageData={pageData}
                                   refArray={pageData.references}
                                   refFilter={refFilter}
-
+    
+                                  className={"ref-view-ref-list"}
+    
                                   onAction={handleRefListClick}  // what happens when flock list clicked
                                   // onKeyDown={handleFlockKeyDown}  // what happens when key down flock list
-
+    
                                   selectedRefIndex={selectedRefIndex}
-
+    
                                   options={{
                                       show_header: false,
                                       show_extra: false,
@@ -352,10 +355,11 @@ export default function RefView({
                                     }}
                                   tooltipId={"url-display-tooltip"}
                         />
+                    {/*</div>*/}
                     </div>
 
                     {/* show ref details in main part of modal window */}
-                    <div className="ref-view-details">
+                    <div className="ref-view-body">
                         {debugAtTop}
                         <RefDetails
                             refDetails={refDetails}

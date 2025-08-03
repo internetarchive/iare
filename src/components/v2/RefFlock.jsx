@@ -15,6 +15,7 @@ function RefFlock({ pageData= {},
                       refArray,
                       refFilter,
                       selectedRefIndex=null,
+                      className=null,
 
                       onAction,
                       onKeyDown,
@@ -306,7 +307,7 @@ function RefFlock({ pageData= {},
 
     return <FlockBox onKeyDown={options?.show_ref_nav ? handleKeyDown : null}  // handle keydown only if show navigation
                      caption={flockCaption}
-                     className={"ref-flock"}>
+                     className={`ref-flock ${className ? ` ${className}` : ''}`}>
 
         {flockList}
 
