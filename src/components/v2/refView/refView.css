@@ -360,13 +360,13 @@ button.truth-probe-button
     margin-top:1rem;
 }
 
-.ref-view-section .url-list {
+.ref-view-section .url-list-rows {
     height: inherit; /* override urls.css */
     border: var(--border-box-light);
     border-radius: var(--border-radius-ref-section);
 
 }
-.ref-view-section .url-list .url-row {
+.ref-view-section .url-list-rows .url-row {
     border: none; /* override urls.css */
 
 }

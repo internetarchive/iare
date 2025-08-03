@@ -12,28 +12,13 @@
 
 /* page data component layout */
 
-/* *******************
- section-box is common component class for sections
- - see UrlDisplay and RefDisplay e.g.
- ********************* */
 .page-data-wrapper {
-    /*display:flex;*/
-    /*flex-direction: row;*/
-    /*height: 100%;*/
-    /*width: 100%;*/
     width: 100%;
     height: 100%;
 }
 
-/*.section-box {*/
-/*    margin-left: .5rem;*/
-/*    z-index: 1;*/
-/*}*/
-/*.section-box:first-child {*/
-/*    margin-left: 0;*/
-/*}*/
-
-.section-box h3, .section-box h4 {
+.page-data-wrapper h3,
+.page-data-wrapper h4 {
     margin-top:0;
     margin-bottom:.5rem;
     font-weight:bold;
@@ -57,6 +42,9 @@
 }
 .view-options-selection label span {
     opacity:.5;
+    margin-left:.15rem;
+    position:relative;
+    top:.05rem;
 }
 .view-options-selection label span.selected-choice {
     opacity:1;

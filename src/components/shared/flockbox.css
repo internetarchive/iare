@@ -37,19 +37,12 @@
 }
 
 .flock-box-contents {
-    background-color: var(--color-filter-box-contents);
-    /*display:block;*/
     display:flex;
     flex-direction: column;
+    height:100%;
 
-    margin-top:var(--margin-box-space);
     padding: 0;
-    border: var(--border-box-light);
-    border-top: none;
-
-    border-radius: var(--border-box-radius);
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
+    padding-top:var(--margin-box-space);
 
     border: none;
     background-color: inherit;
@@ -59,13 +52,3 @@
     margin-bottom: var(--margin-button-list);
 }
 
-.flock-box-contents .url-list-header {
-    position: sticky;
-    flex: 1;
-    z-index: 1;
-}
-
-.flock-box-contents .url-list {
-    overflow-y: auto;
-    flex: 1
-}

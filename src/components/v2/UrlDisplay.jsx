@@ -18,7 +18,7 @@ import {REFERENCE_STATS_MAP} from "../../constants/referenceStatsMap.jsx";
 import {ACTIONS_IARE} from "../../constants/actionsIare.jsx";
 import {isBookUrl, bookTemplates, noBookLink, bookDefs} from "../../utils/iariUtils.js";
 
-// export default function UrlDisplay ({ pageData, options, urlStatusFilterMap= {}, urlArchiveFilterMap = {} } ) {
+
 export default function UrlDisplay ({ pageData, options } ) {
 
     const [currentConditions, setCurrentConditions] = useState([])
@@ -626,34 +626,17 @@ export default function UrlDisplay ({ pageData, options } ) {
                                     style={{ zIndex: 999 }}
                             />
 
-    const testData = <>
-        <div>
-            <h2>test-contents</h2>
-            {Array.from({length: 20}, (_, i) => {
-                return <div style={{
-                    display: "inline",
-                    padding: ".5rem",
-                    border: "1pt solid black",
-                    borderRadius: ".35rem",
-                    marginRight: ".35rem"
-                }}>Spacer</div>
-            })}
-
-            {Array.from({length: 20}, (_, i) => {
-                return <p>test data test data test data test data test data test data test data test data test data test data test data test data test data test data test data test data test data test data test data test data URL links Here!</p>
-            })}
-        </div>
-        </>
 
     const overviewColumn = myConfig.isShowUrlOverview && true
-        ? <div className={"section-box url-overview-column"}>
+        ? <div className={"url-overview-column"}>
                 <UrlOverview pageData={pageData}
                              options={{}}
                              onAction={handleAction}
                              currentState={currentState}
                              tooltipId={"url-display-tooltip"}/>
             </div>
-        : <div className={"overview-column"} style={{backgroundColor: "chartreuse"}}>
+
+        : <div className={"url-overview-column"} style={{backgroundColor: "chartreuse"}}>
             <h2>test-contents</h2>
             {Array.from({length: 3}, (_, i) => {
                 return <div style={{
@@ -666,11 +649,35 @@ export default function UrlDisplay ({ pageData, options } ) {
             })}
 
             {Array.from({length: 20}, (_, i) => {
-                return <p>test data</p>
+                return <p>test overview</p>
             })}
 
         </div>
 
+    const urlDisplayBody = <>
+        <div style={{display: "flex", height:'100%'}}>
+
+            <UrlFlock urlDict={pageData.urlDict}
+                      urlArray={pageData.urlArray}
+                      urlFilters={urlFilters}
+                      onAction={handleAction}
+                      selectedUrl={selectedUrl}
+                      fetchMethod={myConfig.urlStatusMethod}
+                      tooltipId={"url-display-tooltip"} />
+
+            <RefFlock pageData={pageData}
+                      refArray={refArray}
+                      refFilter={refFilter}
+                      onAction={handleRefClick}
+                      options={{
+                          show_header: false,
+                          show_filter_description: false,
+                          caption: "References List",
+                      }}
+                      tooltipId={"url-display-tooltip"}
+                      context={"UrlDisplay"} />
+        </div>
+    </>
 
     return <div className={"url-display-container"}>
 
@@ -678,61 +685,29 @@ export default function UrlDisplay ({ pageData, options } ) {
             {overviewColumn}
         </div>
 
-        <div className={"url-display-contents"}>
+        {/* we add style: pointerEvents to avoid conflict with RefView popup */}
+        <div className={"url-display-contents"}  style={{pointerEvents: isRefViewModalOpen ? "none" : "auto"}}>
 
-            {0
-            ? <div className={"section-box"}>
-                {testData}
-            </div>
+            <div className={"iare-ux-container"}>
 
-            : <div className={"section-box"}
-                    style={{ pointerEvents: isRefViewModalOpen ? "none" : "auto" }}>
+                <div className={"iare-ux-header"}>
 
-                <div className={"iare-ux-container"}>
+                    <ConditionsBox
+                        caption={"Conditions"}
+                        conditions={currentConditions}
+                        onAction={handleAction}/>
 
-                    <div className={"iare-ux-header"}>
+                </div>
 
-                        <ConditionsBox
-                            caption={"Conditions"}
-                            conditions={currentConditions}
-                            onAction={handleAction}/>
+                <div className={"iare-ux-body"}>
+                    {urlDisplayBody}
+                </div> {/* iare-ux-body */}
 
-                    </div>
+            </div> {/* iare-ux-container */}
 
-                    <div className={"iare-ux-body"}>
+        </div>
 
-                        <div style={{display: "flex", height:'100%'}}>
-
-                            <UrlFlock urlDict={pageData.urlDict}
-                                      urlArray={pageData.urlArray}
-                                      urlFilters={urlFilters}
-                                      onAction={handleAction}
-                                      selectedUrl={selectedUrl}
-                                      fetchMethod={myConfig.urlStatusMethod}
-                                      tooltipId={"url-display-tooltip"}
-                            />
-
-                            <RefFlock pageData={pageData}
-                                      refArray={refArray}
-                                      refFilter={refFilter}
-                                      onAction={handleRefClick}
-                                      options={{
-                                          show_header: false,
-                                          show_filter_description: false,
-                                          caption: "References List",
-                                      }}
-                                      tooltipId={"url-display-tooltip"}
-                                      context={"UrlDisplay"}
-
-                            />
-                        </div>
-                    </div> {/* iare-ux-body */}
-                </div> {/* iare-ux-container */}
-
-            </div>}
-         </div>
-
-        {/* this is the popup Reference Viewer component */}
+        {/* this is the Reference Viewer popup component */}
         <RefView isOpen={isRefViewModalOpen}
                  onClose={() => {
                      setIsRefViewModalOpen(false)
@@ -747,6 +722,8 @@ export default function UrlDisplay ({ pageData, options } ) {
 
                  tooltipId={"url-display-tooltip"}/>
 
+        {/* TODO tooltip should be passed in to this UrlDisplay component.
+              It should be universal and not created here... */}
         {tooltipForUrlDisplay}
 
     </div>

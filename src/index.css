@@ -52,8 +52,9 @@
     --color-http-redirect-bg: #ffcd57;
     --color-http-notfound: #ffffff;
     --color-http-notfound-bg: #ff6384;
-    --color-http-error: #FFFFFF;
-    --color-http-error-bg: #f763ff;
+
+    --color-http-error: #f66fdb;
+    --color-http-error-bg: #FFFFFF;
 
     --font-size-debug-section:.8rem;
     --font-weight-debug-section:normal;

@@ -1,3 +1,15 @@
+.url-overview-column {
+    /*overflow: hidden;*/
+    width: var(--width-overview-column);
+    min-width: var(--width-overview-column);
+    height:100%;
+}
+.url-overview > h4 {
+    color: grey;
+    margin-bottom: 0;
+}
+
+
 .url-display-container {
     display: flex;
     flex-direction: row;
@@ -19,6 +31,8 @@
     width: 100%;
     overflow-x:scroll;
 
-    margin-left: var(--iare-spacing-small)
+    margin-left: var(--iare-spacing-small);
+
+    height: 100%;
 }
 

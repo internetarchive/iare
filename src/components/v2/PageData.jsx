@@ -19,6 +19,7 @@ import {URL_STATUS_FILTER_MAP} from "../../constants/urlFilterMaps.jsx";
 import {REF_FILTER_DEFS} from "../../constants/refFilterMaps.jsx";
 import {categorizedDomains, reliabilityMap} from "../../constants/perennialList.jsx";
 import {UrlStatusCheckMethods} from "../../constants/checkMethods.jsx";
+import {testPageData} from "../../utils/testUtils.jsx";
 
 /*
 When this component is rendered, it must "process" the pageData. This involves:
@@ -671,14 +672,12 @@ export default function PageData({rawPageData = {}}) {
                     return urlObj?.isBook
                 })
 
-                // If none of url's indicate a book reference, check
-                // for "book-like" templates in this ref that indicate
-                // this is a book citation.
+                // If none of url's indicate a book reference, check for "book-like"
+                // templates in this ref that indicate this is a book citation.
                 // If a book template is found, then:
                 // - set reference.hasBook = true,
                 // - increment bookStats counter for "references with Books but no book links"
-                // This will allow us to trigger subset for citations that have
-                // books but have no links for that book
+                // This allows us to filter citations that have books but is missing book links
 
                 if (!hasBook) {
                     // check if any of the templates are of book type
@@ -692,20 +691,12 @@ export default function PageData({rawPageData = {}}) {
 
                         console.log(`bookStats added; wikitext: ${_ref.wikitext}`)
                     }
-
-                    // if (_ref.templates?.some( t => {return listBookTemplates.includes(t.name)})) {
-                    //     // add to count of books with no links if ref has book with no url book links
-                    //     if (!bookStats[noBookLink]) bookStats[noBookLink] = 0
-                    //     bookStats[noBookLink] = bookStats[noBookLink] + 1
-                    // }
                 }
 
                 _ref.hasBook = hasBook
 
             })
         }
-
-
 
         pageData["stats"] = pageData["stats"] ?? {}
         pageData.stats["books"] = bookStats
@@ -863,6 +854,9 @@ export default function PageData({rawPageData = {}}) {
         "stats": {
             caption: "Statistics"
         },
+        // "debug": {
+        //     caption: "Debug Elements"
+        // },
     }
 
     const viewOptions = <div className={"view-options-selection"}>
@@ -937,6 +931,12 @@ export default function PageData({rawPageData = {}}) {
                                 {selectedViewType === 'stats' &&
                                     <StatsDisplay pageData={pageData} options={{}}/>
                                 }
+
+                                {/*{selectedViewType === 'debug' &&*/}
+                                {/*    <>*/}
+                                {/*        {testPageData()}*/}
+                                {/*    </>*/}
+                                {/*}*/}
 
                             </div>
                         </div>

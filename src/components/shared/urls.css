@@ -1,6 +1,5 @@
 :root {
-    /*--width-url-list: 43rem;*/
-    --width-url-list: 40rem;
+    /*--width-url-list: 40rem;*/
 
     --width-url-name: 20rem;
     --width-url-status: 2.0rem;
@@ -82,15 +81,6 @@
     font-weight:normal;
 }
 
-.url-overview-column {
-    /*overflow: hidden;*/
-    width: var(--width-overview-column);
-    min-width: var(--width-overview-column);
-}
-.url-overview > h4 {
-    color: grey;
-    margin-bottom: 0;
-}
 .url-chart-display {
     width:327px;
 }
@@ -104,8 +94,45 @@
     /*max-width: var(--width-url-list);*/
 }
 
-
+/* duh */
 .url-list-header {
+    /*position: sticky;*/
+    /*flex: 1;*/
+    /*z-index: 1;*/
+}
+
+.url-list-rows {
+    overflow-y: auto;
+    flex: 1
+}
+
+.url-list-rows .url-row
+{
+    display: flex;
+    flex-direction: row;
+    border:1px solid black;
+    border-top:none;
+    position:relative;
+
+    cursor: pointer;
+
+}
+.url-list-rows .url-row.url-row-error {
+    background-color: darkred;
+    color:white;
+
+    cursor: pointer; /* TODO put a special error cursor here */
+
+}
+
+.url-list-rows .url-row:hover {
+    color:var(--color-list-fg-hover);
+    background-color: var(--color-list-bg-hover);
+}
+
+.url-list-rows .url-selected {
+    color:var(--color-list-fg-selected);
+    background-color: var(--color-list-bg-selected);
 }
 
 .url-list-header .url-header-row{
@@ -122,40 +149,6 @@
     background-color: var(--g-color-list-header-bg);
     color:var(--g-color-list-header-fg);
 }
-
-.url-list {
-    max-height: var(--height-list);
-    height: var(--height-list);
-    /*overflow: scroll;*/
-    /*overflow-x: auto;*/
-}
-.url-list .url-row
-{
-    display: flex;
-    flex-direction: row;
-    border:1px solid black;
-    border-top:none;
-    position:relative;
-}
-.url-list .url-row.url-row-error {
-    background-color: darkred;
-    color:white;
-    cursor: pointer;
-}
-
-.url-list .url-row:hover {
-    color:var(--color-list-fg-hover);
-    background-color: var(--color-list-bg-hover);
-}
-.url-list .url-row {
-    cursor: pointer;
-}
-
-.url-list .url-selected {
-    color:var(--color-list-fg-selected);
-    background-color: var(--color-list-bg-selected);
-}
-
 
 .url-row a,
 .url-row .url-name {

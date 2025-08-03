@@ -621,7 +621,7 @@ const urlFlock = React.memo(function UrlFlock({
 
         return <>
             {flockHeaderRow}
-            <div className={"url-list"}
+            <div className={"url-list-rows"}
                  onClick={handleRowClick}
                  onMouseOver={onHoverDataRow}>{rows}</div>
         </>
@@ -717,7 +717,7 @@ const urlFlock = React.memo(function UrlFlock({
     </div>
 
     const flockCaption = <>
-        <div>URL Links</div>
+        <div>URL Links (this is Flock caption)</div>
         <div className={"sub-caption"}>
             <div>{flockRows.length} {flockRows.length === 1 ? 'URL' : 'URLs'}</div>
             <div>{spanFeedback} {buttonCopyList} {buttonCopyDetails}</div>
@@ -725,7 +725,7 @@ const urlFlock = React.memo(function UrlFlock({
     </>
 
     return <>
-        <div data-tooltip-id={tooltipId}  // id of tooltip for entire url display (not just this flock)
+        <div data-tooltip-id={tooltipId}  // passed in tooltipId for this flock)
              data-tooltip-html={urlTooltipHtml}
              onMouseOver={onHoverUrlFlock}>
             <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>

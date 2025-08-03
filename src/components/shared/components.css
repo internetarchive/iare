@@ -4,7 +4,6 @@
 
     --border-box-light: 1.5pt solid #b4b4b7 !important;
 
-    /*--border-row: 1pt solid #505050 !important;*/
     --border-row: 1pt solid #3c3c3c !important;
     --border-row-light: 1pt solid #aeaeae !important;
 
@@ -14,9 +13,8 @@
     --margin-box-left: .35rem;
     --margin-button-list: .35rem;
 
-    /*--color-filter-box-caption: #FFFFFF;*/
-    /*--color-filter-box-caption-bg: #2299e8;*/
-    /*--color-filter-box-contents: hsl(228 23% 97% / 1);*/
+    --height-max-filter-list: 10rem;
+
     --color-filter-box-caption: var(--g-color-function-box-caption-fg);
     --color-filter-box-caption-bg: var(--g-color-function-box-caption-bg);
     --color-filter-box-contents: var(--g-color-function-box-contents);
@@ -326,6 +324,7 @@
 }
 .list-chart .list-header {
     cursor: pointer;
+    position: sticky !important;
     border-bottom: var(--border-row);
     padding-bottom:.15rem;
     margin-bottom:.15rem;
@@ -339,6 +338,7 @@
     /*height: var(--height-list-component);*/
 
     overflow: auto;
+    max-height: var(--height-max-filter-list);
 }
 .list-chart .list-entry {
     border-bottom: var(--border-row-light);
