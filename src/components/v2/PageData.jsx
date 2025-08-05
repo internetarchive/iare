@@ -850,43 +850,41 @@ export default function PageData({rawPageData = {}, showViewOptions = false, han
         setSelectedViewType(event.target.value);
     };
 
-    const viewTypes = {
+    const viewOptions = {
         "urls": {
             caption: "URLs"
         },
         "refs": {
             caption: "Reference Types"
         },
+        "domains": {
+            caption: "Domains"
+        },
         "stats": {
-            caption: "Statistics"
+            caption: "Statistics",
+            enabled: false,
         },
         // "debug": {
         //     caption: "Debug Elements"
         // },
     }
 
-    // const viewOptionsButton = <button
-    //     // className={"utility-button small-button"}
-    //     className={"utility-button page-utility-button"}
-    //     onClick={handleClick} >
-    //     <span>{showViewOptions ? "Hide View Options" : "Show View Options"}</span>
-    // </button>
-
-    const viewOptions = <div className={"view-options-selection"}>
+    const viewOptionsDisplay = <div className={"view-options-selection"}>
             <div className={'list-label'}>View Options:</div>
-            {Object.keys(viewTypes).map(viewType => {
-                return <div key={viewType} >
+            {Object.entries(viewOptions)
+                .filter(([_, opt]) => opt.enabled !== false) // filter out disabled
+                .map(([viewOption, opt]) => (
+                <div key={viewOption} >
                     <label>
                         <input
                             type="radio"
-                            value={viewType}
-                            checked={selectedViewType === viewType}
+                            value={viewOption}
+                            checked={selectedViewType === viewOption}
                             onChange={handleViewTypeChange}
-                        /> <span className={selectedViewType === viewType ? 'selected-choice' : '' }>{viewTypes[viewType].caption}</span>
+                        /> <span className={selectedViewType === viewOption ? 'selected-choice' : '' }>{opt.caption}</span>
                     </label>
                 </div>
-            })}
-            {/*{showViewOptions && viewOptionsButton}*/}
+                ))}
         </div>
 
     if (!pageData) return null;
@@ -928,7 +926,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, han
                     : <div className={"page-data iare-ux-container"}>
 
                         <div className={`iare-ux-header`}>
-                            {showViewOptions && viewOptions}
+                            {showViewOptions && viewOptionsDisplay}
                         </div>
 
                         <div className={`iare-ux-body`}>

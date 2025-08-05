@@ -1,4 +1,5 @@
 import React from "react";
+import DOMPurify from 'dompurify';
 
 function RefCitationDisplayHtml({ reference = null,
                                  onClick,
@@ -8,15 +9,17 @@ function RefCitationDisplayHtml({ reference = null,
     if (!reference) return null
 
     // const cite_html = reference.citeRef?.cite_html
-    const cite_html = reference.citeRef
+    const citeHTML = reference.citeRef
         ? reference.citeRef.cite_html
         : reference.citeRef?.span_html
             ? reference.citeRef.span_html
-            : "<div class='lolite'>No HTML rendering found.</div>"
+            : "<div class='lolite'>Failed to render HTML.</div>"
+
+    const cleanHTML = DOMPurify.sanitize(citeHTML);
 
     return <div className={"ref-button ref-citation-button-wrapper"} onClick={onClick}>
         { /* NB Note use of DANGEROUS property... */}
-        <div dangerouslySetInnerHTML={{__html: cite_html}} />
+        <div dangerouslySetInnerHTML={{__html: cleanHTML}} />
         { /* NB Note use of DANGEROUS property... */}
     </div>
 
