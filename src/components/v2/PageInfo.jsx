@@ -11,7 +11,7 @@ function ClickButton( {buttonCaption=null, buttonText='', handleClick}) {
 }
 
 /* displays basic info from the original returned json for the page fetch */
-export default function PageInfo({ pageData }) {
+export default function PageInfo({ pageData, showViewOptions = false, handleClick }) {
 
     const [showDetail, setShowDetail] = useState(false);
 
@@ -151,9 +151,22 @@ export default function PageInfo({ pageData }) {
         </div>
         : <p>Nothing to display - pageData is missing.</p>
 
+
+    const viewOptionsButton = <button
+        className={"utility-button page-utility-button"}
+        onClick={handleClick} >
+        <span>{showViewOptions ? "Hide View Options" : "Show View Options"}</span>
+    </button>
+
+
+
     return <div className="page-info">
         <h6 className={"page-stats-header"}>
-            <div>Wiki Page Analyzed: {linkPageSource}{true && oresResults}</div><div>{buttonMoreDetails}</div>
+            <div>Wiki Page Analyzed: {linkPageSource}{true && oresResults}
+                {/*{!showViewOptions ? viewOptionsButton : null}*/}
+                {viewOptionsButton}
+            </div>
+            <div>{buttonMoreDetails}</div>
         </h6>
 
         {showDetail && pageInfoDetails}

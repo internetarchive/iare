@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.3.1.4",
-  "version_name": "0.3.1.4 fixed RefVoew scrolling",
+  "version": "0.3.1.5",
+  "version_name": "0.3.1.5 View Ooptions",
   "private": true,
   "type": "module",
   "dependencies": {

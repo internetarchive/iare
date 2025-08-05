@@ -1,5 +1,6 @@
 :root {
     --border-box: 2px solid #2585cc !important;
+    --border-box-bland: 1.5pt solid #676767 !important;
     --border-box-radius:0.33rem;
 
     --border-box-light: 1.5pt solid #b4b4b7 !important;

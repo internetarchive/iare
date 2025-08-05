@@ -1,6 +1,8 @@
 .page-info {
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
+    /*border: var(--border-box-bland);*/
+    /*border-radius: var(--border-box-radius);*/
 }
 .page-info .page-stats-header {
     display:flex;
@@ -9,6 +11,23 @@
     justify-content: space-between;
     color: var(--color-text-muted);
 }
+
+button.utility-button.page-utility-button {
+    /*border: 1px solid transparent;*/
+    /*border-radius: .3rem;*/
+    margin: 0 0 0.2rem 1.5rem;
+    padding:  0.3em 0.55em 0.25em 0.4em;
+    font-size: .6rem;
+    /*margin: -0.4rem 0 0 0.2rem;*/
+    /*background-color: #cb1bce;*/
+    /*color: #4d4d4d;*/
+    border-color: #888888;
+
+    background-color: #d3d3d3;
+    color: #4d4d4d;
+
+}
+
 
 /* page data component layout */
 

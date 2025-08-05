@@ -60,7 +60,7 @@ export default function PathNameFetch({
     const shortcutsButton = <button
         className={"utility-button small-button"}
         style={{margin: "0 0 0.2rem 10px"}}
-        onClick={() => {setShowShortcuts(!showShortcuts)}} >
+        onClick={() => {setShowShortcuts(prevState => !prevState)}} >
         <span>{showShortcuts ? "Hide Shortcuts" : "Show Shortcuts"}</span>
     </button>
 

@@ -31,7 +31,7 @@ When this component is rendered, it must "process" the pageData. This involves:
 */
 
 
-export default function PageData({rawPageData = {}}) {
+export default function PageData({rawPageData = {}, showViewOptions = false, handleClick}) {
     /*
     pageData is from the IARI reference fetch, with some decoration props added for convenience.
 
@@ -61,6 +61,7 @@ export default function PageData({rawPageData = {}}) {
     const [selectedViewType, setSelectedViewType] = useState('urls')
     const [isLoadingUrls, setIsLoadingUrls] = useState(false)
     const [isDataReady, setIsDataReady] = useState(false)
+
     const [pageErrors, setPageErrors] = useState('')
     const [urlStatusLoadingMessage, setUrlStatusLoadingMessage] = useState(null)
 
@@ -69,7 +70,11 @@ export default function PageData({rawPageData = {}}) {
 
     const myIariBase = myConfig.iariSource  // TODO: grab from pageData.iariSource
     const myStatusCheckMethod = myConfig.urlStatusMethod  // TODO grab from pageData.checkStatusMethod
-    const isShowViewOptions = myConfig.isShowViewOptions
+
+                // // const isShowViewOptions = myConfig.isShowViewOptions
+                // const [showViewOptions, setShowViewOptions] = useState(myConfig.isShowViewOptions)
+
+
 
     // Google Chrome dev tools does not handle module level imports
     // well, but assigning to a local var seems to make things work
@@ -860,6 +865,13 @@ export default function PageData({rawPageData = {}}) {
         // },
     }
 
+    // const viewOptionsButton = <button
+    //     // className={"utility-button small-button"}
+    //     className={"utility-button page-utility-button"}
+    //     onClick={handleClick} >
+    //     <span>{showViewOptions ? "Hide View Options" : "Show View Options"}</span>
+    // </button>
+
     const viewOptions = <div className={"view-options-selection"}>
             <div className={'list-label'}>View Options:</div>
             {Object.keys(viewTypes).map(viewType => {
@@ -874,6 +886,7 @@ export default function PageData({rawPageData = {}}) {
                     </label>
                 </div>
             })}
+            {/*{showViewOptions && viewOptionsButton}*/}
         </div>
 
     if (!pageData) return null;
@@ -915,7 +928,7 @@ export default function PageData({rawPageData = {}}) {
                     : <div className={"page-data iare-ux-container"}>
 
                         <div className={`iare-ux-header`}>
-                            {isShowViewOptions && viewOptions}
+                            {showViewOptions && viewOptions}
                         </div>
 
                         <div className={`iare-ux-body`}>

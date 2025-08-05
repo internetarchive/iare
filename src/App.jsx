@@ -446,7 +446,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         onClick={() => {
             setIsShowViewOptions(prevState => !prevState )
         }
-        } >{isShowViewOptions ? "Hide" : "Show"} View Types</button>
+        } >{isShowViewOptions ? "Hide" : "Show"} View Options</button>
 
     const debugButtonDetails = <button // this is the 'show New Features' button
         className={"utility-button debug-button"}
