@@ -20,6 +20,7 @@ import {REF_FILTER_DEFS} from "../../constants/refFilterMaps.jsx";
 import {categorizedDomains, reliabilityMap} from "../../constants/perennialList.jsx";
 import {UrlStatusCheckMethods} from "../../constants/checkMethods.jsx";
 import {testPageData} from "../../utils/testUtils.jsx";
+import DomainDisplay from "./pages/DomainDisplay.jsx";
 
 /*
 When this component is rendered, it must "process" the pageData. This involves:
@@ -938,6 +939,10 @@ export default function PageData({rawPageData = {}, showViewOptions = false, han
 
                                 {selectedViewType === 'refs' &&
                                     <RefDisplay pageData={pageData} options={{}}/>
+                                }
+
+                                {selectedViewType === 'domains' &&
+                                    <DomainDisplay pageData={pageData} options={{}}/>
                                 }
 
                                 {selectedViewType === 'stats' &&
