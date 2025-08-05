@@ -16,11 +16,16 @@ export default function PathNameFetch({
         className= null,
         handlePathResults,
         shortcuts=[],
-        showShortcuts=false,
-        placeholder='' }) {
+        placeholder='',
+
+        options = {
+            showShortcuts: false,
+        }
+}) {
 
     const [pathName, setPathName] = useState(pathInitial); // init with passed in name
     const [checked, setChecked] = React.useState(checkInitial);
+    const [showShortcuts, setShowShortcuts] = React.useState(options.showShortcuts ?? false);
 
     const handleCheckChange = () => {
         setChecked(!checked);
@@ -52,26 +57,20 @@ export default function PathNameFetch({
         }
     };
 
-    // // only if we want to restrict entry to being in list (subst pathName for text)
-    // const disabled = React.useMemo(() => {
-    //     return !data.some( d => d.label === text );
-    // }, [text]);
+    const shortcutsButton = <button
+        className={"utility-button small-button"}
+        style={{margin: "0 0 0.2rem 10px"}}
+        onClick={() => {setShowShortcuts(!showShortcuts)}} >
+        <span>{showShortcuts ? "Hide Shortcuts" : "Show Shortcuts"}</span>
+    </button>
 
-    // const shortcutsDisplay = showShortcuts && shortcuts?.length
-    //     ? <div style={{display: "block"}}>
-    //         &nbsp;
-    //         {shortcuts.map ( shortCutDef => {
-    //             return <ButtonFetch key={shortCutDef.value} buttonDef={shortCutDef} onClick={setPathName} className={"path-shortcut"}/>
-    //         })
-    //         }
-    //     </div>
-    //     : null
     const shortcutsDisplay = showShortcuts && shortcuts?.length
         ? <div className="shortcuts-display">
             {shortcuts.map ( shortCutDef => {
-                    return <ButtonFetch key={shortCutDef.value} buttonDef={shortCutDef} onClick={setPathName} className={"path-shortcut"}/>
-                })
+                return <ButtonFetch key={shortCutDef.value} buttonDef={shortCutDef} onClick={setPathName} className={"path-shortcut"}/>
+            })
             }
+            {shortcutsButton}
         </div>
         : null
 
@@ -103,6 +102,7 @@ export default function PathNameFetch({
                     <span>{"Load References"}</span>
                 </button
                 ><Checkbox className={"chk-force-refresh"} label={"Force Refresh"} value={checked} onChange={handleCheckChange}/>
+                {!showShortcuts && shortcutsButton}
             </div>
 
             {shortcutsDisplay}

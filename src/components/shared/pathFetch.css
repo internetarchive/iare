@@ -54,7 +54,7 @@
 
 
 .path-fetch-wrap button {
-    margin-top:.35em;
+    margin-top:.35em !important;
 }
 
 .path-fetch-wrap .chk-force-refresh {

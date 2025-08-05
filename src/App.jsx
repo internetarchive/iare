@@ -27,7 +27,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
 
     // these are config values to show/hide certain UI features, available from debug info box
     const [isShowUrlOverview, setIsShowUrlOverview] = useState(true);
-    const [isShowShortcuts, setIsShowShortcuts] = useState(true);
+    const [isShowShortcuts, setIsShowShortcuts] = useState(false);
     const [isShowDebugInfo, setIsShowDebugInfo] = useState(false);
     const [isShowDebugComponents, setIsShowDebugComponents] = useState(false);
     const [isShowViewOptions, setIsShowViewOptions] = useState(false);
@@ -580,8 +580,11 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
                                                checkInitial={refreshCheck}
                                                placeholder={"Enter a Wikipedia article or PDF url here"}
                                                shortcuts={shortcuts}
-                                               showShortcuts={isShowShortcuts}
                                                handlePathResults={handlePathResults}
+                                               options = {{
+                                                   showShortcuts: isShowShortcuts
+                                               }}
+
                                 />
 
                                 {myError

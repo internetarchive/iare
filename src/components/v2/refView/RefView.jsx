@@ -311,12 +311,6 @@ export default function RefView({
             <div className={"ref-view rnd-modal-ref-view-contents"}
                 ref={refContainer}
 
-                // style={{overflow:"auto"}}
-                style={{
-                    overflow: "visible",
-                    position: "relative"
-                }}
-
                 // turn off event responses on main content, as they will cause unexpected behavior
                 onClick={(e) => {stopAndShow(e, "contents:onProbeClick")}}
 

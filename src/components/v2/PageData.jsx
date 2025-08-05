@@ -33,25 +33,26 @@ When this component is rendered, it must "process" the pageData. This involves:
 
 export default function PageData({rawPageData = {}}) {
     /*
-    pageData is the data from the /article endpoint fetch call,
-    with a few minor decoration properties added for convenience.
+    pageData is from the IARI reference fetch, with some decoration props added for convenience.
 
-    pageData must be processed starting with the fetchPageData call
-    in the useEffect upon component instantiation.
+    upon this component instantiation, pageData must be processed. This is accomplished with the
+    fetchPageData call in the component instantiation useEffect.
+        - the URL details are immediately fetched for each URL in pageData.urls, which creates:
+            urlDict, a url-keyed javascript object for each url, and
+            urlArray, an array with each entry pointing to a urlDict object.
 
-    the URL details are immediately fetched for each URL in pageData.urls, which creates:
-        urlDict, a url-keyed javascript object for each url, and
-        urlArray, an array with each entry pointing to a urlDict object.
+        - the references list is flattened, merging all "named" references into one
+            "master" reference, with the number of times a reference is used as a property.
 
-    we then flatten the references list, merging all "named" references into one
-    "master" reference, with the number of times a reference is used as a property.
-
-        NB: we should use only "references" property, not "dehydrated_references"
-        TODO: deprecate "dehydrated_references" and use a "dehydrated" flag instead
+        - some other auxiliary properties are fetched for each reference and link
 
         NB TODO we should take all this processing code and place it in a processing module,
         NB AND, this processing logic should really be in the IARI API backend code, once it
         NB is established what needs to happen.
+
+    NB: we should use only "references" property, not "dehydrated_references"
+    TODO: deprecate "dehydrated_references" and use a "dehydrated" flag instead
+
     */
 
     // const defaultProbesString = "verifyi|trust_project|iffy"
