@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import './domains.css';
+import React from 'react';
+import './domainDisplay.css';
 import '../../shared/components.css';
+import BubbleChart from "../../d3/BubbleChart.jsx";
 
 export default function DomainDisplay ({ pageData, options } ) {
 
@@ -11,7 +12,7 @@ export default function DomainDisplay ({ pageData, options } ) {
         <div>No domain statistics found in page data.</div>
     </>
 
-    const domainsArray = Object.keys(pageData.pld_statistics).map( domain => {
+    const simpleDomainsArray = Object.keys(pageData.pld_statistics).map( domain => {
         return {
             label: domain,
             count: pageData.pld_statistics[domain],
@@ -30,19 +31,43 @@ export default function DomainDisplay ({ pageData, options } ) {
     })
 
 
+    // 1. put data into 2-column name, value array:
+    const domainsArray = Object.keys(pageData.pld_statistics).map( domain => {
+        return {
+            name: domain,
+            value: pageData.pld_statistics[domain],
+        }
+    }).sort((a, b) => {
+        return a.value < b.value
+            ? 1
+            : a.value > b.value
+                ? -1
+                : a.name < b.name
+                    ? 1
+                    : a.name > b.name
+                        ? -1
+                        : 0
+    })
+
+    const simpleDomainsDisplay = <div className={"domain-display-section"}>
+        <div className={"domain-display-section-header"}></div>
+        <div className={"domain-display-section-body"}>
+            {simpleDomainsArray.map(domain => {
+                return <div key={domain.label}>domain: {domain.label}, count: {domain.count}</div>
+            })}
+        </div>
+    </div>
+
+
     return <>
         <div className={"domain-display section-box"}>
 
             {true && <h3>Domains <span style={{fontSize: '50%', fontStyle: "italic", color: "red"}}>This feature under development</span></h3>}
 
-            <div className={"domain-display-section"}>
-                <div className={"domain-display-section-header"}></div>
-                <div className={"domain-display-section-body"}>
-                    {domainsArray.map(domain => {
-                        return <div key={domain.label}>domain: {domain.label}, count: {domain.count}</div>
-                    })}
-                </div>
-            </div>
+            {false && simpleDomainsDisplay}
+
+            <BubbleChart data={domainsArray} width={"400"} height={"400"} />
+
         </div>
 
     </>

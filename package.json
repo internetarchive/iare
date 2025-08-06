@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.3.1.6",
-  "version_name": "0.3.1.6 Domain View",
+  "version": "0.3.1.7",
+  "version_name": "0.3.1.7 Domain View Bubble Graph",
   "private": true,
   "type": "module",
   "dependencies": {
