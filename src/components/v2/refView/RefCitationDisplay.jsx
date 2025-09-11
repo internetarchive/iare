@@ -6,7 +6,7 @@ import CitationDisplayInfo from "../citations/CitationDisplayInfo.jsx";
 
 
 /*
-shows as much info for reference in as pleasant display as possible
+shows as much info for reference in as pleasant a display as possible
  */
 export default function RefCitationDisplay({ _ref,
                                                index=0,
@@ -17,25 +17,38 @@ export default function RefCitationDisplay({ _ref,
                                                options = {},
                                                showDebug=false }) {
 
-    let asParsed = null
+    let parsedCitationInfo = null
     if (_ref) {
         if (parseMethod === ParseMethods.WIKIPARSE_V1.key  ||
-            parseMethod === ParseMethods.WIKIPARSE_XREF.key) {
-            asParsed = <CitationDisplayV1 reference={_ref} index={index} options={{ ...options, isSingleUse: true }} />
+            parseMethod === ParseMethods.WIKIPARSE_XREF.key) {  // as of 2025.08.24 WIKIPARSE_XREF is the default
+            parsedCitationInfo = <CitationDisplayV1 reference={_ref}
+                                          index={index}
+                                          options={{ ...options, isSingleUse: true }} />
+
         } else if (parseMethod === ParseMethods.WIKIPARSE_V2.key) {
-            asParsed = <CitationDisplayV2 reference={_ref} options={{hide_actionables:true, show_extra:true}} index={index} />
+            parsedCitationInfo = <CitationDisplayV2 reference={_ref}
+                                          index={index}
+                                          options={{
+                                              hide_actionables:true,
+                                              show_extra:true
+            }} />
+
         } else {
-            asParsed = <div>Unknown article version {parseMethod ? parseMethod : "(none)"}</div>
+            parsedCitationInfo = <div>Unknown article parse method {parseMethod ? parseMethod : "(none)"}</div>
         }
     } else {
-        asParsed = <div>No reference to show</div>
+        parsedCitationInfo = <div>No reference to show</div>
     }
 
 
     return <div className={"ref-view-section reference-info"} onClick={onClick}>
 
         <div className="ref-view-single-display">
-            <button key={index} className={"ref-button"}>{asParsed}</button>
+            <div className={"parts-wrapper"}>
+                <div className={"parts-title"}>Contents</div>
+                {parsedCitationInfo}
+            </div>
+
             <CitationDisplayInfo reference={_ref} pageData={pageData} onAction={onAction} />
         </div>
 

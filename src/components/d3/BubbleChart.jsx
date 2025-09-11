@@ -33,10 +33,24 @@ const BubbleChart = ({ data }) => {
             .range([5, 45]);
 
         // Force simulation
+        // const simulation = d3.forceSimulation(data)
+        //     .force('center', d3.forceCenter(width / 2, height / 2))
+        //     .force('charge', d3.forceManyBody().strength(5))
+        //     .force('collision', d3.forceCollide(d => radiusScale(d.value) + 2))
+        //     .on('tick', () => {
+        //         bubbles
+        //             .attr('cx', d => d.x)
+        //             .attr('cy', d => d.y);
+        //
+        //         labels
+        //             .attr('x', d => d.x)
+        //             .attr('y', d => d.y + 4);
+        //     });
         const simulation = d3.forceSimulation(data)
             .force('center', d3.forceCenter(width / 2, height / 2))
             .force('charge', d3.forceManyBody().strength(5))
-            .force('collision', d3.forceCollide(d => radiusScale(d.value) + 2))
+            .force('collision', d3.forceCollide(d => radiusScale(d.value) + 4))
+
             .on('tick', () => {
                 bubbles
                     .attr('cx', d => d.x)

@@ -7,6 +7,11 @@
     --color-sub-caption: #9b9a9a;
     --color-actionable-header: hsl(358 69% 65% / 1);
 
+    --color-parts-bg: #81c8e7;
+    --color-parts-label: #689cc5;
+    --color-parts-bg-hover: white;
+    --color-parts-border: #2199e8;
+
     /* local definitions */
     --ref-view-titlebar-height: 2.5rem;
     --titlebar-font-size: 1rem;

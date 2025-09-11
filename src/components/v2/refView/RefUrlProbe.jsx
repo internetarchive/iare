@@ -1,14 +1,15 @@
 import React, {useCallback, useState} from "react";
 // import {Button} from "react-bootstrap";
-import Popup from "../../Popup.jsx";
+// import Popup from "../../Popup.jsx";
 // import Loader from "../../Loader.jsx";
 
-import {getProbeEndpoint} from "../../../utils/iariUtils.js";
+// import {getProbeEndpoint} from "../../../utils/iariUtils.js";
 
+import {ConfigContext} from "../../../contexts/ConfigContext.jsx";
 import loaderImage from "../../../images/threedots.gif";
 import ProbesDisplay from "../ProbesDisplay.jsx";
-import {ConfigContext} from "../../../contexts/ConfigContext.jsx";
-import {setUrlProbeResults} from "../../utils/urlUtils.jsx";
+// import {setUrlProbeResults} from "../../utils/urlUtils.jsx";
+// import Loader from "../../Loader.jsx";
 
 const probesToLoad = "verifyi|trust_project"  // for now...shall be defined higher up in a configgy way
 
@@ -21,6 +22,7 @@ const ProbeLoader = ({startTime, message}) => {
                  style={{ margin:'auto', display:'block' }}
             />
         </div>
+
 }
 
 

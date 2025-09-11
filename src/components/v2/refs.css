@@ -264,3 +264,40 @@
 .ref-list-caption {
     margin-bottom: 0.3rem;
 }
+
+/*** for movement to another section or css file ***/
+.parts-wrapper {
+    /*cursor: pointer; !* Pointer/hand icon *!*/
+    /*width: 100%;*/
+    /*text-align: left;*/
+
+    background-color: var(--g-color-reference-display-bg);
+    padding:.3rem .3rem .3rem .4rem;
+    margin-bottom:var(--spacing-ref-button);
+    position:relative;
+    overflow-wrap: break-word;
+
+    border: var(--border-ref-button-ref-list);
+    border-radius: var(--radius-ref-button);
+}
+
+/*font-size: 0.58rem;*/
+
+/*.parts-wrapper {*/
+.parts-wrapper:not(:first-child) {
+    margin-top: .48rem;
+}
+.parts-wrapper .parts-title {
+    position: absolute;
+    text-transform: uppercase;
+    letter-spacing: 0.068rem;
+    top: -0.42rem;
+    right: 0;
+    background-color: var(--g-color-reference-display-bg);
+    padding: 0 .18rem;
+    margin-left: .33rem;
+
+    font-size: 0.55rem;
+    font-weight: bold;
+    color: #689cc5;
+}

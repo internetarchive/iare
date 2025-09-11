@@ -53,7 +53,8 @@ function CitationDisplayInfo({ reference = null,
         {reference.section === 'root' ? 'Lead' : reference.section}
     </a>
 
-    return <div className={"ref-button ref-citation-button-wrapper"}>
+    return <div className={"parts-wrapper"}>
+        <div className={"parts-title"}>Origin</div>
         <div className={"cite-ref-links"}><span className={"ref-citation-links"}>{citationLabel}</span>{pageRefLinkDisplay}</div>
         <div className={"ref-meta article-info"}>{section_label}{section_link}</div>
     </div>

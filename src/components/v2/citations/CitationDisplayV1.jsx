@@ -57,6 +57,12 @@ function CitationDisplayV1({ reference = null, index=0, options ={}}) {
         })
     }
 
+    const fnNum = 42
+    const footnoteNumber = false && <div className={"ref-line ref-footnote-number"} key={spanCount}>
+        <span className={'ref-line ref-footnote'} key={spanCount}
+        ><span className={'caption'}>Footnote Number:</span> {fnNum}</span>
+    </div>
+
     const citationDisplay = hasContent
         ? <>
             {actionable}
@@ -64,6 +70,7 @@ function CitationDisplayV1({ reference = null, index=0, options ={}}) {
             {refName}
             {doiLinks}
             {templates}
+            {footnoteNumber}
         </>
         : <span>{reference.wikitext}</span>  // if nothing else to show, show wikitext
 
