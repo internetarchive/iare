@@ -21,6 +21,7 @@ import {categorizedDomains, reliabilityMap} from "../../constants/perennialList.
 import {UrlStatusCheckMethods} from "../../constants/checkMethods.jsx";
 import {testPageData} from "../../utils/testUtils.jsx";
 import DomainDisplay from "./pages/DomainDisplay.jsx";
+import ArchiveDisplay from "./pages/ArchiveDisplay.jsx";
 
 /*
 When this component is rendered, it must "process" the pageData. This involves:
@@ -951,7 +952,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, han
                                 }
 
                                 {selectedViewType === viewOptions['archives'].key &&
-                                    <ArchivesDisplay pageData={pageData} options={{}}/>
+                                    <ArchiveDisplay pageData={pageData} options={{}}/>
                                 }
 
                                 {/*{selectedViewType === 'debug' &&*/}
