@@ -717,7 +717,7 @@ const urlFlock = React.memo(function UrlFlock({
     </div>
 
     const flockCaption = <>
-        <div>URL Links (this is Flock caption)</div>
+        <div>URL Links</div>
         <div className={"sub-caption"}>
             <div>{flockRows.length} {flockRows.length === 1 ? 'URL' : 'URLs'}</div>
             <div>{spanFeedback} {buttonCopyList} {buttonCopyDetails}</div>

@@ -444,6 +444,7 @@ table td {
     display:block;
     margin:1rem 0;
     border:2pt solid #c92b2b;
+    border-radius: var(--iare-radius-small);
     padding:.5em;
     font-weight: bold;
     font-size:1.2rem;

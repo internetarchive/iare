@@ -17,6 +17,7 @@ import {Tooltip as MyTooltip} from "react-tooltip";
 import {REFERENCE_STATS_MAP} from "../../constants/referenceStatsMap.jsx";
 import {ACTIONS_IARE} from "../../constants/actionsIare.jsx";
 import {isBookUrl, bookTemplates, noBookLink, bookDefs} from "../../utils/iariUtils.js";
+import {getTestOverviewColumnData} from "../../utils/testUtils.jsx";
 
 
 export default function UrlDisplay ({ pageData, options } ) {
@@ -111,7 +112,7 @@ export default function UrlDisplay ({ pageData, options } ) {
     //  }
     //
     // Most actions set the flock filters to a current value.
-    // Currently only one filter can be applied at a time.
+    // Currently, only one filter can be applied at a time.
     // Maybe later the capability of more than one filter will come to be.
     //
     const handleAction = useCallback( result => {
@@ -364,7 +365,7 @@ export default function UrlDisplay ({ pageData, options } ) {
 
     const getUrlBooksFilter = (bookDomain) => {
 
-        // null bookDomain means show all url's that are books
+        // null bookDomain means show ALL url's that are books
         if (bookDomain === null) {
             return {
                 desc: `URLs referencing books either alone or in a Cite Book template.`,
@@ -626,6 +627,23 @@ export default function UrlDisplay ({ pageData, options } ) {
                                     style={{ zIndex: 999 }}
                             />
 
+                // const testUrlOverviewDisplay=<div className={"url-overview-column"} style={{backgroundColor: "chartreuse"}}>
+                //     <h2>test-contents</h2>
+                //     {Array.from({length: 3}, (_, i) => {
+                //         return <div style={{
+                //             display: "inline",
+                //             padding: ".5rem",
+                //             border: "1pt solid black",
+                //             borderRadius: ".35rem",
+                //             marginRight: ".35rem"
+                //         }}>Spacer</div>
+                //     })}
+                //
+                //     {Array.from({length: 20}, (_, i) => {
+                //         return <p>test overview</p>
+                //     })}
+                //
+                // </div>
 
     const overviewColumn = myConfig.isShowUrlOverview && true
         ? <div className={"url-overview-column"}>
@@ -636,26 +654,10 @@ export default function UrlDisplay ({ pageData, options } ) {
                              tooltipId={"url-display-tooltip"}/>
             </div>
 
-        : <div className={"url-overview-column"} style={{backgroundColor: "chartreuse"}}>
-            <h2>test-contents</h2>
-            {Array.from({length: 3}, (_, i) => {
-                return <div style={{
-                    display: "inline",
-                    padding: ".5rem",
-                    border: "1pt solid black",
-                    borderRadius: ".35rem",
-                    marginRight: ".35rem"
-                }}>Spacer</div>
-            })}
-
-            {Array.from({length: 20}, (_, i) => {
-                return <p>test overview</p>
-            })}
-
-        </div>
+        : {getTestOverviewColumnData}
 
     const urlDisplayBody = <>
-        <div style={{display: "flex", height:'100%'}}>
+        <div className={"url-display-body"} style={{display: "flex", height:'100%'}}>
 
             <UrlFlock urlDict={pageData.urlDict}
                       urlArray={pageData.urlArray}

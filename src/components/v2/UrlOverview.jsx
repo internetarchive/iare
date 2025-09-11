@@ -18,7 +18,14 @@ import {noBookLink, bookDefs} from "../../utils/iariUtils.js";
 Chart.register(LinearScale, BarElement, ArcElement, Legend, Tooltip, Title, SubTitle, Colors,);
 
 // displays overview stats of article data
-const UrlOverview = React.memo(({pageData, options, onAction, currentState, tooltipId=null}) => {  // React.memo so doesn't re-rerender with param changes
+const UrlOverview = React.memo(({
+// React.memo so doesn't re-rerender with param changes
+            pageData,
+            options,
+            onAction,
+            currentState,
+            tooltipId=null
+}) => {
 
     const [autoExpand, setAutoExpand] = useState(true )
 

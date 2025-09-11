@@ -1,17 +1,18 @@
 import React  from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
 
 import './i18n'; // Import i18n configuration
 import 'react-tooltip/dist/react-tooltip.css'
-
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import './custom.scss'; // includes bootstrap.scss
 
-import './index.css';
+import App from './App';
+
 import {UrlStatusCheckMethods} from "./constants/checkMethods.jsx";
 import {IariSources} from "./constants/iariSources.jsx";
 import {ParseMethods} from "./constants/parseMethods.jsx";
+
+import './index.css';
 
 const getEnvironment = () => {
     const REGEX_PRODUCTION_ENV = new RegExp(/^(?:(?:[\w-]+\.)+)?(?:[\w-]+\.)?archive\.org$/);  // if "(\.?)archive.org" at end of string

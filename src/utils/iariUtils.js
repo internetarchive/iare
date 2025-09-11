@@ -44,9 +44,9 @@ export const getPagePathEndpoint = ({
         }
 
         else if (parseMethod === ParseMethods.WIKIPARSE_XREF.key) {
-            // this is James version (i believe)
+            // this is James Hare's version
 
-            // Extract the page title
+            // Extract the page title from the path
             const pageTitleMatch = path.match(/\/wiki\/([^?#]+)/);
             const pageTitle = pageTitleMatch ? pageTitleMatch[1] : null;
 
@@ -71,7 +71,7 @@ export const getPagePathEndpoint = ({
     // do general case...TODO make default parser endpoint a config
     // this will produce an error right now, as IARI does not support "analyze"
     // i (mojomonger) think we _should_ have a generic "analyze" endpoint
-    return `${iariBase}/statistics/analyze?url=${path}${
+    return `${iariBase}/analyze?url=${path}${
         refresh
             ? "&refresh=true"
             : ''}${

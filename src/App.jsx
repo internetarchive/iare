@@ -2,7 +2,9 @@ import React, {useCallback, useEffect, useState, useRef} from "react";
 import {Tooltip as MyTooltip} from "react-tooltip";
 import package_json from "../package.json";
 
-import {debounce} from "./utils/generalUtils.js";
+import { IariError } from "./errors/IariError";
+
+// import {debounce} from "./utils/generalUtils.js";
 import {getPagePathEndpoint} from "./utils/iariUtils.js";
 
 import MakeLink from "./components/MakeLink.jsx";
@@ -28,8 +30,12 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     // these are config values to show/hide certain UI features, available from debug info box
     const [isShowUrlOverview, setIsShowUrlOverview] = useState(true);
     const [isShowShortcuts, setIsShowShortcuts] = useState(false);
+    const [isShowUseCache, setIsShowUseCache] = useState(false);
+
     const [isShowDebugInfo, setIsShowDebugInfo] = useState(false);
     const [isShowDebugComponents, setIsShowDebugComponents] = useState(false);
+    // const [isShowDebugControls, setIsShowDebugControls] = useState(false);
+
     const [isShowViewOptions, setIsShowViewOptions] = useState(false);
 
     // params settable from from address url
@@ -161,10 +167,8 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
 
         // else unknown, for now
 
-
         if (cacheData)
-            return 'wiki'
-
+            return 'wiki'  // cacheData always returns a wiki cache for now....
 
         // eslint-disable-next-line
         const regexPdf = new RegExp("\.pdf$");
@@ -210,7 +214,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         console.log("APP: fetchArticleData: mediaType = ", myMediaType)
 
         // const myEndpoint = getPagePathEndpoint(myIariSourceId, pathName, cacheData, myMediaType, refresh);
-        const myEndpoint = getPagePathEndpoint({
+        const pageEndpoint = getPagePathEndpoint({
             iariSourceId: myIariSourceId,
             path: pathName,
             cacheData: cacheData,
@@ -219,36 +223,53 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
             parseMethod: parseMethod
         })
 
-        console.log("APP::fetchArticleData: endpoint = ", myEndpoint)
-        setEndpointPath(myEndpoint); // for debug display purposes only
+        console.log("APP::fetchArticleData: endpoint = ", pageEndpoint)
+        setEndpointPath(pageEndpoint); // for display purposes only
 
-        // TODO: maybe always clear pageData, so components get cleared while waiting?
+        // TODO: maybe also always clear pageData, so components get
+        //  cleared while waiting?
         setMyError(null);
         setIsLoading(true);
 
         // fetch the article data
-        fetch(myEndpoint, {})
+        fetch(pageEndpoint, {})
 
-            .then((res) => {
+            .then(async (res) => {
+                const data = await res.json(); // parse JSON even for 500 errors
                 if (!res.ok) {
-                    throw new Error(res.statusText ? res.statusText : res.status);
-                    // throw new Error(res);
-                    //return res.text().then(text => { throw new Error({message: }) })
-                } // throw error that will be caught in .catch()
-                return res.json();
+                    /*
+                    "data" variable expected to be like:
+                    {
+                        errors: [
+                            {
+                                error: "WikipediaApiFetchError",
+                                details: "Error fetching details"
+                            }
+                        ]
+                     }
+                    */
+                    const details =
+                        data?.errors?.[0]?.details ??
+                        data?.error?.details ??
+                        null;
+
+                    throw new IariError(details);
+                }
+
+                return data;
             })
 
             .then((data) => {
 
                 // decorate the data with some informative fields upon successful data response
                 data.pathName = pathName;
-                data.endpoint = myEndpoint;
+                data.endpoint = pageEndpoint;
                 data.iariSource = IariSources[myIariSourceId]?.proxy;
                 data.iariParseMethod = parseMethod;
                 data.checkStatusMethod = checkMethod;
                 data.forceRefresh = refresh;
                 data.mediaType = myMediaType; // decorate based on mediaType?
-                data.version = getIariVersion(data, myEndpoint);  // version of pageData - determines display components
+                data.version = getIariVersion(data, pageEndpoint);  // version of pageData - determines display components
                 data.iari_version = data.iari_version ? data.iari_version : "unknown";
 
                 // and set the new pageData state
@@ -260,19 +281,25 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
 
                 // how do we tell if error is from native network cause, or synthesized/augmented by our handling of res != OK above
 
-                if (err.message === "404") {
-                    // if (err.status_code === "404") {
+                if (err.name === IariError.name) {
+                    setMyError(`IARI failure: ${err.message}`)
+
+                } else if (err.message === "404") {
                     setMyError("404 Error finding target page.")
+
                 } else if (err.message === "502") {
                     setMyError("502 Server problem (no further info available)")
 
                 } else if (err.name === "TypeError" && err.message === "Failed to fetch") {
                     setMyError(err.message + " - IARI service failure: Service down or CORS issue.");
                     // TODO: this happens when filename does not exist!
-                    // or when CORS error encountered
+                    //  or when CORS error encountered
+
                 } else {
                     // ?? should we extract HTTP status code from string? (1st 3 characters, if number? without number, next?)
+                    setMyError(`Unhandled error ${err.name}: ${err.message}`);
                 }
+
                 setPageData(null);
 
             })
@@ -285,10 +312,10 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     }, [myIariSourceId, parseMethod])
 
 
-    // callback for PathNameFetch component
-    // pathResults[0] = pathName (string)
-    // pathResults[1] = refreshCheck (boolean)
     const handlePathResults = (pathResults) => {
+        // callback for PathNameFetch component
+        // pathResults[0] = pathName (string)
+        // pathResults[1] = refreshCheck (boolean)
 
         refreshPageResults(
             {
@@ -406,12 +433,6 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         : ''
     const iariSourceInfo = IariSources[myIariSourceId]?.caption
 
-    // const siteInfo = (env?.key !== IareEnvironments.PROD.key)
-    //     ? (env.key !== IareEnvironments.STAGE.key
-    //         ? ` LOCAL `
-    //         : ` STAGING `)
-    //     : ''
-
     const buttonShowDebug = (env !== 'env-production') &&
         <button className={"utility-button debug-button small-button"}
                 onClick={toggleDebug} >{
@@ -421,11 +442,6 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
             // up triangle: <>&#9650;</>
             // dn triangle: <>&#9660;</>
         }</button>
-
-    // const heading = <div className={"header-contents"}>
-    //     <h1>{appTitle}</h1>
-    //     <div className={"iare-header-aux1"}>{versionInfo}{siteInfo} ({iariSourceInfo}) {buttonShowDebug}</div>
-    // </div>
 
     const debugButtonFilters = <button // this is the 'show urls list' button
         className={"utility-button debug-button"}
@@ -582,7 +598,8 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
                                                shortcuts={shortcuts}
                                                handlePathResults={handlePathResults}
                                                options = {{
-                                                   showShortcuts: isShowShortcuts
+                                                   showShortcuts: isShowShortcuts,
+                                                   showUseCache: isShowUseCache,
                                                }}
 
                                 />

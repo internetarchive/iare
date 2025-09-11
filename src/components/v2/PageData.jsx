@@ -20,6 +20,7 @@ import {REF_FILTER_DEFS} from "../../constants/refFilterMaps.jsx";
 import {categorizedDomains, reliabilityMap} from "../../constants/perennialList.jsx";
 import {UrlStatusCheckMethods} from "../../constants/checkMethods.jsx";
 import {testPageData} from "../../utils/testUtils.jsx";
+import DomainDisplay from "./pages/DomainDisplay.jsx";
 
 /*
 When this component is rendered, it must "process" the pageData. This involves:
@@ -33,25 +34,21 @@ When this component is rendered, it must "process" the pageData. This involves:
 
 export default function PageData({rawPageData = {}, showViewOptions = false, handleClick}) {
     /*
-    pageData is from the IARI reference fetch, with some decoration props added for convenience.
+    pageData is the raw data from IARI fetch call, with some decoration properties added for convenience.
 
-    upon this component instantiation, pageData must be processed. This is accomplished with the
+    Upon component instantiation, pageData must be processed. This is accomplished with the
     fetchPageData call in the component instantiation useEffect.
         - the URL details are immediately fetched for each URL in pageData.urls, which creates:
             urlDict, a url-keyed javascript object for each url, and
             urlArray, an array with each entry pointing to a urlDict object.
 
-        - the references list is flattened, merging all "named" references into one
+        - The references list is flattened, merging all "named" references into one
             "master" reference, with the number of times a reference is used as a property.
 
-        - some other auxiliary properties are fetched for each reference and link
+        - Other auxiliary properties are fetched for each reference and link
 
-        NB TODO we should take all this processing code and place it in a processing module,
-        NB AND, this processing logic should really be in the IARI API backend code, once it
-        NB is established what needs to happen.
-
-    NB: we should use only "references" property, not "dehydrated_references"
-    TODO: deprecate "dehydrated_references" and use a "dehydrated" flag instead
+        NB TODO All this processing should be dome in a processing module,
+        NB TODO Ans, this processing module should really be part of IARI API backend
 
     */
 
@@ -303,7 +300,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, han
         // NB TODO Does this do anything useful???
 
         // sets the "hasTemplateArchive" property to true if archive_url parameter found in template
-        // sets url.hasTemplateArchive" of url found in template "ur'"parameter if ther
+        // sets url.hasTemplateArchive" of url found in template "ur'"parameter if there
 
         const templates = ref?.templates ? ref.templates : []
         const templateUrls = {}
@@ -347,23 +344,20 @@ export default function PageData({rawPageData = {}, showViewOptions = false, han
         //  - If it is not named, it is just a single instance of a reference.
 
         // for refs, if dehydrated=true, use pageData.dehydrated_references, else use pageData.references
-        const refs = (pageData?.dehydrated_references?.length)
-            ? pageData.dehydrated_references
-            : (pageData?.references?.length) ? pageData.references
-                : []
+        const refs = (pageData?.references?.length) ? pageData.references : []
 
         const namedRefs = {}
         const anchorRefs = []
 
-        // Process the "named" refs by looping thru each reference
+        // Process "named" refs by looping thru references
         // if named
         //      - increment reference count for namedRef[name]
-        //      - if no content, assume its a reference to an anchor reference
+        //      - if no content, assume it's a reference to a reference that is already anchored
         refs.forEach(ref => {
 
             if (ref.name) {
                 // "named" references point to another "anchor" reference with the same name
-                // namedRef[fef.name] hold the reference count of this name
+                // namedRef[fef.name] holds the reference count of this name
 
                 if (!namedRefs[ref.name]) namedRefs[ref.name] = {
                     count : 0,
@@ -540,15 +534,14 @@ export default function PageData({rawPageData = {}, showViewOptions = false, han
 
         Object.keys(pageData.urlDict).forEach( link => {
             const myUrl = pageData.urlDict[link]
-
-            const statuses = []
-            const templates = []
-            const sections = []
-
             if (!myUrl || !myUrl.refs) {
                 console.log(`associateUrlsWithRefs: no urlDict for: ${link}`)
                 return
             }
+
+            const statuses = []
+            const templates = []
+            const sections = []
 
             // traverse each reference this url is associated with
             myUrl.refs.forEach( r => {
@@ -711,23 +704,23 @@ export default function PageData({rawPageData = {}, showViewOptions = false, han
 
 
     const processProbes = useCallback( (pageData, urlResults) => {
-        // urlResults is array of result objects from get_url_info results
-        // we loop through urlResults, and append info to e=corresponding
-        // pageData.urlDict entry
+        // urlResults is an array of result objects from get_url_info results
+        // we loop through urlResults, and append to corresponding urlDict entries
         //
-        // we are focussing on probe results only right now
+        // as of 2025.08.24 we are focussing on probe results only
+        //  - we also want to process archive data for each urlDict that is a primary link
 
         if (!pageData?.urlDict) return
         const urlDict = pageData.urlDict
 
         if (urlResults) {
-            urlResults.forEach(d => {
+            urlResults.forEach(result => {
 
                 // NB assumes d.data is valid
 
                 // must account for results "d.data" level of hierarchy
-                const myUrl = d.data.url
-                const probe_results = d.data.results?.probe_results
+                const myUrl = result.data.url
+                const probe_results = result.data.results?.probe_results
 
                 // calc score for each probe in probe
                 if (probe_results) {
@@ -852,15 +845,23 @@ export default function PageData({rawPageData = {}, showViewOptions = false, han
 
     const viewOptions = {
         "urls": {
+            key: "urls",
             caption: "URLs"
         },
         "refs": {
+            key: "refs",
             caption: "Reference Types"
         },
         "domains": {
+            key: "domains",
             caption: "Domains"
         },
+        "archives": {
+            key: "archives",
+            caption: "URL Archives"
+        },
         "stats": {
+            key: "stats",
             caption: "Statistics",
             enabled: false,
         },
@@ -914,6 +915,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, han
     const errorDisplay = getErrorDisplay(pageErrors)
 
     console.log(`PageData: rendering...${new Date().toISOString().slice(11, 23)}`)
+
     return <>
         {isLoadingUrls
             ? <Loader message={urlStatusLoadingMessage}/>
@@ -932,16 +934,24 @@ export default function PageData({rawPageData = {}, showViewOptions = false, han
                         <div className={`iare-ux-body`}>
                             <div className={'page-data-wrapper'}>
 
-                                {selectedViewType === 'urls' &&
+                                {selectedViewType === viewOptions['urls'].key &&
                                     <UrlDisplay pageData={pageData} options={{refresh: pageData.forceRefresh}} />
                                 }
 
-                                {selectedViewType === 'refs' &&
+                                {selectedViewType === viewOptions['refs'].key &&
                                     <RefDisplay pageData={pageData} options={{}}/>
                                 }
 
-                                {selectedViewType === 'stats' &&
+                                {selectedViewType === viewOptions['domains'].key &&
+                                    <DomainDisplay pageData={pageData} options={{}}/>
+                                }
+
+                                {selectedViewType === viewOptions['stats'].key &&
                                     <StatsDisplay pageData={pageData} options={{}}/>
+                                }
+
+                                {selectedViewType === viewOptions['archives'].key &&
+                                    <ArchivesDisplay pageData={pageData} options={{}}/>
                                 }
 
                                 {/*{selectedViewType === 'debug' &&*/}
