@@ -1,5 +1,5 @@
 import React from "react";
-import './shared/components.css';
+import './css/components.css';
 
 /*
 display description of filters and actions to take, if any

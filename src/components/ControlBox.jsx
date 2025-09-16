@@ -1,5 +1,5 @@
 import React from "react";
-import './shared/components.css';
+import './css/components.css';
 
 // TODO: add onHover for tooltip? onTooltip?
 // TODO: add onAction? or is all this covered in contents?

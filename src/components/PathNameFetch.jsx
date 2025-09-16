@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ButtonFetch from './ButtonFetch.jsx';
 import Checkbox from "./Checkbox.jsx";
-import "./shared/pathFetch.css"
+import "./css/pathFetch.css"
 
 /*
 expected props

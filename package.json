@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.3.1.9",
-  "version_name": "0.3.1.9 URL Archive Page Option",
+  "version": "0.3.1.10",
+  "version_name": "0.3.1.10 URL Archives d3 display",
   "private": true,
   "type": "module",
   "dependencies": {

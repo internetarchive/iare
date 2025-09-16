@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import UrlFlockPdf from "./UrlFlockPdf.jsx";
 import UrlOverviewPdf from "./UrlOverviewPdf.jsx";
 import Loader from "../Loader.jsx";
-import '../shared/urls.css';
+import '../css/urls.css';
 import './urls.pdf.css';
 import {ConfigContext} from "../../contexts/ConfigContext.jsx";
 import {UrlStatusCheckMethods} from "../../constants/checkMethods.jsx";

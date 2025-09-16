@@ -1,7 +1,7 @@
 import React from "react";
 import PageInfo from "./PageInfo.jsx";
 import PageDataPdf from "./PageDataPdf.jsx";
-import '../shared/page.css';
+import '../css/page.css';
 
 export default function PageDisplayV2PDF( { pageData }) {
 

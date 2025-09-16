@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import PageInfo from "./PageInfo.jsx";
 import PageData from "./PageData.jsx";
-import '../shared/page.css';
+import '../css/page.css';
 import {copyToClipboard} from "../../utils/generalUtils.js";
 import {ConfigContext} from "../../contexts/ConfigContext.jsx";
 

@@ -1,5 +1,5 @@
 import React from "react";
-import './shared/components.css';
+import './css/components.css';
 
 /*
 filter argument may have a caption, desc

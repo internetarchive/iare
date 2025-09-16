@@ -1,6 +1,6 @@
 import React from "react";
 import ConditionBox from "./ConditionBox.jsx";
-import './shared/components.css';
+import './css/components.css';
 import {ACTIONS_IARE} from "../constants/actionsIare.jsx";
 
 /* display description of conditions (filters and actions), if any */

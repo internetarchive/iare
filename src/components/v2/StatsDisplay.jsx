@@ -1,7 +1,7 @@
 import React from 'react';
 import { JsonEditor } from 'json-edit-react'
 
-import '../shared/components.css';
+import '../css/components.css';
 // import RawJson from "../RawJson.jsx";
 
 // <JsonEditor

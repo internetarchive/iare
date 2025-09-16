@@ -1,6 +1,6 @@
 import React from 'react';
 import './domainDisplay.css';
-import '../../shared/components.css';
+import '../../css/components.css';
 import BubbleChart from "../../d3/BubbleChart.jsx";
 
 export default function DomainDisplay ({ pageData, options } ) {

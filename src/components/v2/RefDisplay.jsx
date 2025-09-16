@@ -3,7 +3,7 @@ import RefFlock from "./RefFlock.jsx";
 import RefOverview from "./RefOverview.jsx";
 import {REF_FILTER_DEFS, REF_FILTER_TYPES} from "../../constants/refFilterMaps.jsx";
 import './refs.css';
-import '../shared/components.css';
+import '../css/components.css';
 
 export default function RefDisplay ({ pageData, options } ) {
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import './archiveDisplay.css';
-import '../../shared/components.css';
+import '../../css/components.css';
 import {ConfigContext} from "../../../contexts/ConfigContext.jsx";
 import BubbleChart from "../../d3/BubbleChart.jsx";
 
