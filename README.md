@@ -34,6 +34,14 @@ https://internetarchive.github.io/iare/
 ```
 
 
+## Regular Maintenance
+
+To ensure testing tools respect latest browser specs, it is a good idea to run the following command regularly:
+
+### `npx update-browserslist-db@latest`
+
+
+
 ## Deploy in Docker
 
 Build a deployment Docker image:
