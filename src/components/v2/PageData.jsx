@@ -55,8 +55,9 @@ export default function PageData({rawPageData = {}, showViewOptions = false, han
 
     // const defaultProbesString = "verifyi|trust_project|iffy"
     const defaultProbesString = "verifyi|iffy"
+    const defaultViewType = "archives"  // "urls"
 
-    const [selectedViewType, setSelectedViewType] = useState('urls')
+    const [selectedViewType, setSelectedViewType] = useState(defaultViewType)
     const [isLoadingUrls, setIsLoadingUrls] = useState(false)
     const [isDataReady, setIsDataReady] = useState(false)
 
@@ -875,15 +876,15 @@ export default function PageData({rawPageData = {}, showViewOptions = false, han
             <div className={'list-label'}>View Options:</div>
             {Object.entries(viewOptions)
                 .filter(([_, opt]) => opt.enabled !== false) // filter out disabled
-                .map(([viewOption, opt]) => (
-                <div key={viewOption} >
+                .map(([viewOptionKey, opt]) => (
+                <div key={viewOptionKey} >
                     <label>
                         <input
                             type="radio"
-                            value={viewOption}
-                            checked={selectedViewType === viewOption}
+                            value={viewOptionKey}
+                            checked={selectedViewType === viewOptionKey}
                             onChange={handleViewTypeChange}
-                        /> <span className={selectedViewType === viewOption ? 'selected-choice' : '' }>{opt.caption}</span>
+                        /> <span className={selectedViewType === viewOptionKey ? 'selected-choice' : '' }>{opt.caption}</span>
                     </label>
                 </div>
                 ))}

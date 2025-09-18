@@ -1,0 +1,9 @@
+.archive-display-columns {
+    display: flex;
+    flex-direction: row;
+}
+
+.archive-display-columns .archive-display-section {
+    /*flex-basis: 18% !important;*/
+    width: 48% !important;
+}
