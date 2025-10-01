@@ -4,6 +4,7 @@ import '../../css/components.css';
 import {ConfigContext} from "../../../contexts/ConfigContext.jsx";
 // import BubbleChart from "../../d3/BubbleChart.jsx";
 import { compareByUrl } from '../../../constants/sortMethods.jsx';
+import UrlBubbles from "../../d3/UrlBubbles.jsx";
 
 export default function ArchiveDisplay ({ pageData, options } ) {
 
@@ -21,10 +22,16 @@ export default function ArchiveDisplay ({ pageData, options } ) {
     }).sort(compareByUrl('asc'))
 
 
-    // simpleDomainsDisplay is for debug
+    // simpleArchiveDisplay
+    // simpleUrlArray is collection of "pure" links - does not include archives
+    // each should have associated archive
+    // and live status
+
+    // goal: make a d3 collection of urls
+
     const simpleArchiveDisplay = <div className={"archive-display-section"}>
-        <div className={"archive-display-section-header"}>Simple Archive display</div>
-        <div className={"archive-display-section-header"}>Shows archive status
+        <div className={"xxxarchive-display-section-header"}>Simple Archive display</div>
+        <div className={"xxxarchive-display-section-header"}>Shows archive status
             of url and all archive urls and if they support a prime url or not</div>
 
         <div className={"archive-display-columns"}>
@@ -56,9 +63,9 @@ export default function ArchiveDisplay ({ pageData, options } ) {
                 fontStyle: "italic", 
                 color: "red"}}>This feature under development</span></h3>
 
-            {simpleArchiveDisplay}
+            <UrlBubbles data={simpleUrlArray} width={"400"} height={"400"} />
 
-            {/*<BubbleChart data={domainsArray} width={"400"} height={"400"} />*/}
+            {/*{simpleArchiveDisplay}*/}
 
         </div>
 

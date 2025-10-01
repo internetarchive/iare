@@ -64,6 +64,7 @@ const BubbleChart = ({ data }) => {
         // Bubbles
         const bubbles = svg.selectAll('circle')
             .data(data)
+
             .enter()
             .append('circle')
             .attr('r', d => radiusScale(d.value))
@@ -96,6 +97,7 @@ const BubbleChart = ({ data }) => {
         // Labels
         const labels = svg.selectAll('text')
             .data(data)
+
             .enter()
             .append('text')
             .text(d => d.name)
