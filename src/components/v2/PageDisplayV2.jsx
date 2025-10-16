@@ -12,7 +12,7 @@ export default function PageDisplayV2( { pageData }) {
 
     const [showViewOptions, setShowViewOptions] = useState(myConfig.isShowViewOptions)
 
-    const handleClick = () => {
+    const handleViewOptionsClick = () => {
         setShowViewOptions(prevState => !prevState)
     }
 
@@ -21,14 +21,14 @@ export default function PageDisplayV2( { pageData }) {
             <PageInfo
                 pageData={pageData}
                 showViewOptions={showViewOptions}
-                handleClick = {handleClick}
+                handleViewOptionsClick = {handleViewOptionsClick}
             />
         </div>
         <div className={"iare-ux-body"}>
             <PageData
                 rawPageData={pageData}
                 showViewOptions={showViewOptions}
-                handleClick = {handleClick}
+                viewType={"urls"} // shall get this passed in somehow...params? config? localStorage eventually...
             />
         </div>
     </div>

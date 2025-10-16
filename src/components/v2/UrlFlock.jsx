@@ -584,7 +584,7 @@ const urlFlock = React.memo(function UrlFlock({
                 </div>
 
                 <div className={"url-status"} onClick={() => {handleSortClick("status")}}
-                >Link<br/>Status
+                >Live<br/>Status
                 </div>
 
                 <div className={"url-archive_status"} onClick={() => { handleSortClick("archive_status"); }}

@@ -3,15 +3,15 @@ import PureJson from "../utils/PureJson.jsx";
 import {convertToCSV, copyToClipboard} from "../../utils/generalUtils.js";
 import {ConfigContext} from "../../contexts/ConfigContext.jsx";
 
-function ClickButton( {buttonCaption=null, buttonText='', handleClick}) {
+function ClickButton( {buttonCaption=null, buttonText='', onClick}) {
     const buttonMarkup = buttonCaption ? buttonCaption : <span>{buttonText}</span>
     return <div className="debug-click-button" >
-        <button onClick={handleClick} className={'utility-button small-button'} >{buttonMarkup}</button>
+        <button onClick={onClick} className={'utility-button small-button'} >{buttonMarkup}</button>
     </div>
 }
 
 /* displays basic info from the original returned json for the page fetch */
-export default function PageInfo({ pageData, showViewOptions = false, handleClick }) {
+export default function PageInfo({ pageData, showViewOptions = false, handleViewOptionsClick }) {
 
     const [showDetail, setShowDetail] = useState(false);
 
@@ -127,11 +127,11 @@ export default function PageInfo({ pageData, showViewOptions = false, handleClic
     const section_endpoint = <p>Page Fetch endpoint: <a href={pageData.endpoint} target={"_blank"} rel={"noreferrer"}>{pageData.endpoint}</a></p>
 
     const section_buttons = <>
-        <ClickButton buttonText={"Copy CiteRefs to CSV"} handleClick={handleCopyCiteRefs} />
-        <ClickButton buttonText={"Copy Reference Data to CSV"} handleClick={handleCopyRefs} />
-        <ClickButton buttonText={"Copy UrlArray to Clipboard (JSON)"} handleClick={handleCopyUrlArray} />
-        <ClickButton buttonText={"Copy UrlArray to CSV"} handleClick={handleCopyUrlArrayCsv} />
-        <ClickButton buttonText={"Copy PageData to Clipboard (JSON)"} handleClick={handleCopyPageData} />
+        <ClickButton buttonText={"Copy CiteRefs to CSV"} onClick={handleCopyCiteRefs} />
+        <ClickButton buttonText={"Copy Reference Data to CSV"} onClick={handleCopyRefs} />
+        <ClickButton buttonText={"Copy UrlArray to Clipboard (JSON)"} onClick={handleCopyUrlArray} />
+        <ClickButton buttonText={"Copy UrlArray to CSV"} onClick={handleCopyUrlArrayCsv} />
+        <ClickButton buttonText={"Copy PageData to Clipboard (JSON)"} onClick={handleCopyPageData} />
     </>
 
     const section_extra = <p><br/>ideas: Alert when No Books at all in article</p>
@@ -154,7 +154,7 @@ export default function PageInfo({ pageData, showViewOptions = false, handleClic
 
     const viewOptionsButton = <button
         className={"utility-button page-utility-button"}
-        onClick={handleClick} >
+        onClick={handleViewOptionsClick} >
         <span>{showViewOptions ? "Hide View Options" : "Show View Options"}</span>
     </button>
 

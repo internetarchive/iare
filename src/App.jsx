@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState, useRef} from "react";
-import {Tooltip as MyTooltip} from "react-tooltip";
+import {Tooltip as AppTooltip} from "react-tooltip";
 import package_json from "../package.json";
 
 import { IariError } from "./errors/IariError";
@@ -26,6 +26,12 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     const appTitle = "Internet Archive Reference Explorer"
 
     const [isDebug, setDebug] = useState(myDebug);
+    const [isScrollFix, setIsScrollFix] = useState(() => {
+        // // // code for test if local exists or npt
+        // const saved = localStorage.getItem('isScrollFix');
+        // return saved ? JSON.parse(saved) : false;
+        return false;
+    });
 
     // these are config values to show/hide certain UI features, available from debug info box
     const [isShowUrlOverview, setIsShowUrlOverview] = useState(true);
@@ -48,6 +54,13 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     // states of page
     const [endpointPath, setEndpointPath] = useState('');
     const [pageData, setPageData] = useState(null);
+    const ERROR_MESSAGES = {
+        'NETWORK': 'Failed to fetch - IARI service failure: Service down or CORS issue.',
+        'NOT_FOUND': '404 Error finding target page.',
+        'SERVER': '502 Server problem (no further info available)',
+        'IARI': 'IARI failure: ',
+        'DEFAULT': 'Unhandled error'
+    };
     const [myError, setMyError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -61,6 +74,24 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
 
     const toggleDebug = () => {
         setDebug(!isDebug);
+    }
+
+    const toggleScrollFix = () => {
+        // toggles value of isScrollFix, which determines scroll fix mode of screen
+        setIsScrollFix(prev => {
+            // isScrollFix true allows scrolling without problems screen wide
+            // isScrollFix false pegs scrolling to sections, so functionality may crowd
+            const newScrollValue = !prev;
+            // set style property of about-to-be-new value before setting state value;
+            // this ensures the displayed value is in sync with stat-ed value
+            document.documentElement.style.setProperty(
+                "--iare-ux-body-overflow-y",
+                newScrollValue ? "inherit" : "auto"
+            );
+            localStorage.setItem('isScrollFix', JSON.stringify(newScrollValue));  // so next invocation will remember
+            return newScrollValue;
+        });
+
     }
 
     const handleScroll = () => {
@@ -106,6 +137,12 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     useEffect(() => {
         console.log('APP: useEffect[env]: app name: ' + package_json.name, ', version: ' + package_json.version)
         document.body.classList.add(env);
+
+                        // // pull local storage settings
+                        // const savedScrollFix = localStorage.getItem('isScrollFix');
+                        // if (savedScrollFix !== null) {
+                        //     setIsScrollFix(JSON.parse(savedScrollFix));
+                        // }
     }, [env])
 
                 // add event listener for scroll and resize events
@@ -189,6 +226,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     // fetch article reference data
     //
     // TODO: account for error conditions, like wrong file format, not found, etc
+    //
     const fetchArticleData = useCallback((
         {
             pathName,
@@ -277,31 +315,18 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
             })
 
             .catch((err) => {
-                // TODO: set false pageData for display?
-
-                // how do we tell if error is from native network cause, or synthesized/augmented by our handling of res != OK above
-
                 if (err.name === IariError.name) {
-                    setMyError(`IARI failure: ${err.message}`)
-
+                    setMyError(ERROR_MESSAGES.IARI + err.message);
                 } else if (err.message === "404") {
-                    setMyError("404 Error finding target page.")
-
+                    setMyError(ERROR_MESSAGES.NOT_FOUND);
                 } else if (err.message === "502") {
-                    setMyError("502 Server problem (no further info available)")
-
+                    setMyError(ERROR_MESSAGES.SERVER);
                 } else if (err.name === "TypeError" && err.message === "Failed to fetch") {
-                    setMyError(err.message + " - IARI service failure: Service down or CORS issue.");
-                    // TODO: this happens when filename does not exist!
-                    //  or when CORS error encountered
-
+                    setMyError(ERROR_MESSAGES.NETWORK);
                 } else {
-                    // ?? should we extract HTTP status code from string? (1st 3 characters, if number? without number, next?)
-                    setMyError(`Unhandled error ${err.name}: ${err.message}`);
+                    setMyError(`${ERROR_MESSAGES.DEFAULT} ${err.name}: ${err.message}`);
                 }
-
                 setPageData(null);
-
             })
 
             .finally(() => {
@@ -411,21 +436,6 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         })
         // setIariSourceId(sourceId);
     };
-    const iariChoices = Object.keys(IariSources)
-        .filter(key => {
-            return env === 'env-staging'
-                ? !(key === "iari_local" || key === "iari")  // filter out iari_local and iari on Staging
-                : true
-        })
-        .map( key => {
-            return { caption: IariSources[key].caption, value: IariSources[key].key }
-        })
-
-    const iariChoiceSelect = <div className={"choice-wrapper iari-source-wrapper"}>
-        <Dropdown choices={iariChoices} label={'Iari Source:'} onSelect={handleIariSourceIdChange} defaultChoice={myIariSourceId}/>
-    </div>
-
-    const versionInfo = `version ${package_json.version}`
     const siteInfo = (env !== 'env-production')  // TODO implement IareEnvironments
         ? (env !== 'env-staging'
             ? ` LOCAL `
@@ -433,15 +443,39 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         : ''
     const iariSourceInfo = IariSources[myIariSourceId]?.caption
 
+    const buttonScrollFix = <div>
+        <div>Scroll: <span className={"lock-icon"}
+                           onClick={toggleScrollFix}
+                           data-tooltip-id="app-tooltip-id"
+                           data-tooltip-content={isScrollFix
+                               ? "Currently released - Click to peg scroll to sections"
+                               : "Currently pegged - Click to release scroll to screen"}>
+            {isScrollFix
+                ?
+                <svg className={"svg-icon-box"} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path
+                        d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2z"/>
+                </svg>
+                :
+                <svg className={"svg-icon-box"} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path
+                        d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                </svg>
+            }
+            </span></div>
+    </div>
+
+
     const buttonShowDebug = (env !== 'env-production') &&
         <button className={"utility-button debug-button small-button"}
                 onClick={toggleDebug} >{
-        isDebug
-            ? <>&#8212;</>
-            : "+"  // dash (&#8212;) and plus sign
+            isDebug
+                ? <>&#8212;</>
+                : "+"  // dash (&#8212;) and plus sign
             // up triangle: <>&#9650;</>
             // dn triangle: <>&#9660;</>
         }</button>
+
 
     const debugButtonFilters = <button // this is the 'show urls list' button
         className={"utility-button debug-button"}
@@ -450,12 +484,14 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         }
         } >{isShowUrlOverview ? "Hide" : "Show"} Filters</button>
 
+
     const debugButtonShortcuts = <button // this is the 'show shortcuts' button
         className={"utility-button debug-button"}
         onClick={() => {
             setIsShowShortcuts(prevState => !prevState )
         }
         } >{isShowShortcuts ? "Hide" : "Show"} Shortcuts</button>
+
 
     const debugButtonViewTypes = <button // this is the 'show view options' button
         className={"utility-button debug-button"}
@@ -490,6 +526,22 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         {debugButtonShortcuts}
     </>
 
+    const iariChoices = Object.keys(IariSources)
+        .filter(key => {
+            return env === 'env-staging'
+                ? !(key === "iari_local" || key === "iari")  // filter out iari_local and iari on Staging
+                : true
+        })
+        .map( key => {
+            return { caption: IariSources[key].caption, value: IariSources[key].key }
+        })
+
+    const iariChoiceSelect = <div className={"choice-wrapper iari-source-wrapper"}>
+        <Dropdown choices={iariChoices} label={'Iari Source:'} onSelect={handleIariSourceIdChange} defaultChoice={myIariSourceId}/>
+    </div>
+
+    const versionInfo = `version ${package_json.version}`
+
     const debug = <div className={"debug-section " + (isDebug ? "debug-on" : "debug-off")}>
         {/*<div style={{marginBottom:".5rem"}}*/}
         {/*>{iariChoiceSelect} {methodChoiceSelect} {articleVersionChoiceSelect}</div>*/}
@@ -508,18 +560,6 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         <p><span className={'label'}>endpointPath:</span> <MakeLink href={endpointPath}/></p>
     </div>
 
-    const tooltipConfirm = <MyTooltip id="confirm-tooltip-id"
-                                         float={true}
-                                         closeOnEsc={true}
-                                         delayShow={120}
-                                         variant={"info"}
-                                         noArrow={true}
-                                         offset={5}
-                                         className={"confirm-tooltip"}
-                                         style={{ zIndex: 999 }}
-    />
-
-
     // set config for config context
     const config = {
         environment: env,
@@ -534,7 +574,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         isShowDebugInfo: isShowDebugInfo,
         isShowDebugComponents: isShowDebugComponents,
         isShowViewOptions: isShowViewOptions,
-        tooltipIdConfirm: "confirm-tooltip-id",
+        tooltipIdApp: "app-tooltip-id",
     }
 
     console.log(`APP: Rendering App component:`, JSON.stringify({
@@ -559,6 +599,19 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         // setMyError("Fake Error here!")
     }, [])
 
+
+    const tooltipApp = <AppTooltip id="app-tooltip-id"
+                                   float={true}
+                                   closeOnEsc={true}
+                                   delayShow={420}
+                                   variant={"info"}
+                                   noArrow={true}
+                                   offset={5}
+                                   className={"app-tooltip"}
+                                   style={{ zIndex: 999, backgroundColor: "rgba(0,0,255,0.8)" }}
+    />
+
+
     return <>
 
         {debugStaticDisplay}
@@ -572,13 +625,12 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
                     <div className={"iare-ux-header main-header"}>
 
                         <div className={"main-header-contents"}>
-                            {/*{Array.from({length: 3}, (_, i) => {return <div>Header Here!</div>})}*/}
-
-                            {/*<div className={"iare-header-contents"}>*/}
-                                <h1 className={"app-title"}>{appTitle}</h1>
-                                <div className={"iare-header-aux1"}>{versionInfo}{siteInfo} ({iariSourceInfo}) {buttonShowDebug}</div>
-                            {/*</div>*/}
-
+                            <div><h1 className={"app-title"}>{appTitle}</h1></div>
+                            <div className={"iare-header-aux1"}>
+                                {buttonScrollFix}&nbsp;
+                                <div>{versionInfo}{siteInfo} ({iariSourceInfo})&nbsp;</div>
+                                {buttonShowDebug}
+                            </div>
                         </div>
 
                         {debug}
@@ -638,7 +690,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
 
             {/*</div>*/}
 
-            {tooltipConfirm}
+            {tooltipApp}
 
         </ConfigContext.Provider>
 

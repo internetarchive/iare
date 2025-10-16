@@ -103,7 +103,8 @@
 
 .url-list-rows {
     overflow-y: auto;
-    flex: 1
+    flex: 1;
+    background-color: var(--iare-test-color)
 }
 
 .url-list-rows .url-row

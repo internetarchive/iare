@@ -624,7 +624,7 @@ export default function UrlDisplay ({ pageData, options } ) {
                                     noArrow={true}
                                     offset={5}
                                     className={"url-display-tooltip"}
-                                    style={{ zIndex: 999 }}
+                                    style={{ zIndex: 99 }}
                             />
 
                 // const testUrlOverviewDisplay=<div className={"url-overview-column"} style={{backgroundColor: "chartreuse"}}>

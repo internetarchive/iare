@@ -122,7 +122,8 @@ const UrlOverview = React.memo(({
         <FilterBox name={"reference_stats"} caption={"Reference Stats"} showContents={expand.reference_stats}
                    onToggle={onToggleShow}  // gets passed filter name when clicked from within FilterBox
             >
-            <ReferenceStats pageData={pageData}
+            <ReferenceStats
+                pageData={pageData}
                 options={{
                     colors: {
                                 blue: "#35a2eb",
@@ -141,6 +142,7 @@ const UrlOverview = React.memo(({
                     another_option:"your option here...",
                  }}
                 onAction={onAction}
+
                 currentState={currentState?.reference_stats}
                 tooltipId={tooltipId}/>
 

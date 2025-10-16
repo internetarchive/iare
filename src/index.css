@@ -2,7 +2,8 @@
 @import url("__custom__/iare_custom_overrides.css");
 
 :root {
-
+    --iare-test-color: inherit;
+    --iare-ux-body-overflow-y: auto;
 
     --iare-focus-box-bg: #d8eeff;
     --iare-focus-box-border: 2.0pt solid hsl(207.92deg 75.94% 73.92%);
@@ -169,10 +170,12 @@ body.env-other .iare-header-aux1-display span.non-production {
 }
 .iare-ux-body {
     flex: 1 1 auto;  /* grow to fill remaining space */
-    overflow-y: auto; /* scrolls when content overflows */
-    /*background: #c1b4ec;*/
+    overflow-y: var(--iare-ux-body-overflow-y);
     height: 100%;
     width:100%;
+}
+.iare-ux-body.main-body {
+    overflow-y: auto;  /* always for top iare-ux-body */
 }
 
 .main-container {
@@ -253,6 +256,10 @@ body.env-other .iare-header-aux1-display span.non-production {
     padding-top: 0.65rem;
     font-weight: normal;
     color: grey;
+
+    /*width: 41%;*/
+    display: flex
+;
 }
 
 .iare-input {
@@ -508,4 +515,13 @@ font-weight:normal;
 }
 .indent-info p {
     margin-bottom: .25rem;
+}
+
+.lock-icon {
+    cursor: pointer;
+}
+
+.svg-icon-box {
+    margin-top: -.34rem;
+    margin-left: -.125rem;
 }

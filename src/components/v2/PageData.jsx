@@ -33,7 +33,7 @@ When this component is rendered, it must "process" the pageData. This involves:
 */
 
 
-export default function PageData({rawPageData = {}, showViewOptions = false, handleClick}) {
+export default function PageData({rawPageData = {}, showViewOptions = false, viewType = "archives"}) {
     /*
     pageData is the raw data from IARI fetch call, with some decoration properties added for convenience.
 
@@ -55,9 +55,8 @@ export default function PageData({rawPageData = {}, showViewOptions = false, han
 
     // const defaultProbesString = "verifyi|trust_project|iffy"
     const defaultProbesString = "verifyi|iffy"
-    const defaultViewType = "archives"  // "urls"
+    const [selectedViewType, setSelectedViewType] = useState(viewType)
 
-    const [selectedViewType, setSelectedViewType] = useState(defaultViewType)
     const [isLoadingUrls, setIsLoadingUrls] = useState(false)
     const [isDataReady, setIsDataReady] = useState(false)
 
