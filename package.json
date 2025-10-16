@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.3.1.10",
-  "version_name": "0.3.1.10 URL Archives d3 display",
+  "version": "0.3.1.11",
+  "version_name": "0.3.1.11 Scroll lock and unlock",
   "private": true,
   "type": "module",
   "dependencies": {
