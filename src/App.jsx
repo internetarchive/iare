@@ -33,8 +33,9 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
             gap: '.45rem'
         },
         '.app-logo': {
-            height: '2.2rem',
-            width: 'auto'
+            height: '1.65rem',
+            width: 'auto',
+            marginLeft: '0.27rem',
         }
     }
 
