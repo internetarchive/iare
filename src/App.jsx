@@ -25,6 +25,27 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
 
     const appTitle = "Internet Archive Reference Explorer"
 
+    // Add CSS styles for logo
+    const styles = {
+        '.header-title-section': {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '.45rem'
+        },
+        '.app-logo': {
+            height: '2.2rem',
+            width: 'auto'
+        }
+    }
+
+    // Add styles to document
+    Object.entries(styles).forEach(([selector, rules]) => {
+        const styleEl = document.createElement('style')
+        styleEl.textContent = `${selector} { ${Object.entries(rules).map(([prop, value]) =>
+            `${prop.replace(/[A-Z]/g, m => '-' + m.toLowerCase())}: ${value}`).join(';')} }`
+        document.head.appendChild(styleEl)
+    })
+
     const [isDebug, setDebug] = useState(myDebug);
     const [isScrollFix, setIsScrollFix] = useState(() => {
         // // // code for test if local exists or npt
@@ -625,7 +646,10 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
                     <div className={"iare-ux-header main-header"}>
 
                         <div className={"main-header-contents"}>
-                            <div><h1 className={"app-title"}>{appTitle}</h1></div>
+                            <div className="header-title-section">
+                                <img src={"logo192.png"} alt="App Logo" className="app-logo"/>
+                                <h1 className={"app-title"}>{appTitle}</h1>
+                            </div>
                             <div className={"iare-header-aux1"}>
                                 {buttonScrollFix}&nbsp;
                                 <div>{versionInfo}{siteInfo} ({iariSourceInfo})&nbsp;</div>
