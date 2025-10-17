@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.3.1.11",
-  "version_name": "0.3.1.11 Scroll lock and unlock",
+  "version": "0.3.1.12",
+  "version_name": "0.3.1.12 app logo",
   "private": true,
   "type": "module",
   "dependencies": {
