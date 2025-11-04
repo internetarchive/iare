@@ -67,10 +67,25 @@
     font-weight: bold;
     line-height:1.2;
     margin-bottom: 0 !important;
+    position: relative;
 }
 
 .control-box-caption .sub-caption {
+    font-style: italic;
+    font-size:88%;
+    font-weight: bold !important;
+    opacity:0.3;
+    /*text-align: right;*/
+    /*position: absolute;*/
+    /*right: 0.25rem;*/
+    /*top: 0.2rem;*/
+    /*margin-top: 0.25rem;*/
+    /*display:flex;*/
+    /*flex-flow: wrap;*/
+    /*flex-direction: row;*/
+    /*justify-content: space-between;*/
 }
+
 .control-box-contents .category-row {
     line-height:1.8;
 }

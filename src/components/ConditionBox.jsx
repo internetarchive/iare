@@ -17,10 +17,7 @@ export default function ConditionBox({filter = null}) {
             <div className={"category-row"}>
                 <div className={"cond-data"}>Showing All Items</div>
             </div>
-            <div className={"fixit-row"}>
-                <div className={"cond-data"}>Use filters to narrow selection.</div>
-            </div>
-        </div>
+    </div>
 
     return <>
         <div className={`condition-box`}>

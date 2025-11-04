@@ -14,7 +14,9 @@ import Checkbox from "../Checkbox.jsx";
 import {Chart, LinearScale, BarElement, ArcElement, Legend, Tooltip, Title, SubTitle, Colors,} from 'chart.js'
 import ReferenceStats from "./charts/ReferenceStats.jsx";
 import {ConfigContext} from "../../contexts/ConfigContext.jsx";
+
 import {noBookLink, bookDefs} from "../../utils/iariUtils.js";
+
 Chart.register(LinearScale, BarElement, ArcElement, Legend, Tooltip, Title, SubTitle, Colors,);
 
 // displays overview stats of article data
@@ -153,10 +155,7 @@ const UrlOverview = React.memo(({
 
         <div className={"iare-ux-header"}>
             <ControlBox>
-                <h3 className={"control-box-caption"}>Filters</h3>
-                {/*<div className={"category-row"}>Clicking an item filters URL and References lists.</div>*/}
-                <div className={"category-row"}>Clicking a filter item selects URLs and References.</div>
-
+                <h3 className={"control-box-caption"}>Filters <span className={"sub-caption"}>Use filters to set Conditions</span></h3>
                 {filterButtonRow}
             </ControlBox>
         </div>
