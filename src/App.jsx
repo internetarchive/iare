@@ -57,7 +57,8 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
 
     // these are config values to show/hide certain UI features, available from debug info box
     const [isShowUrlOverview, setIsShowUrlOverview] = useState(true);
-    const [isShowShortcuts, setIsShowShortcuts] = useState(false);
+    const [isShowShortcuts, setIsShowShortcuts] = useState(true);
+        // TODO set this based on local storage or cookie value
     const [isShowUseCache, setIsShowUseCache] = useState(false);
 
     const [isShowDebugInfo, setIsShowDebugInfo] = useState(false);
