@@ -1,0 +1,15 @@
+.grok-display-columns {
+    display: flex;
+    flex-direction: row;
+}
+
+.grok-display-columns .grok-display-section {
+    /*flex-basis: 18% !important;*/
+    width: 48% !important;
+}
+
+
+.grok-display-section-header {
+    font-weight: bold;
+    font-size: 1.5rem !important;
+}

@@ -1,6 +1,6 @@
 import React from "react";
-import PageDisplayV2 from "./v2/PageDisplayV2.jsx";
-import PageDisplayV2PDF from "./v2pdf/PageDisplayV2PDF.jsx";
+import PageDisplayV2 from "./pages/v2/PageDisplayV2.jsx";
+import PageDisplayV2PDF from "./pages/v2pdf/PageDisplayV2PDF.jsx";
 
 // uses React.memo to prevent unnecessary re-renders
 //
