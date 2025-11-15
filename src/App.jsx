@@ -19,9 +19,20 @@ import {ParseMethods} from "./constants/parseMethods.jsx";
 
 import {ConfigContext} from "./contexts/ConfigContext"
 import {ShortcutDefs, envShortcutLists} from "./constants/shortcutDefs.jsx";
+import {MEDIA_TYPES} from "./constants/mediaTypes.jsx";
 
 
-export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod, myParseMethod, myIariSourceId, myDebug}) {
+export default function App(
+    {
+        env,
+        myPath,
+        myCacheData,
+        myRefresh,
+        myCheckMethod,
+        myParseMethod,
+        myIariSourceId,
+        myDebug
+    }) {
 
     const appTitle = "Internet Archive Reference Explorer"
 
@@ -222,26 +233,52 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
 
         // if cacheData, assume wiki
 
-        // if path ends in ".pdf", assume pdf
-        // if path contains ".wikipedia.org/wiki/, assume wiki
-
-        // else unknown, for now
+                    // if (cacheData)
+                    //     return 'wiki'  // cacheData always returns a wiki cache for now....
+                    //     // TODO: will have to process cahce filename to determine mediaTy]e
+                    //     // e.g. grok results can be cached
+                    //
+                    // // if path ends in ".pdf", assume pdf
+                    // // if path contains ".wikipedia.org/wiki/, assume wiki
+                    //
+                    // // eslint-disable-next-line
+                    // const regexPdf = new RegExp("\.pdf$");
+                    // // eslint-disable-next-line
+                    // const regexWiki = new RegExp("\.wikipedia.org/wiki/");
+                    // // eslint-disable-next-line
+                    //
+                    // if (regexPdf.test(path))
+                    //     return 'pdf'
+                    // else if (regexWiki.test(path))
+                    //     return "wiki"
+                    //
+                    // else
+                    //     // else unknown, for now
+                    //     return "unknown";
 
         if (cacheData)
-            return 'wiki'  // cacheData always returns a wiki cache for now....
+            return MEDIA_TYPES.UNKNOWN.key
+            // TODO: will have to process cache filename to determine mediaTy]e
+            // e.g. grok results can be cached
 
-        // eslint-disable-next-line
-        const regexPdf = new RegExp("\.pdf$");
-        // eslint-disable-next-line
-        const regexWiki = new RegExp("\.wikipedia.org/wiki/");
-        // eslint-disable-next-line
+        // // if path ends in ".pdf", assume pdf
+        // // if path contains ".wikipedia.org/wiki/, assume wiki
+        //
+        // // eslint-disable-next-line
+        // const regexPdf = new RegExp("\.pdf$");
+        // // eslint-disable-next-line
+        // const regexWiki = new RegExp("\.wikipedia.org/wiki/");
+        // // eslint-disable-next-line
 
-        if (regexPdf.test(path))
-            return 'pdf'
-        else if (regexWiki.test(path))
-            return "wiki"
+        if (MEDIA_TYPES.WIKI.regex.test(path))
+            return MEDIA_TYPES.WIKI.key
+        else if (MEDIA_TYPES.GROK.regex.test(path))
+            return MEDIA_TYPES.GROK.key
+        else if (MEDIA_TYPES.PDF.regex.test(path))
+            return MEDIA_TYPES.PDF.key
+
         else
-            return "unknown";
+            return MEDIA_TYPES.UNKNOWN.key
 
     };
 
@@ -417,6 +454,8 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         fetchArticleData({
             pathName: myPath,
             cacheData: myCacheData,
+                // cacheData means get parsed file contents from local cache.
+                // This is a debug helper mechanism.
             refresh: myRefresh
         })
 
@@ -466,6 +505,9 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         : ''
     const iariSourceInfo = IariSources[myIariSourceId]?.caption
 
+    // scroll Fix - for small screens, turning on "scrollfix" allows more elements of
+    // of the screen to be scrolled. otherwise, screen elements that are fixed take up
+    // too much of screen real estate and not much room is left for scrolling data!
     const buttonScrollFix = <div>
         <div>Scroll: <span className={"lock-icon"}
                            onClick={toggleScrollFix}

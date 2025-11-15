@@ -22,7 +22,7 @@ import {UrlStatusCheckMethods} from "../../../constants/checkMethods.jsx";
 import {testPageData} from "../../../utils/testUtils.jsx";
 import DomainDisplay from "./views/Domain/DomainDisplay.jsx";
 import ArchiveDisplay from "./views/Archive/ArchiveDisplay.jsx";
-import GrokDisplay from "./views/Grok/GrokDisplay.jsx";
+import GrokDisplay from "../vGrok/views/Grok/GrokDisplay.jsx";
 
 /*
 When this component is rendered, it must "process" the pageData. This involves:
@@ -79,7 +79,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
     // well, but assigning to a local var seems to make things work
     const rspDomains = categorizedDomains
 
-    const pageData = rawPageData  // TODO ehy this reassign??
+    const pageData = rawPageData  // TODO why this reassign??
 
     const addProcessError = (pageData, newError) => {
         if (!pageData.process_errors) pageData.process_errors = []

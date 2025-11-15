@@ -15,6 +15,8 @@ import {ParseMethods} from "./constants/parseMethods.jsx";
 import './index.css';
 
 const getEnvironment = () => {
+    // return 'env-production'
+
     const REGEX_PRODUCTION_ENV = new RegExp(/^(?:(?:[\w-]+\.)+)?(?:[\w-]+\.)?archive\.org$/);  // if "(\.?)archive.org" at end of string
     const host = window.location.host
     if (REGEX_PRODUCTION_ENV.test(host)) return 'env-production'

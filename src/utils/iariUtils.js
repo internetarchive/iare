@@ -3,6 +3,7 @@ import {IariSources} from "../constants/iariSources.jsx";
 import {ParseMethods} from "../constants/parseMethods.jsx";
 import {IariMethods} from "../constants/iariMethods.js";
 import {ProbeDefs} from "../constants/probeDefs.jsx";
+import {MEDIA_TYPES} from "../constants/mediaTypes.jsx";
 
 
 export const getPagePathEndpoint = ({
@@ -10,7 +11,7 @@ export const getPagePathEndpoint = ({
                                         path = '',
                                         as_of = '',
                                         cacheData = '',
-                                        mediaType = 'wiki',
+                                        mediaType = MEDIA_TYPES.WIKI.key,
                                         refresh = false,
                                         parseMethod = "",  // NB should default to something useful
                                     }) => {
@@ -21,12 +22,12 @@ export const getPagePathEndpoint = ({
 
     if (cacheData) {
         // use cached article result data if specified
-        // this is used (mainly?only?) for development
+        // this is used (mainly?only?) for development tests
         console.log(`getPagePathEndpoint: cacheData is true.`)
         return `${iariBase}/article_cache?iari_id=${cacheData}`;
     }
 
-    else if (mediaType === "wiki") {
+    else if (mediaType === MEDIA_TYPES.WIKI.key) {
 
         console.log(`getPagePathEndpoint: wiki:article version: ${parseMethod}`)
 
@@ -60,12 +61,17 @@ export const getPagePathEndpoint = ({
                 `${as_of ? "&as_of=" + as_of : ""}`;
         }
 
-    } else if (mediaType === "pdf") {
+    } else if (mediaType === MEDIA_TYPES.GROK.key) {
+        console.log(`getPagePathEndpoint: grok`)
+        return `${iariBase}/extract_grok?url=${path}${refresh ? "&refresh=true" : ''}`;
+
+    } else if (mediaType === MEDIA_TYPES.PDF.key) {
         console.log(`getPagePathEndpoint: pdf`)
         return `${iariBase}/statistics/pdf?url=${path}${refresh ? "&refresh=true" : ''}`;
 
     }
 
+    // else unknown
     console.log(`getPagePathEndpoint: Unknown mediaType - returning default endpoint!`)
 
     // do general case...TODO make default parser endpoint a config
