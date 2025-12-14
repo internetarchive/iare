@@ -688,7 +688,12 @@ export default function UrlDisplay ({ pageData, options } ) {
         </div>
 
         {/* we add style: pointerEvents to avoid conflict with RefView popup */}
-        <div className={"url-display-contents"}  style={{pointerEvents: isRefViewModalOpen ? "none" : "auto"}}>
+        <div className={"url-display-contents"}
+            style={{
+                pointerEvents: isRefViewModalOpen ? "none" : "auto",
+                color:"red"
+
+        }}>
 
             <div className={"iare-ux-container"}>
 

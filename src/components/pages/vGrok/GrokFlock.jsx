@@ -10,8 +10,10 @@ import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../../constants
 import {httpStatusCodes, iabotLiveStatusCodes} from "../../../constants/httpStatusCodes.jsx"
 import {reliabilityMap} from "../../../constants/perennialList.jsx";
 import {urlColumnDefs} from "../../../constants/urlColumnDefs.jsx";
-import ProbesDisplay from "../../ProbesDisplay.jsx";
+// import ProbesDisplay from "../../ProbesDisplay.jsx";
+// import ProbesDisplay from "../../ProbesDisplay.jsx";
 import Popup from "../../Popup.jsx";
+import SignalsDisplay from "../../SignalsDisplay.jsx";
 
 
 /*
@@ -41,7 +43,7 @@ example filterDef element:
     }
 
 */
-const urlFlock = React.memo(function UrlFlock({
+const grokFlock = React.memo(function GrokFlock({
                                                   urlDict,
                                                   urlArray,
                                                   urlFilters = {},  // keyed object of filter definitions to apply to urlArray for final url list display
@@ -54,9 +56,9 @@ const urlFlock = React.memo(function UrlFlock({
     //  making it a memo seemed to reduce the re-renders of the flock when the tooltip text was updated
 
     // TODO how do we make the Probe Popup a global, like a tooltip, sort of?
-    const [isProbePopupOpen, setIsProbePopupOpen] = useState(false)
-    const [probePopupTitle, setProbePopupTitle] = useState(<>Modal Title</>);
-    const [probePopupData, setProbePopupData] = useState(null);
+    const [isSignalPopupOpen, setIsSignalPopupOpen] = useState(false)
+    const [signalPopupTitle, setSignalPopupTitle] = useState(<>Modal Title</>);
+    const [signalPopupData, setSignalPopupData] = useState(null);
 
 
     const [feedbackText, setFeedbackText] = useState("")
@@ -75,6 +77,7 @@ const urlFlock = React.memo(function UrlFlock({
             "actionable": {name: "actionable", dir: -1},
             "sections": {name: "sections", dir: -1},
             "perennial": {name: "perennial", dir: -1},
+            "signals": {name: "signals", dir: -1},
         },
         sortOrder: ["status"]  // array indicating which sorts get applied and in what order. NB this is not implemented yet, but will be
     })
@@ -107,9 +110,38 @@ const urlFlock = React.memo(function UrlFlock({
         const score = probeData ? probeData.score : "?"
 
         const [pTitle, pContents] = getProbePopupData(probeKey, urlLink, score, rawProbeData)
-        setProbePopupTitle(pTitle)
-        setProbePopupData(pContents)
-        setIsProbePopupOpen(true)
+        setSignalPopupTitle(pTitle)
+        setSignalPopupData(pContents)
+        setIsSignalPopupOpen(true)
+
+    }
+
+    const handleSignalClick = (e) => {
+        // target element is Signal badge, "inside" of url row...
+        //
+        // displays popup describing probe details of url
+        // - url determined by row clicked
+        // - probe determined by probe badge (small icon) clicked
+
+        const targetElement = e.target
+
+        const urlElement = targetElement.closest('.url-row')
+        const urlLink = urlElement.dataset.url
+        const urlObj = urlDict[urlLink]
+
+        const probeKey = targetElement.dataset.probeKey
+
+        const probeData = urlObj?.probe_results?.probes?.[probeKey] ?? null
+
+        console.log(`Clicked ${probeKey} probe details for url: ${urlLink}, probeData is: ${JSON.stringify(probeData, null, 2 )}`)
+
+        const rawProbeData = <pre>{JSON.stringify(probeData, null, 2)}</pre>
+        const score = probeData ? probeData.score : "?"
+
+        const [pTitle, pContents] = getProbePopupData(probeKey, urlLink, score, rawProbeData)
+        setSignalPopupTitle(pTitle)
+        setSignalPopupData(pContents)
+        setIsSignalPopupOpen(true)
 
     }
 
@@ -140,7 +172,7 @@ const urlFlock = React.memo(function UrlFlock({
         })
     }
 
-    
+
     const sortByName = (a, b) => {
         const nameA = a.url
         const nameB = b.url
@@ -162,8 +194,8 @@ const urlFlock = React.memo(function UrlFlock({
     }
 
     const sortByArchiveStatus = (a, b) => {
-        const archiveA = a?.archive_status.hasArchive ? 1 : 0;
-        const archiveB = b?.archive_status.hasArchive ? 1 : 0;
+        const archiveA = a?.archive_status?.hasArchive ? 1 : 0;
+        const archiveB = b?.archive_status?.hasArchive ? 1 : 0;
         const bookA = a?.isBook ? 1 : 0;
         const bookB = b?.isBook ? 1 : 0;
 
@@ -175,6 +207,15 @@ const urlFlock = React.memo(function UrlFlock({
         // if neither a or b is a book, sort by archive status, respect sortDir
         if (archiveA > archiveB) return sort.sorts['archive_status'].dir * -1;
         if (archiveA < archiveB) return sort.sorts['archive_status'].dir;
+        return 0;
+    }
+
+    const sortBySignals = (a, b) => {
+        const signalA = a?.signal_data?.error ? 0 : 1;
+        const signalB = b?.signal_data?.error ? 0 : 1;
+
+        if (signalA > signalB) return sort.sorts['signals'].dir * -1;
+        if (signalA < signalB) return sort.sorts['signals'].dir;
         return 0;
     }
 
@@ -244,6 +285,7 @@ const urlFlock = React.memo(function UrlFlock({
         perennial: sortByPerennial,
         archive_status: sortByArchiveStatus,
         probes: sortByProbes,
+        signals: sortBySignals(),
     }
 
     const sortFunction = (a, b) => {
@@ -317,8 +359,8 @@ const urlFlock = React.memo(function UrlFlock({
         } else if (columnClass === "url-archive_status") {
             html = row.dataset.live_state
                 ? `<div>${row.dataset.archive_status === "true" ? 'Archived' : 'Not Archived'}` +
-                    `<br/>` +
-                    `IABot live_state: ${row.dataset.live_state} - ${iabotLiveStatusCodes[row.dataset.live_state]}</div>`
+                `<br/>` +
+                `IABot live_state: ${row.dataset.live_state} - ${iabotLiveStatusCodes[row.dataset.live_state]}</div>`
                 : `IABot archive_status = ${row.dataset.archive_status}<br/>IABot live_state = ${row.dataset.live_state}`
 
         } else if (columnClass === "url-citations") {
@@ -359,6 +401,48 @@ const urlFlock = React.memo(function UrlFlock({
         setUrlTooltipHtml(text)
     }
 
+    const getHeaderRow = () => {
+        return <div
+            className={"url-list-header"}
+            onClick={onClickHeader}
+            onMouseOver={onHoverHeaderRow}>
+
+            <div className={"url-header-row"}>
+
+                <div className={"url-name"} onClick={() => {
+                    handleSortClick("name")
+                }}
+                ><br/>Reference URL Link
+                </div>
+
+                <div className={"url-status"} onClick={() => {
+                    handleSortClick("status")
+                }}
+                >Live<br/>Status
+                </div>
+
+                <div className={"url-archive_status"} onClick={() => {
+                    handleSortClick("archive_status");
+                }}
+                >{archiveFilterDefs['iabot']._.name}</div>
+
+                <div className={"url-actionable"} onClick={() => {
+                    handleSortClick("actionable");
+                }}
+                >Action<br/>Items
+                </div>
+
+                <div className={"url-signals"} onClick={() => {
+                    handleSortClick("signals");
+                }}
+                >Signals<br/>Results
+                </div>
+
+            </div>
+
+        </div>
+    }
+
     const getFlockRows = (flockArray, flockFilters) => {
         // returns [flockRow markup, array of filtered urls]
         if (!flockArray || flockArray.length === 0) {
@@ -366,15 +450,12 @@ const urlFlock = React.memo(function UrlFlock({
         }
 
         if (!flockFilters) flockFilters = {}  // prevent null errors
-        // TODO what to do if flockFilters is not a keyed object of FlockFilter's?
-        //  Can we make flockFilters a custom type, such as FlockFilters?
-
 
         // filter the urls according to the set of filters provided
         // NB Currently only 1 filter is supported; in the future we may support more
 
+        // setup filteredUrls
         let filteredUrls = flockArray  // initialize url array as the full provided array
-
         Object.keys(flockFilters).forEach(filterName => {
             const f = flockFilters[filterName]
             if (f) {  // only process if filter is non-null
@@ -403,29 +484,6 @@ const urlFlock = React.memo(function UrlFlock({
             filteredUrls.sort(sortFunction)  // sorts by "sort" object state
         }
 
-        // eslint-disable-next-line no-unused-vars
-        const getCitationInfo = (u => {
-            // NB This needs to be more clearly defined
-            // for now, returns array of statuses from url's associated references
-            return !u.reference_info?.statuses
-                ? null
-                : u.reference_info.statuses.map((s, i) => {
-                    const display = s === "--"  // this is what PageData set status to if not there - TODO do this better!
-                        ? ""
-                        : s.charAt(0).toUpperCase() + s.slice(1)
-                    return <div key={i}>{display}</div>
-                })
-        })
-
-        // eslint-disable-next-line no-unused-vars
-        const getTemplateInfo = (u => {
-            return !u.reference_info?.templates
-                ? null
-                : u.reference_info.templates.map((s, i) => {
-                    return <div key={i}>{s}</div>
-                })
-        })
-
         const getActionableInfo = (u => {
             return !u.actionable
                 ? null
@@ -435,17 +493,6 @@ const urlFlock = React.memo(function UrlFlock({
                     return <div className={"yes-actionable"} key={i}>
                         <span className={"icon-area"}></span>
                     </div>
-                })
-        })
-
-        const getSectionInfo = (u => {
-            // display array of section names
-            return !u.reference_info?.sections
-                ? null
-                : u.reference_info.sections.map((s, i) => {
-                    s = (s === 'root' ? 'Lead' : s)  // transform "root" section to "Lead"
-                    // TODO: should transform s earlier...
-                    return <div key={i}>{s}</div>
                 })
         })
 
@@ -475,31 +522,21 @@ const urlFlock = React.memo(function UrlFlock({
                         data-is_book={u.isBook}
                         data-citation_status={citationStatus}
                         data-live_state={u.archive_status?.live_state}
-                        data-perennial={u.rsp ? u.rsp[0] : null}  // just return first perennial if found for now...dont deal with > 1
+                        data-signals={u.signals ? u.signals[0] : null}  // just return first signal for now....1
+                        // data-perennial={u.rsp ? u.rsp[0] : null}  // just return first perennial if found for now...dont deal with > 1
                         data-actionable={u.actionable ? u.actionable[0] : null}  // return first actionable only (for now)
             >
                 <div className={"url-name"}>{u.url}</div>
                 <div className={"url-status"}>{u.status_code ? u.status_code : "?"}</div>
                 <div className={"url-archive_status"}>{getArchiveStatusInfo(u)}</div>
 
-                {/*<div className={"url-citations"}>{getCitationInfo(u)}</div>*/}
-                {/*<div className={"url-templates"}>{getTemplateInfo(u)}</div>*/}
-
                 <div className={"url-actionable"}>{getActionableInfo(u)}</div>
-
-                <div className={"url-sections"}>{getSectionInfo(u)}</div>
-
-
-                {columns.reliability.show
-                    ? <div className={"url-perennial"}>{getPerennialInfo(u)}</div>
-                    : null
-                }
 
                 {/* idea: use UrlDataCol component when columns become dynamically described (in the future) */}
                 {/* <UrlDataCol urlObj={u} column_name={"probes"} options={{onProbeClick: handleProbeClick}}/> */}
 
-                <div className={"url-probes"}>
-                    <ProbesDisplay urlObj={u} onProbeClick={handleProbeClick} />
+                <div className={"url-signals"}>
+                    <SignalsDisplay urlObj={u} onSignalClick={handleSignalClick} />
                 </div>
 
             </div>
@@ -539,7 +576,7 @@ const urlFlock = React.memo(function UrlFlock({
             // TODO: we should sanitize earlier on in the process to save time here...
 
             // if url object is problematic, return as error row
-            if (!u || u.url === undefined || u.status_code === undefined) {
+            if (!u || u.url === undefined) {
 
                 const errText = !u ? `URL data not defined for index ${i}`
                     : !u.url ? `URL missing for index ${i}`
@@ -549,6 +586,18 @@ const urlFlock = React.memo(function UrlFlock({
                 // TODO do something akin to "myMethodRenderer.getErrorRow"
                 return getErrorRow(u, i, errText)
             }
+
+            // // if url status code is undefined...
+            // if (u.status_code === undefined) {
+            //
+            //     const errText = !u ? `URL data not defined for index ${i}`
+            //         : !u.url ? `URL missing for index ${i}`
+            //             : u.status_code === undefined ? `URL status code undefined (try Force Refresh)`
+            //                 : 'Unknown error'; // this last case should not happen
+            //
+            //     // TODO do something akin to "myMethodRenderer.getErrorRow"
+            //     return getErrorRow(u, i, errText)
+            // }
 
             // otherwise show "normally"
             // TODO change this to something like:
@@ -572,58 +621,14 @@ const urlFlock = React.memo(function UrlFlock({
 
     const getFlock = (rows) => {
 
-        const flockHeaderRow = <div
-            className={"url-list-header"}
-            onClick={onClickHeader}
-            onMouseOver={onHoverHeaderRow}>
-
-            <div className={"url-header-row"}>
-
-                <div className={"url-name"} onClick={() => {handleSortClick("name")}}
-                ><br/>URL Link
-                </div>
-
-                <div className={"url-status"} onClick={() => {handleSortClick("status")}}
-                >Live<br/>Status
-                </div>
-
-                <div className={"url-archive_status"} onClick={() => { handleSortClick("archive_status"); }}
-                >{archiveFilterDefs['iabot']._.name}</div>
-
-                {/*<div className={"url-citations"} onProbeClick={() => { handleSortClick("references"); } }*/}
-                {/*>Citation<br/>Priority</div>*/}
-
-                {/*<div className={"url-templates"} onProbeClick={() => { handleSortClick("templates"); } }*/}
-                {/*>Template<br/>Type</div>*/}
-
-                <div className={"url-actionable"} onClick={() => { handleSortClick("actionable"); }}
-                >Action<br/>Items
-                </div>
-
-                <div className={"url-sections"} onClick={() => { handleSortClick("sections"); }}
-                >Section<br/>of Origin
-                </div>
-
-                {columns.reliability.show
-                    ? <div className={"url-perennial"} onClick={
-                        () => { handleSortClick("perennial"); }
-                    }>Reliability<br/>Rating</div>
-                    : null
-                }
-
-                <div className={"url-probes"} onClick={() => { handleSortClick("probes"); }}
-                >Probe<br/>Results
-                </div>
-
-            </div>
-
-        </div>
+        const flockHeaderRow = getHeaderRow()
 
         return <>
             {flockHeaderRow}
             <div className={"url-list-rows"}
-                 onClick={handleRowClick}
-                 onMouseOver={onHoverDataRow}>{rows}</div>
+                 // onClick={handleRowClick}
+                 onMouseOver={onHoverDataRow}
+            >{rows}</div>
         </>
     }  // end getFlock
 
@@ -716,8 +721,8 @@ const urlFlock = React.memo(function UrlFlock({
         {feedbackText && <span>{feedbackText}</span>}
     </div>
 
-    const flockCaption = <>
-        <div>URL Links</div>
+    const captionBox = <>
+        <div>Citation URL Links</div>
         <div className={"sub-caption"}>
             <div>{flockRows.length} {flockRows.length === 1 ? 'URL' : 'URLs'}</div>
             <div>{spanFeedback} {buttonCopyList} {buttonCopyDetails}</div>
@@ -725,22 +730,20 @@ const urlFlock = React.memo(function UrlFlock({
     </>
 
     return <>
-        {/*<div data-tooltip-id={tooltipId}  // passed in tooltipId for this flock)*/}
-        {/*     data-tooltip-html={urlTooltipHtml}*/}
-        {/*     onMouseOver={onHoverUrlFlock}>*/}
-        {/*    <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>*/}
-        {/*</div>*/}
-
-        <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>
+        <div data-tooltip-id={tooltipId}  // passed in tooltipId for this flock)
+             data-tooltip-html={urlTooltipHtml}
+             onMouseOver={onHoverUrlFlock}>
+            <FlockBox caption={captionBox} className={"grok-flock"}>{flock}</FlockBox>
+        </div>
 
         {/* popup title, data and open status set in handleProbeClick function */}
-        <Popup isOpen={isProbePopupOpen}
-               onClose={() => { setIsProbePopupOpen(false) }}
-               title={probePopupTitle}>
-            {probePopupData}
+        <Popup isOpen={isSignalPopupOpen}
+               onClose={() => { setIsSignalPopupOpen(false) }}
+               title={signalPopupTitle}>
+            {signalPopupData}
         </Popup>
 
     </>
 })
 
-export default urlFlock
+export default grokFlock

@@ -1,6 +1,6 @@
 import React from "react";
-import {ProbeDefs} from "../../../constants/probeDefs.jsx";
-import {isEmpty} from "../../../utils/generalUtils.js";
+import {ProbeDefs} from "../constants/probeDefs.jsx";
+import {isEmpty} from "../utils/generalUtils.js";
 
 
 export default function ProbesDisplay({

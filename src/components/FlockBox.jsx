@@ -23,7 +23,7 @@ export default function FlockBox({
 
         <div className={`flock-box${className ? ` ${className}` : ''} iare-ux-container`}
             onKeyDown={onKeyDown}
-            >
+        >
 
             <div className={`iare-ux-header`}>
                 <div className={"flock-box-caption"} key={"arf1"}>{caption}</div>

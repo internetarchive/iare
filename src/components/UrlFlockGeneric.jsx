@@ -10,7 +10,7 @@ import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../../constants
 import {httpStatusCodes, iabotLiveStatusCodes} from "../../../constants/httpStatusCodes.jsx"
 import {reliabilityMap} from "../../../constants/perennialList.jsx";
 import {urlColumnDefs} from "../../../constants/urlColumnDefs.jsx";
-import ProbesDisplay from "../../ProbesDisplay.jsx";
+import ProbesDisplay from "./ProbesDisplay.jsx";
 import Popup from "../../Popup.jsx";
 
 
@@ -41,7 +41,8 @@ example filterDef element:
     }
 
 */
-const urlFlock = React.memo(function UrlFlock({
+
+const urlFlockGeneric = React.memo(function UrlFlock({
                                                   urlDict,
                                                   urlArray,
                                                   urlFilters = {},  // keyed object of filter definitions to apply to urlArray for final url list display
@@ -50,6 +51,25 @@ const urlFlock = React.memo(function UrlFlock({
                                                   fetchMethod = "",
                                                   tooltipId = ''
                                               }) {
+/*
+TODO SOON: pass in a call back:
+    rowRender
+    - takes a url element
+    getFlock here takes rows
+    we need a render for row
+    and a render for flock
+
+    i think for now i want to just use specific columns
+    for the header
+    and
+    use the same specific columns for the row render
+    we set up the row render here, and send that row render to FlockBoxGeneric
+
+    but for now now, use same structure
+
+ */
+
+
     // TODO maybe should not/don't have to use memo here??
     //  making it a memo seemed to reduce the re-renders of the flock when the tooltip text was updated
 
@@ -140,7 +160,7 @@ const urlFlock = React.memo(function UrlFlock({
         })
     }
 
-    
+
     const sortByName = (a, b) => {
         const nameA = a.url
         const nameB = b.url
@@ -317,8 +337,8 @@ const urlFlock = React.memo(function UrlFlock({
         } else if (columnClass === "url-archive_status") {
             html = row.dataset.live_state
                 ? `<div>${row.dataset.archive_status === "true" ? 'Archived' : 'Not Archived'}` +
-                    `<br/>` +
-                    `IABot live_state: ${row.dataset.live_state} - ${iabotLiveStatusCodes[row.dataset.live_state]}</div>`
+                `<br/>` +
+                `IABot live_state: ${row.dataset.live_state} - ${iabotLiveStatusCodes[row.dataset.live_state]}</div>`
                 : `IABot archive_status = ${row.dataset.archive_status}<br/>IABot live_state = ${row.dataset.live_state}`
 
         } else if (columnClass === "url-citations") {
@@ -725,13 +745,11 @@ const urlFlock = React.memo(function UrlFlock({
     </>
 
     return <>
-        {/*<div data-tooltip-id={tooltipId}  // passed in tooltipId for this flock)*/}
-        {/*     data-tooltip-html={urlTooltipHtml}*/}
-        {/*     onMouseOver={onHoverUrlFlock}>*/}
-        {/*    <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>*/}
-        {/*</div>*/}
-
-        <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>
+        <div data-tooltip-id={tooltipId}  // passed in tooltipId for this flock)
+             data-tooltip-html={urlTooltipHtml}
+             onMouseOver={onHoverUrlFlock}>
+            <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>
+        </div>
 
         {/* popup title, data and open status set in handleProbeClick function */}
         <Popup isOpen={isProbePopupOpen}
@@ -743,4 +761,4 @@ const urlFlock = React.memo(function UrlFlock({
     </>
 })
 
-export default urlFlock
+export default urlFlockGeneric

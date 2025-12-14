@@ -81,6 +81,12 @@
     font-weight:normal;
 }
 
+.flock-box.url-flock {
+    flex: 1 1 0%;
+    width: 25%;
+}
+
+
 .url-chart-display {
     width:327px;
 }

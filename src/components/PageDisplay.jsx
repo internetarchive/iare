@@ -16,9 +16,9 @@ import PageDisplayGrok from "./pages/vGrok/PageDisplayGrok.jsx";
 
 const PageDisplay = React.memo( ({ pageData }) => {
     console.log(`PageDisplay (${pageData ? pageData.version + ' ' + pageData.mediaType : 'null'})`)
-    const message = 'Please enter a URL and click "Load References"'
+    const messageNoData = 'Please enter a URL and click "Load References"'
 
-    if (!pageData) return <p className={'text-primary'}>{message}</p>
+    if (!pageData) return <p className={'text-primary'}>{messageNoData}</p>
 
     if (pageData.version === "v2") {
 

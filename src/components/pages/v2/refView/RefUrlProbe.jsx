@@ -7,7 +7,7 @@ import React, {useCallback, useState} from "react";
 
 import {ConfigContext} from "../../../../contexts/ConfigContext.jsx";
 import loaderImage from "../../../../images/threedots.gif";
-import ProbesDisplay from "../ProbesDisplay.jsx";
+import ProbesDisplay from "../../../ProbesDisplay.jsx";
 // import {setUrlProbeResults} from "../../utils/urlUtils.jsx";
 // import Loader from "../../Loader.jsx";
 

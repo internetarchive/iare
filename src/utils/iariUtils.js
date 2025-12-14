@@ -63,7 +63,9 @@ export const getPagePathEndpoint = ({
 
     } else if (mediaType === MEDIA_TYPES.GROK.key) {
         console.log(`getPagePathEndpoint: grok`)
-        return `${iariBase}/extract_grok?url=${path}${refresh ? "&refresh=true" : ''}`;
+        const pageTitleExtractGrok = path.match(/\/grokipedia.com\/page\/([^?#]+)/);
+        const pageTitleGrok = pageTitleExtractGrok ? pageTitleExtractGrok[1] : null;
+        return `${iariBase}/extract_grok?page_title=${pageTitleGrok}${refresh ? "&refresh=true" : ''}`;
 
     } else if (mediaType === MEDIA_TYPES.PDF.key) {
         console.log(`getPagePathEndpoint: pdf`)

@@ -1,4 +1,4 @@
 import React from "react";
 
-export default function RawJson ({obj}) { return <pre>{JSON.stringify(obj,null,2)}</pre> }
+export default function RawJson ({json}) { return <pre>{JSON.stringify(json,null,2)}</pre> }
 

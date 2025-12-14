@@ -1,71 +1,105 @@
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 import './grokDisplay.css';
 import '../../../../css/components.css';
 import {ConfigContext} from "../../../../../contexts/ConfigContext.jsx";
-// import BubbleChart from "../../d3/BubbleChart.jsx";
-import { compareByUrl } from '../../../../../constants/sortMethods.jsx';
-import UrlBubbles from "../../../../d3/UrlBubbles.jsx";
+import {ACTIONS_IARE} from "../../../../../constants/actionsIare.jsx";
+// import UrlFlock from "../../../v2/UrlFlock.jsx";
+import GrokFlock from "../../GrokFlock.jsx";
 
-export default function GrokDisplay ({ pageData, options } ) {
+
+/*
+assumes pageData.urlArray and pageData.urlDict
+ */
+export default function GrokDisplay ({ pageData, options, tooltipId = null } ) {
+
+    const [urlFilters, setUrlFilters] = useState( null ); // keyed object of url filters to pass in to UrlFlock
+    // TODO: implement UrlFilter custom objects
+    const [currentFilterState, setCurrentFilterState] = useState({})  // aggregate state of filter boxes
+    const [selectedUrl, setSelectedUrl] = useState(''); // currently selected url in url list
+
 
     let myConfig = React.useContext(ConfigContext);
     myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
 
-    const simpleUrlDict = Object.keys(pageData.urlDict).map( urlKey => {
-        // extract url from key
-        return { url: urlKey }
-    }).sort(compareByUrl('asc'));
+            // const simpleUrlDict = Object.keys(pageData.urlDict).map( urlKey => {
+            //     // extract url from key
+            //     return { url: urlKey }
+            // }).sort(compareByUrl('asc'));
+            //
+            // const simpleUrlArray = pageData.urlArray.map( urlObj => {
+            //     // extract url from url object
+            //     return { url: urlObj.url }
+            // }).sort(compareByUrl('asc'))
 
-    const simpleUrlArray = pageData.urlArray.map( urlObj => {
-        // extract url from url object
-        return { url: urlObj.url }
-    }).sort(compareByUrl('asc'))
+    const setFilterState = (whichFilter, value) => {
+        setCurrentFilterState(prevState => {
+            const newState = prevState
+            Object.keys(prevState).forEach( state => {
+                newState[state] = null
+            })
+            if (whichFilter?.key) newState[whichFilter.key] = value
+            return newState
+        })
+    }
 
+    const handleAction = useCallback( result => {
+        // handles callback functionality when something "down below" (like a url row) gets clicked
+
+        const {action, value} = result;
+        console.log (`UrlDisplay: handleAction: action=${action}, value=${value}`);
+
+        const noneFilter = {
+            "filter" : {
+                filterFunction: () => () => {return false},
+            }
+        }
+
+        if (0) {
+            // allows for easy addition of "else if"
+        }
+
+        else if (action ===
+            ACTIONS_IARE.REMOVE_ALL_FILTERS
+        ) {
+            // clear filters (or, show all) for URL
+            setUrlFilters(null)
+            setSelectedUrl(null)
+            setFilterState(null)
+        }
+
+        else {
+            console.log(`Action "${action}" not supported.`)
+            alert(`Action "${action}" not supported.`)
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     // simpleArchiveDisplay
     // simpleUrlArray is collection of "pure" links - does not include archives
     // each should have associated archive
     // and live status
-
     // goal: make a d3 collection of urls
 
-    const simpleArchiveDisplay = <div className={"grok-display-section"}>
-        <div className={"xxxgrok-display-section-header"}>Simple Archive display</div>
-        <div className={"xxxgrok-display-section-header"}>Shows archive status
-            of url and all archive urls and if they support a prime url or not</div>
-
-        <div className={"grok-display-columns"}>
-            <div className={"grok-display-section"}>
-                <div className={"grok-display-section-header"}>Simple Url Dict <span>count: {simpleUrlDict.length}</span></div>
-
-                {simpleUrlDict.map( urlObj => {
-                    return <div key={urlObj.url} className={"url-display-header"}>link: {urlObj.url}</div>
-                })}
-            </div>
-
-            <div className={"grok-display-section"}>
-                <div className={"grok-display-section-header"}>Simple Url Array <span>count: {simpleUrlArray.length}</span></div>
-
-                {simpleUrlArray.map( urlObj => {
-                    return <div key={urlObj.url} className={"url-display-header"}>link: {urlObj.url}</div>
-                })}
-            </div>
-        </div>
-`
-    </div>
-
-
     return <>
-        <div className={"domain-display section-box"}>
+        <div className={"section-box"}>
 
-            <h3>Archives <span style={{
+            <h3>Grokipedia Citation URLs <span style={{
+                display: "none",
                 fontSize: '50%',
                 fontStyle: "italic",
-                color: "red"}}>This feature under development</span></h3>
+                color: "red"}}>all urls from Citations</span></h3>
 
-            <UrlBubbles data={simpleUrlArray} width={"400"} height={"400"} />
+            <div className={"url-display-body"} style={{display: "flex", height:'100%'}}>
 
-            {/*{simpleArchiveDisplay}*/}
+                <GrokFlock urlDict={pageData.urlDict}
+                           urlArray={pageData.urlArray}
+                           urlFilters={urlFilters}
+                           onAction={handleAction}
+                           selectedUrl={selectedUrl}
+                           fetchMethod={myConfig.urlStatusMethod}
+                           tooltipId={"url-display-tooltip"} />
+            </div>
 
         </div>
 

@@ -27,7 +27,7 @@ export default function PageDisplayGrok( { pageData }) {
             <PageDataGrok
                 rawPageData={pageData}
                 showViewOptions={showViewOptions}
-                viewType={"urls"} // shall get this passed in somehow...params? config? localStorage eventually...
+                viewOption={"urls"} // TODO get this passed in somehow...params? config? localStorage, eventually...
             />
         </div>
     </div>
