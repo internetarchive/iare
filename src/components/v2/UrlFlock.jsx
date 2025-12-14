@@ -725,11 +725,15 @@ const urlFlock = React.memo(function UrlFlock({
     </>
 
     return <>
-        <div data-tooltip-id={tooltipId}  // passed in tooltipId for this flock)
-             data-tooltip-html={urlTooltipHtml}
-             onMouseOver={onHoverUrlFlock}>
-            <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>
-        </div>
+
+        {/*<div data-tooltip-id={tooltipId}  // passed in tooltipId for this flock)*/}
+        {/*     data-tooltip-html={urlTooltipHtml}*/}
+        {/*     onMouseOver={onHoverUrlFlock}>*/}
+        {/*    <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>*/}
+        {/*</div>*/}
+
+        <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>
+
 
         {/* popup title, data and open status set in handleProbeClick function */}
         <Popup isOpen={isProbePopupOpen}

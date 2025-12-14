@@ -89,6 +89,11 @@
 }
 
 
+.flock-box.url-flock {
+    flex: 1 1 0%;
+    width: 25%;
+}
+
 .url-flock {
     /*width: var(--width-url-list);*/
     /*max-width: var(--width-url-list);*/
