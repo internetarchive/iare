@@ -95,7 +95,8 @@ const grokFlock = React.memo(function GrokFlock({
         const urlLink = urlElement.dataset.url
         const urlObj = urlDict[urlLink]
 
-        const rawSignalData = <pre>{JSON.stringify(urlObj.signal_data, null, 2)}</pre>
+        // const rawSignalData = <pre>{JSON.stringify(urlObj.signal_data, null, 2)}</pre>
+        const rawSignalData = urlObj.signal_data
         const score = "TBD"
 
         const [pTitle, pContents] = getSignalPopupData(urlLink, score, rawSignalData)

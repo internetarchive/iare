@@ -1,5 +1,6 @@
 // import React from "react";
 import {reliabilityMap} from "../../constants/perennialList.jsx";
+import JsonTable from "../JsonTable.jsx";
 
 
 export const setUrlProbeResults = ( (urlObj, rawProbeResults) => {
@@ -35,13 +36,26 @@ export const getSignalPopupData = (urlLink, score, rawSignalData) => {
         <div style={{fontWeight: "normal"}}> {urlLink}</div>
     </>
 
+
+    /* take signal data and create a table out of it */
+
+    let signal_content = null
+
+    if (rawSignalData.error) {
+        signal_content = <div>No Signal Content Available</div>
+    } else {
+        // flatten signal_data.value to just value
+        const signals = rawSignalData.signals.map(s => ({
+            signal_name: s.signal_name,
+            value: s.signal_data?.value
+        }));
+        signal_content = <JsonTable data={signals} />
+    }
+
     const popup_content = <div>
         <div className={"signal-score"}>Score: {score}</div>
         <hr/>
-        <div>
-            <div className={"raw-title"}>Raw data:</div>
-            <div>{rawSignalData}</div>
-        </div>
+        {signal_content}
     </div>
 
     return [popup_title, popup_content]
