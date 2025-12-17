@@ -691,7 +691,7 @@ export default function UrlDisplay ({ pageData, options } ) {
         <div className={"url-display-contents"}
             style={{
                 pointerEvents: isRefViewModalOpen ? "none" : "auto",
-                color:"red"
+                // color:"red"
 
         }}>
 

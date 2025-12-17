@@ -525,3 +525,9 @@ font-weight:normal;
     margin-top: -.34rem;
     margin-left: -.125rem;
 }
+
+/* debug */
+x* {
+    outline: 1px solid rgba(255, 0, 0, 0.2);
+}
+

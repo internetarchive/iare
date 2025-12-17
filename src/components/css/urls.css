@@ -6,9 +6,8 @@
     --width-url-archive-status: 3.5rem;
     --width-url-citations: 3.5rem;
     --width-url-templates: 4.0rem;
-    /*--width-url-actionable: 7.0rem;*/
-    /*--width-url-actionable: 5.0rem;*/
     --width-url-actionable: 3.5rem;
+    --width-url-signals: 15.5rem;
     --width-url-sections: 4.5rem;
     --width-url-perennial: 5.0rem;
     --width-url-probes: 6.0rem;
@@ -255,9 +254,7 @@
     max-width: var(--width-url-actionable);
     min-width: var(--width-url-actionable);
 }
-.url-row .url-actionable {
-    /*text-align: left !important;*/
-}
+
 .url-row .yes-actionable {
     position: relative;
 }
@@ -273,6 +270,28 @@
     background-size: cover;
     background-repeat: no-repeat;
 }
+
+.url-header-row .url-signals,
+.url-row .url-signals
+{
+    width: var(--width-url-signals);
+    max-width: var(--width-url-signals);
+    min-width: var(--width-url-signals);
+    text-align: left;
+}
+
+.url-header-row .url-signals {
+    padding-left: var(--padding-url-column)
+}
+
+
+x.url-header-row div:last-child,
+x.url-row div:last-child {
+    background-color: deeppink;
+    width: 100%;
+    max-width: 100%;
+}
+
 
 .url-header-row .url-sections,
 .url-row .url-sections

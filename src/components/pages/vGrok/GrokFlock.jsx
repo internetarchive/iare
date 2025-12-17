@@ -2,7 +2,7 @@ import React, {useCallback, useState} from 'react';
 import FlockBox from "../../FlockBox.jsx";
 
 import {convertToCSV, copyToClipboard} from "../../../utils/generalUtils.js";
-import {getArchiveStatusInfo, getProbePopupData} from "../../utils/urlUtils.jsx";
+import {getArchiveStatusInfo, getProbePopupData, getSignalPopupData} from "../../utils/urlUtils.jsx";
 
 import {ACTIONS_IARE} from "../../../constants/actionsIare.jsx";
 import {ACTIONABLE_FILTER_MAP} from "../../../constants/actionableMap.jsx";
@@ -86,42 +86,8 @@ const grokFlock = React.memo(function GrokFlock({
         "reliability": { show: true }
     }
 
-    const handleProbeClick = (e) => {
-        // target element is probe badge, "inside" url row...
-        //
-        // displays popup describing probe details of url
-        // - url determined by row clicked
-        // - probe determined by probe badge (small icon) clicked
-
-        const targetElement = e.target
-
-        const urlElement = targetElement.closest('.url-row')
-        const urlLink = urlElement.dataset.url
-        const urlObj = urlDict[urlLink]
-
-        const probeKey = targetElement.dataset.probeKey
-
-
-        const probeData = urlObj?.probe_results?.probes?.[probeKey] ?? null
-
-        console.log(`Clicked ${probeKey} probe details for url: ${urlLink}, probeData is: ${JSON.stringify(probeData, null, 2 )}`)
-
-        const rawProbeData = <pre>{JSON.stringify(probeData, null, 2)}</pre>
-        const score = probeData ? probeData.score : "?"
-
-        const [pTitle, pContents] = getProbePopupData(probeKey, urlLink, score, rawProbeData)
-        setSignalPopupTitle(pTitle)
-        setSignalPopupData(pContents)
-        setIsSignalPopupOpen(true)
-
-    }
-
     const handleSignalClick = (e) => {
         // target element is Signal badge, "inside" of url row...
-        //
-        // displays popup describing probe details of url
-        // - url determined by row clicked
-        // - probe determined by probe badge (small icon) clicked
 
         const targetElement = e.target
 
@@ -129,16 +95,10 @@ const grokFlock = React.memo(function GrokFlock({
         const urlLink = urlElement.dataset.url
         const urlObj = urlDict[urlLink]
 
-        const probeKey = targetElement.dataset.probeKey
+        const rawSignalData = <pre>{JSON.stringify(urlObj.signal_data, null, 2)}</pre>
+        const score = "TBD"
 
-        const probeData = urlObj?.probe_results?.probes?.[probeKey] ?? null
-
-        console.log(`Clicked ${probeKey} probe details for url: ${urlLink}, probeData is: ${JSON.stringify(probeData, null, 2 )}`)
-
-        const rawProbeData = <pre>{JSON.stringify(probeData, null, 2)}</pre>
-        const score = probeData ? probeData.score : "?"
-
-        const [pTitle, pContents] = getProbePopupData(probeKey, urlLink, score, rawProbeData)
+        const [pTitle, pContents] = getSignalPopupData(urlLink, score, rawSignalData)
         setSignalPopupTitle(pTitle)
         setSignalPopupData(pContents)
         setIsSignalPopupOpen(true)
@@ -523,7 +483,6 @@ const grokFlock = React.memo(function GrokFlock({
                         data-citation_status={citationStatus}
                         data-live_state={u.archive_status?.live_state}
                         data-signals={u.signals ? u.signals[0] : null}  // just return first signal for now....1
-                        // data-perennial={u.rsp ? u.rsp[0] : null}  // just return first perennial if found for now...dont deal with > 1
                         data-actionable={u.actionable ? u.actionable[0] : null}  // return first actionable only (for now)
             >
                 <div className={"url-name"}>{u.url}</div>

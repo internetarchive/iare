@@ -28,6 +28,26 @@ export const getProbePopupData = (probeKey, urlLink, score, rawProbeData) => {
 }
 
 
+export const getSignalPopupData = (urlLink, score, rawSignalData) => {
+
+    const popup_title = <>
+        <div>Signal results for URL:</div>
+        <div style={{fontWeight: "normal"}}> {urlLink}</div>
+    </>
+
+    const popup_content = <div>
+        <div className={"signal-score"}>Score: {score}</div>
+        <hr/>
+        <div>
+            <div className={"raw-title"}>Raw data:</div>
+            <div>{rawSignalData}</div>
+        </div>
+    </div>
+
+    return [popup_title, popup_content]
+}
+
+
 export const getArchiveStatusInfo = (u => {
     return <span className={u.isBook
         ? "archive-book"

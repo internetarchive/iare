@@ -78,17 +78,15 @@ export default function SignalsDisplay({
 
 
     const signalData = urlObj?.signal_data ?? {}
-    if (signalData.error) {
-        // if has error, show that
-        return <div className={"signals-results signals-badges"}>
-            <div className={"lolite"}>{signalData.error}</div>
-        </div>
-    }
 
-    const signalDisplay = <div className={"lolite"}>Signal badges go here...</div>
+    const signalDisplay = signalData.error
+            ? <div className={"lolite"}>{signalData.error}</div>
+            : <div className={"lolite"}>Signal badges go here...</div>
 
     return <>
-        <div className={"signals-results signals-badges"}>
+        <div className={"signals-results signals-badges"}
+             style={{height: "100%"}}
+             onClick={onSignalClick}>
             {signalDisplay}
         </div>
     </>
