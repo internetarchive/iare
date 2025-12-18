@@ -2,7 +2,8 @@ import React, {useCallback, useState} from 'react';
 import FlockBox from "../../FlockBox.jsx";
 
 import {convertToCSV, copyToClipboard} from "../../../utils/generalUtils.js";
-import {getArchiveStatusInfo, getProbePopupData, getSignalPopupData} from "../../utils/urlUtils.jsx";
+// import {getArchiveStatusInfo, getProbePopupData} from "../../utils/urlUtils.jsx";
+import {getArchiveStatusInfo} from "../../utils/urlUtils.jsx";
 
 import {ACTIONS_IARE} from "../../../constants/actionsIare.jsx";
 import {ACTIONABLE_FILTER_MAP} from "../../../constants/actionableMap.jsx";
@@ -14,6 +15,9 @@ import {urlColumnDefs} from "../../../constants/urlColumnDefs.jsx";
 // import ProbesDisplay from "../../ProbesDisplay.jsx";
 import Popup from "../../Popup.jsx";
 import SignalsDisplay from "../../SignalsDisplay.jsx";
+import SignalPopupTitle from "../../SignalPopupTitle.jsx";
+import SignalPopupContents from "../../SignalPopupContents.jsx";
+// import SignalPopupContents from "../../SignalPopupContents.jsx";
 
 
 /*
@@ -58,7 +62,7 @@ const grokFlock = React.memo(function GrokFlock({
     // TODO how do we make the Probe Popup a global, like a tooltip, sort of?
     const [isSignalPopupOpen, setIsSignalPopupOpen] = useState(false)
     const [signalPopupTitle, setSignalPopupTitle] = useState(<>Modal Title</>);
-    const [signalPopupData, setSignalPopupData] = useState(null);
+    const [signalPopupContents, setSignalPopupContents] = useState(null);
 
 
     const [feedbackText, setFeedbackText] = useState("")
@@ -99,9 +103,16 @@ const grokFlock = React.memo(function GrokFlock({
         const rawSignalData = urlObj.signal_data
         const score = "TBD"
 
-        const [pTitle, pContents] = getSignalPopupData(urlLink, score, rawSignalData)
-        setSignalPopupTitle(pTitle)
-        setSignalPopupData(pContents)
+        // const [pTitle, pContents] = getSignalPopupContents(urlLink, score, rawSignalData)
+
+        setSignalPopupTitle(<SignalPopupTitle urlLink={url} />)
+
+        setSignalPopupContents(<SignalPopupContents
+            urlLink={url}
+            score={score}
+            rawSignalData={rawSignalData}
+        />)
+
         setIsSignalPopupOpen(true)
 
     }
@@ -700,7 +711,7 @@ const grokFlock = React.memo(function GrokFlock({
         <Popup isOpen={isSignalPopupOpen}
                onClose={() => { setIsSignalPopupOpen(false) }}
                title={signalPopupTitle}>
-            {signalPopupData}
+            {signalPopupContents}
         </Popup>
 
     </>

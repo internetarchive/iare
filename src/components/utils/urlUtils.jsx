@@ -1,4 +1,4 @@
-// import React from "react";
+import React, {useState} from "react";
 import {reliabilityMap} from "../../constants/perennialList.jsx";
 import JsonTable from "../JsonTable.jsx";
 
@@ -29,37 +29,53 @@ export const getProbePopupData = (probeKey, urlLink, score, rawProbeData) => {
 }
 
 
-export const getSignalPopupData = (urlLink, score, rawSignalData) => {
-
-    const popup_title = <>
-        <div>Signal results for URL:</div>
-        <div style={{fontWeight: "normal"}}> {urlLink}</div>
-    </>
-
-
-    /* take signal data and create a table out of it */
-
-    let signal_content = null
-
-    if (rawSignalData.error) {
-        signal_content = <div>No Signal Content Available</div>
-    } else {
-        // flatten signal_data.value to just value
-        const signals = rawSignalData.signals.map(s => ({
-            signal_name: s.signal_name,
-            value: s.signal_data?.value
-        }));
-        signal_content = <JsonTable data={signals} />
-    }
-
-    const popup_content = <div>
-        <div className={"signal-score"}>Score: {score}</div>
-        <hr/>
-        {signal_content}
-    </div>
-
-    return [popup_title, popup_content]
-}
+// export const getSignalPopupContents = (urlLink, score, rawSignalData) => {
+//     // returns [popup_title, popup_content]
+//
+//     const [isFiltered, setIsFiltered] = useState(false);
+//
+//     const popup_title = <>
+//         <div>Signal results for URL:</div>
+//         <div style={{fontWeight: "normal"}}> {urlLink}</div>
+//     </>
+//
+//
+//     /* take signal data and create a table out of it */
+//
+//     let signal_content = null
+//
+//     if (rawSignalData.error) {
+//         signal_content = <div>No Signal Content Available</div>
+//     } else {
+//         // flatten signal_data.value to just value
+//         const signals = rawSignalData.signals.map(s => ({
+//             signal_name: s.signal_name,
+//             value: s.signal_data?.value
+//         }));
+//         signal_content = <JsonTable data={signals} />
+//     }
+//
+//     const buttonFilter = <label>
+//         <input
+//             type="checkbox"
+//             checked={isFiltered}
+//             onChange={(e) => {
+//                 setIsFiltered(e.target.checked);
+//                 console.log("filter checkbox clicked!", e.target.checked);
+//             }}
+//         />
+//         Filter
+//     </label>
+//
+//     const popup_content = <div>
+//         <div className={"signal-score"}>Score: {score}</div>
+//         <hr/>
+//         {buttonFilter}
+//         {signal_content}
+//     </div>
+//
+//     return [popup_title, popup_content]
+// }
 
 
 export const getArchiveStatusInfo = (u => {

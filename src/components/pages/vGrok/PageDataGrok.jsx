@@ -47,12 +47,14 @@ export default function PageDataGrok({rawPageData = {}, showViewOptions = false,
         pageData.urlDict = pageData.url_dict
 
         // make urlArray an array into urlDict
-        pageData.urlArray = pageData.urls.map(urlKey => {
-            return {
-                url: urlKey,
-                ...pageData.urlDict[urlKey],
-            }
-        })
+        pageData.urlArray = pageData.urls
+            ? pageData.urls.map(urlKey => {
+                return {
+                    url: urlKey,
+                    ...pageData.urlDict[urlKey],
+                }
+            })
+            : []
 
     }, [])  // no deps, defines callback function once upon component mount
 
