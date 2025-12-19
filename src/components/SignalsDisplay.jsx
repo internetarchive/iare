@@ -81,7 +81,7 @@ export default function SignalsDisplay({
 
     const signalDisplay = signalData.error
             ? <div className={"lolite"}>{signalData.error}</div>
-            : <div className={"lolite"}>Signal badges go here...</div>
+            : <div className={"xxxlolite"}>Signals exist for this domain (click to view)</div>
 
     return <>
         <div className={"signals-results signals-badges"}

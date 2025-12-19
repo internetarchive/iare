@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.3.1.15",
-  "version_name": "0.3.1.15 grok",
+  "version": "0.3.1.16",
+  "version_name": "0.3.1.16 grok with signals",
   "private": true,
   "type": "module",
   "dependencies": {

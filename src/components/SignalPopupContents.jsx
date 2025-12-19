@@ -1,7 +1,8 @@
+import React from "react";
 import JsonTable from "./JsonTable.jsx";
 
 export default function SignalPopupContents({ urlLink, score, rawSignalData }) {
-    const [isFiltered, setIsFiltered] = useState(false);
+    const [isFiltered, setIsFiltered] = React.useState(false);
 
     const popup_title = (
         <>
@@ -21,7 +22,9 @@ export default function SignalPopupContents({ urlLink, score, rawSignalData }) {
         }));
 
         const displayedSignals = isFiltered
-            ? signals.filter(s => s.value != null)
+            ? signals.filter(s => {
+                return s.value != null && s.value !== "False"
+            })
             : signals;
 
         signal_content = <>
@@ -30,8 +33,9 @@ export default function SignalPopupContents({ urlLink, score, rawSignalData }) {
                     type="checkbox"
                     checked={isFiltered}
                     onChange={e => setIsFiltered(e.target.checked)}
-                />
-                Filter
+                />{isFiltered
+                ? <span>&nbsp;Remove Filter (Show all Signals)</span>
+                : <span>&nbsp;Apply Filter (Hide all null and false Signals)</span>}
             </label>
             <JsonTable data={displayedSignals} />
         </>

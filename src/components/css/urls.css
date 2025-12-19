@@ -284,6 +284,10 @@
     padding-left: var(--padding-url-column)
 }
 
+.signals-results .lolite {
+    /*color: var(--color-text-muted);*/
+    color: #adb4c0;
+}
 
 x.url-header-row div:last-child,
 x.url-row div:last-child {

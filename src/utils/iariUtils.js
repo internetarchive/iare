@@ -11,6 +11,7 @@ export const getPagePathEndpoint = ({
                                         path = '',
                                         as_of = '',
                                         cacheData = '',
+                                        use_local_cache = false,
                                         mediaType = MEDIA_TYPES.WIKI.key,
                                         refresh = false,
                                         parseMethod = "",  // NB should default to something useful
@@ -24,6 +25,10 @@ export const getPagePathEndpoint = ({
         // use cached article result data if specified
         // this is used (mainly?only?) for development tests
         console.log(`getPagePathEndpoint: cacheData is true.`)
+        return `${iariBase}/article_cache?iari_id=${cacheData}`;
+    }
+    if (use_local_cache) {
+        console.log(`getPagePathEndpoint: use_local_cache is true.`)
         return `${iariBase}/article_cache?iari_id=${cacheData}`;
     }
 
@@ -41,7 +46,7 @@ export const getPagePathEndpoint = ({
         else if (parseMethod === ParseMethods.WIKIPARSE_V2.key) {
             // this is the new, improved parsing method
             const options = ''
-            return `${iariBase}${ParseMethods.WIKIPARSE_V2.endpoint}?url=${path}${options}${refresh ? "&refresh=true" : ''}`;
+            return `${iariBase}${ParseMethods.WIKIPARSE_V2.endpoint}?url=${path}${options}${refresh ? "&refresh=true" : ''}${refresh ? "&refresh=true" : ''}`;
         }
 
         else if (parseMethod === ParseMethods.WIKIPARSE_XREF.key) {
@@ -63,9 +68,20 @@ export const getPagePathEndpoint = ({
 
     } else if (mediaType === MEDIA_TYPES.GROK.key) {
         console.log(`getPagePathEndpoint: grok`)
+
         const pageTitleExtractGrok = path.match(/\/grokipedia.com\/page\/([^?#]+)/);
         const pageTitleGrok = pageTitleExtractGrok ? pageTitleExtractGrok[1] : null;
-        return `${iariBase}/extract_grok?page_title=${pageTitleGrok}${refresh ? "&refresh=true" : ''}`;
+
+        // return `${iariBase}/extract_grok?page_title=${pageTitleGrok}${refresh ? "&refresh=true" : ''}`;
+
+        const params = new URLSearchParams({
+            page_title: pageTitleGrok,
+            ...(refresh && { refresh: "true" }),
+            ...(use_local_cache && { use_local_cache: "true" }),
+        });
+
+        return `${iariBase}/extract_grok?${params.toString()}`;
+
 
     } else if (mediaType === MEDIA_TYPES.PDF.key) {
         console.log(`getPagePathEndpoint: pdf`)

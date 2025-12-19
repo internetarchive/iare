@@ -71,6 +71,7 @@ export default function PageInfoGrok({ pageData, showViewOptions = false, handle
     const pageInfoDetails = pageData
         ? <div className={'detail-section'}>
             <div>Grok Page Info Details</div>
+            <div>pageData.endpoint: {pageData.endpoint}</div>
             {/*{section_type}*/}
             {/*{section_endpoint}*/}
             {/*{section_method}*/}

@@ -105,10 +105,10 @@ const grokFlock = React.memo(function GrokFlock({
 
         // const [pTitle, pContents] = getSignalPopupContents(urlLink, score, rawSignalData)
 
-        setSignalPopupTitle(<SignalPopupTitle urlLink={url} />)
+        setSignalPopupTitle(<SignalPopupTitle urlLink={urlLink} />)
 
         setSignalPopupContents(<SignalPopupContents
-            urlLink={url}
+            urlLink={urlLink}
             score={score}
             rawSignalData={rawSignalData}
         />)
@@ -407,7 +407,7 @@ const grokFlock = React.memo(function GrokFlock({
                 <div className={"url-signals"} onClick={() => {
                     handleSortClick("signals");
                 }}
-                >Signals<br/>Results
+                >Signal Results<br/>(Click to view)
                 </div>
 
             </div>

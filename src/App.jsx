@@ -27,6 +27,7 @@ export default function App(
         env,
         myPath,
         myCacheData,
+        myUseLocalCache,
         myRefresh,
         myCheckMethod,
         myParseMethod,
@@ -81,6 +82,7 @@ export default function App(
     // params settable from from address url
     const [targetPath, setTargetPath] = useState(myPath);
     const [cacheData, setCacheData] = useState(myCacheData);
+    const [useLocalCache, setUseLocalCache] = useState(myUseLocalCache);
     const [refreshCheck, setRefreshCheck] = useState(myRefresh);
     const [checkMethod, setCheckMethod] = useState(myCheckMethod);
     const [parseMethod, setParseMethod] = useState(myParseMethod);
@@ -290,6 +292,7 @@ export default function App(
     const fetchArticleData = useCallback((
         {
             pathName,
+            use_local_cache = '',
             cacheData = '',
             refresh = false
         }) => {
@@ -316,6 +319,7 @@ export default function App(
             iariSourceId: myIariSourceId,
             path: pathName,
             cacheData: cacheData,
+            use_local_cache: use_local_cache,
             mediaType: myMediaType,
             refresh: refresh,
             parseMethod: parseMethod
@@ -417,6 +421,7 @@ export default function App(
         {
             url = '',
             cache_data = '',
+            use_local_cache = '',
             refresh=false,
             iari_source = IariSources.iari_prod.key
         } ) => {
@@ -425,6 +430,7 @@ export default function App(
             + window.location.host + window.location.pathname
             + `?url=${url}`
             + (cache_data ? `&cache_data=${cache_data}` : '')
+            + (use_local_cache ? `&use_local_cache=${use_local_cache}` : '')
             + (refresh ? '&refresh=true' : '')
             + (checkMethod ? `&method=${checkMethod}` : '')
             + (myIariSourceId ? `&iari-source=${iari_source}` : '')
@@ -446,9 +452,10 @@ export default function App(
         // set these states for debug display, essentially
         setTargetPath(myPath);
         setCacheData(myCacheData)
+        setUseLocalCache(myUseLocalCache)
         setRefreshCheck(myRefresh);
 
-        console.log(`APP: useEffect[myIariSourceId, myPath, myCacheData, myRefresh, fetchArticleData]: calling fetchArticleData: ${myPath}, ${myCacheData}, ${myRefresh}`)
+        console.log(`APP: useEffect[myIariSourceId, myPath, myCacheData, myUseLocalCache, myRefresh, fetchArticleData]: calling fetchArticleData: ${myPath}, ${myCacheData}, ${myUseLocalCache}, ${myRefresh}`)
 
         // and do the fetching for the path specified (pulled from URL address)
         fetchArticleData({
@@ -456,11 +463,12 @@ export default function App(
             cacheData: myCacheData,
                 // cacheData means get parsed file contents from local cache.
                 // This is a debug helper mechanism.
+            use_local_cache: myUseLocalCache,
             refresh: myRefresh
         })
 
 
-    }, [myIariSourceId, myPath, myCacheData, myRefresh, fetchArticleData])
+    }, [myIariSourceId, myPath, myCacheData, myRefresh, myUseLocalCache, fetchArticleData])
 
 
     const handleCheckMethodChange = (methodId) => {
@@ -493,6 +501,7 @@ export default function App(
         refreshPageResults( {
             url : targetPath,
             cache_data : cacheData,
+            use_local_cache : use_local_cache,
             refresh : refreshCheck,
             iari_source: sourceId,
         })
