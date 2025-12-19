@@ -1,6 +1,6 @@
 export const envShortcutLists = {
     prod: ['easterIsland', 'internetArchive', 'pdfCovid',],  // production mode limited shortcuts
-    stage: ['easterIsland', 'easter_island_short', 'internetArchive', 'mlk', 'short_test', ],  // staging shows a little more for testing
+    stage: ['easterIsland', 'easter_island_short', 'grok_easter_island', 'internetArchive', 'mlk', 'short_test', ],  // staging shows a little more for testing
     other: ['grok_easter_island', 'assam', 'marc_bolan', 'easterIsland', 'easter_island_short', 'kennewick_man', 'mlk', 'internetArchive', 'short_test'],  // everything else (my dev env, e.g.) shows lots more
 }
 
