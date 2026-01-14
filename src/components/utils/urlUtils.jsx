@@ -87,6 +87,15 @@ export const getArchiveStatusInfo = (u => {
 } )
 
 
+export const getArchiveStatusInfoGrok = (u => {
+    return <span className={u.isBook
+        ? "archive-book"
+        : u.archive_data?.archive_exists
+            ? "archive-yes"
+            : "archive-no" }></span>
+} )
+
+
 export const getPerennialInfo = (u => {
     return !u.rsp
         ? null

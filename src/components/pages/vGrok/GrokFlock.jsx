@@ -3,7 +3,7 @@ import FlockBox from "../../FlockBox.jsx";
 
 import {convertToCSV, copyToClipboard} from "../../../utils/generalUtils.js";
 // import {getArchiveStatusInfo, getProbePopupData} from "../../utils/urlUtils.jsx";
-import {getArchiveStatusInfo} from "../../utils/urlUtils.jsx";
+import {getArchiveStatusInfo, getArchiveStatusInfoGrok} from "../../utils/urlUtils.jsx";
 
 import {ACTIONS_IARE} from "../../../constants/actionsIare.jsx";
 import {ACTIONABLE_FILTER_MAP} from "../../../constants/actionableMap.jsx";
@@ -69,20 +69,19 @@ const grokFlock = React.memo(function GrokFlock({
 
     const [feedbackText, setFeedbackText] = useState("")
 
-    const [urlTooltipHtml, setUrlTooltipHtml] = useState('<div>ToolTip' +
-        '<br>UrlFlock<br />second line');
+    const [urlTooltipHtml, setUrlTooltipHtml] = useState('<div>ToolTip<br />GrokFlock<br />second line');
     // TODO there is a bug where sort re-renders list every time tooltip text/html property is updated
     // TODO maybe fix using React.useRef somehow???
 
-    const [sort, setSort] = useState({
+    const [sortDefs, setSortDefs] = useState({
         sorts: {  // holds sort value for all different sort types
             "status": {name: "status", dir: 1},  // dir: 1 is asc, -1 is desc, 0 is do not sort
             "archive_status": {name: "archive_status", dir: -1},
-            "references": {name: "references", dir: -1},
-            "templates": {name: "templates", dir: -1},
+            // "references": {name: "references", dir: -1},
+            // "templates": {name: "templates", dir: -1},
             "actionable": {name: "actionable", dir: -1},
-            "sections": {name: "sections", dir: -1},
-            "perennial": {name: "perennial", dir: -1},
+            // "sections": {name: "sections", dir: -1},
+            // "perennial": {name: "perennial", dir: -1},
             "signals": {name: "signals", dir: -1},
         },
         sortOrder: ["status"]  // array indicating which sorts get applied and in what order. NB this is not implemented yet, but will be
@@ -126,7 +125,7 @@ const grokFlock = React.memo(function GrokFlock({
 
         // selectively change the specified sort type
         // https://stackoverflow.com/questions/43638938/updating-an-object-with-setstate-in-react
-        setSort(prevState => {
+        setSortDefs(prevState => {
             // guarantee new sort has entry in sorts object
             if (!(prevState.sorts[sortKey])) {
                 prevState.sorts[sortKey] = {name: sortKey, dir: 1}
@@ -152,8 +151,8 @@ const grokFlock = React.memo(function GrokFlock({
         const nameB = b.url
 
         // respect sortDir
-        if (nameA < nameB) return sort.sorts['name'].dir * -1;
-        if (nameA > nameB) return sort.sorts['name'].dir;
+        if (nameA < nameB) return sortDefs.sorts['name'].dir * -1;
+        if (nameA > nameB) return sortDefs.sorts['name'].dir;
         return 0;
     }
 
@@ -162,25 +161,25 @@ const grokFlock = React.memo(function GrokFlock({
         const statusB = b && b.status_code !== undefined ? b.status_code : -1;
 
         // respect sort dir
-        if (statusA < statusB) return sort.sorts['status'].dir * -1;
-        if (statusA > statusB) return sort.sorts['status'].dir;
+        if (statusA < statusB) return sortDefs.sorts['status'].dir * -1;
+        if (statusA > statusB) return sortDefs.sorts['status'].dir;
         return 0;
     }
 
     const sortByArchiveStatus = (a, b) => {
-        const archiveA = a?.archive_status?.hasArchive ? 1 : 0;
-        const archiveB = b?.archive_status?.hasArchive ? 1 : 0;
+        const archiveA = a?.archive_data?.archive_exists ? 1 : 0;
+        const archiveB = b?.archive_data?.archive_exists ? 1 : 0;
         const bookA = a?.isBook ? 1 : 0;
         const bookB = b?.isBook ? 1 : 0;
 
         // sort by book status first, respect sortDir
         // NB: ignoring book type (e.g. google or archive.org) for now
-        if (bookA) return sort.sorts['archive_status'].dir * -1
-        if (bookB) return sort.sorts['archive_status'].dir
+        if (bookA) return sortDefs.sorts['archive_status'].dir * -1
+        if (bookB) return sortDefs.sorts['archive_status'].dir
 
         // if neither a or b is a book, sort by archive status, respect sortDir
-        if (archiveA > archiveB) return sort.sorts['archive_status'].dir * -1;
-        if (archiveA < archiveB) return sort.sorts['archive_status'].dir;
+        if (archiveA > archiveB) return sortDefs.sorts['archive_status'].dir * -1;
+        if (archiveA < archiveB) return sortDefs.sorts['archive_status'].dir;
         return 0;
     }
 
@@ -188,25 +187,8 @@ const grokFlock = React.memo(function GrokFlock({
         const signalA = a?.signal_data?.error ? 0 : 1;
         const signalB = b?.signal_data?.error ? 0 : 1;
 
-        if (signalA > signalB) return sort.sorts['signals'].dir * -1;
-        if (signalA < signalB) return sort.sorts['signals'].dir;
-        return 0;
-    }
-
-    const sortByReference = (a, b) => {
-        const statusA = a.reference_info?.statuses?.length ? a.reference_info.statuses[0] : ''
-        const statusB = b.reference_info?.statuses?.length ? b.reference_info.statuses[0] : ''
-        return sort.sorts['references'].dir * ((statusA > statusB) ? 1 : (statusA < statusB ? -1 : 0));  // dir is multiplied by 1, -1 or 0
-    }
-
-    const sortByTemplate = (a, b) => {
-
-        const nameA = a.reference_info?.templates?.length ? a.reference_info.templates[0] : ''
-        const nameB = b.reference_info?.templates?.length ? b.reference_info.templates[0] : ''
-
-        // respect sortDir
-        if (nameA < nameB) return sort.sorts['templates'].dir * -1;
-        if (nameA > nameB) return sort.sorts['templates'].dir;
+        if (signalA > signalB) return sortDefs.sorts['signals'].dir * -1;
+        if (signalA < signalB) return sortDefs.sorts['signals'].dir;
         return 0;
     }
 
@@ -216,58 +198,27 @@ const grokFlock = React.memo(function GrokFlock({
         const actionB = b.actionable?.length ? b.actionable[0] : ''
 
         // respect sortDir
-        if (actionA < actionB) return sort.sorts['actionable'].dir * -1;
-        if (actionA > actionB) return sort.sorts['actionable'].dir;
+        if (actionA < actionB) return sortDefs.sorts['actionable'].dir * -1;
+        if (actionA > actionB) return sortDefs.sorts['actionable'].dir;
         return 0;
     }
-
-    const sortByPerennial = (a, b) => {
-
-        const nameA = a.rsp?.length ? a.rsp[0] : ''
-        const nameB = b.rsp?.length ? b.rsp[0] : ''
-
-        // respect sortDir
-        if (nameA < nameB) return sort.sorts['perennial'].dir * -1;
-        if (nameA > nameB) return sort.sorts['perennial'].dir;
-        return 0;
-    }
-
-    const sortBySection = (a, b) => {
-
-        const sectionA = a.reference_info?.sections?.length ? a.reference_info.sections[0] : ''
-        const sectionB = b.reference_info?.sections?.length ? b.reference_info.sections[0] : ''
-
-        // respect sortDir
-        if (sectionA < sectionB) return sort.sorts['sections'].dir * -1;
-        if (sectionA > sectionB) return sort.sorts['sections'].dir;
-        return 0;
-    }
-
-
-    const sortByProbes = (a, b) => {
-        return 0  // for now...
-    }
-
 
     const sortFunctions = {
-        name: sortByName,
-        status: sortByStatus,
-        references: sortByReference,
-        templates: sortByTemplate,
-        actionable: sortByActionable,
-        sections: sortBySection,
-        perennial: sortByPerennial,
-        archive_status: sortByArchiveStatus,
-        probes: sortByProbes,
-        signals: sortBySignals(),
+        "name": sortByName,
+        "status": sortByStatus,
+        "archive_status": sortByArchiveStatus,
+        "actionable": sortByActionable,
+        "signals": sortBySignals,
     }
 
     const sortFunction = (a, b) => {
+        // returns sort function based on current value of sortDefs
+
         // TODO make sorting respect a list sort definitions as described in a
         //  "sort.sortOrder" array of key names for sort methods.
         //  "e.g: sort.sortOrder = ["references", "archive_status", "name"]
 
-        const sort_column = sort.sortOrder[0];
+        const sort_column = sortDefs.sortOrder[0];
         const sortFn = sortFunctions[sort_column];
         return sortFn ? sortFn(a, b) : 0;
 
@@ -376,6 +327,27 @@ const grokFlock = React.memo(function GrokFlock({
     }
 
     const getHeaderRow = () => {
+
+        // TODO: do the columns more like this
+        //  NB: problem is when caption is a function
+        // const headerColumns = [
+        //     "name", "status", "archive_status", "actionable", "signals",
+        // ]
+        //
+        // const headerColumnDefs = {
+        //     "name": {
+        //         "caption": "Reference URL Link",
+        //         ""
+        //     },
+        //     "status": {
+        //         "caption": "Live Status",
+        //         "ttData": "Live Status",
+        //     },
+        //     "archive_status": {
+        //         "caption": "Archive Status",
+        //     }
+        //
+        // }
         return <div
             className={"url-list-header"}
             onClick={onClickHeader}
@@ -398,7 +370,7 @@ const grokFlock = React.memo(function GrokFlock({
                 <div className={"url-archive_status"} onClick={() => {
                     handleSortClick("archive_status");
                 }}
-                >{archiveFilterDefs['iabot']._.name}</div>
+                >{archiveFilterDefs['iabot']._.name}</div>  {/* huh? whats this? very obscure! */}
 
                 <div className={"url-actionable"} onClick={() => {
                     handleSortClick("actionable");
@@ -453,8 +425,8 @@ const grokFlock = React.memo(function GrokFlock({
         })
 
         // sort filteredUrls if specified
-        if (sort.sortOrder?.length > 0) {
-            console.log(`sorting urls by: ${sort.sortOrder[0]}`)
+        if (sortDefs.sortOrder?.length > 0) {
+            console.log(`sorting urls by: ${sortDefs.sortOrder[0]}`)
             filteredUrls.sort(sortFunction)  // sorts by "sort" object state
         }
 
@@ -470,18 +442,6 @@ const grokFlock = React.memo(function GrokFlock({
                 })
         })
 
-        const getPerennialInfo = (u => {
-            return !u.rsp
-                ? null
-                // rsp contains keys into reliabilityMap
-                : u.rsp.map((s, i) => {
-                    return <div key={i} className={reliabilityMap[s]?.key === "__unassigned" ? "lolite" : ""}>{
-                        reliabilityMap[s]?.shortCaption ? reliabilityMap[s].shortCaption : ''
-                    }</div>
-                })
-        })
-
-
         const getDataRow = (u, i, classes) => {
 
             const citationStatus = !u.reference_info?.statuses?.length
@@ -496,12 +456,12 @@ const grokFlock = React.memo(function GrokFlock({
                         data-is_book={u.isBook}
                         data-citation_status={citationStatus}
                         data-live_state={u.archive_status?.live_state}
-                        data-signals={u.signals ? u.signals[0] : null}  // just return first signal for now....1
+                        data-signals={u.signals ? u.signals : null}
                         data-actionable={u.actionable ? u.actionable[0] : null}  // return first actionable only (for now)
             >
                 <div className={"url-name"}>{u.url}</div>
                 <div className={"url-status"}>{u.status_code ? u.status_code : "?"}</div>
-                <div className={"url-archive_status"}>{getArchiveStatusInfo(u)}</div>
+                <div className={"url-archive_status"}>{getArchiveStatusInfoGrok(u)}</div>
 
                 <div className={"url-actionable"}>{getActionableInfo(u)}</div>
 
@@ -582,7 +542,6 @@ const grokFlock = React.memo(function GrokFlock({
                             : u.status_code >= 500 && u.status_code < 600 ? ' url-is-error'
                                 : '')
                 + (u.url === selectedUrl ? ' url-selected' : '')
-                + (u.rsp ? ` url-rating-${u.rsp[0]}` : '')
 
             return getDataRow(u, i, classes)
 
