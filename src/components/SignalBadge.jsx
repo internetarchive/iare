@@ -1,5 +1,6 @@
 import React from "react";
 import {SignalDefs} from "../constants/signalDefs.jsx";
+import {mbfc_display} from "../constants/signalBadgeFunctions.jsx";
 
 /*
 return signal badge if signal is a valid Badge to be displayed
@@ -13,16 +14,16 @@ signalDef is the
  */
 
 
-function mbfc_display(signalData, signals) {
-    // triggered by in_mbfc signal
-    // if true then show; if false then abandon
-
-    if (!signalData) return null
-
-    // take value form signals[mbfc_ratings] and display
-    const value = signals["mbfc_ratings"]
-    return <div>MBFC: {value}</div>
-}
+                    // function mbfc_display(signalData, signals) {
+                    //     // triggered by in_mbfc signal
+                    //     // if true then show; if false then abandon
+                    //
+                    //     if (!signalData) return null
+                    //
+                    //     // take value form signals[mbfc_ratings] and display
+                    //     const value = signals["mbfc_ratings"]
+                    //     return <div>MBFC: {value}</div>
+                    // }
 
 /*
 signals from json:
