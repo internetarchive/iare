@@ -19,6 +19,8 @@ import SignalPopupTitle from "../../SignalPopupTitle.jsx";
 import SignalPopupContents from "../../SignalPopupContents.jsx";
 // import SignalPopupContents from "../../SignalPopupContents.jsx";
 
+import '../../css/grok.css';
+
 
 /*
 assumes urlArray is an array of url objects:

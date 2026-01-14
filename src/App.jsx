@@ -71,7 +71,7 @@ export default function App(
     const [isShowUrlOverview, setIsShowUrlOverview] = useState(true);
     const [isShowShortcuts, setIsShowShortcuts] = useState(true);
         // TODO set this based on local storage or cookie value
-    const [isShowUseCache, setIsShowUseCache] = useState(false);
+    const [isShowUseLocalCache, setIsShowUseLocalCache] = useState(true);
 
     const [isShowDebugInfo, setIsShowDebugInfo] = useState(false);
     const [isShowDebugComponents, setIsShowDebugComponents] = useState(false);
@@ -230,52 +230,15 @@ export default function App(
     }
 
     // mediaType is "pdf", "html", "wiki", or anything else we come up with
-    const getMediaType = (path = '', cacheData = '') => {
+    const getMediaType = (path = '') => {
         // set media type based on heuristic:
-
-        // if cacheData, assume wiki
-
-                    // if (cacheData)
-                    //     return 'wiki'  // cacheData always returns a wiki cache for now....
-                    //     // TODO: will have to process cahce filename to determine mediaTy]e
-                    //     // e.g. grok results can be cached
-                    //
-                    // // if path ends in ".pdf", assume pdf
-                    // // if path contains ".wikipedia.org/wiki/, assume wiki
-                    //
-                    // // eslint-disable-next-line
-                    // const regexPdf = new RegExp("\.pdf$");
-                    // // eslint-disable-next-line
-                    // const regexWiki = new RegExp("\.wikipedia.org/wiki/");
-                    // // eslint-disable-next-line
-                    //
-                    // if (regexPdf.test(path))
-                    //     return 'pdf'
-                    // else if (regexWiki.test(path))
-                    //     return "wiki"
-                    //
-                    // else
-                    //     // else unknown, for now
-                    //     return "unknown";
-
-        if (cacheData)
-            return MEDIA_TYPES.UNKNOWN.key
-            // TODO: will have to process cache filename to determine mediaTy]e
-            // e.g. grok results can be cached
-
-        // // if path ends in ".pdf", assume pdf
-        // // if path contains ".wikipedia.org/wiki/, assume wiki
-        //
-        // // eslint-disable-next-line
-        // const regexPdf = new RegExp("\.pdf$");
-        // // eslint-disable-next-line
-        // const regexWiki = new RegExp("\.wikipedia.org/wiki/");
-        // // eslint-disable-next-line
 
         if (MEDIA_TYPES.WIKI.regex.test(path))
             return MEDIA_TYPES.WIKI.key
+
         else if (MEDIA_TYPES.GROK.regex.test(path))
             return MEDIA_TYPES.GROK.key
+
         else if (MEDIA_TYPES.PDF.regex.test(path))
             return MEDIA_TYPES.PDF.key
 
@@ -292,25 +255,24 @@ export default function App(
     const fetchArticleData = useCallback((
         {
             pathName,
-            use_local_cache = '',
-            cacheData = '',
+            use_local_cache = false,
             refresh = false
         }) => {
 
         // handle null pathName
-        if (!pathName && !cacheData) {
-            console.log("APP::fetchArticleData: pathName is null-ish and no cache-data specified");
+        if (!pathName) {
+            console.log("APP::fetchArticleData: pathName is null-ish");
             setPageData(null);
             // TODO: use setMyError(null); // ??
             return;
         }
 
         // mediaType is "pdf", "html", "wiki", or anything else we come up with
-        const myMediaType = getMediaType(pathName, cacheData);
+        const myMediaType = getMediaType(pathName);
         // TODO: idea: respect a "forceMediaType",
-        // where it can force a media type endpoint, no matter what getMediaType thinks it is.
-        // If so, passes it in to getPagePathEndpoint, where the endpoint is determined
-        // by passed in mediaType rather than mediaType interpolated from pathName.
+        //  where it can force a media type endpoint, no matter what getMediaType thinks it is.
+        //  If so, passes it in to getPagePathEndpoint, where the endpoint is determined
+        //  by passed in mediaType rather than mediaType interpolated from pathName.
 
         console.log("APP: fetchArticleData: mediaType = ", myMediaType)
 
@@ -318,7 +280,6 @@ export default function App(
         const pageEndpoint = getPagePathEndpoint({
             iariSourceId: myIariSourceId,
             path: pathName,
-            cacheData: cacheData,
             use_local_cache: use_local_cache,
             mediaType: myMediaType,
             refresh: refresh,
@@ -404,12 +365,14 @@ export default function App(
     const handlePathResults = (pathResults) => {
         // callback for PathNameFetch component
         // pathResults[0] = pathName (string)
-        // pathResults[1] = refreshCheck (boolean)
+        // pathResults[1] = checkboxRefresh (boolean)
+        // pathResults[2] = checkboxUseLocalCache (boolean)
 
         refreshPageResults(
             {
                 url: pathResults[0],
                 refresh: pathResults[1],
+                use_local_cache: pathResults[2],
                 iari_source: myIariSourceId,
             }
         )
@@ -460,9 +423,9 @@ export default function App(
         // and do the fetching for the path specified (pulled from URL address)
         fetchArticleData({
             pathName: myPath,
-            cacheData: myCacheData,
-                // cacheData means get parsed file contents from local cache.
-                // This is a debug helper mechanism.
+            // cacheData: myCacheData,
+            //     // cacheData means get parsed file contents from local cache.
+            //     // This is a debug helper mechanism.
             use_local_cache: myUseLocalCache,
             refresh: myRefresh
         })
@@ -629,6 +592,7 @@ export default function App(
         <p><span className={'label'}>Target URL from query param:</span> {myPath}</p>
         <p><span className={'label'}>Use Cache Data:</span> {myCacheData ? myCacheData : 'N/A'}</p>
         <p><span className={'label'}>Force Refresh:</span> {refreshCheck ? "TRUE" : "false"}</p>
+        <p><span className={'label'}>Use Local Cache:</span> {useLocalCache ? "TRUE" : "false"}</p>
         <div>{debugButtons}</div>
         <p><span className={'label'}>pathName:</span> <MakeLink href={targetPath}/></p>
         <p><span className={'label'}>endpointPath:</span> <MakeLink href={endpointPath}/></p>
@@ -722,13 +686,14 @@ export default function App(
 
                                 <PathNameFetch pathInitial={targetPath?.length > 0 ? targetPath : defaultIfEmpty}
                                                className={"iare-path-fetch"}
-                                               checkInitial={refreshCheck}
+                                               checkboxInitialRefresh={refreshCheck}
+                                               checkboxInitialUseLocalCache={useLocalCache}
                                                placeholder={"Enter a Wikipedia article or PDF url here"}
                                                shortcuts={shortcuts}
                                                handlePathResults={handlePathResults}
                                                options = {{
                                                    showShortcuts: isShowShortcuts,
-                                                   showUseCache: isShowUseCache,
+                                                   showUseLocalCache: isShowUseLocalCache,
                                                }}
 
                                 />

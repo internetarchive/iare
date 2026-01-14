@@ -10,7 +10,6 @@ export const getPagePathEndpoint = ({
                                         iariSourceId =IariSources['iari'].key,
                                         path = '',
                                         as_of = '',
-                                        cacheData = '',
                                         use_local_cache = false,
                                         mediaType = MEDIA_TYPES.WIKI.key,
                                         refresh = false,
@@ -21,18 +20,19 @@ export const getPagePathEndpoint = ({
     // TODO: error if iariBase is undefined or otherwise falsey
     console.log(`getPagePathEndpoint: myIariSourceId = ${iariSourceId}, iariBase = ${iariBase}, mediaType = ${mediaType}, articleVersion = ${parseMethod}`)
 
-    if (cacheData) {
-        // use cached article result data if specified
-        // this is used (mainly?only?) for development tests
-        console.log(`getPagePathEndpoint: cacheData is true.`)
-        return `${iariBase}/article_cache?iari_id=${cacheData}`;
-    }
-    if (use_local_cache) {
-        console.log(`getPagePathEndpoint: use_local_cache is true.`)
-        return `${iariBase}/article_cache?iari_id=${cacheData}`;
-    }
+                // if (cacheData) {
+                //     // use cached article result data if specified
+                //     // this is used (mainly?only?) for development tests
+                //     console.log(`getPagePathEndpoint: cacheData is true.`)
+                //     return `${iariBase}/article_cache?iari_id=${cacheData}`;
+                // }
+                //
+                    // if (use_local_cache) {
+                //     console.log(`getPagePathEndpoint: use_local_cache is true.`)
+                //     return `${iariBase}/article_cache?iari_id=${cacheData}`;
+                // }
 
-    else if (mediaType === MEDIA_TYPES.WIKI.key) {
+    if (mediaType === MEDIA_TYPES.WIKI.key) {
 
         console.log(`getPagePathEndpoint: wiki:article version: ${parseMethod}`)
 
