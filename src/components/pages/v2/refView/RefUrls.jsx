@@ -6,7 +6,7 @@ import {
     getPerennialInfo,
     // getProbeInfo,
     getProbePopupData,
-} from "../../../utils/urlUtils.jsx";
+} from "../../../../utils/urlUtils.jsx";
 import {Button} from "react-bootstrap";
 import Popup from "../../../Popup.jsx";
 import RefUrlProbe from "./RefUrlProbe.jsx";

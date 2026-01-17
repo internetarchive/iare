@@ -2,7 +2,7 @@ import React, {useCallback, useState} from 'react';
 import FlockBox from "../../FlockBox.jsx";
 
 import {convertToCSV, copyToClipboard} from "../../../utils/generalUtils.js";
-import {getArchiveStatusInfo, getProbePopupData} from "../../utils/urlUtils.jsx";
+import {getArchiveStatusInfo, getProbePopupData} from "../../../utils/urlUtils.jsx";
 
 import {ACTIONS_IARE} from "../../../constants/actionsIare.jsx";
 import {ACTIONABLE_FILTER_MAP} from "../../../constants/actionableMap.jsx";

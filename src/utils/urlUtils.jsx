@@ -1,6 +1,6 @@
 import React, {useState} from "react";
-import {reliabilityMap} from "../../constants/perennialList.jsx";
-import JsonTable from "../JsonTable.jsx";
+import {reliabilityMap} from "../constants/perennialList.jsx";
+import JsonTable from "../components/JsonTable.jsx";
 
 
 export const setUrlProbeResults = ( (urlObj, rawProbeResults) => {
