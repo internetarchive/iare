@@ -1,7 +1,7 @@
 import React, {useCallback, useState} from 'react';
 import UrlFlock from "../../UrlFlock.jsx";
 import RefFlock from "../../RefFlock.jsx";
-import UrlOverview from "./UrlOverview.jsx";
+import UrlFilterPanel from "./UrlFilterPanel.jsx";
 import '../../../../css/urls.css';
 import '../../../../css/components.css';
 import './urlDisplay.css';
@@ -647,11 +647,11 @@ export default function UrlDisplay ({ pageData, options } ) {
 
     const overviewColumn = myConfig.isShowUrlOverview && true
         ? <div className={"url-overview-column"}>
-                <UrlOverview pageData={pageData}
-                             options={{}}
-                             onAction={handleAction}
-                             currentState={currentState}
-                             tooltipId={"url-display-tooltip"}/>
+                <UrlFilterPanel pageData={pageData}
+                                options={{}}
+                                onAction={handleAction}
+                                currentState={currentState}
+                                tooltipId={"url-display-tooltip"}/>
             </div>
 
         : {getTestOverviewColumnData}

@@ -20,7 +20,7 @@ import {noBookLink, bookDefs} from "../../../../../utils/iariUtils.js";
 Chart.register(LinearScale, BarElement, ArcElement, Legend, Tooltip, Title, SubTitle, Colors,);
 
 // displays overview stats of article data
-const UrlOverview = React.memo(({
+const UrlFilterPanel = React.memo(({
 // React.memo so doesn't re-rerender with param changes
             pageData,
             options,
@@ -237,4 +237,4 @@ const UrlOverview = React.memo(({
 
 })
 
-export default UrlOverview;
+export default UrlFilterPanel;
