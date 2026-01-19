@@ -1,70 +1,53 @@
 import React, {useState} from 'react'
-import TemplateChart from "../../../../charts/TemplateChart.jsx";
-import PerennialChart from "../../../../charts/PerennialChart.jsx";
+
 import TldChart from "../../../../charts/TldChart.jsx";
 import BooksChart from "../../../../charts/BooksChart.jsx";
-import FilterBox from "../../../../FilterBox.jsx";
 import PapersChart from "../../../../charts/PapersChart.jsx";
-import LinkStatusChart from "../../../../charts/LinkStatusChart.jsx";
-import ControlBox from "../../../../ControlBox.jsx";
 import ActionableChart from "../../../../charts/ActionableChart.jsx";
 import PayLevelDomainsChart from "../../../../charts/PayLevelDomainsChart.jsx";
+import ReferenceStats from "../../../../charts/ReferenceStats.jsx";
+import FilterBox from "../../../../FilterBox.jsx";
+import ControlBox from "../../../../ControlBox.jsx";
 import Checkbox from "../../../../Checkbox.jsx";
 
 import {Chart, LinearScale, BarElement, ArcElement, Legend, Tooltip, Title, SubTitle, Colors,} from 'chart.js'
-import ReferenceStats from "../../../../charts/ReferenceStats.jsx";
-import {ConfigContext} from "../../../../../contexts/ConfigContext.jsx";
 
+import {ConfigContext} from "../../../../../contexts/ConfigContext.jsx";
 import {noBookLink, bookDefs} from "../../../../../utils/iariUtils.js";
+import {iareColors} from "../../../../../constants/iareColors.jsx";
+import SignalsChart from "../../../../charts/SignalsChart.jsx";
 
 Chart.register(LinearScale, BarElement, ArcElement, Legend, Tooltip, Title, SubTitle, Colors,);
 
 // displays overview stats of article data
-const UrlFilterPanel = React.memo(({
+const GrokFilterPanel = React.memo(({
 // React.memo so doesn't re-rerender with param changes
-            pageData,
-            options,
-            onAction,
-            currentState,
-            tooltipId=null
-}) => {
+                                       pageData,
+                                       options,
+                                       onAction,
+                                       currentState,
+                                       tooltipId=null
+                                   }) => {
 
     const [autoExpand, setAutoExpand] = useState(true )
 
     // todo create a structure called "filters" or "myFilters", defining a key
     // for each filter we want to have here.
 
-    const [expand, setExpand] = useState({
+    const [expanded, setExpanded] = useState({
         "actionable" : true,
-        "reference_stats" : true,
         "domains" : true,
-        "link_status" : true,
-        "papers" : true,
-        "reliability" : true,
+        "signals" : true,
         "tld" : true,
         "books" : true,
-        "templates" : true,
+        "papers" : true,
     })
-    const iareColors = {
-        blue: "#35a2eb",
-        darkBlue: "#1169a5",
-        red: "#ff6384",
-        teal: "#4bc0c0",
-        orange: "#ff9f40",
-        purple: "#9866ff",
-        yellow: "#ffcd57",
-        green: "#5bbd38",
-        grey: "#c9cbcf",
-        magenta: "#f763ff",
-        black: "#000000",
-        white: "#FFFFFF"
-    }
 
     let myConfig = React.useContext(ConfigContext);
     myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
 
     const onToggleShow = (name) => {
-        setExpand( prevState => {
+        setExpanded( prevState => {
             const newState = {}
             // init newState with all false if autoExpand
             Object.keys(prevState).forEach( state => {
@@ -77,9 +60,9 @@ const UrlFilterPanel = React.memo(({
     }
 
     const accordionCheckbox = <Checkbox className={"auto-expand"} label={"Accordion Mode"} value={autoExpand}
-        onChange={() => setAutoExpand(prevState => !prevState)}
-        tooltipId={tooltipId}
-        tooltipContent={"In Accordion Mode, one filter is visible at a time.<br/>Clicking a filter will hide all others."}
+                                        onChange={() => setAutoExpand(prevState => !prevState)}
+                                        tooltipId={tooltipId}
+                                        tooltipContent={"In Accordion Mode, one filter is visible at a time.<br/>Clicking a filter will hide all others."}
     />
 
     const filterButtonRow = <div className={"button-row"}>
@@ -87,7 +70,7 @@ const UrlFilterPanel = React.memo(({
             type="button"
             className={`btn small-button utility-button`}
             onClick={() => {
-                setExpand(prevState => {
+                setExpanded(prevState => {
                     const newState = {}
                     Object.keys(prevState).forEach(key => {
                         newState[key] = true
@@ -104,7 +87,7 @@ const UrlFilterPanel = React.memo(({
             type="button"
             className={`btn small-button utility-button`}
             onClick={() => {
-                setExpand(prevState => {
+                setExpanded(prevState => {
                     const newState = {}
                     Object.keys(prevState).forEach(key => {
                         newState[key] = false
@@ -121,28 +104,28 @@ const UrlFilterPanel = React.memo(({
     </div>
 
     const debugFilters = myConfig.isShowDebugComponents && <>
-        <FilterBox name={"reference_stats"} caption={"Reference Stats"} showContents={expand.reference_stats}
+        <FilterBox name={"reference_stats"} caption={"Reference Stats"} showContents={expanded.reference_stats}
                    onToggle={onToggleShow}  // gets passed filter name when clicked from within FilterBox
-            >
+        >
             <ReferenceStats
                 pageData={pageData}
                 options={{
                     colors: {
-                                blue: "#35a2eb",
-                                darkBlue: "#1169a5",
-                                red: "#ff6384",
-                                teal: "#4bc0c0",
-                                orange: "#ff9f40",
-                                purple: "#9866ff",
-                                yellow: "#ffcd57",
-                                green: "#5bbd38",
-                                grey: "#c9cbcf",
-                                magenta: "#f763ff",
-                                black: "#000000",
-                                white: "#FFFFFF"
-                            },
+                        blue: "#35a2eb",
+                        darkBlue: "#1169a5",
+                        red: "#ff6384",
+                        teal: "#4bc0c0",
+                        orange: "#ff9f40",
+                        purple: "#9866ff",
+                        yellow: "#ffcd57",
+                        green: "#5bbd38",
+                        grey: "#c9cbcf",
+                        magenta: "#f763ff",
+                        black: "#000000",
+                        white: "#FFFFFF"
+                    },
                     another_option:"your option here...",
-                 }}
+                }}
                 onAction={onAction}
 
                 currentState={currentState?.reference_stats}
@@ -150,6 +133,7 @@ const UrlFilterPanel = React.memo(({
 
         </FilterBox>
     </>
+
 
     return <div className={"url-overview iare-ux-container"}>
 
@@ -170,37 +154,30 @@ const UrlFilterPanel = React.memo(({
             {debugFilters}  {/* eventually all filters will be in one variable with config-controlled inclusion */}
 
             <FilterBox name={"actionable"} caption={"Actionable"} className={'actionable-filter-box'}
-                       showContents={expand.actionable}
+                       showContents={expanded.actionable}
                        onToggle={onToggleShow}>
                 <ActionableChart pageData={pageData} onAction={onAction}
                                  currentState={currentState?.actionable}
                                  tooltipId={tooltipId}/>
             </FilterBox>
 
-            <FilterBox name={"link_status"} caption="Link Status Codes"
-                       showContents={expand.link_status}
-                       onToggle={onToggleShow}>
-                <LinkStatusChart pageData={pageData} onAction={onAction}
-                                 currentState={currentState?.link_status}/>
-            </FilterBox>
-
 
             <FilterBox name={"books"} caption="Links to Books"
-                       showContents={expand.books}
+                       showContents={expanded.books}
                        onToggle={onToggleShow}>
                 <BooksChart pageData={pageData}
                             options={{
                                 colors: iareColors,
                                 no_book_link_caption: bookDefs[noBookLink]?.caption,
                                 no_book_link_key: noBookLink,
-                }}
+                            }}
                             onAction={onAction}
                             currentState={currentState?.books}/>
             </FilterBox>
 
 
             <FilterBox name={"papers"} caption="Links to Papers and DOIs"
-                       showContents={expand.papers}
+                       showContents={expanded.papers}
                        onToggle={onToggleShow}>
                 <PapersChart pageData={pageData} onAction={onAction}
                              currentState={currentState?.papers}/>
@@ -208,27 +185,23 @@ const UrlFilterPanel = React.memo(({
 
 
             <FilterBox name={"domains"} caption="Pay Level Domains" className={'domains-filter-box'}
-                       showContents={expand.domains}
+                       showContents={expanded.domains}
                        onToggle={onToggleShow}>
                 <PayLevelDomainsChart pageData={pageData} onAction={onAction}
                                       currentState={currentState?.domains}/>
             </FilterBox>
 
-            <FilterBox name={"reliability"} caption="Reliability Statistics" showContents={expand.reliability}
+
+            <FilterBox name={"signals"} caption="Wiki Signals" showContents={expanded.signals}
                        onToggle={onToggleShow}>
-                <PerennialChart pageData={pageData} onAction={onAction}
-                                currentState={currentState?.perennial}/>
+                <SignalsChart pageData={pageData} onAction={onAction}
+                                currentState={currentState?.signals}/>
             </FilterBox>
 
-            <FilterBox name={"tld"} caption="Top Level Domains" showContents={expand.tld} onToggle={onToggleShow}>
+
+            <FilterBox name={"tld"} caption="Top Level Domains" showContents={expanded.tld} onToggle={onToggleShow}>
                 <TldChart pageData={pageData} onAction={onAction}
                           currentState={currentState?.tld}/>
-            </FilterBox>
-
-            <FilterBox name={"templates"} caption="Template Occurrences" showContents={expand.templates}
-                       onToggle={onToggleShow}>
-                <TemplateChart pageData={pageData} onAction={onAction}
-                               currentState={currentState?.templates}/>
             </FilterBox>
 
         </div>
@@ -237,4 +210,4 @@ const UrlFilterPanel = React.memo(({
 
 })
 
-export default UrlFilterPanel;
+export default GrokFilterPanel;

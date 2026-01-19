@@ -1,7 +1,7 @@
 .url-overview-column {
     /*overflow: hidden;*/
-    width: var(--width-overview-column);
-    min-width: var(--width-overview-column);
+    width: var(--width-filter-panel-column);
+    min-width: var(--width-filter-panel-column);
     height:100%;
 }
 .url-overview > h4 {

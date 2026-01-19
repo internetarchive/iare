@@ -1,6 +1,6 @@
 import React, {useState, useRef} from 'react';
-import ListChart from "../../../ListChart.jsx";
-import {ACTIONS_IARE} from "../../../../constants/actionsIare.jsx";
+import ListChart from "../ListChart.jsx";
+import {ACTIONS_IARE} from "../../constants/actionsIare.jsx";
 
 const PayLevelDomainsChart = ({pageData, options, onAction, currentState = null}) => {
 

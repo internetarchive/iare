@@ -1,5 +1,5 @@
 import React from 'react';
-import PieChart from "../../../PieChart.jsx";
+import PieChart from "../PieChart.jsx";
 import ChartLegend from "./ChartLegend.jsx";
 
 const UrlStatusChart = ({pageData, options, colors, onAction}) => {

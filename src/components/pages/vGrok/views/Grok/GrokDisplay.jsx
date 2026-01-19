@@ -3,8 +3,8 @@ import './grokDisplay.css';
 import '../../../../css/components.css';
 import {ConfigContext} from "../../../../../contexts/ConfigContext.jsx";
 import {ACTIONS_IARE} from "../../../../../constants/actionsIare.jsx";
-// import UrlFlock from "../../../v2/UrlFlock.jsx";
 import GrokFlock from "../../GrokFlock.jsx";
+import GrokFilterPanel from "./GrokFilterPanel.jsx";
 
 
 /*
@@ -82,7 +82,7 @@ export default function GrokDisplay ({ pageData, options, tooltipId = null } ) {
     // goal: make a d3 collection of urls
 
     return <>
-        <div className={"section-box"}>
+        <div className={"section-box grok-display"}>
 
             <h3>Grokipedia Citation URLs <span style={{
                 display: "none",
@@ -92,13 +92,23 @@ export default function GrokDisplay ({ pageData, options, tooltipId = null } ) {
 
             <div className={"url-display-body"} style={{display: "flex", height:'100%'}}>
 
-                <GrokFlock urlDict={pageData.urlDict}
-                           urlArray={pageData.urlArray}
-                           urlFilters={urlFilters}
-                           onAction={handleAction}
-                           selectedUrl={selectedUrl}
-                           fetchMethod={myConfig.urlStatusMethod}
-                           tooltipId={"url-display-tooltip"} />
+                <div className={"grok-filter-panel-column"}>
+                    <GrokFilterPanel pageData={pageData}
+                                    options={{}}
+                                    onAction={handleAction}
+                                    currentState={currentFilterState}
+                                    tooltipId={"url-display-tooltip"}/>
+                </div>
+
+                <div className={"flock-display-contents"}>
+                    <GrokFlock urlDict={pageData.urlDict}
+                               urlArray={pageData.urlArray}
+                               urlFilters={urlFilters}
+                               onAction={handleAction}
+                               selectedUrl={selectedUrl}
+                               fetchMethod={myConfig.urlStatusMethod}
+                               tooltipId={"url-display-tooltip"} />
+                </div>
             </div>
 
         </div>

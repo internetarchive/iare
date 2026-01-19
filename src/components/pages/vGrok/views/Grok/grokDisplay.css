@@ -13,3 +13,20 @@
     font-weight: bold;
     font-size: 1.5rem !important;
 }
+
+
+
+.grok-filter-panel-column {
+    /*overflow: hidden;*/
+    width: var(--width-filter-panel-column);
+    min-width: var(--width-filter-panel-column);
+    height:100%;
+}
+.grok-filter-panel > h4 {
+    color: grey;
+    margin-bottom: 0;
+}
+
+.grok-display .flock-display-contents {
+    margin-left: var(--iare-spacing-small)
+}

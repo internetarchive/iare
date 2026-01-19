@@ -1,8 +1,8 @@
 import React from 'react';
 import './charts.css';
-import {generateColorFade} from "../../../../utils/generalUtils.js";
+import {generateColorFade} from "../../utils/generalUtils.js";
 import ChartLegend from "./ChartLegend.jsx";
-import {ACTIONS_IARE} from "../../../../constants/actionsIare.jsx";
+import {ACTIONS_IARE} from "../../constants/actionsIare.jsx";
 
 const PapersChart = ({pageData, options, onAction, currentState=null}) => {
 

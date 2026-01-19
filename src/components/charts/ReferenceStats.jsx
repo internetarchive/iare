@@ -1,7 +1,7 @@
 import React from 'react';
 import ChartLegend from "./ChartLegend.jsx";
-import {REFERENCE_STATS_MAP} from "../../../../constants/referenceStatsMap.jsx";
-import {ACTIONS_IARE} from "../../../../constants/actionsIare.jsx";
+import {REFERENCE_STATS_MAP} from "../../constants/referenceStatsMap.jsx";
+import {ACTIONS_IARE} from "../../constants/actionsIare.jsx";
 
 
 const ReferenceStats = ({pageData, options, onAction}) => {

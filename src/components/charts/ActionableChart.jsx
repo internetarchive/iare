@@ -1,6 +1,6 @@
-import {ACTIONABLE_FILTER_MAP} from "../../../../constants/actionableMap.jsx";
-import FilterButtons from "../../../FilterButtons.jsx";
-import {ACTIONS_IARE} from "../../../../constants/actionsIare.jsx";
+import {ACTIONABLE_FILTER_MAP} from "../../constants/actionableMap.jsx";
+import FilterButtons from "../FilterButtons.jsx";
+import {ACTIONS_IARE} from "../../constants/actionsIare.jsx";
 
 function ActionFilters({
     // TODO we can remove this ActionFilters component and use FilterButtons directly in ActionableChart

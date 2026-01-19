@@ -1,7 +1,7 @@
 import React from 'react';
-import PieChart from "../../../PieChart.jsx";
+import PieChart from "../PieChart.jsx";
 import ChartLegend from "./ChartLegend.jsx";
-import {LINK_STATUS_MAP} from "../../../../constants/linkStatusMap.jsx";
+import {LINK_STATUS_MAP} from "../../constants/linkStatusMap.jsx";
 
 const LinkStatusChart = ({pageData, options, onAction, currentState = null}) => {
 
