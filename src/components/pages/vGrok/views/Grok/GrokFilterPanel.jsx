@@ -16,6 +16,7 @@ import {ConfigContext} from "../../../../../contexts/ConfigContext.jsx";
 import {noBookLink, bookDefs} from "../../../../../utils/iariUtils.js";
 import {iareColors} from "../../../../../constants/iareColors.jsx";
 import SignalsChart from "../../../../charts/SignalsChart.jsx";
+import ArchiveStatusChart from "../../../../charts/ArchiveStatusChart.jsx";
 
 Chart.register(LinearScale, BarElement, ArcElement, Legend, Tooltip, Title, SubTitle, Colors,);
 
@@ -36,6 +37,7 @@ const GrokFilterPanel = React.memo(({
 
     const [expanded, setExpanded] = useState({
         "actionable" : true,
+        "archived" : true,
         "domains" : true,
         "signals" : true,
         "tld" : true,
@@ -159,6 +161,18 @@ const GrokFilterPanel = React.memo(({
                 <ActionableChart pageData={pageData} onAction={onAction}
                                  currentState={currentState?.actionable}
                                  tooltipId={tooltipId}/>
+            </FilterBox>
+
+
+            <FilterBox name={"archive"} caption="Archive Status"
+                       showContents={expanded.archived}
+                       onToggle={onToggleShow}>
+                <ArchiveStatusChart pageData={pageData}
+                            options={{
+                                colors: iareColors,
+                            }}
+                            onAction={onAction}
+                            currentState={currentState?.archived}/>
             </FilterBox>
 
 

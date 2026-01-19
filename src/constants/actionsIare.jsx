@@ -64,4 +64,12 @@ export const ACTIONS_IARE = {
         key: "SAVE_WIKITEXT"
     },
 
+    SET_LINK_STATUS_FILTER: {
+        key: "SET_LINK_STATUS_FILTER"
+    },
+
+    SET_ARCHIVE_STATUS_FILTER: {
+        key: "SET_ARCHIVE_STATUS_FILTER"
+    },
+
 }

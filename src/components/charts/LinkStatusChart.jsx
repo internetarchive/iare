@@ -2,6 +2,7 @@ import React from 'react';
 import PieChart from "../PieChart.jsx";
 import ChartLegend from "./ChartLegend.jsx";
 import {LINK_STATUS_MAP} from "../../constants/linkStatusMap.jsx";
+import {ACTIONS_IARE} from "../../constants/actionsIare.jsx";
 
 const LinkStatusChart = ({pageData, options, onAction, currentState = null}) => {
 
@@ -42,7 +43,7 @@ const LinkStatusChart = ({pageData, options, onAction, currentState = null}) => 
 
     const onClickChart = (link) => {
         // console.log("pie chart clicked, link=", link)
-        onAction({action: "setLinkStatusFilter", value: link})
+        onAction({action: ACTIONS_IARE.SET_LINK_STATUS_FILTER, value: link})
     }
 
     const linkStatusChartOptions = {
@@ -65,7 +66,7 @@ const LinkStatusChart = ({pageData, options, onAction, currentState = null}) => 
 
     const onClickLegend = e => {
         const linkStatus = e.target.closest('.legend-entry').dataset['link'];
-        onAction({action: "setLinkStatusFilter", value: linkStatus})
+        onAction({action: ACTIONS_IARE.SET_LINK_STATUS_FILTER, value: linkStatus})
     }
 
     return <>

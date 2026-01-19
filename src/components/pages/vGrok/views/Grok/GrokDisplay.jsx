@@ -2,9 +2,11 @@ import React, {useCallback, useState} from 'react';
 import './grokDisplay.css';
 import '../../../../css/components.css';
 import {ConfigContext} from "../../../../../contexts/ConfigContext.jsx";
-import {ACTIONS_IARE} from "../../../../../constants/actionsIare.jsx";
 import GrokFlock from "../../GrokFlock.jsx";
 import GrokFilterPanel from "./GrokFilterPanel.jsx";
+import {ACTIONS_IARE} from "../../../../../constants/actionsIare.jsx";
+import {ARCHIVE_STATUS_MAP} from "../../../../../constants/archiveStatusMap.jsx";
+
 
 
 /*
@@ -12,10 +14,14 @@ assumes pageData.urlArray and pageData.urlDict
  */
 export default function GrokDisplay ({ pageData, options, tooltipId = null } ) {
 
-    const [urlFilters, setUrlFilters] = useState( null ); // keyed object of url filters to pass in to UrlFlock
+    const [flockFilters, setFlockFilters] = useState( null ); // keyed object of url filters to pass in to UrlFlock
     // TODO: implement UrlFilter custom objects
     const [currentFilterState, setCurrentFilterState] = useState({})  // aggregate state of filter boxes
     const [selectedUrl, setSelectedUrl] = useState(''); // currently selected url in url list
+
+    const filters = {
+        archive_status: { key: "archive_status" },
+    }
 
 
     let myConfig = React.useContext(ConfigContext);
@@ -42,6 +48,31 @@ export default function GrokDisplay ({ pageData, options, tooltipId = null } ) {
         })
     }
 
+    const getFilterArchiveStatus = (archiveStatus) => {
+        const statusDisplay = ARCHIVE_STATUS_MAP[archiveStatus]?.key || null
+
+        if (statusDisplay === null) {
+            return null; // null means "all" filter
+        }
+
+        const filterFunction = ARCHIVE_STATUS_MAP[archiveStatus]?.filterFunction
+        if (!filterFunction) return null;
+
+        // return synthetic filter showing URLs that have specified archiveStatus
+        return {
+            "archive_status": {
+                desc: `URLs that have Archive Status of "${statusDisplay}"`,
+                caption: <span>{`Contains Archive Status "${statusDisplay}"`}</span>,
+                // filterFunction: () => (url) => {
+                //     if (!url.rsp) return false  // if no rsp list for url, block it - it does not "belong"
+                //     return url.rsp.includes(perennialKey)
+                // }
+                filterFunction: filterFunction
+            }
+        }
+    }
+
+    
     const handleAction = useCallback( result => {
         // handles callback functionality when something "down below" (like a url row) gets clicked
 
@@ -59,15 +90,23 @@ export default function GrokDisplay ({ pageData, options, tooltipId = null } ) {
         }
 
         else if (action ===
-            ACTIONS_IARE.REMOVE_ALL_FILTERS
+            ACTIONS_IARE.REMOVE_ALL_FILTERS.key
         ) {
             // clear filters (or, show all) for URL
-            setUrlFilters(null)
+            setFlockFilters(null)
             setSelectedUrl(null)
             setFilterState(null)
         }
 
-        else {
+        else if (action === ACTIONS_IARE.SET_ARCHIVE_STATUS_FILTER.key
+        ) {
+            // value is true (archived) or false (no archive)
+            alert(`handling action: ${action}, value: ${value}`)
+            setFlockFilters(getFilterArchiveStatus(value))
+            setFilterState(filters.reference_stats, value)
+        }
+
+    else {
             console.log(`Action "${action}" not supported.`)
             alert(`Action "${action}" not supported.`)
         }
@@ -103,7 +142,7 @@ export default function GrokDisplay ({ pageData, options, tooltipId = null } ) {
                 <div className={"flock-display-contents"}>
                     <GrokFlock urlDict={pageData.urlDict}
                                urlArray={pageData.urlArray}
-                               urlFilters={urlFilters}
+                               urlFilters={flockFilters}
                                onAction={handleAction}
                                selectedUrl={selectedUrl}
                                fetchMethod={myConfig.urlStatusMethod}
