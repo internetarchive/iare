@@ -8,7 +8,6 @@ import {ACTIONS_IARE} from "../../../../../constants/actionsIare.jsx";
 import {ARCHIVE_STATUS_MAP} from "../../../../../constants/archiveStatusMap.jsx";
 
 
-
 /*
 assumes pageData.urlArray and pageData.urlDict
  */
@@ -19,23 +18,12 @@ export default function GrokDisplay ({ pageData, options, tooltipId = null } ) {
     const [currentFilterState, setCurrentFilterState] = useState({})  // aggregate state of filter boxes
     const [selectedUrl, setSelectedUrl] = useState(''); // currently selected url in url list
 
-    const filters = {
+    const availableFilters = {
         archive_status: { key: "archive_status" },
     }
 
-
     let myConfig = React.useContext(ConfigContext);
     myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
-
-            // const simpleUrlDict = Object.keys(pageData.urlDict).map( urlKey => {
-            //     // extract url from key
-            //     return { url: urlKey }
-            // }).sort(compareByUrl('asc'));
-            //
-            // const simpleUrlArray = pageData.urlArray.map( urlObj => {
-            //     // extract url from url object
-            //     return { url: urlObj.url }
-            // }).sort(compareByUrl('asc'))
 
     const setFilterState = (whichFilter, value) => {
         setCurrentFilterState(prevState => {
@@ -49,24 +37,20 @@ export default function GrokDisplay ({ pageData, options, tooltipId = null } ) {
     }
 
     const getFilterArchiveStatus = (archiveStatus) => {
-        const statusDisplay = ARCHIVE_STATUS_MAP[archiveStatus]?.key || null
 
-        if (statusDisplay === null) {
-            return null; // null means "all" filter
+        const statusCaption = ARCHIVE_STATUS_MAP[archiveStatus]?.key || null
+        if (statusCaption === null) {
+            return null  // null means "all" filter
         }
 
         const filterFunction = ARCHIVE_STATUS_MAP[archiveStatus]?.filterFunction
-        if (!filterFunction) return null;
+        if (!filterFunction) return null  // if no filter function then show all
 
-        // return synthetic filter showing URLs that have specified archiveStatus
+        // return synthetic filter object for archive_status
         return {
             "archive_status": {
-                desc: `URLs that have Archive Status of "${statusDisplay}"`,
-                caption: <span>{`Contains Archive Status "${statusDisplay}"`}</span>,
-                // filterFunction: () => (url) => {
-                //     if (!url.rsp) return false  // if no rsp list for url, block it - it does not "belong"
-                //     return url.rsp.includes(perennialKey)
-                // }
+                desc: `URLs that have Archive Status of "${statusCaption}"`,
+                caption: <span>{`Contains Archive Status "${statusCaption}"`}</span>,
                 filterFunction: filterFunction
             }
         }
@@ -77,13 +61,8 @@ export default function GrokDisplay ({ pageData, options, tooltipId = null } ) {
         // handles callback functionality when something "down below" (like a url row) gets clicked
 
         const {action, value} = result;
-        console.log (`UrlDisplay: handleAction: action=${action}, value=${value}`);
+        console.log (`GrokDisplay: handleAction: action=${action}, value=${value}`);
 
-        const noneFilter = {
-            "filter" : {
-                filterFunction: () => () => {return false},
-            }
-        }
 
         if (0) {
             // allows for easy addition of "else if"
@@ -100,10 +79,10 @@ export default function GrokDisplay ({ pageData, options, tooltipId = null } ) {
 
         else if (action === ACTIONS_IARE.SET_ARCHIVE_STATUS_FILTER.key
         ) {
-            // value is true (archived) or false (no archive)
-            alert(`handling action: ${action}, value: ${value}`)
+            // value is "archived" or "no archive"
+            // alert(`handling action: ${action}, value: ${value}`)
             setFlockFilters(getFilterArchiveStatus(value))
-            setFilterState(filters.reference_stats, value)
+            setFilterState(availableFilters.archive_status, value)
         }
 
     else {
@@ -114,11 +93,6 @@ export default function GrokDisplay ({ pageData, options, tooltipId = null } ) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    // simpleArchiveDisplay
-    // simpleUrlArray is collection of "pure" links - does not include archives
-    // each should have associated archive
-    // and live status
-    // goal: make a d3 collection of urls
 
     return <>
         <div className={"section-box grok-display"}>

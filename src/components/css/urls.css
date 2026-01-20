@@ -132,7 +132,7 @@
 }
 
 .url-list-rows .url-row:hover {
-    color:var(--color-list-fg-hover);
+    /*color:var(--color-list-fg-hover);*/
     background-color: var(--color-list-bg-hover);
 }
 

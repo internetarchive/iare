@@ -1,6 +1,7 @@
 const myCategory = "Archive Status"
 
 export const ARCHIVE_STATUS_MAP = {
+
     archived: {
         key: "archived",
         category: myCategory,
