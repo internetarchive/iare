@@ -28,3 +28,39 @@ export function mbfc_display(signalData, signals) {
         return <div>MBFC: {value}</div>
     }
 }
+
+
+export function wayback_display(signalData, signals) {
+    /*
+    "signals": {
+        ...
+        "n_wayback_machine_snapshot": 151049.0,
+        "first_wayback_machine_snapshot": "2001-04-10 21:40:13",
+        "last_wayback_machine_snapshot": "2025-09-17 13:12:21",
+        ...
+    }
+
+     */
+    // triggered by n_wayback_machine_snapshot signal
+    // use heuristics to display
+
+    if (!signalData) return null
+
+    // take value from signals and display
+    const n = signals["n_wayback_machine_snapshot"]
+    const wayback_first = signals["first_wayback_machine_snapshot"]
+    const wayback_last = signals["last_wayback_machine_snapshot"]
+
+    try {
+        
+        return <div>
+            Wayback: {Math.round(n / 1000)}K snapshots
+            from {wayback_first.split(' ')[0]} to {wayback_last.split(' ')[0]}
+        </div>
+
+        // TODO put any data in dataset for this element?
+
+    } catch (e) {
+        return <div>Wayback: Error displaying snapshot data</div>
+    }
+}

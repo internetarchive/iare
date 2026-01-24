@@ -1,6 +1,6 @@
 import React from "react";
 import {SignalDefs} from "../constants/signalDefs.jsx";
-import {mbfc_display} from "../constants/signalBadgeFunctions.jsx";
+import {mbfc_display, wayback_display} from "../constants/signalBadgeFunctions.jsx";
 
 /*
 return signal badge if signal is a valid Badge to be displayed
@@ -60,7 +60,7 @@ export default function SignalBadge({
     // otherwise, use signalDef.action to determine display of signal
 
     if (!signalDef) {
-        return <div className={"signal-no-support"}>Signal: {signal?.signal_name} not supported.</div>
+        return <div className={"signal-no-support"}>Signal: {signalKey} not supported.</div>
     }
 
     // make signalContent based on signal action
@@ -71,6 +71,7 @@ export default function SignalBadge({
 
 
     const signalAction = signalDef?.action
+    // action determined by signalDef associated with signalKey
 
     // skip badge if signal is null
     if (signalAction === null) {
@@ -92,6 +93,11 @@ export default function SignalBadge({
     else if (signalAction === "mbfc_display") {
         // base display on mbfc_ratings
         signalContents = mbfc_display(signalData, signals)
+    }
+
+    else if (signalAction === "wayback_display") {
+        // base display on mbfc_ratings
+        signalContents = wayback_display(signalData, signals)
     }
 
 

@@ -247,13 +247,14 @@ const grokFlock = React.memo(function GrokFlock({
     const onClickHeader = (evt) => {
     }
 
-    const onHoverUrlFlock = (e) => {
+    const onHoverFlock = (e) => {
         // clears tooltip html...only if no other sub-elements got there first
         setUrlTooltipHtml('')
+        console.log(`GrokFlock onHoverFlock: ${e.type}`)
     }
 
     const onHoverHeaderRow = useCallback((e) => {  // useCallback prevents re-render upon hover???
-        e.stopPropagation()  // prevents default onHover of UrlFlock from engaging and erasing tooltip
+        e.stopPropagation()  // prevents default onHover of GrokFlock from engaging and erasing tooltip
         const html = urlColumnDefs.columns[e.target.className]?.ttCaption
         setUrlTooltipHtml(html)
     }, [])
@@ -275,7 +276,7 @@ const grokFlock = React.memo(function GrokFlock({
 
         let html = ''
 
-        console.log(`UrlFlock onHover: columnClass = ${columnClass}`)
+        console.log(`GrokFlock onHover: columnClass = ${columnClass}`)
 
         if (columnClass === "url-status") {
             const statusDescription = httpStatusCodes[row.dataset.status_code]
@@ -664,7 +665,7 @@ const grokFlock = React.memo(function GrokFlock({
     return <>
         <div data-tooltip-id={tooltipId}  // passed in tooltipId for this flock)
              data-tooltip-html={urlTooltipHtml}
-             onMouseOver={onHoverUrlFlock}>
+             onMouseOver={onHoverFlock}>
             <FlockBox caption={captionBox} className={"grok-flock"}>{flock}</FlockBox>
         </div>
 

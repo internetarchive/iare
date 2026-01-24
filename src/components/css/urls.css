@@ -384,7 +384,8 @@ x.url-row div:last-child {
     color: red !important;
 }
 .url-row.url-is-error .url-status {
-    color: var(--color-http-error-bg) !important;
+    /*color: var(--color-http-error-bg) !important;*/
+    color: red !important;
 }
 
 
