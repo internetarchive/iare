@@ -6,6 +6,18 @@ import PageDataGrok from "./PageDataGrok.jsx";
 
 export default function PageDisplayGrok( { pageData }) {
 
+    if (pageData?.page_errors) {
+        const errors = Array.isArray(pageData.page_errors)
+            ? pageData.page_errors
+            : [pageData.page_errors];
+        const pageErrors = errors.map((err, i) => <div key={i}>{err}</div>)
+        return <div className={"iari-wiki-display iare-ux-container"}>
+            <div className={"iare-ux-header"}>Page Errors</div>
+            <div className={"iare-ux-body"}>{pageErrors}</div>
+        </div>
+    }
+        
+
     let myConfig = React.useContext(ConfigContext)
     myConfig = myConfig ? myConfig : {} // prevents myConfig.<undefined param> errors
 
