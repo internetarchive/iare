@@ -134,9 +134,11 @@ export default function PageInfo({ pageData, showViewOptions = false, handleView
         <ClickButton buttonText={"Copy PageData to Clipboard (JSON)"} onClick={handleCopyPageData} />
     </>
 
-    const section_extra = <p><br/>ideas: Alert when No Books at all in article</p>
-    // that is IARI Alert - that should be defined in iare dispersal, not calculated in IARE (anymore)
-    //
+    const section_extra = <>
+        <p><br/>Idea: Alert (Actionable per article?) when No Books at all in article</p>
+        <div><a href={`https://web.archive.org`} target="_blank" rel="noreferrer">Link to
+            Wayback Machine</a></div>
+    </>
 
 
     const pageInfoDetails = pageData

@@ -64,13 +64,17 @@ export default function PageInfoGrok({ pageData, showViewOptions = false, handle
     //     <ClickButton buttonText={"Copy PageData to Clipboard (JSON)"} onClick={handleCopyPageData} />
     // </>
     //
-    const section_extra = <><div>Grok Page Details here</div></>
+    // const section_extra = <><div>Grok Page Details here</div></>
+    const section_extra = <>
+        <div><a href={`https://web.archive.org`} target="_blank" rel="noreferrer">Link to
+            Wayback Machine</a></div>
+    </>
 
     const linkPageSource = <a href={pageData.pathName} target={"_blank"} rel={"noreferrer"}>{pageData.pathName}</a>
 
     const pageInfoDetails = pageData
         ? <div className={'detail-section'}>
-            <div>Grok Page Info Details</div>
+            <div style={{fontStyle:"italic", fontWeight:"bold"}}>Grok Page Info Details</div>
             <div>pageData.endpoint: {pageData.endpoint}</div>
             {/*{section_type}*/}
             {/*{section_endpoint}*/}
