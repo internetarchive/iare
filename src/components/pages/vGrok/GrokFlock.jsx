@@ -390,7 +390,7 @@ const grokFlock = React.memo(function GrokFlock({
         </div>
     }
 
-    const getFlockRows = (flockArray, flockFilters) => {
+    const getDataRows = (flockArray, flockFilters) => {
         // returns [flockRow markup, array of filtered urls]
         if (!flockArray || flockArray.length === 0) {
             return [<h4>No URLs to show</h4>, []]
@@ -593,7 +593,7 @@ const grokFlock = React.memo(function GrokFlock({
     }, [feedbackText]);
 
 
-    const [flockRows, flockArray] = getFlockRows(urlArray, urlFilters)
+    const [flockRows, flockArray] = getDataRows(urlArray, urlFilters)
     const flock = getFlock(flockRows)
 
     const handleCopyUrlDetails = () => {
