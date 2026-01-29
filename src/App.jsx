@@ -19,9 +19,21 @@ import {ParseMethods} from "./constants/parseMethods.jsx";
 
 import {ConfigContext} from "./contexts/ConfigContext"
 import {ShortcutDefs, envShortcutLists} from "./constants/shortcutDefs.jsx";
+import {MEDIA_TYPES} from "./constants/mediaTypes.jsx";
 
 
-export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod, myParseMethod, myIariSourceId, myDebug}) {
+export default function App(
+    {
+        env,
+        myPath,
+        myCacheData,
+        myUseLocalCache,
+        myRefresh,
+        myCheckMethod,
+        myParseMethod,
+        myIariSourceId,
+        myDebug
+    }) {
 
     const appTitle = "Internet Archive Reference Explorer"
 
@@ -59,7 +71,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     const [isShowUrlOverview, setIsShowUrlOverview] = useState(true);
     const [isShowShortcuts, setIsShowShortcuts] = useState(true);
         // TODO set this based on local storage or cookie value
-    const [isShowUseCache, setIsShowUseCache] = useState(false);
+    const [isShowUseLocalCache, setIsShowUseLocalCache] = useState(true);
 
     const [isShowDebugInfo, setIsShowDebugInfo] = useState(false);
     const [isShowDebugComponents, setIsShowDebugComponents] = useState(false);
@@ -70,6 +82,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     // params settable from from address url
     const [targetPath, setTargetPath] = useState(myPath);
     const [cacheData, setCacheData] = useState(myCacheData);
+    const [useLocalCache, setUseLocalCache] = useState(myUseLocalCache);
     const [refreshCheck, setRefreshCheck] = useState(myRefresh);
     const [checkMethod, setCheckMethod] = useState(myCheckMethod);
     const [parseMethod, setParseMethod] = useState(myParseMethod);
@@ -217,31 +230,20 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     }
 
     // mediaType is "pdf", "html", "wiki", or anything else we come up with
-    const getMediaType = (path = '', cacheData = '') => {
+    const getMediaType = (path = '') => {
         // set media type based on heuristic:
 
-        // if cacheData, assume wiki
+        if (MEDIA_TYPES.WIKI.regex.test(path))
+            return MEDIA_TYPES.WIKI.key
 
-        // if path ends in ".pdf", assume pdf
-        // if path contains ".wikipedia.org/wiki/, assume wiki
+        else if (MEDIA_TYPES.GROK.regex.test(path))
+            return MEDIA_TYPES.GROK.key
 
-        // else unknown, for now
+        else if (MEDIA_TYPES.PDF.regex.test(path))
+            return MEDIA_TYPES.PDF.key
 
-        if (cacheData)
-            return 'wiki'  // cacheData always returns a wiki cache for now....
-
-        // eslint-disable-next-line
-        const regexPdf = new RegExp("\.pdf$");
-        // eslint-disable-next-line
-        const regexWiki = new RegExp("\.wikipedia.org/wiki/");
-        // eslint-disable-next-line
-
-        if (regexPdf.test(path))
-            return 'pdf'
-        else if (regexWiki.test(path))
-            return "wiki"
         else
-            return "unknown";
+            return MEDIA_TYPES.UNKNOWN.key
 
     };
 
@@ -253,24 +255,24 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     const fetchArticleData = useCallback((
         {
             pathName,
-            cacheData = '',
+            use_local_cache = false,
             refresh = false
         }) => {
 
         // handle null pathName
-        if (!pathName && !cacheData) {
-            console.log("APP::fetchArticleData: pathName is null-ish and no cache-data specified");
+        if (!pathName) {
+            console.log("APP::fetchArticleData: pathName is null-ish");
             setPageData(null);
             // TODO: use setMyError(null); // ??
             return;
         }
 
         // mediaType is "pdf", "html", "wiki", or anything else we come up with
-        const myMediaType = getMediaType(pathName, cacheData);
+        const myMediaType = getMediaType(pathName);
         // TODO: idea: respect a "forceMediaType",
-        // where it can force a media type endpoint, no matter what getMediaType thinks it is.
-        // If so, passes it in to getPagePathEndpoint, where the endpoint is determined
-        // by passed in mediaType rather than mediaType interpolated from pathName.
+        //  where it can force a media type endpoint, no matter what getMediaType thinks it is.
+        //  If so, passes it in to getPagePathEndpoint, where the endpoint is determined
+        //  by passed in mediaType rather than mediaType interpolated from pathName.
 
         console.log("APP: fetchArticleData: mediaType = ", myMediaType)
 
@@ -278,7 +280,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         const pageEndpoint = getPagePathEndpoint({
             iariSourceId: myIariSourceId,
             path: pathName,
-            cacheData: cacheData,
+            use_local_cache: use_local_cache,
             mediaType: myMediaType,
             refresh: refresh,
             parseMethod: parseMethod
@@ -363,12 +365,14 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
     const handlePathResults = (pathResults) => {
         // callback for PathNameFetch component
         // pathResults[0] = pathName (string)
-        // pathResults[1] = refreshCheck (boolean)
+        // pathResults[1] = checkboxRefresh (boolean)
+        // pathResults[2] = checkboxUseLocalCache (boolean)
 
         refreshPageResults(
             {
                 url: pathResults[0],
                 refresh: pathResults[1],
+                use_local_cache: pathResults[2],
                 iari_source: myIariSourceId,
             }
         )
@@ -380,6 +384,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         {
             url = '',
             cache_data = '',
+            use_local_cache = '',
             refresh=false,
             iari_source = IariSources.iari_prod.key
         } ) => {
@@ -388,6 +393,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
             + window.location.host + window.location.pathname
             + `?url=${url}`
             + (cache_data ? `&cache_data=${cache_data}` : '')
+            + (use_local_cache ? `&use_local_cache=${use_local_cache}` : '')
             + (refresh ? '&refresh=true' : '')
             + (checkMethod ? `&method=${checkMethod}` : '')
             + (myIariSourceId ? `&iari-source=${iari_source}` : '')
@@ -409,19 +415,23 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         // set these states for debug display, essentially
         setTargetPath(myPath);
         setCacheData(myCacheData)
+        setUseLocalCache(myUseLocalCache)
         setRefreshCheck(myRefresh);
 
-        console.log(`APP: useEffect[myIariSourceId, myPath, myCacheData, myRefresh, fetchArticleData]: calling fetchArticleData: ${myPath}, ${myCacheData}, ${myRefresh}`)
+        console.log(`APP: useEffect[myIariSourceId, myPath, myCacheData, myUseLocalCache, myRefresh, fetchArticleData]: calling fetchArticleData: ${myPath}, ${myCacheData}, ${myUseLocalCache}, ${myRefresh}`)
 
         // and do the fetching for the path specified (pulled from URL address)
         fetchArticleData({
             pathName: myPath,
-            cacheData: myCacheData,
+            // cacheData: myCacheData,
+            //     // cacheData means get parsed file contents from local cache.
+            //     // This is a debug helper mechanism.
+            use_local_cache: myUseLocalCache,
             refresh: myRefresh
         })
 
 
-    }, [myIariSourceId, myPath, myCacheData, myRefresh, fetchArticleData])
+    }, [myIariSourceId, myPath, myCacheData, myRefresh, myUseLocalCache, fetchArticleData])
 
 
     const handleCheckMethodChange = (methodId) => {
@@ -454,6 +464,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         refreshPageResults( {
             url : targetPath,
             cache_data : cacheData,
+            use_local_cache : use_local_cache,
             refresh : refreshCheck,
             iari_source: sourceId,
         })
@@ -466,6 +477,9 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         : ''
     const iariSourceInfo = IariSources[myIariSourceId]?.caption
 
+    // scroll Fix - for small screens, turning on "scrollfix" allows more elements of
+    // of the screen to be scrolled. otherwise, screen elements that are fixed take up
+    // too much of screen real estate and not much room is left for scrolling data!
     const buttonScrollFix = <div>
         <div>Scroll: <span className={"lock-icon"}
                            onClick={toggleScrollFix}
@@ -578,6 +592,7 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
         <p><span className={'label'}>Target URL from query param:</span> {myPath}</p>
         <p><span className={'label'}>Use Cache Data:</span> {myCacheData ? myCacheData : 'N/A'}</p>
         <p><span className={'label'}>Force Refresh:</span> {refreshCheck ? "TRUE" : "false"}</p>
+        <p><span className={'label'}>Use Local Cache:</span> {useLocalCache ? "TRUE" : "false"}</p>
         <div>{debugButtons}</div>
         <p><span className={'label'}>pathName:</span> <MakeLink href={targetPath}/></p>
         <p><span className={'label'}>endpointPath:</span> <MakeLink href={endpointPath}/></p>
@@ -671,13 +686,14 @@ export default function App({env, myPath, myCacheData, myRefresh, myCheckMethod,
 
                                 <PathNameFetch pathInitial={targetPath?.length > 0 ? targetPath : defaultIfEmpty}
                                                className={"iare-path-fetch"}
-                                               checkInitial={refreshCheck}
+                                               checkboxInitialRefresh={refreshCheck}
+                                               checkboxInitialUseLocalCache={useLocalCache}
                                                placeholder={"Enter a Wikipedia article or PDF url here"}
                                                shortcuts={shortcuts}
                                                handlePathResults={handlePathResults}
                                                options = {{
                                                    showShortcuts: isShowShortcuts,
-                                                   showUseCache: isShowUseCache,
+                                                   showUseLocalCache: isShowUseLocalCache,
                                                }}
 
                                 />

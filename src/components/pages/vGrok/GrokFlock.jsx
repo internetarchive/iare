@@ -1,0 +1,682 @@
+import React, {useCallback, useState} from 'react';
+import FlockBox from "../../FlockBox.jsx";
+
+import {convertToCSV, copyToClipboard} from "../../../utils/generalUtils.js";
+// import {getArchiveStatusInfo, getProbePopupData} from "../../utils/urlUtils.jsx";
+import {getArchiveStatusInfo, getArchiveStatusInfoGrok} from "../../../utils/urlUtils.jsx";
+
+import {ACTIONS_IARE} from "../../../constants/actionsIare.jsx";
+import {ACTIONABLE_FILTER_MAP} from "../../../constants/actionableMap.jsx";
+import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../../constants/urlFilterMaps.jsx";
+import {httpStatusCodes, iabotLiveStatusCodes} from "../../../constants/httpStatusCodes.jsx"
+import {reliabilityMap} from "../../../constants/perennialList.jsx";
+import {urlColumnDefs} from "../../../constants/urlColumnDefs.jsx";
+// import ProbesDisplay from "../../ProbesDisplay.jsx";
+// import ProbesDisplay from "../../ProbesDisplay.jsx";
+import Popup from "../../Popup.jsx";
+import SignalsDisplay from "../../SignalsDisplay.jsx";
+import SignalPopupTitle from "../../SignalPopupTitle.jsx";
+import SignalPopupContents from "../../SignalPopupContents.jsx";
+// import SignalPopupContents from "../../SignalPopupContents.jsx";
+
+import '../../css/grok.css';
+
+
+/*
+assumes urlArray is an array of url objects:
+    [
+        {
+            url : <url>,
+            status_code : <status_code>,
+            <other url info>
+        },
+        ...
+    ]
+
+and filterDef property is a filter object definition of the form:
+
+    {
+        caption: "caption here",
+        desc: "", // ? tooltip text?
+        filterFunction: () => { <return callback function to filter> }
+    }
+
+example filterDef element:
+    {
+        caption: "General",
+        desc: "",
+        filterFunction: () => (d) => {return d.type === "general"},
+    }
+
+*/
+const grokFlock = React.memo(function GrokFlock({
+                                                  urlDict,
+                                                  urlArray,
+                                                  urlFilters = {},  // keyed object of filter definitions to apply to urlArray for final url list display
+                                                  onAction,
+                                                  selectedUrl = '',
+                                                  fetchMethod = "",
+                                                  tooltipId = ''
+                                              }) {
+    // TODO maybe should not/don't have to use memo here??
+    //  making it a memo seemed to reduce the re-renders of the flock when the tooltip text was updated
+
+    // TODO how do we make the Probe Popup a global, like a tooltip, sort of?
+    const [isSignalPopupOpen, setIsSignalPopupOpen] = useState(false)
+    const [signalPopupTitle, setSignalPopupTitle] = useState(<>Modal Title</>);
+    const [signalPopupContents, setSignalPopupContents] = useState(null);
+
+
+    const [feedbackText, setFeedbackText] = useState("")
+
+    const [urlTooltipHtml, setUrlTooltipHtml] = useState('<div>ToolTip<br />GrokFlock<br />second line');
+    // TODO there is a bug where sort re-renders list every time tooltip text/html property is updated
+    // TODO maybe fix using React.useRef somehow???
+
+    const [sortDefs, setSortDefs] = useState({
+        sorts: {  // holds sort value for all different sort types
+            "status": {name: "status", dir: 1},  // dir: 1 is asc, -1 is desc, 0 is do not sort
+            "archive_status": {name: "archive_status", dir: -1},
+            // "references": {name: "references", dir: -1},
+            // "templates": {name: "templates", dir: -1},
+            "actionable": {name: "actionable", dir: -1},
+            // "sections": {name: "sections", dir: -1},
+            // "perennial": {name: "perennial", dir: -1},
+            "signals": {name: "signals", dir: -1},
+        },
+        sortOrder: ["status"]  // array indicating which sorts get applied and in what order. NB this is not implemented yet, but will be
+    })
+
+    const columns = {
+        "reliability": { show: true }
+    }
+
+    const handleSignalClick = (e) => {
+        // target element is Signal badge, "inside" of url row...
+
+        const targetElement = e.target
+
+        const urlElement = targetElement.closest('.url-row')
+        const urlLink = urlElement.dataset.url
+        const urlObj = urlDict[urlLink]
+
+        // const rawSignalData = <pre>{JSON.stringify(urlObj.signal_data, null, 2)}</pre>
+        const rawSignalData = urlObj.signal_data
+        const score = "TBD"
+
+        // const [pTitle, pContents] = getSignalPopupContents(urlLink, score, rawSignalData)
+
+        setSignalPopupTitle(<SignalPopupTitle urlLink={urlLink} />)
+
+        setSignalPopupContents(<SignalPopupContents
+            urlLink={urlLink}
+            score={score}
+            rawSignalData={rawSignalData}
+        />)
+
+        setIsSignalPopupOpen(true)
+
+    }
+
+    const handleSortClick = (sortKey) => {
+        // set new sort State:
+        // - toggle sort direction of specified sort
+        // - set new sort state with setSort
+
+        // selectively change the specified sort type
+        // https://stackoverflow.com/questions/43638938/updating-an-object-with-setstate-in-react
+        setSortDefs(prevState => {
+            // guarantee new sort has entry in sorts object
+            if (!(prevState.sorts[sortKey])) {
+                prevState.sorts[sortKey] = {name: sortKey, dir: 1}
+            }
+            // change just the element associated with the specified sortKey
+            return {
+                sorts: {
+                    ...prevState.sorts,
+                    [sortKey]: {  // TODO NB: must check if sortName is there already and append to array if not
+                        ...prevState.sorts[sortKey],
+                        dir: -1 * prevState.sorts[sortKey].dir
+                    }
+                },
+                sortOrder: [sortKey]  // set only one for now...
+                // TODO implement so that sortOrder contains an array of a list of sortKey's, not just one
+            }
+        })
+    }
+
+
+    const sortByName = (a, b) => {
+        const nameA = a.url
+        const nameB = b.url
+
+        // respect sortDir
+        if (nameA < nameB) return sortDefs.sorts['name'].dir * -1;
+        if (nameA > nameB) return sortDefs.sorts['name'].dir;
+        return 0;
+    }
+
+    const sortByStatus = (a, b) => {
+        const statusA = a && a.status_code !== undefined ? a.status_code : -1;
+        const statusB = b && b.status_code !== undefined ? b.status_code : -1;
+
+        // respect sort dir
+        if (statusA < statusB) return sortDefs.sorts['status'].dir * -1;
+        if (statusA > statusB) return sortDefs.sorts['status'].dir;
+        return 0;
+    }
+
+    const sortByArchiveStatus = (a, b) => {
+        const archiveA = a?.archive_data?.archive_exists ? 1 : 0;
+        const archiveB = b?.archive_data?.archive_exists ? 1 : 0;
+        const bookA = a?.isBook ? 1 : 0;
+        const bookB = b?.isBook ? 1 : 0;
+
+        // sort by book status first, respect sortDir
+        // NB: ignoring book type (e.g. google or archive.org) for now
+        if (bookA) return sortDefs.sorts['archive_status'].dir * -1
+        if (bookB) return sortDefs.sorts['archive_status'].dir
+
+        // if neither a or b is a book, sort by archive status, respect sortDir
+        if (archiveA > archiveB) return sortDefs.sorts['archive_status'].dir * -1;
+        if (archiveA < archiveB) return sortDefs.sorts['archive_status'].dir;
+        return 0;
+    }
+
+    const sortBySignals = (a, b) => {
+        const signalA = a?.signal_data?.error ? 0 : 1;
+        const signalB = b?.signal_data?.error ? 0 : 1;
+
+        if (signalA > signalB) return sortDefs.sorts['signals'].dir * -1;
+        if (signalA < signalB) return sortDefs.sorts['signals'].dir;
+        return 0;
+    }
+
+    const sortByActionable = (a, b) => {
+
+        const actionA = a.actionable?.length ? a.actionable[0] : ''
+        const actionB = b.actionable?.length ? b.actionable[0] : ''
+
+        // respect sortDir
+        if (actionA < actionB) return sortDefs.sorts['actionable'].dir * -1;
+        if (actionA > actionB) return sortDefs.sorts['actionable'].dir;
+        return 0;
+    }
+
+    const sortFunctions = {
+        "name": sortByName,
+        "status": sortByStatus,
+        "archive_status": sortByArchiveStatus,
+        "actionable": sortByActionable,
+        "signals": sortBySignals,
+    }
+
+    const sortFunction = (a, b) => {
+        // returns sort function based on current value of sortDefs
+
+        // TODO make sorting respect a list sort definitions as described in a
+        //  "sort.sortOrder" array of key names for sort methods.
+        //  "e.g: sort.sortOrder = ["references", "archive_status", "name"]
+
+        const sort_column = sortDefs.sortOrder[0];
+        const sortFn = sortFunctions[sort_column];
+        return sortFn ? sortFn(a, b) : 0;
+
+    }
+
+    const handleRowClick = (e) => {
+        // get the url data from the row associated with the clicked element
+        // TODO fix this to use dataset property
+        // const url = e.target.closest('.url-row').getAttribute('data-url');
+        const el = e.target.closest('.url-row')
+        const url = el?.dataset.url
+
+        // if click on Probe badge, do not popup refView
+        if (e.target.classList.contains("probe-badge")) {
+            e.stopPropagation()
+            return
+        }
+
+        // send action back up the component tree to co-filter the references list
+        onAction({
+            "action": ACTIONS_IARE.SHOW_REFERENCE_VIEWER_FOR_URL.key,
+            "value": url,
+        })
+    }
+
+    const onClickHeader = (evt) => {
+    }
+
+    const onHoverFlock = (e) => {
+        // clears tooltip html...only if no other sub-elements got there first
+        setUrlTooltipHtml('')
+        console.log(`GrokFlock onHoverFlock: ${e.type}`)
+    }
+
+    const onHoverHeaderRow = useCallback((e) => {  // useCallback prevents re-render upon hover???
+        e.stopPropagation()  // prevents default onHover of GrokFlock from engaging and erasing tooltip
+        const html = urlColumnDefs.columns[e.target.className]?.ttCaption
+        setUrlTooltipHtml(html)
+    }, [])
+
+    const onHoverDataRow = e => {
+        // show tool tip for targeted column of hovered row
+
+        e.stopPropagation()  // stop higher up elements from changing tooltip
+
+        const row = e.target.closest('.url-row')
+
+        // get the class name of the column we are in...this is
+        // a little tricky because of possible sub elements
+        const columnClass = e.target.parentElement.classList.contains('url-row')
+            ? e.target.className
+            : (e.target.parentElement.classList.contains("probe-results")
+                ? "url-probes"
+                : e.target.parentElement.className)
+
+        let html = ''
+
+        console.log(`GrokFlock onHover: columnClass = ${columnClass}`)
+
+        if (columnClass === "url-status") {
+            const statusDescription = httpStatusCodes[row.dataset.status_code]
+            html = `<div>${row.dataset.status_code} : ${statusDescription}</div>`
+
+        } else if (columnClass === "url-archive_status") {
+            html = row.dataset.live_state
+                ? `<div>${row.dataset.archive_status === "true" ? 'Archived' : 'Not Archived'}` +
+                `<br/>` +
+                `IABot live_state: ${row.dataset.live_state} - ${iabotLiveStatusCodes[row.dataset.live_state]}</div>`
+                : `IABot archive_status = ${row.dataset.archive_status}<br/>IABot live_state = ${row.dataset.live_state}`
+
+        } else if (columnClass === "url-citations") {
+            html = row.dataset.citation_status && row.dataset.citation_status !== '--'
+                ? `<div>Link Status ${'"' + row.dataset.citation_status + '"'} as indicated in Citation</div>`
+                : `<div>No Link Status defined in Citation</div>`
+
+        } else if (columnClass === "url-actionable" || columnClass === "yes-actionable") {
+            const actionableKey = row.dataset.actionable
+            const desc = ACTIONABLE_FILTER_MAP[actionableKey]?.desc
+            html = desc
+                ? `<div>${desc}</div>`
+                : ""
+
+        } else if (columnClass === "url-probes") {
+            if (e.target.classList.contains("probe-badge")) {
+                const probeKey = e.target.dataset.probeKey
+                const probeScore = e.target.dataset.probeScore
+                html = probeScore === "error"
+                    ? "Error with probe data"
+                    : probeScore === "nodata"
+                        ? "No probe data for this URL"
+                        :`<div>${probeKey} score is ${probeScore}</div>`
+            }
+
+        } else {
+            // if not a special case column, show tooltip from column definition
+            html = urlColumnDefs.columns[columnClass]?.ttData
+        }
+
+        setUrlTooltipHtml(html)
+    }
+
+    const onHoverErrorRow = e => {
+        // sets tooltip to error text of row
+        const text = e.currentTarget.getAttribute('data-err-text');
+        // console.log("handleRowHover", text)
+        setUrlTooltipHtml(text)
+    }
+
+    const getHeaderRow = () => {
+
+        // TODO: do the columns more like this
+        //  NB: problem is when caption is a function
+        // const headerColumns = [
+        //     "name", "status", "archive_status", "actionable", "signals",
+        // ]
+        //
+        // const headerColumnDefs = {
+        //     "name": {
+        //         "caption": "Reference URL Link",
+        //         ""
+        //     },
+        //     "status": {
+        //         "caption": "Live Status",
+        //         "ttData": "Live Status",
+        //     },
+        //     "archive_status": {
+        //         "caption": "Archive Status",
+        //     }
+        //
+        // }
+        return <div
+            className={"url-list-header"}
+            onClick={onClickHeader}
+            onMouseOver={onHoverHeaderRow}>
+
+            <div className={"url-header-row"}>
+
+                <div className={"url-name"} onClick={() => {
+                    handleSortClick("name")
+                }}
+                ><br/>Reference URL Link
+                </div>
+
+                <div className={"url-status"} onClick={() => {
+                    handleSortClick("status")
+                }}
+                >Live<br/>Status
+                </div>
+
+                <div className={"url-archive_status"} onClick={() => {
+                    handleSortClick("archive_status");
+                }}
+                >{archiveFilterDefs['iabot']._.name}</div>  {/* huh? whats this? very obscure! */}
+
+                <div className={"url-actionable"} onClick={() => {
+                    handleSortClick("actionable");
+                }}
+                >Action<br/>Items
+                </div>
+
+                <div className={"url-signals"} onClick={() => {
+                    handleSortClick("signals");
+                }}
+                >Signal Results<br/>(Click to view)
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+    const getFlockRows = (flockArray, flockFilters) => {
+        // returns [flockRow markup, array of filtered urls]
+        if (!flockArray || flockArray.length === 0) {
+            return [<h4>No URLs to show</h4>, []]
+        }
+
+        if (!flockFilters) flockFilters = {}  // prevent null errors
+
+        // filter the urls according to the set of filters provided
+        // NB Currently only 1 filter is supported; in the future we may support more
+
+        // setup filteredUrls
+        let filteredUrls = flockArray  // initialize url array as the full provided array
+        Object.keys(flockFilters).forEach(filterName => {
+            const f = flockFilters[filterName]
+            if (f) {  // only process if filter is non-null
+
+                if (Array.isArray(f.filterFunction)) {  // f is an array of filters
+                    // interpret f.filterFunction as an array of filters,
+                    //    and apply all filters one at a time
+                    // TODO turn this into some kind of effective recursive loop
+                    f.filterFunction.forEach(oneFilter => {
+                        if (oneFilter.filterFunction) {
+                            filteredUrls = filteredUrls.filter((oneFilter.filterFunction)())
+                        }  // NB: Note self-calling function
+                    })
+
+                } else {  // f is one filter
+                    if (f.filterFunction) {
+                        filteredUrls = filteredUrls.filter((f.filterFunction)())
+                    }  // NB: Note self-calling function
+                }
+            }
+        })
+
+        // sort filteredUrls if specified
+        if (sortDefs.sortOrder?.length > 0) {
+            console.log(`sorting urls by: ${sortDefs.sortOrder[0]}`)
+            filteredUrls.sort(sortFunction)  // sorts by "sort" object state
+        }
+
+        const getActionableInfo = (u => {
+            return !u.actionable
+                ? null
+                : u.actionable.map((key, i) => {
+                    // return <div className={"yes-actionable"} key={i}>
+                    //     <span className={"icon-area"}></span>{ACTIONABLE_FILTER_MAP[key].short_caption}</div>
+                    return <div className={"yes-actionable"} key={i}>
+                        <span className={"icon-area"}></span>
+                    </div>
+                })
+        })
+
+        const getDataRow = (u, i, classes) => {
+
+            const citationStatus = !u.reference_info?.statuses?.length
+                // TODO rethink this column - could have a JSON array version
+                ? null
+                : u.reference_info.statuses[0]  // just return first one
+
+            return <div className={classes} key={i}
+                        data-url={u.url}
+                        data-status_code={u.status_code}
+                        data-archive_status={u.archive_status?.hasArchive}
+                        data-is_book={u.isBook}
+                        data-citation_status={citationStatus}
+                        data-live_state={u.archive_status?.live_state}
+                        data-signals={u.signals ? u.signals : null}
+                        data-actionable={u.actionable ? u.actionable[0] : null}  // return first actionable only (for now)
+            >
+                <div className={"url-name"}>{u.url}</div>
+                <div className={"url-status"}>{u.status_code ? u.status_code : "?"}</div>
+                <div className={"url-archive_status"}>{getArchiveStatusInfoGrok(u)}</div>
+
+                <div className={"url-actionable"}>{getActionableInfo(u)}</div>
+
+                {/* idea: use UrlDataCol component when columns become dynamically described (in the future) */}
+                {/* <UrlDataCol urlObj={u} column_name={"probes"} options={{onProbeClick: handleProbeClick}}/> */}
+
+                <div className={"url-signals"}>
+                    <SignalsDisplay urlObj={u} onSignalClick={handleSignalClick} />
+                </div>
+
+            </div>
+
+        }
+
+        const getErrorRow = (u, i, errText) => {
+            return <div className={`url-row url-row-error`} key={i}
+                        data-url={u.url}
+                        data-err-text={errText}
+                // onMouseOverCapture={handleRowHover}>
+                        onMouseOver={onHoverErrorRow}
+                        onMouseLeave={() => setUrlTooltipHtml('')}
+            >
+                <div className={"url-name"}>{u.url ? u.url : `ERROR: No url for index ${i}`}</div>
+                <div className={"url-status"}>{-1}</div>
+                <div className={"url-archive_status"}>?</div>
+
+                {/*<div className={"url-citations"}>&nbsp;</div>*/}
+                {/*<div className={"url-templates"}>&nbsp;</div>*/}
+
+                <div className={"url-actionable"}>&nbsp;</div>
+
+                <div className={"url-sections"}>&nbsp;</div>
+                {columns.reliability.show
+                    ? <div className={"url-perennial"}>&nbsp;</div>
+                    : null
+                }
+                <div className={"url-probes"}>&nbsp;</div>
+
+            </div>
+        }
+
+        // iterate over array of url objects to create rendered output
+        const flockRows = filteredUrls.map((u, i) => {
+
+            // TODO: we should sanitize earlier on in the process to save time here...
+
+            // if url object is problematic, return as error row
+            if (!u || u.url === undefined) {
+
+                const errText = !u ? `URL data not defined for index ${i}`
+                    : !u.url ? `URL missing for index ${i}`
+                        : u.status_code === undefined ? `URL status code undefined (try Force Refresh)`
+                            : 'Unknown error'; // this last case should not happen
+
+                // TODO do something akin to "myMethodRenderer.getErrorRow"
+                return getErrorRow(u, i, errText)
+            }
+
+            // // if url status code is undefined...
+            // if (u.status_code === undefined) {
+            //
+            //     const errText = !u ? `URL data not defined for index ${i}`
+            //         : !u.url ? `URL missing for index ${i}`
+            //             : u.status_code === undefined ? `URL status code undefined (try Force Refresh)`
+            //                 : 'Unknown error'; // this last case should not happen
+            //
+            //     // TODO do something akin to "myMethodRenderer.getErrorRow"
+            //     return getErrorRow(u, i, errText)
+            // }
+
+            // otherwise show "normally"
+            // TODO change this to something like:
+            //  return myCheckMethod.renderRow(u)
+            const classes = 'url-row '
+                + (u.status_code === 0 ? ' url-is-unknown'
+                    : u.status_code >= 300 && u.status_code < 400 ? ' url-is-redirect'
+                        : u.status_code >= 400 && u.status_code < 500 ? ' url-is-notfound'
+                            : u.status_code >= 500 && u.status_code < 600 ? ' url-is-error'
+                                : '')
+                + (u.url === selectedUrl ? ' url-selected' : '')
+
+            return getDataRow(u, i, classes)
+
+        })
+
+        return [flockRows, filteredUrls]
+
+    }  // end getFlockRows
+
+    const getFlock = (rows) => {
+
+        const flockHeaderRow = getHeaderRow()
+
+        return <>
+            {flockHeaderRow}
+            <div className={"url-list-rows"}
+                 // onClick={handleRowClick}
+                 onMouseOver={onHoverDataRow}
+            >{rows}</div>
+        </>
+    }  // end getFlock
+
+    // fades in feedback text and then fades it out
+    React.useEffect(() => {
+        // this is an attempt to show feedback text for a short time before disappearing
+        if (feedbackText) {
+
+            const displayTimer = setTimeout(() => {
+                setFeedbackText('');
+            }, 6000);
+
+            // const displayTimer = setTimeout(() => {
+            //     setFeedbackFadeout(true)
+            //     setTimeout(() => {
+            //         setFeedbackText('');
+            //     }, 5000)
+            // }, 3000);
+
+            // const clearTimer = setTimeout(() => {
+            //     clearTimeout(displayTimer);
+            // }, 5000);
+
+            return () => {
+                clearTimeout(displayTimer);
+                // clearTimeout(clearTimer);
+            };
+        }
+    }, [feedbackText]);
+
+
+    const [flockRows, flockArray] = getFlockRows(urlArray, urlFilters)
+    const flock = getFlock(flockRows)
+
+    const handleCopyUrlDetails = () => {
+
+        const urlArrayData = [...flockArray].sort(   // NB "..." used so that copy of array is sorted, not original flock array
+            (a, b) => (a.url > b.url) ? 1 : (a.url < b.url) ? -1 : 0  // sort by url
+
+        ).map(u => {  // get one row per line:
+            return [
+                u.url,
+                u.status_code,
+                u.archive_status?.hasArchive,
+                u.reference_info?.templates ? u.reference_info?.templates.join(",") : null,
+                u.status_code_errors?.reason ? u.status_code_errors.reason : null,
+                u.status_code_errors?.message ? u.status_code_errors.message : null,
+            ]
+            // TODO output archive status and maybe iabot live stuff
+        })
+
+        const numItems = urlArrayData.length
+
+        // add column labels
+        urlArrayData.unshift([
+            'URL',
+            `${fetchMethod} status`,
+            `Has Archive`,
+            `Templates`,
+            `Error reason`,
+            `Error message`
+        ])
+
+        copyToClipboard(convertToCSV(urlArrayData), `${numItems} URL Data Rows`, handleFeedback)
+
+    }
+
+    const handleFeedback = (feedback) => {
+        setFeedbackText(feedback)
+    }
+
+    const handleCopyUrlList = () => {
+
+        const urlArrayData = [...flockArray].sort(   // NB used "..." so that copy of array is sorted, not original flock array
+            (a, b) => (a.url > b.url) ? 1 : (a.url < b.url) ? -1 : 0  // sort by url
+
+        ).map(u => {  // get one row per line:
+            return u.url
+        })
+
+        copyToClipboard(urlArrayData.join("\n"), `${urlArrayData.length} URLs`, handleFeedback)
+
+    }
+
+    const buttonCopyList = <button onClick={handleCopyUrlList} className={'btn utility-button small-button'}><span>Copy URL List</span>
+    </button>
+    const buttonCopyDetails = <button onClick={handleCopyUrlDetails} className={'btn utility-button small-button'}>
+        <span>Copy URL Details</span></button>
+    const spanFeedback = <div className={`feedback-div ${feedbackText ? 'feedback-fade-text' : ''}`}>
+        {feedbackText && <span>{feedbackText}</span>}
+    </div>
+
+    const captionBox = <>
+        <div>Citation URL Links</div>
+        <div className={"sub-caption"}>
+            <div>{flockRows.length} {flockRows.length === 1 ? 'URL' : 'URLs'}</div>
+            <div>{spanFeedback} {buttonCopyList} {buttonCopyDetails}</div>
+        </div>
+    </>
+
+    return <>
+        <div data-tooltip-id={tooltipId}  // passed in tooltipId for this flock)
+             data-tooltip-html={urlTooltipHtml}
+             onMouseOver={onHoverFlock}>
+            <FlockBox caption={captionBox} className={"grok-flock"}>{flock}</FlockBox>
+        </div>
+
+        {/* popup title, data and open status set in handleProbeClick function */}
+        <Popup isOpen={isSignalPopupOpen}
+               onClose={() => { setIsSignalPopupOpen(false) }}
+               title={signalPopupTitle}>
+            {signalPopupContents}
+        </Popup>
+
+    </>
+})
+
+export default grokFlock

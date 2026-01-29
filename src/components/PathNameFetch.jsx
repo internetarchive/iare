@@ -12,7 +12,8 @@ expected props
  */
 export default function PathNameFetch({
         pathInitial='',
-        checkInitial= false,
+        checkboxInitialRefresh= false,
+        checkboxInitialUseLocalCache=false,
         className= null,
         handlePathResults,
         shortcuts=[],
@@ -20,19 +21,25 @@ export default function PathNameFetch({
 
         options = {
             showShortcuts: false,
+            showUseLocalCache: false,
         }
 }) {
 
     const [pathName, setPathName] = useState(pathInitial); // init with passed in name
-    const [checked, setChecked] = React.useState(checkInitial);
+    const [checkboxRefresh, setCheckboxRefresh] = React.useState(checkboxInitialRefresh);
+    const [checkboxUseLocalCache, setCheckboxUseLocalCache] = React.useState(checkboxInitialUseLocalCache);
     const [showShortcuts, setShowShortcuts] = React.useState(options.showShortcuts ?? false);
 
-    const handleCheckChange = () => {
-        setChecked(!checked);
+    const handleCheckChangeRefresh = () => {
+        setCheckboxRefresh(!checkboxRefresh);
+    };
+
+    const handleCheckChangeUseLocalCache = () => {
+        setCheckboxUseLocalCache(!checkboxUseLocalCache);
     };
 
     const returnResults = () => {
-        handlePathResults([pathName, checked])
+        handlePathResults([pathName, checkboxRefresh, checkboxUseLocalCache])
     }
 
     const myHandlePath = {
@@ -101,7 +108,8 @@ export default function PathNameFetch({
                 <button className={"utility-button"} style={{margin: "0 0 0.2rem 10px"}} onClick={myHandlePath.handleSubmit} >
                     <span>{"Load References"}</span>
                 </button
-                ><Checkbox className={"chk-force-refresh"} label={"Force Refresh"} value={checked} onChange={handleCheckChange}/>
+                ><Checkbox className={"chk-checkbox chk-force-refresh"} label={"Force Refresh"} value={checkboxRefresh} onChange={handleCheckChangeRefresh}/>
+                {options.showUseLocalCache && <Checkbox className={"chk-checkbox chk-use-local-cache"} label={"Use Local Cache for Source"} value={checkboxUseLocalCache} onChange={handleCheckChangeUseLocalCache}/>}
                 {!showShortcuts && shortcutsButton}
             </div>
 

@@ -31,7 +31,7 @@
     --color-list-bg-selected: #ceefd9; /*#c4e4c8;*/
     --color-list-fg-hover: #fffde5; /*blue;*/
 
-    --color-list-bg-hover: #9ccfe5;
+    --color-list-bg-hover: #f0f0f0;
     /*--color-list-bg-hover: #81c8e7;*/
     /*--color-list-bg-hover: #CFF0FF;*/
     /*--color-list-bg-hover: #cfdeff;*/
@@ -525,3 +525,9 @@ font-weight:normal;
     margin-top: -.34rem;
     margin-left: -.125rem;
 }
+
+/* debug */
+x* {
+    outline: 1px solid rgba(255, 0, 0, 0.2);
+}
+

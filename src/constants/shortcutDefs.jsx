@@ -1,11 +1,27 @@
 export const envShortcutLists = {
     prod: ['easterIsland', 'internetArchive', 'pdfCovid',],  // production mode limited shortcuts
-    stage: ['easterIsland', 'easter_island_short', 'internetArchive', 'mlk', 'short_test', ],  // staging shows a little more for testing
-    other: ['assam', 'marc_bolan', 'easterIsland', 'easter_island_short', 'kennewick_man', 'mlk', 'internetArchive', 'short_test'],  // everything else (my dev env, e.g.) shows lots more
+    stage: ['easterIsland', 'easter_island_short', 'grok_easter_island', 'internetArchive', 'mlk', 'short_test', ],  // staging shows a little more for testing
+    other: ['grok_easter_island', 'grok_internet_archive', 'grok_island_local', 'assam', 'marc_bolan', 'easterIsland', 'easter_island_short', 'kennewick_man', 'mlk', 'internetArchive', 'short_test'],  // everything else (my dev env, e.g.) shows lots more
 }
 
 
 export const ShortcutDefs = {
+    "grok_easter_island"  : {
+        label : "Grok Easter Island",
+        value : "https://grokipedia.com/page/Easter_Island"
+    },
+
+    "grok_internet_archive"  : {
+        label : "Grok Internet Archive",
+        value : "https://grokipedia.com/page/Internet_Archive"
+    },
+
+    "grok_island_local"  : {
+        label : "Grok Island Local",
+        value : "https://grokipedia.com/page/Easter_Island.crop",
+        use_local_cache: true
+    },
+
     "easter_island_short"  : {
         label : "Easter Island Short",
         value : "https://en.wikipedia.org/wiki/User:Iamojo/testcase/EasterIslandShort"

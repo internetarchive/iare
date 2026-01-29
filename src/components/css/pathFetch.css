@@ -57,11 +57,19 @@
     margin-top:.35em !important;
 }
 
-.path-fetch-wrap .chk-force-refresh {
+.path-fetch-wrap .chk-checkbox {
     margin-top:.65em;
     margin-left: .5rem;
     margin-right: .75rem;
 }
-.path-fetch-wrap .chk-force-refresh input[type=checkbox] {
+.path-fetch-wrap .chk-checkbox input[type=checkbox] {
     margin-right: .25rem;
 }
+/*.path-fetch-wrap .chk-force-refresh {*/
+/*    margin-top:.65em;*/
+/*    margin-left: .5rem;*/
+/*    margin-right: .75rem;*/
+/*}*/
+/*.path-fetch-wrap .chk-force-refresh input[type=checkbox] {*/
+/*    margin-right: .25rem;*/
+/*}*/

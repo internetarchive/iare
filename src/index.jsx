@@ -15,6 +15,8 @@ import {ParseMethods} from "./constants/parseMethods.jsx";
 import './index.css';
 
 const getEnvironment = () => {
+    // return 'env-production'
+
     const REGEX_PRODUCTION_ENV = new RegExp(/^(?:(?:[\w-]+\.)+)?(?:[\w-]+\.)?archive\.org$/);  // if "(\.?)archive.org" at end of string
     const host = window.location.host
     if (REGEX_PRODUCTION_ENV.test(host)) return 'env-production'
@@ -29,9 +31,14 @@ const getIariSource = (qParams, targetEnvironment) => {
     // hard-set to iari_prod for production
     if (targetEnvironment === 'env-production') return IariSources.iari_prod.key
     // else default to stage if not specified
-    const sourceKey = queryParameters.has("iari-source") ? queryParameters.get("iari-source") : IariSources.iari_stage.key
+    const sourceKey = queryParameters.has("iari-source")
+        ? queryParameters.get("iari-source")
+        : (targetEnvironment === 'env-local')
+            ? IariSources.iari_local.key
+            : IariSources.iari_stage.key
 
     // if specified source not in our defined choices, default to stage, and error
+    // TODO we should change this so we get a UI run time error
     if (!IariSources[sourceKey]) {
         console.error(`IARI Source ${sourceKey} not supported.`)
         return IariSources.iari_stage.key
@@ -102,6 +109,7 @@ const env = getEnvironment();
 const myDebug = queryParameters.has("debug") ? queryParameters.get("debug").toLowerCase() === 'true' : false;
 const myPath = queryParameters.has("url") ? queryParameters.get("url") : '';
 const myCacheData = queryParameters.has("cache_data") ? queryParameters.get("cache_data") : '';
+const myUseLocalCache = queryParameters.has("use_local_cache") ? queryParameters.get("use_local_cache") : '';
 const myRefresh = queryParameters.has("refresh") ? queryParameters.get("refresh").toLowerCase() === 'true' : false;
 const myIariSourceId = getIariSource(queryParameters, env);
 const myCheckMethod = getCheckMethod(queryParameters, env);
@@ -122,13 +130,14 @@ const myParseMethod = getParseMethod(queryParameters, env);
 ReactDOM.createRoot(document.getElementById("root")).render(
     // <React.StrictMode>
         <App env={env}
-         myPath={myPath}
-         myCacheData={myCacheData}
-         myRefresh={myRefresh}
-         myCheckMethod={myCheckMethod}
-         myParseMethod={myParseMethod}
-         myIariSourceId={myIariSourceId}
-         myDebug={myDebug} />
+             myPath={myPath}
+             myCacheData={myCacheData}
+             myUseLocalCache={myUseLocalCache}
+             myRefresh={myRefresh}
+             myCheckMethod={myCheckMethod}
+             myParseMethod={myParseMethod}
+             myIariSourceId={myIariSourceId}
+             myDebug={myDebug} />
     // </React.StrictMode>
 );
 

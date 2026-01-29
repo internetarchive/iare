@@ -3,14 +3,15 @@ import {IariSources} from "../constants/iariSources.jsx";
 import {ParseMethods} from "../constants/parseMethods.jsx";
 import {IariMethods} from "../constants/iariMethods.js";
 import {ProbeDefs} from "../constants/probeDefs.jsx";
+import {MEDIA_TYPES} from "../constants/mediaTypes.jsx";
 
 
 export const getPagePathEndpoint = ({
                                         iariSourceId =IariSources['iari'].key,
                                         path = '',
                                         as_of = '',
-                                        cacheData = '',
-                                        mediaType = 'wiki',
+                                        use_local_cache = false,
+                                        mediaType = MEDIA_TYPES.WIKI.key,
                                         refresh = false,
                                         parseMethod = "",  // NB should default to something useful
                                     }) => {
@@ -19,14 +20,19 @@ export const getPagePathEndpoint = ({
     // TODO: error if iariBase is undefined or otherwise falsey
     console.log(`getPagePathEndpoint: myIariSourceId = ${iariSourceId}, iariBase = ${iariBase}, mediaType = ${mediaType}, articleVersion = ${parseMethod}`)
 
-    if (cacheData) {
-        // use cached article result data if specified
-        // this is used (mainly?only?) for development
-        console.log(`getPagePathEndpoint: cacheData is true.`)
-        return `${iariBase}/article_cache?iari_id=${cacheData}`;
-    }
+                // if (cacheData) {
+                //     // use cached article result data if specified
+                //     // this is used (mainly?only?) for development tests
+                //     console.log(`getPagePathEndpoint: cacheData is true.`)
+                //     return `${iariBase}/article_cache?iari_id=${cacheData}`;
+                // }
+                //
+                    // if (use_local_cache) {
+                //     console.log(`getPagePathEndpoint: use_local_cache is true.`)
+                //     return `${iariBase}/article_cache?iari_id=${cacheData}`;
+                // }
 
-    else if (mediaType === "wiki") {
+    if (mediaType === MEDIA_TYPES.WIKI.key) {
 
         console.log(`getPagePathEndpoint: wiki:article version: ${parseMethod}`)
 
@@ -40,7 +46,7 @@ export const getPagePathEndpoint = ({
         else if (parseMethod === ParseMethods.WIKIPARSE_V2.key) {
             // this is the new, improved parsing method
             const options = ''
-            return `${iariBase}${ParseMethods.WIKIPARSE_V2.endpoint}?url=${path}${options}${refresh ? "&refresh=true" : ''}`;
+            return `${iariBase}${ParseMethods.WIKIPARSE_V2.endpoint}?url=${path}${options}${refresh ? "&refresh=true" : ''}${refresh ? "&refresh=true" : ''}`;
         }
 
         else if (parseMethod === ParseMethods.WIKIPARSE_XREF.key) {
@@ -60,12 +66,30 @@ export const getPagePathEndpoint = ({
                 `${as_of ? "&as_of=" + as_of : ""}`;
         }
 
-    } else if (mediaType === "pdf") {
+    } else if (mediaType === MEDIA_TYPES.GROK.key) {
+        console.log(`getPagePathEndpoint: grok`)
+
+        const pageTitleExtractGrok = path.match(/\/grokipedia.com\/page\/([^?#]+)/);
+        const pageTitleGrok = pageTitleExtractGrok ? pageTitleExtractGrok[1] : null;
+
+        // return `${iariBase}/extract_grok?page_title=${pageTitleGrok}${refresh ? "&refresh=true" : ''}`;
+
+        const params = new URLSearchParams({
+            page_title: pageTitleGrok,
+            ...(refresh && { refresh: "true" }),
+            ...(use_local_cache && { use_local_cache: "true" }),
+        });
+
+        return `${iariBase}/extract_grok?${params.toString()}`;
+
+
+    } else if (mediaType === MEDIA_TYPES.PDF.key) {
         console.log(`getPagePathEndpoint: pdf`)
         return `${iariBase}/statistics/pdf?url=${path}${refresh ? "&refresh=true" : ''}`;
 
     }
 
+    // else unknown
     console.log(`getPagePathEndpoint: Unknown mediaType - returning default endpoint!`)
 
     // do general case...TODO make default parser endpoint a config
