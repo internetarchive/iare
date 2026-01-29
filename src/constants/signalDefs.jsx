@@ -38,7 +38,7 @@ export const SignalDefs = {
     "en_wikipedia_external_link_count": {
         "key": "en_wikipedia_external_link_count",
         "caption": "Wiki Link Count",
-        "action": "default"
+        "action": "wiki_display"
     },
 
 

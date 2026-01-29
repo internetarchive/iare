@@ -41,3 +41,37 @@
     color: lightgrey;
     border-color: lightgrey;
 }
+
+
+.wayback-badge {
+    display:flex;
+    flex-direction: row;
+    /*background-color: deeppink;*/
+}
+
+.wayback-badge .wayback-logo-image {
+    height:2rem;
+
+}
+
+.wayback-badge-element {
+    margin-right: .25rem;
+
+}
+
+.wiki-badge {
+    display:flex;
+    flex-direction: row;
+    /*background-color: deeppink;*/
+    vertical-align: middle;
+}
+
+.wiki-badge .wiki-logo-image {
+    height:1.5rem;
+
+}
+
+.wiki-badge-element {
+    margin-right: .25rem;
+
+}

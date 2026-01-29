@@ -1,7 +1,8 @@
 {
   "name": "iare",
-  "version": "0.3.1.19",
-  "version_name": "0.3.1.19 signal placehiolder in url flock",
+  "version": "0.3.1.20",
+  "version_name": "0.3.1.20 signal graphics",
+
   "private": true,
   "type": "module",
   "dependencies": {

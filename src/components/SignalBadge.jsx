@@ -1,6 +1,7 @@
 import React from "react";
 import {SignalDefs} from "../constants/signalDefs.jsx";
-import {mbfc_display, wayback_display} from "../constants/signalBadgeFunctions.jsx";
+import {mbfc_display, wayback_display, wiki_display} from "../constants/signalBadgeFunctions.jsx";
+import "../components/css/signals.css";
 
 /*
 return signal badge if signal is a valid Badge to be displayed
@@ -98,6 +99,10 @@ export default function SignalBadge({
     else if (signalAction === "wayback_display") {
         // base display on mbfc_ratings
         signalContents = wayback_display(signalData, signals)
+    }
+
+    else if (signalAction === "wiki_display") {
+        signalContents = wiki_display(signalData, signals)
     }
 
 
