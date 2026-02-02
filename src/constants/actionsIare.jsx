@@ -1,3 +1,8 @@
+/* actionsIare
+This defines all actions that are available within the IARE interqctive
+system. Many action handlers in various components make use of these
+"Action constants"
+ */
 export const ACTIONS_IARE = {
 
     REMOVE_ALL_FILTERS: {

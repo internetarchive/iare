@@ -1,18 +1,26 @@
+/* shortcutDefs.jsx
+provide destination shortcuts for quick-click filling out "path to insopec"
+field in the Path Fetcher part of IARE.
+
+This is so that common examples can be quickly entered with the click of a button
+*/
+
+// define array of shortcuts to use depending on environment
 export const envShortcutLists = {
     prod: ['easterIsland', 'internetArchive', 'pdfCovid',],  // production mode limited shortcuts
-    stage: ['easterIsland', 'easter_island_short', 'grok_easter_island', 'internetArchive', 'mlk', 'short_test', ],  // staging shows a little more for testing
+    stage: ['easterIsland', 'easter_island_short', 'internetArchive', 'grok_easter_island', 'mlk', 'short_test', ],  // staging shows a little more for testing
     other: ['grok_easter_island', 'grok_internet_archive', 'grok_island_local', 'assam', 'marc_bolan', 'easterIsland', 'easter_island_short', 'kennewick_man', 'mlk', 'internetArchive', 'short_test'],  // everything else (my dev env, e.g.) shows lots more
 }
 
 
 export const ShortcutDefs = {
     "grok_easter_island"  : {
-        label : "Grok Easter Island",
+        label : "Grok: Easter Island",
         value : "https://grokipedia.com/page/Easter_Island"
     },
 
     "grok_internet_archive"  : {
-        label : "Grok Internet Archive",
+        label : "Grok: Internet Archive",
         value : "https://grokipedia.com/page/Internet_Archive"
     },
 
@@ -31,7 +39,7 @@ export const ShortcutDefs = {
         value : "https://en.wikipedia.org/wiki/Israel–Hamas_war"
     },
     "mlk"  : {
-        label : "MLK",
+        label : "enwiki: MLK",
         value : "https://en.wikipedia.org/wiki/Martin_Luther_King_Jr."
     },
     "karen_bakker"  : {
@@ -47,11 +55,11 @@ export const ShortcutDefs = {
         value : "https://en.wikipedia.org/wiki/Lindsay_Lohan"
     },
     "easterIsland"  : {
-        label : "Easter Island",
+        label : "enwiki: Easter Island",
         value : "https://en.wikipedia.org/wiki/Easter_Island"
     },
     "internetArchive"  : {
-        label : "Internet Archive",
+        label : "enwiki: Internet Archive",
         value : "https://en.wikipedia.org/wiki/Internet_Archive"
     },
     "assam" : {
