@@ -77,6 +77,7 @@ const grokFlock = React.memo(function GrokFlock({
 
     const [sortDefs, setSortDefs] = useState({
         sorts: {  // holds sort value for all different sort types
+            "none": {name: "none", dir: 0},
             "status": {name: "status", dir: 1},  // dir: 1 is asc, -1 is desc, 0 is do not sort
             "archive_status": {name: "archive_status", dir: -1},
             // "references": {name: "references", dir: -1},
@@ -93,8 +94,11 @@ const grokFlock = React.memo(function GrokFlock({
         "reliability": { show: true }
     }
 
+    // when Signal elements in Signal Results column are clicked
     const handleSignalClick = (e) => {
         // target element is Signal badge, "inside" of url row...
+
+        e.stopPropagation()  // stops row click from engaging
 
         const targetElement = e.target
 
@@ -147,6 +151,11 @@ const grokFlock = React.memo(function GrokFlock({
         })
     }
 
+    const sortByNone = (a, b) => {
+        const idxA = a?.idx ?? 0;
+        const idxB = b?.idx ?? 0;
+        return idxA - idxB;
+    }
 
     const sortByName = (a, b) => {
         const nameA = a.url
@@ -194,6 +203,29 @@ const grokFlock = React.memo(function GrokFlock({
         return 0;
     }
 
+    const sortBySignalWayback = (a, b) => {
+        // signal A is wayback value of
+        const signalA = a?.signal_data?.error ? 0
+            : a?.signal_data?.signals?.n_wayback_machine_snapshot ? a.signal_data.signals.n_wayback_machine_snapshot : 0
+        const signalB = a?.signal_data?.error ? 0
+            : b?.signal_data?.signals?.n_wayback_machine_snapshot ? b.signal_data.signals.n_wayback_machine_snapshot : 0
+
+        if (signalA > signalB) return sortDefs.sorts['signal_wayback'].dir * -1;
+        if (signalA < signalB) return sortDefs.sorts['signal_wayback'].dir;
+        return 0;
+    }
+
+    const sortBySignalWiki = (a, b) => {
+        const signalA = a?.signal_data?.error ? 0
+            : a?.signal_data?.signals?.en_wikipedia_external_link_count ? a.signal_data.signals.en_wikipedia_external_link_count : 0
+        const signalB = a?.signal_data?.error ? 0
+            : b?.signal_data?.signals?.en_wikipedia_external_link_count ? b.signal_data.signals.en_wikipedia_external_link_count : 0
+
+        if (signalA > signalB) return sortDefs.sorts['signal_wiki'].dir * -1;
+        if (signalA < signalB) return sortDefs.sorts['signal_wiki'].dir;
+        return 0;
+    }
+
     const sortByActionable = (a, b) => {
 
         const actionA = a.actionable?.length ? a.actionable[0] : ''
@@ -206,11 +238,14 @@ const grokFlock = React.memo(function GrokFlock({
     }
 
     const sortFunctions = {
+        "none": sortByNone,
         "name": sortByName,
         "status": sortByStatus,
         "archive_status": sortByArchiveStatus,
         "actionable": sortByActionable,
         "signals": sortBySignals,
+        "signal_wayback": sortBySignalWayback,
+        "signal_wiki": sortBySignalWiki,
     }
 
     const sortFunction = (a, b) => {
@@ -220,7 +255,7 @@ const grokFlock = React.memo(function GrokFlock({
         //  "sort.sortOrder" array of key names for sort methods.
         //  "e.g: sort.sortOrder = ["references", "archive_status", "name"]
 
-        const sort_column = sortDefs.sortOrder[0];
+        const sort_column = sortDefs.sortOrder[0];  // just one column sort for now, i.e., no cascading sorts
         const sortFn = sortFunctions[sort_column];
         return sortFn ? sortFn(a, b) : 0;
 
@@ -239,6 +274,8 @@ const grokFlock = React.memo(function GrokFlock({
             return
         }
 
+        console.log(`Row clicked for URL: ${url}`)
+
         // do nothing for now...
         
         // // send action back up the component tree to co-filter the references list
@@ -248,8 +285,14 @@ const grokFlock = React.memo(function GrokFlock({
         // })
     }
 
-    const onClickHeaderSignal = (evt) => {
-        alert("Signal Header column clicked")
+    const onSignalHeaderClick = (e) => {
+
+        e.stopPropagation()
+
+        console.log(`onClickHeaderSignal: e.target.className = ${e.target.className}`)
+
+        setIsSignalDocPopupOpen(true)
+        // alert("Signal Header column clicked")
     }
 
     const onHoverFlock = (e) => {
@@ -261,7 +304,7 @@ const grokFlock = React.memo(function GrokFlock({
     const onHoverHeaderRow = useCallback((e) => {  // useCallback prevents re-render upon hover???
         e.stopPropagation()  // prevents default onHover of GrokFlock from engaging and erasing tooltip
         // const html = urlColumnDefs.columns[e.target.className]?.ttCaption
-        const html = "Arf!!"
+        const html = `${e.target.className}`
         console.log(`GrokFlock onHoverHeaderRow: ${html}`)
         setTooltipHtml(html)
     }, [])
@@ -386,13 +429,13 @@ const grokFlock = React.memo(function GrokFlock({
                 >Action<br/>Items
                 </div>
 
-                <div className={"url-signals"} onClick={() => {
+                <div className={"url-signals"} onClick={(e) => {
                     // skip sort click, as Signal will do something different
 
                     // handleSortClick("signals");
-                    onClickHeaderSignal()
+                    onSignalHeaderClick(e)
                 }}
-                >Signal Results<br/>(Click to view)
+                >Signal Results<br/><div className={"descriptor-text"}>Click to sort</div>
                 </div>
 
             </div>
@@ -438,7 +481,7 @@ const grokFlock = React.memo(function GrokFlock({
         // sort filteredUrls if specified
         if (sortDefs.sortOrder?.length > 0) {
             console.log(`sorting urls by: ${sortDefs.sortOrder[0]}`)
-            filteredUrls.sort(sortFunction)  // sorts by "sort" object state
+            filteredUrls.sort(sortFunction)  // sorts according to "sort" object state
         }
 
         const getActionableInfo = (u => {
@@ -651,20 +694,51 @@ const grokFlock = React.memo(function GrokFlock({
     </>
 
     return <>
-        <div data-tooltip-id={tooltipId}  // passed in tooltipId for this flock)
+        <div className="tooltip-container"
+             data-tooltip-id={tooltipId}
              data-tooltip-html={tooltipHtml}
+             data-tooltip-place="right"
              onMouseOver={onHoverFlock}>
             <FlockBox caption={captionBox} className={"grok-flock"}>{flock}</FlockBox>
         </div>
 
-        {/* popup title, data and open status set in handleProbeClick function */}
         <Popup isOpen={isSignalDocPopupOpen}
-               onClose={() => { setIsSignalDocPopupOpen(false) }}
-               title="What is Wiki Signals?">
+               onClose={() => {
+                   setIsSignalDocPopupOpen(false)
+               }}
+               title="What is Wiki Signals?"
+               initialSize={{ width: 600, height: 200 }}
+               initialPosition={{ x: 600, y: 160 }}
+        >
             <div>Wiki Signals is a system that allows you to create and share signals for URLs.</div>
+            <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                // gap: '10px',
+                alignItems: 'left',
+                marginTop: '10px'
+            }}>
+                <button className={"utility-button no-margin"}
+                        style={{width: '200px'}}
+                        onClick={() => {
+                            handleSortClick("signal_wayback")
+                        }}>Sort By Wayback snapshots
+                </button>
+                <button className={"utility-button no-margin"}
+                        style={{width: '200px'}}
+                        onClick={() => {
+                            handleSortClick("signal_wiki")
+                        }}>Sort By Wikipedia uses
+                </button>
+                <button className={"utility-button no-margin"}
+                        style={{width: '200px'}}
+                        onClick={() => {
+                            handleSortClick("none")
+                        }}>Remove Sort
+                </button>
+            </div>
         </Popup>
 
-        {/* popup title, data and open status set in handleProbeClick function */}
         <Popup isOpen={isSignalPopupOpen}
                onClose={() => { setIsSignalPopupOpen(false) }}
                title={signalPopupTitle}>

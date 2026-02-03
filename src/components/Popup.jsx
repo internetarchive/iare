@@ -2,15 +2,17 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { Rnd } from 'react-rnd';
 
-const Popup = ({ isOpen, onClose, title, children }) => {
+const Popup = ({ isOpen, onClose, title, children, initialSize = { width: 600, height: 480 }, initialPosition = { x: 200, y: 200 } }) => {
 
-    const [size, setSize] = useState({ width: 600, height: 480 });
-    const [position, setPosition] = useState({ x: 200, y: 200 });
-    const [resizeText, setResizeText] = useState("xxx");
-    const [isDragging, setIsDragging] = useState(false);
+    // const [size, setSize] = useState({ width: 600, height: 480 });
+    // const [position, setPosition] = useState({ x: 200, y: 200 });
+    const [size, setSize] = useState(initialSize)
+    const [position, setPosition] = useState(initialPosition)
+    const [resizeText, setResizeText] = useState("xxx")
+    const [isDragging, setIsDragging] = useState(false)
 
     if (!isOpen) {
-        return null;
+        return null
     }
 
 
@@ -59,7 +61,7 @@ const Popup = ({ isOpen, onClose, title, children }) => {
     }
 
     const handleMouseDown = (e) => {
-        console.log("Popup:Rnd: onMouseDown")
+        // console.log("Popup:Rnd: onMouseDown")
         setIsDragging(false)
         e.stopPropagation()
     }
@@ -126,11 +128,11 @@ const Popup = ({ isOpen, onClose, title, children }) => {
                     pointerEvents: "auto",
                 }}
 
-                onClick={(e) => {stopAndShow(e, "contents:onProbeClick")}}
-                // onMouseMove={(e) => {stopAndShow(e, "contents:onMouseMove")}}
-                // onMouseDown={(e) => {stopAndShow(e, "onMouseDown")}}
-                onScroll={(e) => {stopAndShow(e, "contents:onScroll")}}
-                onScrollCapture={(e) => {stopAndShow(e, "contents:onScrollCapture")}}
+                // onClick={(e) => {stopAndShow(e, "contents:onProbeClick")}}
+                // // onMouseMove={(e) => {stopAndShow(e, "contents:onMouseMove")}}
+                // // onMouseDown={(e) => {stopAndShow(e, "onMouseDown")}}
+                // onScroll={(e) => {stopAndShow(e, "contents:onScroll")}}
+                // onScrollCapture={(e) => {stopAndShow(e, "contents:onScrollCapture")}}
 
             >
 

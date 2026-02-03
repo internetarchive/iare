@@ -363,6 +363,9 @@ button.utility-button.small-button {
     color: #4d4d4d;
     border-color: #888888;
 }
+button.utility-button.no-margin {
+    margin-left: 0;
+}
 
 
 .utility-button:focus, .utility-button:hover {
@@ -531,3 +534,10 @@ x* {
     outline: 1px solid rgba(255, 0, 0, 0.2);
 }
 
+.muted-text {
+    color: var(--color-text-muted);
+}
+.descriptor-text {
+    color: var(--color-text-muted);
+    font-style: italic;
+}

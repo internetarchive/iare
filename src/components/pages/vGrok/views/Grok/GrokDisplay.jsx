@@ -128,17 +128,19 @@ export default function GrokDisplay ({ pageData, options, tooltipId = null } ) {
                                     options={{}}
                                     onAction={handleAction}
                                     currentState={currentFilterState}
-                                    tooltipId={"url-display-tooltip"}/>
+                                    tooltipId={"grok-display-tooltip"}/>
                 </div>
 
                 <div className={"flock-display-contents"}>
                     <GrokFlock urlDict={pageData.urlDict}
                                urlArray={pageData.urlArray}
                                urlFilters={flockFilters}
+
                                onAction={handleAction}
+                               tooltipId={"grok-display-tooltip"} />
+
                                selectedUrl={selectedUrl}
                                fetchMethod={myConfig.urlStatusMethod}
-                               tooltipId={"url-display-tooltip"} />
                 </div>
             </div>
 
