@@ -48,6 +48,10 @@
     --height-list-component: 12.67rem;
 
     --padding-tight:.35rem;
+
+    --grid-caption-color: #aaaaaa;
+    --grid-caption-font-size: 0.85rem;
+    --grid-caption-font-weight: bold;
 }
 
 /* Control Box */  /* may move these to better file location */
@@ -397,4 +401,10 @@
 
 .inline-heading {
     font-weight: bold;
+}
+
+.grid-caption {
+    color: var(--grid-caption-color);
+    /*font-size: var(--grid-caption-font-size);*/
+    font-weight: var(--grid-caption-font-weight);
 }

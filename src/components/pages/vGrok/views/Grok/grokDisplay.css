@@ -30,3 +30,8 @@
 .grok-display .flock-display-contents {
     margin-left: var(--iare-spacing-small)
 }
+
+#grok-display-tooltip {
+    font-size:1.25em;
+    font-weight:normal;
+}

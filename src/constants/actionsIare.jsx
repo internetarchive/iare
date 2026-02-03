@@ -9,6 +9,10 @@ export const ACTIONS_IARE = {
         key:"REMOVE_ALL_FILTERS",
     },
 
+    SHOW_MESSAGE: {
+        key:"SHOW_MESSAGE",
+    },
+
     FILTER_BY_REFERENCE_STATS: {
         key:"FILTER_BY_REFERENCE_STATS",
     },

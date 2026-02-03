@@ -6,6 +6,7 @@ import GrokFlock from "../../GrokFlock.jsx";
 import GrokFilterPanel from "./GrokFilterPanel.jsx";
 import {ACTIONS_IARE} from "../../../../../constants/actionsIare.jsx";
 import {ARCHIVE_STATUS_MAP} from "../../../../../constants/archiveStatusMap.jsx";
+import {Tooltip as MyTooltip} from "react-tooltip";
 
 
 /*
@@ -69,6 +70,12 @@ export default function GrokDisplay ({ pageData, options, tooltipId = null } ) {
         }
 
         else if (action ===
+            ACTIONS_IARE.SHOW_MESSAGE.key
+        ) {
+            alert(value)
+        }
+
+        else if (action ===
             ACTIONS_IARE.REMOVE_ALL_FILTERS.key
         ) {
             // clear filters (or, show all) for URL
@@ -93,6 +100,17 @@ export default function GrokDisplay ({ pageData, options, tooltipId = null } ) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+
+    const tooltipForGrokDisplay = <MyTooltip id="grok-display-tooltip"
+                                            float={true}
+                                            closeOnEsc={true}
+                                            delayShow={420}
+                                            variant={"info"}
+                                            noArrow={true}
+                                            offset={5}
+                                            className={"grok-display-tooltip"}
+                                            style={{ zIndex: 99 }}
+    />
 
     return <>
         <div className={"section-box grok-display"}>
@@ -123,6 +141,8 @@ export default function GrokDisplay ({ pageData, options, tooltipId = null } ) {
                                tooltipId={"url-display-tooltip"} />
                 </div>
             </div>
+
+            {tooltipForGrokDisplay}
 
         </div>
 

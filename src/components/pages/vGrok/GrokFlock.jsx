@@ -61,15 +61,17 @@ const grokFlock = React.memo(function GrokFlock({
     // TODO maybe should not/don't have to use memo here??
     //  making it a memo seemed to reduce the re-renders of the flock when the tooltip text was updated
 
-    // TODO how do we make the Probe Popup a global, like a tooltip, sort of?
+    // TODO how do we make the Signal Popup a global, like a tooltip, sort of?
     const [isSignalPopupOpen, setIsSignalPopupOpen] = useState(false)
     const [signalPopupTitle, setSignalPopupTitle] = useState(<>Modal Title</>);
     const [signalPopupContents, setSignalPopupContents] = useState(null);
 
+    const [isSignalDocPopupOpen, setIsSignalDocPopupOpen] = useState(false)
+
 
     const [feedbackText, setFeedbackText] = useState("")
 
-    const [urlTooltipHtml, setUrlTooltipHtml] = useState('<div>ToolTip<br />GrokFlock<br />second line');
+    const [tooltipHtml, setTooltipHtml] = useState('<div>ToolTip<br />GrokFlock<br />second line');
     // TODO there is a bug where sort re-renders list every time tooltip text/html property is updated
     // TODO maybe fix using React.useRef somehow???
 
@@ -237,26 +239,31 @@ const grokFlock = React.memo(function GrokFlock({
             return
         }
 
-        // send action back up the component tree to co-filter the references list
-        onAction({
-            "action": ACTIONS_IARE.SHOW_REFERENCE_VIEWER_FOR_URL.key,
-            "value": url,
-        })
+        // do nothing for now...
+        
+        // // send action back up the component tree to co-filter the references list
+        // onAction({
+        //     "action": ACTIONS_IARE.SHOW_MESSAGE.key,
+        //     "value": `Row clicked for URL: ${url}`,
+        // })
     }
 
-    const onClickHeader = (evt) => {
+    const onClickHeaderSignal = (evt) => {
+        alert("Signal Header column clicked")
     }
 
     const onHoverFlock = (e) => {
         // clears tooltip html...only if no other sub-elements got there first
-        setUrlTooltipHtml('')
+        setTooltipHtml('')
         console.log(`GrokFlock onHoverFlock: ${e.type}`)
     }
 
     const onHoverHeaderRow = useCallback((e) => {  // useCallback prevents re-render upon hover???
         e.stopPropagation()  // prevents default onHover of GrokFlock from engaging and erasing tooltip
-        const html = urlColumnDefs.columns[e.target.className]?.ttCaption
-        setUrlTooltipHtml(html)
+        // const html = urlColumnDefs.columns[e.target.className]?.ttCaption
+        const html = "Arf!!"
+        console.log(`GrokFlock onHoverHeaderRow: ${html}`)
+        setTooltipHtml(html)
     }, [])
 
     const onHoverDataRow = e => {
@@ -317,14 +324,14 @@ const grokFlock = React.memo(function GrokFlock({
             html = urlColumnDefs.columns[columnClass]?.ttData
         }
 
-        setUrlTooltipHtml(html)
+        setTooltipHtml(html)
     }
 
     const onHoverErrorRow = e => {
         // sets tooltip to error text of row
         const text = e.currentTarget.getAttribute('data-err-text');
         // console.log("handleRowHover", text)
-        setUrlTooltipHtml(text)
+        setTooltipHtml(text)
     }
 
     const getHeaderRow = () => {
@@ -351,7 +358,7 @@ const grokFlock = React.memo(function GrokFlock({
         // }
         return <div
             className={"url-list-header"}
-            onClick={onClickHeader}
+            // onClick={onClickHeaderRow}
             onMouseOver={onHoverHeaderRow}>
 
             <div className={"url-header-row"}>
@@ -380,7 +387,10 @@ const grokFlock = React.memo(function GrokFlock({
                 </div>
 
                 <div className={"url-signals"} onClick={() => {
-                    handleSortClick("signals");
+                    // skip sort click, as Signal will do something different
+
+                    // handleSortClick("signals");
+                    onClickHeaderSignal()
                 }}
                 >Signal Results<br/>(Click to view)
                 </div>
@@ -483,23 +493,13 @@ const grokFlock = React.memo(function GrokFlock({
                         data-err-text={errText}
                 // onMouseOverCapture={handleRowHover}>
                         onMouseOver={onHoverErrorRow}
-                        onMouseLeave={() => setUrlTooltipHtml('')}
+                        onMouseLeave={() => setTooltipHtml('')}
             >
                 <div className={"url-name"}>{u.url ? u.url : `ERROR: No url for index ${i}`}</div>
                 <div className={"url-status"}>{-1}</div>
                 <div className={"url-archive_status"}>?</div>
-
-                {/*<div className={"url-citations"}>&nbsp;</div>*/}
-                {/*<div className={"url-templates"}>&nbsp;</div>*/}
-
                 <div className={"url-actionable"}>&nbsp;</div>
-
-                <div className={"url-sections"}>&nbsp;</div>
-                {columns.reliability.show
-                    ? <div className={"url-perennial"}>&nbsp;</div>
-                    : null
-                }
-                <div className={"url-probes"}>&nbsp;</div>
+                <div className={"url-signals"}>&nbsp;</div>
 
             </div>
         }
@@ -520,18 +520,6 @@ const grokFlock = React.memo(function GrokFlock({
                 // TODO do something akin to "myMethodRenderer.getErrorRow"
                 return getErrorRow(u, i, errText)
             }
-
-            // // if url status code is undefined...
-            // if (u.status_code === undefined) {
-            //
-            //     const errText = !u ? `URL data not defined for index ${i}`
-            //         : !u.url ? `URL missing for index ${i}`
-            //             : u.status_code === undefined ? `URL status code undefined (try Force Refresh)`
-            //                 : 'Unknown error'; // this last case should not happen
-            //
-            //     // TODO do something akin to "myMethodRenderer.getErrorRow"
-            //     return getErrorRow(u, i, errText)
-            // }
 
             // otherwise show "normally"
             // TODO change this to something like:
@@ -559,7 +547,7 @@ const grokFlock = React.memo(function GrokFlock({
         return <>
             {flockHeaderRow}
             <div className={"url-list-rows"}
-                 // onClick={handleRowClick}
+                 onClick={handleRowClick}
                  onMouseOver={onHoverDataRow}
             >{rows}</div>
         </>
@@ -664,10 +652,17 @@ const grokFlock = React.memo(function GrokFlock({
 
     return <>
         <div data-tooltip-id={tooltipId}  // passed in tooltipId for this flock)
-             data-tooltip-html={urlTooltipHtml}
+             data-tooltip-html={tooltipHtml}
              onMouseOver={onHoverFlock}>
             <FlockBox caption={captionBox} className={"grok-flock"}>{flock}</FlockBox>
         </div>
+
+        {/* popup title, data and open status set in handleProbeClick function */}
+        <Popup isOpen={isSignalDocPopupOpen}
+               onClose={() => { setIsSignalDocPopupOpen(false) }}
+               title="What is Wiki Signals?">
+            <div>Wiki Signals is a system that allows you to create and share signals for URLs.</div>
+        </Popup>
 
         {/* popup title, data and open status set in handleProbeClick function */}
         <Popup isOpen={isSignalPopupOpen}

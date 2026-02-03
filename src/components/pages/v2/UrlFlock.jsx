@@ -822,7 +822,7 @@ const urlFlock = React.memo(function UrlFlock({
             {probePopupData}
         </Popup>
 
-        {/* popup title, data and open status set in handleProbeClick function */}
+        {/* popup title, data and open status set in handleSignalClick function */}
         <Popup isOpen={isSignalPopupOpen}
                onClose={() => { setIsSignalPopupOpen(false) }}
                title={signalPopupTitle}>

@@ -19,6 +19,8 @@ export default function FlockBox({
           children
       }) {
 
+    console.log(`FlockBox: render`)
+
     return <>
 
         <div className={`flock-box${className ? ` ${className}` : ''} iare-ux-container`}

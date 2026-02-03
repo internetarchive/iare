@@ -18,13 +18,6 @@ export default function SignalPopupContents({urlLink, score, rawSignalData}) {
     const [isFiltered, setIsFiltered] = React.useState(false);
     const [showFilterControls, setShowFilterControls] = React.useState(false);
 
-    const popup_title = (
-        <>
-            <div>Signal results for URL:</div>
-            <div style={{fontWeight: "normal"}}>{urlLink}</div>
-        </>
-    );
-
     let signal_content = null;
 
     if (rawSignalData.error) {
@@ -32,6 +25,7 @@ export default function SignalPopupContents({urlLink, score, rawSignalData}) {
     } else if (!rawSignalData.signals) {
         signal_content = <div>No Signal Content Available</div>;
     } else {
+        // simplify signal data for this URL
         const signals = Object.entries(rawSignalData.signals).map(([key, value]) => ({
             signal_name: SignalDefs[key]?.caption ?? key,
             value: value
@@ -43,27 +37,38 @@ export default function SignalPopupContents({urlLink, score, rawSignalData}) {
             })
             : signals;
 
+        const filterControls = showFilterControls
+            ? <label>
+                <input
+                    type="checkbox"
+                    checked={isFiltered}
+                    onChange={e => setIsFiltered(e.target.checked)}
+                />{isFiltered
+                ? <span>&nbsp;Remove Filter (Show all Signals)</span>
+                : <span>&nbsp;Apply Filter (Hide all null and false Signals)</span>}
+            </label>
+            : null
+
         signal_content = <>
-            {showFilterControls
-                ? <label>
-                    <input
-                        type="checkbox"
-                        checked={isFiltered}
-                        onChange={e => setIsFiltered(e.target.checked)}
-                    />{isFiltered
-                    ? <span>&nbsp;Remove Filter (Show all Signals)</span>
-                    : <span>&nbsp;Apply Filter (Hide all null and false Signals)</span>}
-                </label>
-                : null }
+            {filterControls}
             <JsonTable data={displayedSignals}/>
         </>
     }
 
     return (
         <>
-            {popup_title}
             <div>
-                <div className="signal-score">Score: {score}</div>
+                <div style={{
+                    display: "grid",
+                    gridTemplateColumns: "auto auto",
+                    gap: "10px",
+                    marginBottom: "10px"
+                }}>
+                    <div className={"grid-caption"}>URL:</div>
+                    <div>{urlLink}</div>
+                    <div className={"grid-caption"}>Score:</div>
+                    <div>{score}</div>
+                </div>
                 <hr/>
                 {signal_content}
             </div>
