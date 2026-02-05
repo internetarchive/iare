@@ -90,7 +90,11 @@ const grokFlock = React.memo(function GrokFlock({
         sortOrder: ["status"]  // array indicating which sorts get applied and in what order. NB this is not implemented yet, but will be
     })
 
-    const columns = {
+    const flockColumns = {
+        "status": {
+            show: true,
+            caption: <>Live<br/>Status</>
+        },
         "reliability": { show: true }
     }
 
@@ -505,16 +509,18 @@ const grokFlock = React.memo(function GrokFlock({
 
             return <div className={classes} key={i}
                         data-url={u.url}
-                        data-status_code={u.status_code}
+                        data-live_status={u.live_status}
                         data-archive_status={u.archive_status?.hasArchive}
+                        data-signals={u.signal_data?.signals ? u.signal_data.signals : null}
+
+                        // data-status_code={u.live_status}
                         data-is_book={u.isBook}
                         data-citation_status={citationStatus}
                         data-live_state={u.archive_status?.live_state}
-                        data-signals={u.signals ? u.signals : null}
                         data-actionable={u.actionable ? u.actionable[0] : null}  // return first actionable only (for now)
             >
                 <div className={"url-name"}>{u.url}</div>
-                <div className={"url-status"}>{u.status_code ? u.status_code : "?"}</div>
+                <div className={"url-status"}>{u.live_status ? u.live_status : "?"}</div>
                 <div className={"url-archive_status"}>{getArchiveStatusInfoGrok(u)}</div>
 
                 <div className={"url-actionable"}>{getActionableInfo(u)}</div>

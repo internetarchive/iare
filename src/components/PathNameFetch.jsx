@@ -81,6 +81,11 @@ export default function PathNameFetch({
         </div>
         : null
 
+    const UseLocalCacheDisplay = options.showUseLocalCache
+        ? <Checkbox className={"chk-checkbox chk-use-local-cache"} label={"Use Local Cache for Source"} value={checkboxUseLocalCache} onChange={handleCheckChangeUseLocalCache}/>
+        : null
+
+
     return <div className={`path-fetch iare-focus-box${className ? ` ${className}` : ''}`}>
 
         <div className={"path-fetch-wrap"}>
@@ -109,7 +114,7 @@ export default function PathNameFetch({
                     <span>{"Load References"}</span>
                 </button
                 ><Checkbox className={"chk-checkbox chk-force-refresh"} label={"Force Refresh"} value={checkboxRefresh} onChange={handleCheckChangeRefresh}/>
-                {options.showUseLocalCache && <Checkbox className={"chk-checkbox chk-use-local-cache"} label={"Use Local Cache for Source"} value={checkboxUseLocalCache} onChange={handleCheckChangeUseLocalCache}/>}
+                {UseLocalCacheDisplay}
                 {!showShortcuts && shortcutsButton}
             </div>
 

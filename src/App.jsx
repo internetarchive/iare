@@ -71,7 +71,9 @@ export default function App(
     const [isShowUrlOverview, setIsShowUrlOverview] = useState(true);
     const [isShowShortcuts, setIsShowShortcuts] = useState(true);
         // TODO set this based on local storage or cookie value
-    const [isShowUseLocalCache, setIsShowUseLocalCache] = useState(true);
+    const [isShowUseLocalCache, setIsShowUseLocalCache] = useState(
+        env === "env-local"
+    );
 
     const [isShowDebugInfo, setIsShowDebugInfo] = useState(false);
     const [isShowDebugComponents, setIsShowDebugComponents] = useState(false);

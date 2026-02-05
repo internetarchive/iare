@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import PureJson from "../../PureJson.jsx";
 import {convertToCSV, copyToClipboard} from "../../../utils/generalUtils.js";
 import {ConfigContext} from "../../../contexts/ConfigContext.jsx";
+import MakeLink from "../../MakeLink.jsx";
 
 function ClickButton( {buttonCaption=null, buttonText='', onClick}) {
     const buttonMarkup = buttonCaption ? buttonCaption : <span>{buttonText}</span>
@@ -75,7 +76,7 @@ export default function PageInfoGrok({ pageData, showViewOptions = false, handle
     const pageInfoDetails = pageData
         ? <div className={'detail-section'}>
             <div style={{fontStyle:"italic", fontWeight:"bold"}}>Grok Page Info Details</div>
-            <div>pageData.endpoint: {pageData.endpoint}</div>
+            <div>pageData.endpoint: <MakeLink href={pageData.endpoint}/></div>
             {/*{section_type}*/}
             {/*{section_endpoint}*/}
             {/*{section_method}*/}

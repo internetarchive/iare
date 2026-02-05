@@ -16,6 +16,7 @@ import './index.css';
 
 const getEnvironment = () => {
     // return 'env-production'
+    // return 'env-staging'
 
     const REGEX_PRODUCTION_ENV = new RegExp(/^(?:(?:[\w-]+\.)+)?(?:[\w-]+\.)?archive\.org$/);  // if "(\.?)archive.org" at end of string
     const host = window.location.host

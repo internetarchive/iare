@@ -8,7 +8,7 @@ This is so that common examples can be quickly entered with the click of a butto
 // define array of shortcuts to use depending on environment
 export const envShortcutLists = {
     prod: ['easterIsland', 'internetArchive', 'pdfCovid',],  // production mode limited shortcuts
-    stage: ['easterIsland', 'easter_island_short', 'internetArchive', 'grok_easter_island', 'mlk', 'short_test', ],  // staging shows a little more for testing
+    stage: ['easterIsland', 'internetArchive', 'mlk', 'grok_easter_island', 'short_test', ],  // staging shows a little more for testing
     other: ['grok_easter_island', 'grok_internet_archive', 'grok_island_local', 'assam', 'marc_bolan', 'easterIsland', 'easter_island_short', 'kennewick_man', 'mlk', 'internetArchive', 'short_test'],  // everything else (my dev env, e.g.) shows lots more
 }
 
