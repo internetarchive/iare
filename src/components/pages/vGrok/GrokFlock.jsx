@@ -308,7 +308,12 @@ const grokFlock = React.memo(function GrokFlock({
     const onHoverHeaderRow = useCallback((e) => {  // useCallback prevents re-render upon hover???
         e.stopPropagation()  // prevents default onHover of GrokFlock from engaging and erasing tooltip
         // const html = urlColumnDefs.columns[e.target.className]?.ttCaption
-        const html = `${e.target.className}`
+
+        const col = e.target.classList.contains('flock-col') ? e.target : e.target.closest('.flock-col')
+        const colClassName = col.className.replace('flock-col ', '')
+        const html = (colClassName === "url-signals")
+            ? "Click to sort by Signals"
+            : colClassName
         console.log(`GrokFlock onHoverHeaderRow: ${html}`)
         setTooltipHtml(html)
     }, [])
@@ -410,30 +415,30 @@ const grokFlock = React.memo(function GrokFlock({
 
             <div className={"url-header-row"}>
 
-                <div className={"url-name"} onClick={() => {
+                <div className={"flock-col url-name"} onClick={() => {
                     handleSortClick("name")
                 }}
                 ><br/>Reference URL Link
                 </div>
 
-                <div className={"url-status"} onClick={() => {
+                <div className={"flock-col url-status"} onClick={() => {
                     handleSortClick("status")
                 }}
                 >Live<br/>Status
                 </div>
 
-                <div className={"url-archive_status"} onClick={() => {
+                <div className={"flock-col url-archive_status"} onClick={() => {
                     handleSortClick("archive_status");
                 }}
                 >{archiveFilterDefs['iabot']._.name}</div>  {/* huh? whats this? very obscure! */}
 
-                <div className={"url-actionable"} onClick={() => {
+                <div className={"flock-col url-actionable"} onClick={() => {
                     handleSortClick("actionable");
                 }}
                 >Action<br/>Items
                 </div>
 
-                <div className={"url-signals"} onClick={(e) => {
+                <div className={"flock-col url-signals"} onClick={(e) => {
                     // skip sort click, as Signal will do something different
 
                     // handleSortClick("signals");
@@ -519,16 +524,16 @@ const grokFlock = React.memo(function GrokFlock({
                         data-live_state={u.archive_status?.live_state}
                         data-actionable={u.actionable ? u.actionable[0] : null}  // return first actionable only (for now)
             >
-                <div className={"url-name"}>{u.url}</div>
-                <div className={"url-status"}>{u.live_status ? u.live_status : "?"}</div>
-                <div className={"url-archive_status"}>{getArchiveStatusInfoGrok(u)}</div>
+                <div className={"flock-col url-name"}>{u.url}</div>
+                <div className={"flock-col url-status"}>{u.live_status ? u.live_status : "?"}</div>
+                <div className={"flock-col url-archive_status"}>{getArchiveStatusInfoGrok(u)}</div>
 
-                <div className={"url-actionable"}>{getActionableInfo(u)}</div>
+                <div className={"flock-col url-actionable"}>{getActionableInfo(u)}</div>
 
                 {/* idea: use UrlDataCol component when columns become dynamically described (in the future) */}
                 {/* <UrlDataCol urlObj={u} column_name={"probes"} options={{onProbeClick: handleProbeClick}}/> */}
 
-                <div className={"url-signals"}>
+                <div className={"flock-col url-signals"}>
                     <SignalsDisplay urlObj={u} onSignalClick={handleSignalClick} />
                 </div>
 
