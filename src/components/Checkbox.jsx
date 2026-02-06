@@ -8,5 +8,5 @@ export default function Checkbox ( { label, value, onChange, className='', toolt
         type="checkbox"
         checked={value}
         onChange={onChange}
-    />{label}</label>
+    /><span className={"chk-label"}>{label}</span></label>
 }

@@ -20,6 +20,8 @@ import SignalPopupContents from "../../SignalPopupContents.jsx";
 // import SignalPopupContents from "../../SignalPopupContents.jsx";
 
 import '../../css/grok.css';
+import Checkbox from "../../Checkbox.jsx";
+import MakeLink from "../../MakeLink.jsx";
 
 
 /*
@@ -27,7 +29,7 @@ assumes urlArray is an array of url objects:
     [
         {
             url : <url>,
-            status_code : <status_code>,
+            live_status : <status_code>,
             <other url info>
         },
         ...
@@ -65,12 +67,12 @@ const grokFlock = React.memo(function GrokFlock({
     const [isSignalPopupOpen, setIsSignalPopupOpen] = useState(false)
     const [signalPopupTitle, setSignalPopupTitle] = useState(<>Modal Title</>);
     const [signalPopupContents, setSignalPopupContents] = useState(null);
-
     const [isSignalDocPopupOpen, setIsSignalDocPopupOpen] = useState(false)
 
+    const [showHotLinksDisplay, setShowHotLinksDisplay] = useState(true)
+    const [useHotLinks, setUseHotLinks] = useState(false)
 
     const [feedbackText, setFeedbackText] = useState("")
-
     const [tooltipHtml, setTooltipHtml] = useState('<div>ToolTip<br />GrokFlock<br />second line');
     // TODO there is a bug where sort re-renders list every time tooltip text/html property is updated
     // TODO maybe fix using React.useRef somehow???
@@ -128,7 +130,7 @@ const grokFlock = React.memo(function GrokFlock({
 
     }
 
-    const handleSortClick = (sortKey) => {
+    const updateFlockSort = (sortKey) => {
         // set new sort State:
         // - toggle sort direction of specified sort
         // - set new sort state with setSort
@@ -171,9 +173,9 @@ const grokFlock = React.memo(function GrokFlock({
         return 0;
     }
 
-    const sortByStatus = (a, b) => {
-        const statusA = a && a.status_code !== undefined ? a.status_code : -1;
-        const statusB = b && b.status_code !== undefined ? b.status_code : -1;
+    const sortByLiveStatus = (a, b) => {
+        const statusA = a && a.live_status !== undefined ? a.live_status : -1;
+        const statusB = b && b.live_status !== undefined ? b.live_status : -1;
 
         // respect sort dir
         if (statusA < statusB) return sortDefs.sorts['status'].dir * -1;
@@ -244,7 +246,7 @@ const grokFlock = React.memo(function GrokFlock({
     const sortFunctions = {
         "none": sortByNone,
         "name": sortByName,
-        "status": sortByStatus,
+        "status": sortByLiveStatus,
         "archive_status": sortByArchiveStatus,
         "actionable": sortByActionable,
         "signals": sortBySignals,
@@ -259,7 +261,7 @@ const grokFlock = React.memo(function GrokFlock({
         //  "sort.sortOrder" array of key names for sort methods.
         //  "e.g: sort.sortOrder = ["references", "archive_status", "name"]
 
-        const sort_column = sortDefs.sortOrder[0];  // just one column sort for now, i.e., no cascading sorts
+        const sort_column = sortDefs.sortOrder[0];  // just sort one column for now, i.e., no cascading sorts
         const sortFn = sortFunctions[sort_column];
         return sortFn ? sortFn(a, b) : 0;
 
@@ -337,9 +339,9 @@ const grokFlock = React.memo(function GrokFlock({
 
         console.log(`GrokFlock onHover: columnClass = ${columnClass}`)
 
-        if (columnClass === "url-status") {
-            const statusDescription = httpStatusCodes[row.dataset.status_code]
-            html = `<div>${row.dataset.status_code} : ${statusDescription}</div>`
+        if (columnClass === "url-live_status") {
+            const statusDescription = httpStatusCodes[row.dataset.live_status]
+            html = `<div>${row.dataset.live_status} : ${statusDescription}</div>`
 
         } else if (columnClass === "url-archive_status") {
             html = row.dataset.live_state
@@ -416,24 +418,24 @@ const grokFlock = React.memo(function GrokFlock({
             <div className={"url-header-row"}>
 
                 <div className={"flock-col url-name"} onClick={() => {
-                    handleSortClick("name")
+                    updateFlockSort("name")
                 }}
                 ><br/>Reference URL Link
                 </div>
 
-                <div className={"flock-col url-status"} onClick={() => {
-                    handleSortClick("status")
+                <div className={"flock-col url-live_status"} onClick={() => {
+                    updateFlockSort("status")
                 }}
                 >Live<br/>Status
                 </div>
 
                 <div className={"flock-col url-archive_status"} onClick={() => {
-                    handleSortClick("archive_status");
+                    updateFlockSort("archive_status");
                 }}
                 >{archiveFilterDefs['iabot']._.name}</div>  {/* huh? whats this? very obscure! */}
 
                 <div className={"flock-col url-actionable"} onClick={() => {
-                    handleSortClick("actionable");
+                    updateFlockSort("actionable");
                 }}
                 >Action<br/>Items
                 </div>
@@ -453,7 +455,8 @@ const grokFlock = React.memo(function GrokFlock({
     }
 
     const getDataRows = (flockArray, flockFilters) => {
-        // returns [flockRow markup, array of filtered urls]
+        // returns [flockRow markup, array of filtered urls, filter caption]
+
         if (!flockArray || flockArray.length === 0) {
             return [<h4>No URLs to show</h4>, []]
         }
@@ -465,6 +468,8 @@ const grokFlock = React.memo(function GrokFlock({
 
         // setup filteredUrls
         let filteredUrls = flockArray  // initialize url array as the full provided array
+        let filterCaption = ""
+        
         Object.keys(flockFilters).forEach(filterName => {
             const f = flockFilters[filterName]
             if (f) {  // only process if filter is non-null
@@ -473,15 +478,17 @@ const grokFlock = React.memo(function GrokFlock({
                     // interpret f.filterFunction as an array of filters,
                     //    and apply all filters one at a time
                     // TODO turn this into some kind of effective recursive loop
-                    f.filterFunction.forEach(oneFilter => {
+                    f.filterFunction.forEach((oneFilter, i) => {
                         if (oneFilter.filterFunction) {
                             filteredUrls = filteredUrls.filter((oneFilter.filterFunction)())
+                            filterCaption += (i > 0 ? " AND " : "" ) + oneFilter.caption
                         }  // NB: Note self-calling function
                     })
 
                 } else {  // f is one filter
                     if (f.filterFunction) {
                         filteredUrls = filteredUrls.filter((f.filterFunction)())
+                        filterCaption = f.caption
                     }  // NB: Note self-calling function
                 }
             }
@@ -512,6 +519,10 @@ const grokFlock = React.memo(function GrokFlock({
                 ? null
                 : u.reference_info.statuses[0]  // just return first one
 
+            const url = useHotLinks
+                ? <MakeLink href={u.url}/>
+                : <>{u.url}<MakeLink href={u.url} linkText={<span className={"cite-ref-jump-link"}></span>}/></>
+
             return <div className={classes} key={i}
                         data-url={u.url}
                         data-live_status={u.live_status}
@@ -524,8 +535,8 @@ const grokFlock = React.memo(function GrokFlock({
                         data-live_state={u.archive_status?.live_state}
                         data-actionable={u.actionable ? u.actionable[0] : null}  // return first actionable only (for now)
             >
-                <div className={"flock-col url-name"}>{u.url}</div>
-                <div className={"flock-col url-status"}>{u.live_status ? u.live_status : "?"}</div>
+                <div className={"flock-col url-name"}>{url}</div>
+                <div className={"flock-col url-live_status"}>{u.live_status ? u.live_status : "?"}</div>
                 <div className={"flock-col url-archive_status"}>{getArchiveStatusInfoGrok(u)}</div>
 
                 <div className={"flock-col url-actionable"}>{getActionableInfo(u)}</div>
@@ -550,7 +561,7 @@ const grokFlock = React.memo(function GrokFlock({
                         onMouseLeave={() => setTooltipHtml('')}
             >
                 <div className={"url-name"}>{u.url ? u.url : `ERROR: No url for index ${i}`}</div>
-                <div className={"url-status"}>{-1}</div>
+                <div className={"url-live_status"}>{-1}</div>
                 <div className={"url-archive_status"}>?</div>
                 <div className={"url-actionable"}>&nbsp;</div>
                 <div className={"url-signals"}>&nbsp;</div>
@@ -568,7 +579,7 @@ const grokFlock = React.memo(function GrokFlock({
 
                 const errText = !u ? `URL data not defined for index ${i}`
                     : !u.url ? `URL missing for index ${i}`
-                        : u.status_code === undefined ? `URL status code undefined (try Force Refresh)`
+                        : u.live_status === undefined ? `URL live status undefined (try Force Refresh)`
                             : 'Unknown error'; // this last case should not happen
 
                 // TODO do something akin to "myMethodRenderer.getErrorRow"
@@ -579,10 +590,10 @@ const grokFlock = React.memo(function GrokFlock({
             // TODO change this to something like:
             //  return myCheckMethod.renderRow(u)
             const classes = 'url-row '
-                + (u.status_code === 0 ? ' url-is-unknown'
-                    : u.status_code >= 300 && u.status_code < 400 ? ' url-is-redirect'
-                        : u.status_code >= 400 && u.status_code < 500 ? ' url-is-notfound'
-                            : u.status_code >= 500 && u.status_code < 600 ? ' url-is-error'
+                + (u.live_status === 0 ? ' url-is-unknown'
+                    : u.live_status >= 300 && u.live_status < 400 ? ' url-is-redirect'
+                        : u.live_status >= 400 && u.live_status < 500 ? ' url-is-notfound'
+                            : u.live_status >= 500 && u.live_status < 600 ? ' url-is-error'
                                 : '')
                 + (u.url === selectedUrl ? ' url-selected' : '')
 
@@ -590,7 +601,7 @@ const grokFlock = React.memo(function GrokFlock({
 
         })
 
-        return [flockRows, filteredUrls]
+        return [flockRows, filteredUrls, filterCaption]
 
     }  // end getFlockRows
 
@@ -635,7 +646,7 @@ const grokFlock = React.memo(function GrokFlock({
     }, [feedbackText]);
 
 
-    const [flockRows, flockArray] = getDataRows(urlArray, urlFilters)
+    const [flockRows, flockArray, filterCaption] = getDataRows(urlArray, urlFilters)
     const flock = getFlock(flockRows)
 
     const handleCopyUrlDetails = () => {
@@ -646,7 +657,7 @@ const grokFlock = React.memo(function GrokFlock({
         ).map(u => {  // get one row per line:
             return [
                 u.url,
-                u.status_code,
+                u.live_status,
                 u.archive_status?.hasArchive,
                 u.reference_info?.templates ? u.reference_info?.templates.join(",") : null,
                 u.status_code_errors?.reason ? u.status_code_errors.reason : null,
@@ -696,10 +707,23 @@ const grokFlock = React.memo(function GrokFlock({
         {feedbackText && <span>{feedbackText}</span>}
     </div>
 
+    const hotLinksDisplay = showHotLinksDisplay
+        ? <Checkbox className={"chk-checkbox chk-show-hot-links"}
+                    label={"Make URL links hot"}
+                    value={useHotLinks}
+                    onChange={() => setUseHotLinks(!useHotLinks)}/>
+        : null
+
+    const filterMessage = filterCaption
+        ? <span> &mdash; Filter: {filterCaption}</span>
+        : <span> &mdash; Showing All links</span>
+    
     const captionBox = <>
-        <div>Citation URL Links</div>
+        <div>Citation URL Links{hotLinksDisplay}</div>
         <div className={"sub-caption"}>
-            <div>{flockRows.length} {flockRows.length === 1 ? 'URL' : 'URLs'}</div>
+            <div>{flockRows.length} {flockRows.length === 1 ? 'URL' : 'URLs'}
+                {filterMessage}
+            </div>
             <div>{spanFeedback} {buttonCopyList} {buttonCopyDetails}</div>
         </div>
     </>
@@ -732,19 +756,19 @@ const grokFlock = React.memo(function GrokFlock({
                 <button className={"utility-button no-margin"}
                         style={{width: '200px'}}
                         onClick={() => {
-                            handleSortClick("signal_wayback")
+                            updateFlockSort("signal_wayback")
                         }}>Sort By Wayback snapshots
                 </button>
                 <button className={"utility-button no-margin"}
                         style={{width: '200px'}}
                         onClick={() => {
-                            handleSortClick("signal_wiki")
+                            updateFlockSort("signal_wiki")
                         }}>Sort By Wikipedia uses
                 </button>
                 <button className={"utility-button no-margin"}
                         style={{width: '200px'}}
                         onClick={() => {
-                            handleSortClick("none")
+                            updateFlockSort("none")
                         }}>Remove Sort
                 </button>
             </div>

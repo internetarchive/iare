@@ -17,6 +17,7 @@ import {noBookLink, bookDefs} from "../../../../../utils/iariUtils.js";
 import {iareColors} from "../../../../../constants/iareColors.jsx";
 import SignalsChart from "../../../../charts/SignalsChart.jsx";
 import ArchiveStatusChart from "../../../../charts/ArchiveStatusChart.jsx";
+import LiveStatusChart from "../../../../charts/LiveStatusChart.jsx";
 
 Chart.register(LinearScale, BarElement, ArcElement, Legend, Tooltip, Title, SubTitle, Colors,);
 
@@ -37,7 +38,8 @@ const GrokFilterPanel = React.memo(({
 
     const [expanded, setExpanded] = useState({
         "actionable" : true,
-        "archived" : true,
+        "archive" : true,
+        "live_status" : true,
         "domains" : true,
         "signals" : true,
         "tld" : true,
@@ -165,14 +167,26 @@ const GrokFilterPanel = React.memo(({
 
 
             <FilterBox name={"archive"} caption="Archive Status"
-                       showContents={expanded.archived}
+                       showContents={expanded.archive}
                        onToggle={onToggleShow}>
                 <ArchiveStatusChart pageData={pageData}
-                            options={{
-                                colors: iareColors,
-                            }}
-                            onAction={onAction}
-                            currentState={currentState?.archived}/>
+                                    options={{
+                                        colors: iareColors,
+                                    }}
+                                    onAction={onAction}
+                                    currentState={currentState?.archive}/>
+            </FilterBox>
+
+
+            <FilterBox name={"live_status"} caption="Live Status"
+                       showContents={expanded.live_status}
+                       onToggle={onToggleShow}>
+                <LiveStatusChart pageData={pageData}
+                                 options={{
+                                     colors: iareColors,
+                                 }}
+                                 onAction={onAction}
+                                 currentState={currentState?.live_status}/>
             </FilterBox>
 
 

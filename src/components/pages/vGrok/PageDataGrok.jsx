@@ -36,6 +36,28 @@ export default function PageDataGrok({rawPageData = {}, showViewOptions = false,
 
     const myIariBase = myConfig.iariSource  // TODO: grab from pageData.iariSource
 
+    const calcLiveStatusStats = (urlArray) => {
+        // calculates live status stats
+
+        if (!urlArray?.length) {
+            return {}
+        }
+
+        const liveDict = {}  // stores count of each tld
+        urlArray.forEach( urlObj => {
+
+            // get live status
+            // add to dict
+
+            const stat = urlObj.live_status ? urlObj.live_status : 0
+
+            if (!liveDict[stat]) liveDict[stat] = 0
+            liveDict[stat] = liveDict[stat] + 1
+        })
+
+        return liveDict
+    }
+
     const processPageData = useCallback( (pageData, extraData) => {
         // define pageData.urlDict and pageData.urlArray to accommodate flock display component.
         // natively, IARI.extract_grok returns, in its payload:
@@ -46,7 +68,7 @@ export default function PageDataGrok({rawPageData = {}, showViewOptions = false,
 
         pageData.urlDict = pageData.url_dict
 
-        // make urlArray an array into urlDict
+        // make urlArray an array of urlDict's
         pageData.urlArray = pageData.urls
             ? pageData.urls.map(urlKey => {
                 return {
@@ -55,6 +77,8 @@ export default function PageDataGrok({rawPageData = {}, showViewOptions = false,
                 }
             })
             : []
+
+        pageData.liveStatusStats = calcLiveStatusStats(pageData.urlArray)
 
     }, [])  // no deps, defines callback function once upon component mount
 

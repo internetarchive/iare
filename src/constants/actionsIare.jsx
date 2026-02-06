@@ -81,4 +81,8 @@ export const ACTIONS_IARE = {
         key: "SET_ARCHIVE_STATUS_FILTER"
     },
 
+    SET_LIVE_STATUS_FILTER: {
+        key: "SET_LIVE_STATUS_FILTER"
+    },
+
 }

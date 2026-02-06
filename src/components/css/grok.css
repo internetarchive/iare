@@ -7,3 +7,23 @@
 .signal-no-support {
     color: var(--color-badge-bad-bg);
 }
+
+
+.flock-box label.chk-show-hot-links{
+    margin-left: 1rem;
+}
+
+.flock-box label.chk-show-hot-links .chk-label {
+    font-size: 77%;
+    position: relative;
+    top: -0.075rem;
+}
+
+.grok-display .flock-box .cite-ref-jump-link {
+    /*content: url('../../../../../images/link-external-small-ltr-progressive.svg');*/
+    width:0.7rem;
+    height:0.7rem;
+    margin-left:.25rem;
+    vertical-align:-0.05rem;
+    /*display:inline;*/
+}

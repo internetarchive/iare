@@ -183,6 +183,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             setRefDetails(selectedRef)
             setSelectedRefIndex(refIndex)
             showRefView(refIndex)  // value is reference index
+
         } else if (action ===
             ACTIONS_IARE.SET_ACTIONABLE_FILTER.key
         ) {
@@ -199,6 +200,7 @@ export default function UrlDisplay ({ pageData, options } ) {
                 : null)
             setFilterState(filters.actionable, value)
             setCondition(f)
+
         } else if (action ===
             ACTIONS_IARE.SET_PAY_LEVEL_DOMAIN_FILTER.key
         ) {

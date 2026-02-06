@@ -68,39 +68,6 @@ placeholder - using pay level domain data just to hold a place until signals cha
         })
     }
 
-    /*
-    return <>
-        <div
-            ref={resizableRef}
-            style={{
-                height,
-                position: "relative",
-                // width: "300px",
-                // backgroundColor: "#f0f0f0",
-                // border: "1px solid #ccc",
-            }}
-        >
-            <div
-                onMouseDown={startResizing}
-                style={{
-                    height: "10px",
-                    background: "#aaa",
-                    cursor: "ns-resize",
-                    position: "absolute",
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                }}
-            />
-                <ListChart data={itemsArray}
-                           className={'pay-level-domains-list-chart'}
-                           currentState={currentState?.domains}
-                           options={{label:"Domain", label_count: "Count"}}
-                           onProbeClick={onClickItem} />
-        </div>
-    </>
-    */
-
     return <>
         <ListChart data={itemsArray}
                    className={'pay-level-domains-list-chart'}

@@ -52,3 +52,9 @@
     margin-bottom: var(--margin-button-list);
 }
 
+.flock-box label.chk-checkbox {
+    font-weight: normal;
+}
+.flock-box label.chk-checkbox input[type=checkbox] {
+    margin-right: .25rem;
+}

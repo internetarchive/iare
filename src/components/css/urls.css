@@ -2,7 +2,7 @@
     /*--width-url-list: 40rem;*/
 
     --width-url-name: 20rem;
-    --width-url-status: 2.0rem;
+    --width-url-live_status: 2.0rem;
     --width-url-archive-status: 3.5rem;
     --width-url-citations: 3.5rem;
     --width-url-templates: 4.0rem;
@@ -194,11 +194,11 @@
     padding-left: var(--padding-url-column) !important;
 }
 
-.url-header-row .url-status,
-.url-row .url-status {
-    width: var(--width-url-status);
-    max-width: var(--width-url-status);
-    min-width: var(--width-url-status);
+.url-header-row .url-live_status,
+.url-row .url-live_status {
+    width: var(--width-url-live_status);
+    max-width: var(--width-url-live_status);
+    min-width: var(--width-url-live_status);
     /*border-right: var(--width-cell-border);*/
 }
 

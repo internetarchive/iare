@@ -359,7 +359,7 @@ const urlFlock = React.memo(function UrlFlock({
 
         console.log(`UrlFlock onHover: columnClass = ${columnClass}`)
 
-        if (columnClass === "url-status") {
+        if (columnClass === "url-live_status") {
             const statusDescription = httpStatusCodes[row.dataset.status_code]
             html = `<div>${row.dataset.status_code} : ${statusDescription}</div>`
 
@@ -530,7 +530,7 @@ const urlFlock = React.memo(function UrlFlock({
 
             >
                 <div className={"url-name"}>{u.url}</div>
-                <div className={"url-status"}>{u.status_code ? u.status_code : "?"}</div>
+                <div className={"url-live_status"}>{u.status_code ? u.status_code : "?"}</div>
                 <div className={"url-archive_status"}>{getArchiveStatusInfo(u)}</div>
 
                 {/*<div className={"url-citations"}>{getCitationInfo(u)}</div>*/}
@@ -578,7 +578,7 @@ const urlFlock = React.memo(function UrlFlock({
                         onMouseLeave={() => setUrlTooltipHtml('')}
             >
                 <div className={"url-name"}>{u.url ? u.url : `ERROR: No url for index ${i}`}</div>
-                <div className={"url-status"}>{-1}</div>
+                <div className={"url-live_status"}>{-1}</div>
                 <div className={"url-archive_status"}>?</div>
 
                 {/*<div className={"url-citations"}>&nbsp;</div>*/}
@@ -646,7 +646,7 @@ const urlFlock = React.memo(function UrlFlock({
                 ><br/>URL Link
                 </div>
 
-                <div className={"url-status"} onClick={() => {handleSortClick("status")}}
+                <div className={"url-live_status"} onClick={() => {handleSortClick("status")}}
                 >Live<br/>Status
                 </div>
 

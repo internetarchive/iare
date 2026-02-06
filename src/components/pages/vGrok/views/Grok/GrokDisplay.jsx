@@ -21,6 +21,7 @@ export default function GrokDisplay ({ pageData, options, tooltipId = null } ) {
 
     const availableFilters = {
         archive_status: { key: "archive_status" },
+        live_status: { key: "live_status" },
     }
 
     let myConfig = React.useContext(ConfigContext);
@@ -39,25 +40,50 @@ export default function GrokDisplay ({ pageData, options, tooltipId = null } ) {
 
     const getFilterArchiveStatus = (archiveStatus) => {
 
-        const statusCaption = ARCHIVE_STATUS_MAP[archiveStatus]?.key || null
-        if (statusCaption === null) {
-            return null  // null means "all" filter
-        }
+        const f = ARCHIVE_STATUS_MAP[archiveStatus]
+        if (!f) return null  // null means "all" filter
 
-        const filterFunction = ARCHIVE_STATUS_MAP[archiveStatus]?.filterFunction
+        const filterFunction = f.filterFunction
         if (!filterFunction) return null  // if no filter function then show all
 
         // return synthetic filter object for archive_status
         return {
             "archive_status": {
-                desc: `URLs that have Archive Status of "${statusCaption}"`,
-                caption: <span>{`Contains Archive Status "${statusCaption}"`}</span>,
+                desc: `URLs that have Archive Status of "${f.filterDescription}"`,
+                caption: f.filterDescription,
                 filterFunction: filterFunction
             }
         }
     }
 
-    
+
+    // TODO get this from liveStatus filter definition from Filter defs
+    //  that def should contain a "Url filter def"
+    const getFilterLiveStatus = (liveStatus) => {
+        if (liveStatus === null) {
+            return null; // no live stat means all filter
+        }
+
+        // return synthetic filter object for live_status
+        return {
+            "live_status": {
+                desc: `URLs that have Live Status of "${liveStatus}"`,
+                caption: `Status code: ${liveStatus}`,
+                filterFunction: () => (url) => {
+                    // Convert live_status to number, default to 0 if null/invalid
+                    const urlStatus = !url.live_status || isNaN(Number(url.live_status))
+                        ? 0
+                        : Number(url.live_status);
+                    const compareStatus = !liveStatus || isNaN(Number(liveStatus))
+                        ? 0
+                        : Number(liveStatus);
+                    return urlStatus === compareStatus;
+                },
+            }
+        }
+    }
+
+
     const handleAction = useCallback( result => {
         // handles callback functionality when something "down below" (like a url row) gets clicked
 
@@ -86,13 +112,21 @@ export default function GrokDisplay ({ pageData, options, tooltipId = null } ) {
 
         else if (action === ACTIONS_IARE.SET_ARCHIVE_STATUS_FILTER.key
         ) {
-            // value is "archived" or "no archive"
+            // value is "archived" or "no archive", keys into ARCHIVE_STATUS_MAP
             // alert(`handling action: ${action}, value: ${value}`)
             setFlockFilters(getFilterArchiveStatus(value))
             setFilterState(availableFilters.archive_status, value)
         }
 
-    else {
+        else if (action === ACTIONS_IARE.SET_LIVE_STATUS_FILTER.key
+        ) {
+            // value is live status
+            setFlockFilters(getFilterLiveStatus(value))
+            setFilterState(availableFilters.live_status, value)
+        }
+
+
+        else {
             console.log(`Action "${action}" not supported.`)
             alert(`Action "${action}" not supported.`)
         }
@@ -137,10 +171,11 @@ export default function GrokDisplay ({ pageData, options, tooltipId = null } ) {
                                urlFilters={flockFilters}
 
                                onAction={handleAction}
-                               tooltipId={"grok-display-tooltip"} />
+                               tooltipId={"grok-display-tooltip"}
 
                                selectedUrl={selectedUrl}
                                fetchMethod={myConfig.urlStatusMethod}
+                    />
                 </div>
             </div>
 

@@ -2,7 +2,7 @@
     --width-url-list-pdf: 28rem;
     --width-url-name-pdf: 20rem;
     --width-url-source-pdf: 3rem;
-    --width-url-status-pdf: 3rem;
+    --width-url-live_status-pdf: 3rem;
 
 }
 
@@ -20,7 +20,7 @@
     text-align: center;
 }
 .iari-v2-pdf .url-row .url-status {
-    width: var(--width-url-status-pdf);
+    width: var(--width-url-live_status-pdf);
 }
 
 
