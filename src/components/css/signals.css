@@ -1,6 +1,18 @@
+.signals-display {
+    display:flex;
+    flex-direction: column;
+}
+.signals-display .lolite {
+    color: var(--color-text-muted);
+}
+
 .signals-badges {
     display:flex;
-    flex-direction: row;
+    flex-direction: column;
+}
+.signal-badges-from-cache {
+    font-style: italic;
+    color: var(--color-text-muted);
 }
 .signals-badge {
     min-width:1.25rem;
@@ -42,7 +54,9 @@
     border-color: lightgrey;
 }
 
-
+/* * * * * * * * * *
+ *  W A Y B A C K  *
+ * * * * * * * * * */
 .wayback-badge {
     display:flex;
     flex-direction: row;
@@ -59,19 +73,21 @@
 
 }
 
+
+/* * * * * * *
+ *  W I K I  *
+ * * * * * * */
 .wiki-badge {
     display:flex;
     flex-direction: row;
-    /*background-color: deeppink;*/
     vertical-align: middle;
 }
 
 .wiki-badge .wiki-logo-image {
     height:1.5rem;
-
 }
 
 .wiki-badge-element {
     margin-right: .25rem;
-
 }
+

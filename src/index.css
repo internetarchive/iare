@@ -25,7 +25,7 @@
     --color-h4: #808080;
 
     --color-text: black;
-    --color-text-muted: grey;
+    --color-text-muted: #adb4c0; /* grey */
 
     --color-list-fg-selected: #054630; /*#1c654f;*/
     --color-list-bg-selected: #ceefd9; /*#c4e4c8;*/

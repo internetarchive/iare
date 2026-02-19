@@ -289,11 +289,6 @@
     padding-left: var(--padding-url-column)
 }
 
-.signals-results .lolite {
-    /*color: var(--color-text-muted);*/
-    color: #adb4c0;
-}
-
 x.url-header-row div:last-child,
 x.url-row div:last-child {
     background-color: deeppink;
@@ -432,18 +427,6 @@ x.url-row div:last-child {
 }
 .status-method-display .embiggen{
     font-size:120%;
-}
-
-.rnd-modal-popup-contents .probe-score {
-    font-weight: bold;
-    font-size: .85rem;
-    padding-top:.5rem;
-}
-.rnd-modal-popup-contents .raw-title {
-    font-weight: bold;
-    font-size: .85rem;
-    margin-top:.25rem;
-    color:#555;
 }
 
 h4.url-flock-caption {

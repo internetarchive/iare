@@ -3,31 +3,37 @@ collection of functions to process signal data and return display for badges
  */
 import React from "react";
 
-export function mbfc_display(signalData, signals) {
-    // triggered by in_mbfc signal
-    // if true then show; if false then abandon
-
-    if (!signalData) return null
-
-    // take value form signals[mbfc_ratings] and display
-    const value = signals["mbfc_ratings"]
-
+export function mbfc_display(signals) {
+    // displays relevant mbfc data
 
     try {
-        const mbfcData = JSON.parse(value.replace(/'/g, '"'))
-        // return <div>
-        //     MBFC: {mbfcData.name} (Bias: {mbfcData.bias},
-        //     Credibility: {mbfcData.credibility},
-        //     Reporting: {mbfcData.reporting})
-        // </div>
+        let wsMeta = null  // WikiSignalMeta
+        if (signals?.meta?.ws_mbfc_cats) {
+            const mbfcData = JSON.parse(signals.meta.ws_mbfc_cats.replace(/'/g, '"'))
+            wsMeta = `MBFC: ${mbfcData.bias}, ${mbfcData.credibility}, reporting: ${mbfcData.reporting}`
+        }
+
+        let wsLists = null
+        if (signals.ratings) {
+            const ratingEntries = []
+            if (signals.ratings["mbfc-bias"]) ratingEntries.push(<div
+                key="bias">MBFC Bias: {signals.ratings["mbfc-bias"]}</div>)
+            if (signals.ratings["mbfc-cred"]) ratingEntries.push(<div
+                key="cred">MBFC Cred: {signals.ratings["mbfc-cred"]}</div>)
+            if (signals.ratings["mbfc-Fact"]) ratingEntries.push(<div
+                key="fact">MBFC Fact: {signals.ratings["mbfc-Fact"]}</div>)
+            wsLists = ratingEntries.length > 0 ? <div>{ratingEntries}</div> : null
+        }
+
         return <div>
-            MBFC: {mbfcData.bias}, {mbfcData.credibility}, {mbfcData.reporting} reporting
+            {wsMeta}
+            {wsLists}
         </div>
 
         // TODO put the extra data, like mbfcData.name, in element dataset, to be picked up by element click
 
     } catch (e) {
-        return <div>MBFC: {value}</div>
+        return <div>MBFC: Error encountered ({e.message})</div>
     }
 }
 

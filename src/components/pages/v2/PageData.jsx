@@ -2,27 +2,29 @@ import React, {useCallback, useEffect, useState} from "react";
 import {
     fetchUrls,
     iariPostProcessUrl,
-    fetchUrlsInfo,
-    calcProbeScores,
+    fetchSignalInfoForUrls,
+    calcSignalScores,
     isBookUrl,
     bookTemplates, noBookLink
 } from "../../../utils/iariUtils.js"
 
 import Loader from "../../Loader.jsx";
+import {ConfigContext} from "../../../contexts/ConfigContext.jsx";
+
 import UrlDisplay from "./views/Url/UrlDisplay.jsx";
 import RefDisplay from "./views/Reference/RefDisplay.jsx";
 import StatsDisplay from "./StatsDisplay.jsx";
-
-import {ConfigContext} from "../../../contexts/ConfigContext.jsx";
-import {ACTIONABLE_FILTER_MAP} from "../../../constants/actionableMap.jsx";
-import {URL_STATUS_FILTER_MAP} from "../../../constants/urlFilterMaps.jsx";
-import {REF_FILTER_DEFS} from "../../../constants/refFilterMaps.jsx";
-import {categorizedDomains, reliabilityMap} from "../../../constants/perennialList.jsx";
-import {UrlStatusCheckMethods} from "../../../constants/checkMethods.jsx";
-import {testPageData} from "../../../utils/testUtils.jsx";
 import DomainDisplay from "./views/Domain/DomainDisplay.jsx";
 import ArchiveDisplay from "./views/Archive/ArchiveDisplay.jsx";
 import GrokDisplay from "../vGrok/views/Grok/GrokDisplay.jsx";
+
+import {ACTIONABLE_FILTER_MAP} from "../../../constants/actionableMap.jsx";
+import {URL_STATUS_FILTER_MAP} from "../../../constants/urlFilterMaps.jsx";
+import {REF_FILTER_DEFS} from "../../../constants/refFilterMaps.jsx";
+
+import {UrlStatusCheckMethods} from "../../../constants/checkMethods.jsx";
+import {categorizedDomains, reliabilityMap} from "../../../constants/perennialList.jsx";
+import {testPageData} from "../../../utils/testUtils.jsx";
 
 /*
 When this component is rendered, it must "process" the pageData. This involves:
@@ -70,9 +72,8 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
     const myIariBase = myConfig.iariSource  // TODO: grab from pageData.iariSource
     const myStatusCheckMethod = myConfig.urlStatusMethod  // TODO grab from pageData.checkStatusMethod
 
-                // // const isShowViewOptions = myConfig.isShowViewOptions
-                // const [showViewOptions, setShowViewOptions] = useState(myConfig.isShowViewOptions)
-
+    // // const isShowViewOptions = myConfig.isShowViewOptions
+    // const [showViewOptions, setShowViewOptions] = useState(myConfig.isShowViewOptions)
 
 
     // Google Chrome dev tools does not handle module level imports
@@ -83,14 +84,14 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
 
     const addProcessError = (pageData, newError) => {
         if (!pageData.process_errors) pageData.process_errors = []
-        pageData.process_errors.push( newError )
+        pageData.process_errors.push(newError)
     }
 
     // from urlResults, creates:
     //  pageData.urlDict and
     //  pageData.urlArray
     //
-    const processUrls = useCallback( (pageData, urlResults) => {
+    const processUrls = useCallback((pageData, urlResults) => {
         // callback function defined upon component instantiation
         //
         // called in useEffect when new urlResults received
@@ -105,14 +106,14 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
             urlResults.forEach(d => {
 
                 const myUrl = d.data.url
-                    // urlResults arrive from fetch routine surrounded by a "data" element:
-                    //
-                    // [
-                    //  { data: <url data>, status_code: <result of fetch call (not the url status)> },
-                    //  . . .
-                    // ]
-                    //
-                    // so we remove that level of indirection here
+                // urlResults arrive from fetch routine surrounded by a "data" element:
+                //
+                // [
+                //  { data: <url data>, status_code: <result of fetch call (not the url status)> },
+                //  . . .
+                // ]
+                //
+                // so we remove that level of indirection here
 
                 // add urlDict entry for url if not yet present
                 if (!urlDict[myUrl]) {
@@ -149,13 +150,13 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
             return urlDict[urlKey]
         })
 
-                    // // generate some page-wide statistics
-                    // gatherDomainStats(pageData.urlArray)
-                    // gatherStatusStats(pageData.urlArray)
+        // // generate some page-wide statistics
+        // gatherDomainStats(pageData.urlArray)
+        // gatherStatusStats(pageData.urlArray)
 
     }, [])
 
-    const processUrlStats = useCallback( (pageData) => {
+    const processUrlStats = useCallback((pageData) => {
 
         const gatherDomainStats = (urlArray) => {
             // calculates top level domain and pay level domain stats
@@ -168,7 +169,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
 
             const tldDict = {}  // stores count of each tld
             const pldDict = {}  // stores count of each tld
-            urlArray.forEach( urlObj => {
+            urlArray.forEach(urlObj => {
 
                 // do top level domain
                 if (!tldDict[urlObj.tld]) tldDict[urlObj.tld] = 0
@@ -210,7 +211,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
     }, [])
 
 
-    const processActionables = useCallback( (pageData) => {
+    const processActionables = useCallback((pageData) => {
         // for each url in urlResults, check if it is actionable
         // if so, add to url.actionable list
 
@@ -229,7 +230,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
         })
 
         // TODO what if references is nil?
-        pageData.references.forEach( _ref => {
+        pageData.references.forEach(_ref => {
             // for each url:
             // if url is actionable, add to url.actionable list
             _ref.actionable = []
@@ -255,16 +256,16 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
                     if url in {cite_ref.urls}
                     set ref.cite_ref = pointer to cite_ref element
      */
-    const uniteCiteRefs = useCallback( (pageData) => {
+    const uniteCiteRefs = useCallback((pageData) => {
 
         const wikiRefs = pageData?.references || []  // references from wikitext parsing
         // const htmlRefs = pageData?.cite_refs || []  // references from html parsing
 
-        wikiRefs.forEach( wikiRef => {
+        wikiRefs.forEach(wikiRef => {
 
             wikiRef.citeRef = null
 
-            wikiRef.urls.forEach( url => {
+            wikiRef.urls.forEach(url => {
 
                 //skip if not an anchor link in urlDict
                 if (!pageData.urlDict[url]) return
@@ -274,9 +275,9 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
                 const citeRefs = pageData?.cite_refs
 
                 if (citeRefs) {
-                    citeRefs.forEach( citeRef => {
+                    citeRefs.forEach(citeRef => {
                         if (citeRef.urls) {
-                            citeRef.urls.forEach( citeUrl => {
+                            citeRef.urls.forEach(citeUrl => {
                                 if (url === citeUrl) {
                                     // match this citeRef to the current wikiRef and return from url search loop
                                     wikiRef.citeRef = citeRef
@@ -297,7 +298,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
     }, [])
 
 
-    const processReference = useCallback( (ref, urlDict) => {
+    const processReference = useCallback((ref, urlDict) => {
         // NB TODO Does this do anything useful???
 
         // sets the "hasTemplateArchive" property to true if archive_url parameter found in template
@@ -306,7 +307,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
         const templates = ref?.templates ? ref.templates : []
         const templateUrls = {}
 
-        templates.forEach( template => {
+        templates.forEach(template => {
 
             if (!template.parameters) {
                 setPageErrors("\"parameters\" property of reference.template missing")
@@ -361,8 +362,8 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
                 // namedRef[fef.name] holds the reference count of this name
 
                 if (!namedRefs[ref.name]) namedRefs[ref.name] = {
-                    count : 0,
-                    anchor : {}
+                    count: 0,
+                    anchor: {}
                 }  // if first time, create
 
                 namedRefs[ref.name].count++  // increment "how many times this reference is referenced by name"
@@ -371,7 +372,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
                 // defines the reference that is to be referenced by name by other citations, then,
                 // save a pointer to this reference in the namedRef[<this ref>].anchor property
 
-                if (ref.type ==='footnote' && ref.footnote_subtype === 'content') {
+                if (ref.type === 'footnote' && ref.footnote_subtype === 'content') {
                     // an "anchor" reference is one labeled as footnote with a subtype of 'content'
                     namedRefs[ref.name].anchor = ref
                     // TODO: bug: if a "named ref" does not contain an "anchor" citation, there is a problem.
@@ -381,13 +382,13 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
             // if this ref is a non-footnote ref, or, is a footnote-anchor (subtype != named) ref, save it in anchorRefs
             if (!(ref.type === 'footnote' && ref.footnote_subtype === 'named')) {
                 ref.reference_count = 1 // will replace counts of multiply referenced refs in next loop
-                anchorRefs.push( ref )
+                anchorRefs.push(ref)
             }
         })
 
         // For all references that were saved in named references, set reference count of "anchor" refs
         // TODO when we get the cite_refs in the reference data, we can save those, too for each named reference
-        Object.keys(namedRefs).forEach( refName => {
+        Object.keys(namedRefs).forEach(refName => {
             const nr = namedRefs[refName]
             nr.anchor.reference_count = nr.count
         })
@@ -395,7 +396,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
         return anchorRefs
     }
 
-    const processReferences = useCallback( pageData => {
+    const processReferences = useCallback(pageData => {
         // * reduce references with multiple citations into one reference with multiple page referrals
         // * calculate the status of the links in the references by examining the primary and
         //   archived urls in the templates in each reference
@@ -408,7 +409,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
         const processTemplates = (refArray) => {
             // for each template in reference, set template.name tp params[template_name] if there
             if (refArray?.length) {
-                refArray.forEach( ref => {
+                refArray.forEach(ref => {
                     if (!ref.templates?.length) return
                     ref.templates.forEach(template => {
                         // console.log(`Another Template found for ref id ${ref.id}: ${templateName}`)
@@ -427,7 +428,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
         const gatherTemplateStatistics = (refArray) => {
             const templateDict = {}  // stores count of each template
             if (refArray?.length) {
-                refArray.forEach( ref => {
+                refArray.forEach(ref => {
                     if (!ref.template_names?.length) return
                     ref.template_names.forEach(templateName => {
                         // console.log(`Another Template found for ref id ${ref.id}: ${templateName}`)
@@ -468,7 +469,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
 
 
         // process all "anchor" or primary references
-        pageData.references.forEach( (ref, index) => {
+        pageData.references.forEach((ref, index) => {
 
             processReference(ref, pageData.urlDict)
             // pretty much just sets "hasTemplateArchive" property of urls found in reference
@@ -490,8 +491,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
     }, [processReference, uniteCiteRefs])
 
 
-
-    const associateUrlsWithRefs = useCallback( pageData => {
+    const associateUrlsWithRefs = useCallback(pageData => {
         // for each reference in pageData.references
         //  - for each url link
         //      - add ref to url's refs list
@@ -533,7 +533,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
         // - template names
         // - sections where reference came from
 
-        Object.keys(pageData.urlDict).forEach( link => {
+        Object.keys(pageData.urlDict).forEach(link => {
             const myUrl = pageData.urlDict[link]
             if (!myUrl || !myUrl.refs) {
                 console.log(`associateUrlsWithRefs: no urlDict for: ${link}`)
@@ -545,7 +545,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
             const sections = []
 
             // traverse each reference this url is associated with
-            myUrl.refs.forEach( r => {
+            myUrl.refs.forEach(r => {
 
                 // process url_status's
                 if (r.templates) {
@@ -577,15 +577,15 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
 
             })
             myUrl["reference_info"] = {
-                "statuses" : statuses,
-                "templates" : templates,
-                "sections" : sections,
+                "statuses": statuses,
+                "templates": templates,
+                "sections": sections,
             }
         })
 
     }, [])
 
-    const processReliabilityStats = useCallback( pageData => {
+    const processReliabilityStats = useCallback(pageData => {
         // for each url in pageData.urlArray, set rsp[] property of urlDict entry
         // at the same time, keep track of rsp count
 
@@ -594,7 +594,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
         // create reliabilityStats with nitial counts of 0
         const reliabilityStats = {}
         const reliabilityMapKeys = Object.keys(reliabilityMap)
-        reliabilityMapKeys.forEach( key => {
+        reliabilityMapKeys.forEach(key => {
             reliabilityStats[key] = 0
         })
 
@@ -623,14 +623,14 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
                     ||
                     rspDomains[rspKey].includes(urlObj._3ld)) {
 
-                    urlObj.rsp.push( key )  // add this rsp to this url
+                    urlObj.rsp.push(key)  // add this rsp to this url
                     reliabilityStats[key] = reliabilityStats[key] + 1
                 }
 
             })
             // if not found in any rsp category, assign to "__unassigned"
             if (urlObj.rsp.length === 0) {
-                urlObj.rsp.push( "__unassigned" )  // add this rsp to this url
+                urlObj.rsp.push("__unassigned")  // add this rsp to this url
                 reliabilityStats["__unassigned"] = reliabilityStats["__unassigned"] + 1
             }
         })
@@ -640,7 +640,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
     }, [rspDomains])
 
 
-    const processBookStats = useCallback( pageData => {
+    const processBookStats = useCallback(pageData => {
         // come up with books data for URL
 
         if (!pageData?.urlArray) return
@@ -664,7 +664,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
         // indicate for each ref if it has a book or not.
         // it may be a book reference but not have a book link
         if (pageData.references) {
-            pageData.references.forEach( _ref => {
+            pageData.references.forEach(_ref => {
 
                 // true if any of the ref's urls are books
                 let hasBook = _ref.urls.some(url => {
@@ -681,7 +681,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
 
                 if (!hasBook) {
                     // check if any of the templates are of book type
-                    hasBook = _ref.templates?.some( t => {
+                    hasBook = _ref.templates?.some(t => {
                         return bookTemplates.includes(t.name)
                     })
                     if (hasBook) {
@@ -704,34 +704,71 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
     }, [])
 
 
-    const processProbes = useCallback( (pageData, urlResults) => {
+    // const processProbes = useCallback( (pageData, urlResults) => {
+    //     // urlResults is an array of result objects from get_url_info results
+    //     // we loop through urlResults, and append to corresponding urlDict entries
+    //     //
+    //     // as of 2025.08.24 we are focussing on probe results only
+    //     //  - we also want to process archive data for each urlDict that is a primary link
+    //
+    //     if (!pageData?.urlDict) return
+    //     const urlDict = pageData.urlDict
+    //
+    //     if (urlResults) {
+    //         urlResults.forEach(result => {
+    //
+    //             // NB assumes d.data is valid
+    //
+    //             // must account for results "d.data" level of hierarchy
+    //             const myUrl = result.data.url
+    //             const probe_results = result.data.results?.probe_results
+    //
+    //             // calc score for each probe in probe
+    //             if (probe_results) {
+    //                 calcProbeScores(probe_results)
+    //             }
+    //
+    //             // add probe_data to urlDict entry for url
+    //             const urlObj = urlDict[myUrl]
+    //             if (urlObj) {
+    //                 urlObj["probe_results"] = urlObj.isBook ? null : probe_results
+    //             }
+    //
+    //         })
+    //     }
+    //
+    //
+    // }, [])
+
+
+    const processSignals = useCallback((pageData, urlSignalResults) => {
         // urlResults is an array of result objects from get_url_info results
         // we loop through urlResults, and append to corresponding urlDict entries
         //
-        // as of 2025.08.24 we are focussing on probe results only
-        //  - we also want to process archive data for each urlDict that is a primary link
+        // as of 2026.02.11 we are focussing on signal results only
 
-        if (!pageData?.urlDict) return
+        if (!pageData?.urlDict) return  // do nothing if nothing to do
+
         const urlDict = pageData.urlDict
 
-        if (urlResults) {
-            urlResults.forEach(result => {
+        if (urlSignalResults) {
+            urlSignalResults.forEach(urlSignal => {
 
                 // NB assumes d.data is valid
 
                 // must account for results "d.data" level of hierarchy
-                const myUrl = result.data.url
-                const probe_results = result.data.results?.probe_results
+                const myUrl = urlSignal.data.url
+                const signal_data = urlSignal.data.results?.signal_data
 
                 // calc score for each probe in probe
-                if (probe_results) {
-                    calcProbeScores(probe_results)
+                if (signal_data) {
+                    calcSignalScores(signal_data)
                 }
 
-                // add probe_data to urlDict entry for url
+                // add signal data to each url in urlDict
                 const urlObj = urlDict[myUrl]
                 if (urlObj) {
-                    urlObj["probe_results"] = urlObj.isBook ? null : probe_results
+                    urlObj["signal_data"] = signal_data
                 }
 
             })
@@ -741,10 +778,10 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
     }, [])
 
 
-    useEffect( () => { // [myIariBase, pageData, processReferences, processUrls, myStatusCheckMethod]
+    useEffect(() => { // [myIariBase, pageData, processReferences, processUrls, myStatusCheckMethod]
 
         const fetchPageUrls = () => {
-            return fetchUrls( {
+            return fetchUrls({
                 iariBase: myIariBase,
                 urlArray: pageData.urls,
                 refresh: pageData.forceRefresh,
@@ -753,16 +790,28 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
             })
         }
 
-        const fetchProbeInfo = (urlDict, probesString="") => {
+        // const fetchProbeInfo = (urlDict, probesString="") => {
+        //
+        //     const myUrlArray = Object.keys(urlDict)
+        //
+        //     return fetchUrlsInfo( {
+        //         iariBase: myIariBase,
+        //         urlArray: myUrlArray,
+        //         refresh: pageData.forceRefresh,
+        //         timeout: 60,
+        //         probes: probesString,
+        //     })
+        // }
+
+        const fetchSignalInfo = (urlDict) => {
 
             const myUrlArray = Object.keys(urlDict)
 
-            return fetchUrlsInfo( {
+            return fetchSignalInfoForUrls({
                 iariBase: myIariBase,
                 urlArray: myUrlArray,
                 refresh: pageData.forceRefresh,
                 timeout: 60,
-                probes: probesString,
             })
         }
 
@@ -774,7 +823,8 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
                 setUrlStatusLoadingMessage(<>
                     <div>Retrieving URL info.</div>
                     <div>Status code checking with {UrlStatusCheckMethods[myStatusCheckMethod].caption} method</div>
-                    <div>Probe status checks: {defaultProbesString}</div>
+                    {/*<div>Probe status checks: {defaultProbesString}</div>*/}
+                    <div>Wiki Signals status checks</div>
                 </>)
                 setIsDataReady(false);
                 setIsLoadingUrls(true);
@@ -790,18 +840,25 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
 
                 processBookStats(pageData)
 
-                const myUrlsInfo = await fetchProbeInfo(pageData.urlDict, defaultProbesString)
+                // const urlProbesInfo = await fetchProbeInfo(pageData.urlDict, defaultProbesString)
+                // // for each URL in urlDict, fetch probe info and assign to probe property of url
+                // // this is temporary, as eventually the probe data will be included with the url
+                // // data when initially retrieved (with get_url_info vs. check_url IARI endpoint)
+                // processProbes(pageData, urlProbesInfo)
+
+                const urlSignalsInfo = await fetchSignalInfo(pageData.urlDict)
                 // for each URL in urlDict, fetch probe info and assign to probe property of url
                 // this is temporary, as eventually the probe data will be included with the url
                 // data when initially retrieved (with get_url_info vs. check_url IARI endpoint)
-                processProbes(pageData, myUrlsInfo)
+                processSignals(pageData, urlSignalsInfo)
 
                 // now that all info is fetched from IARI API, process local info
                 processReferences(pageData)
 
                 // associateUrlsWithRefs(pageData)  // associates url links with references
 
-                processReliabilityStats(pageData)
+                //// processReliabilityStats(pageData)
+
                 processActionables(pageData)
 
                 // if any errors, display
@@ -826,17 +883,17 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
 
         fetchPageData()
 
-        },   [
-            myIariBase,
-            pageData,
-            myStatusCheckMethod,
-            processUrls,
-            processUrlStats,
-            processReferences,
-            associateUrlsWithRefs,
-            processReliabilityStats,
-            processBookStats,
-            processActionables,
+    }, [
+        myIariBase,
+        pageData,
+        myStatusCheckMethod,
+        processUrls,
+        processUrlStats,
+        processReferences,
+        associateUrlsWithRefs,
+        processReliabilityStats,
+        processBookStats,
+        processActionables,
     ])
 
 
@@ -877,22 +934,23 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
     }
 
     const viewOptionsDisplay = <div className={"view-options-selection"}>
-            <div className={'list-label'}>View Options:</div>
-            {Object.entries(viewOptions)
-                .filter(([_, opt]) => opt.enabled !== false) // filter out disabled
-                .map(([viewOptionKey, opt]) => (
-                <div key={viewOptionKey} >
+        <div className={'list-label'}>View Options:</div>
+        {Object.entries(viewOptions)
+            .filter(([_, opt]) => opt.enabled !== false) // filter out disabled
+            .map(([viewOptionKey, opt]) => (
+                <div key={viewOptionKey}>
                     <label>
                         <input
                             type="radio"
                             value={viewOptionKey}
                             checked={selectedViewType === viewOptionKey}
                             onChange={handleViewTypeChange}
-                        /> <span className={selectedViewType === viewOptionKey ? 'selected-choice' : '' }>{opt.caption}</span>
+                        /> <span
+                        className={selectedViewType === viewOptionKey ? 'selected-choice' : ''}>{opt.caption}</span>
                     </label>
                 </div>
-                ))}
-        </div>
+            ))}
+    </div>
 
     if (!pageData) return null;
 
@@ -908,10 +966,10 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
                     ? errors[0]
                     : <>
                         <div className={"title"}>Errors:</div>
-                        {errors.map((s,i) => {
+                        {errors.map((s, i) => {
                             return <div key={i}>{i + 1}: {s}</div>
                         })}
-                        </>
+                    </>
                 }
             </div>
         }
@@ -941,7 +999,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
                             <div className={'page-data-wrapper'}>
 
                                 {selectedViewType === viewOptions['urls'].key &&
-                                    <UrlDisplay pageData={pageData} options={{refresh: pageData.forceRefresh}} />
+                                    <UrlDisplay pageData={pageData} options={{refresh: pageData.forceRefresh}}/>
                                 }
 
                                 {selectedViewType === viewOptions['refs'].key &&

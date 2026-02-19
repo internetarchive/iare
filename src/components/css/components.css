@@ -408,3 +408,26 @@
     /*font-size: var(--grid-caption-font-size);*/
     font-weight: var(--grid-caption-font-weight);
 }
+
+
+/* Popup modal popup component*/
+
+.rnd-modal-popup-contents .probe-score {
+    font-weight: bold;
+    font-size: .85rem;
+    padding-top:.5rem;
+}
+.rnd-modal-popup-contents .raw-title {
+    font-weight: bold;
+    font-size: .85rem;
+    margin-top:.25rem;
+    color:#555;
+}
+
+.popup-button-container {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    /*align-items: left;*/
+    margin-top: 10px;
+}

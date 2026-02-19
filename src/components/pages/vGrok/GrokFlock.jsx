@@ -1,5 +1,6 @@
 import React, {useCallback, useState} from 'react';
 import FlockBox from "../../FlockBox.jsx";
+import {SignalHandlers} from "../../../constants/signalHandlers.jsx";
 
 import {convertToCSV, copyToClipboard} from "../../../utils/generalUtils.js";
 // import {getArchiveStatusInfo, getProbePopupData} from "../../utils/urlUtils.jsx";
@@ -22,6 +23,7 @@ import SignalPopupContents from "../../SignalPopupContents.jsx";
 import '../../css/grok.css';
 import Checkbox from "../../Checkbox.jsx";
 import MakeLink from "../../MakeLink.jsx";
+import {UI_STRINGS} from "../../../constants/uiStrings.jsx";
 
 
 /*
@@ -92,6 +94,7 @@ const grokFlock = React.memo(function GrokFlock({
         sortOrder: ["status"]  // array indicating which sorts get applied and in what order. NB this is not implemented yet, but will be
     })
 
+    // NB this is experimental - want to eventually control wgich columns are shown and not shown
     const flockColumns = {
         "status": {
             show: true,
@@ -99,6 +102,14 @@ const grokFlock = React.memo(function GrokFlock({
         },
         "reliability": { show: true }
     }
+
+    const activeSignalKeys = [
+        SignalHandlers.tranco.key,
+        SignalHandlers.mbfc.key,
+        SignalHandlers.enwiki.key,
+        SignalHandlers.wayback.key,
+    ]
+
 
     // when Signal elements in Signal Results column are clicked
     const handleSignalClick = (e) => {
@@ -108,18 +119,15 @@ const grokFlock = React.memo(function GrokFlock({
 
         const targetElement = e.target
 
-        const urlElement = targetElement.closest('.url-row')
-        const urlLink = urlElement.dataset.url
+        const urlRow = targetElement.closest('.url-row')
+        const urlLink = urlRow.dataset.url
         const urlObj = urlDict[urlLink]
 
         // const rawSignalData = <pre>{JSON.stringify(urlObj.signal_data, null, 2)}</pre>
         const rawSignalData = urlObj.signal_data
         const score = "TBD"
 
-        // const [pTitle, pContents] = getSignalPopupContents(urlLink, score, rawSignalData)
-
         setSignalPopupTitle(<SignalPopupTitle urlLink={urlLink} />)
-
         setSignalPopupContents(<SignalPopupContents
             urlLink={urlLink}
             score={score}
@@ -311,11 +319,16 @@ const grokFlock = React.memo(function GrokFlock({
         e.stopPropagation()  // prevents default onHover of GrokFlock from engaging and erasing tooltip
         // const html = urlColumnDefs.columns[e.target.className]?.ttCaption
 
-        const col = e.target.classList.contains('flock-col') ? e.target : e.target.closest('.flock-col')
-        const colClassName = col.className.replace('flock-col ', '')
-        const html = (colClassName === "url-signals")
-            ? "Click to sort by Signals"
-            : colClassName
+        const col = e.target.classList.contains('flock-col')
+            ? e.target
+            : e.target.closest('.flock-col')
+        let html = ""
+        if (col) {
+            const colClassName = col.className.replace('flock-col ', '')  // extract out generic 'flock-col'
+            html = (colClassName === "url-signals")
+                ? "Click to sort by Signals"  // special case signals
+                : colClassName  // default use class name of column
+        }
         console.log(`GrokFlock onHoverHeaderRow: ${html}`)
         setTooltipHtml(html)
     }, [])
@@ -464,9 +477,8 @@ const grokFlock = React.memo(function GrokFlock({
         if (!flockFilters) flockFilters = {}  // prevent null errors
 
         // filter the urls according to the set of filters provided
-        // NB Currently only 1 filter is supported; in the future we may support more
+        // NB Currently only 1 filter is supported at a time; in the future we may support more
 
-        // setup filteredUrls
         let filteredUrls = flockArray  // initialize url array as the full provided array
         let filterCaption = ""
         
@@ -527,9 +539,10 @@ const grokFlock = React.memo(function GrokFlock({
                         data-url={u.url}
                         data-live_status={u.live_status}
                         data-archive_status={u.archive_status?.hasArchive}
-                        data-signals={u.signal_data?.signals ? u.signal_data.signals : null}
 
+                        // data-signals={u.signal_data?.signals ? u.signal_data.signals : null}
                         // data-status_code={u.live_status}
+
                         data-is_book={u.isBook}
                         data-citation_status={citationStatus}
                         data-live_state={u.archive_status?.live_state}
@@ -545,7 +558,7 @@ const grokFlock = React.memo(function GrokFlock({
                 {/* <UrlDataCol urlObj={u} column_name={"probes"} options={{onProbeClick: handleProbeClick}}/> */}
 
                 <div className={"flock-col url-signals"}>
-                    <SignalsDisplay urlObj={u} onSignalClick={handleSignalClick} />
+                    <SignalsDisplay urlObj={u} activeSignalKeys={activeSignalKeys} onSignalClick={handleSignalClick} />
                 </div>
 
             </div>
@@ -717,7 +730,7 @@ const grokFlock = React.memo(function GrokFlock({
     const filterMessage = filterCaption
         ? <span> &mdash; Filter: {filterCaption}</span>
         : <span> &mdash; Showing All links</span>
-    
+
     const captionBox = <>
         <div>Citation URL Links{hotLinksDisplay}</div>
         <div className={"sub-caption"}>
@@ -741,35 +754,29 @@ const grokFlock = React.memo(function GrokFlock({
                onClose={() => {
                    setIsSignalDocPopupOpen(false)
                }}
-               title="What is Wiki Signals?"
-               initialSize={{ width: 600, height: 200 }}
+               title={UI_STRINGS.wikiSignals.title}
+               initialSize={{ width: 600, height: 300 }}
                initialPosition={{ x: 600, y: 160 }}
         >
-            <div>Wiki Signals is a system that allows you to create and share signals for URLs.</div>
-            <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                // gap: '10px',
-                alignItems: 'left',
-                marginTop: '10px'
-            }}>
+            {UI_STRINGS.wikiSignals.content}
+            <div className={"popup-button-container"} >
                 <button className={"utility-button no-margin"}
                         style={{width: '200px'}}
                         onClick={() => {
                             updateFlockSort("signal_wayback")
-                        }}>Sort By Wayback snapshots
+                        }}>{UI_STRINGS.wikiSignals.buttons.sortWayback}
                 </button>
                 <button className={"utility-button no-margin"}
                         style={{width: '200px'}}
                         onClick={() => {
                             updateFlockSort("signal_wiki")
-                        }}>Sort By Wikipedia uses
+                        }}>{UI_STRINGS.wikiSignals.buttons.sortWiki}
                 </button>
                 <button className={"utility-button no-margin"}
                         style={{width: '200px'}}
                         onClick={() => {
                             updateFlockSort("none")
-                        }}>Remove Sort
+                        }}>{UI_STRINGS.wikiSignals.buttons.sortReset}
                 </button>
             </div>
         </Popup>
