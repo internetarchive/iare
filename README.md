@@ -4,6 +4,29 @@ _This document is under development._
 
 This project uses the React.js framework.
 
+## Running reference explorer
+
+### From browser
+
+\<iare host>
+#### allowed params:
+
+	| Parameter       | Description               |
+	|-----------------|---------------------------|
+	| url             | The URL to fetch data for |
+	| refresh         | Refresh cache if set      |
+	| iari-source     | Source for IARI data      |
+	| method          | Live Status method to use |
+	| parse_method    | Method for parsing data   |
+	| use_local_cache | Use local cache if true   |
+	| debug           | Enable debug mode         |
+
+*Note:* Build process is now with ___vite___. Build instructions coming soon.
+
+Builds are accomplished with standard node/React scripts.
+
+From the project directory:
+
 ## Development Scripts
 
 *Note:* Build process is now with ___vite___. Build instructions coming soon.

@@ -46,26 +46,19 @@ function trimifyNumber(n) {
         `${Math.round(n / 1000)}K`
 }
 
-export function wayback_display(signalData, signals) {
+export function wayback_display(signals) {
     /*
-    "signals": {
-        ...
-        "n_wayback_machine_snapshot": 151049.0,
-        "first_wayback_machine_snapshot": "2001-04-10 21:40:13",
-        "last_wayback_machine_snapshot": "2025-09-17 13:12:21",
-        ...
+    signals is signal data from url (or anything that can generate signals, actually)
+    */
+    if (!signals) {
+        return <div><img src={waybackLogo} alt="Wayback"
+                         style={{height: '1em', verticalAlign: 'middle'}}/> {'Error: No signal data available'}</div>;
     }
 
-     */
-    // triggered by n_wayback_machine_snapshot signal
-    // use heuristics to display
-
-    if (!signalData) return null
-
-    // take value from signals and display
-    const n = signals["n_wayback_machine_snapshot"]
-    const wayback_first = signals["first_wayback_machine_snapshot"]
-    const wayback_last = signals["last_wayback_machine_snapshot"]
+    const meta = signals?.meta || {};
+    const n = meta["ws_wbm_total"] ?? 0;
+    const wayback_first = meta["ws_wbm_first"] ?? 'N/A';
+    const wayback_last = meta["ws_wbm_last"] ?? 'N/A';
 
     try {
         return <div className={"wayback-badge"}>
@@ -116,7 +109,7 @@ export function wiki_display(signalData, signals) {
             <img src={wikiLogo} alt="Wikipedia" className={"wiki-logo-image"}/>
         </div>
         <div className={"wiki-badge-element"} style={{display: 'flex', alignItems: 'center'}}>
-        {signalData}
+            {signalData}
         </div>
     </div>
 

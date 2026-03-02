@@ -9,7 +9,7 @@ This is so that common examples can be quickly entered with the click of a butto
 export const envShortcutLists = {
     prod: ['easterIsland', 'internetArchive', 'pdfCovid',],  // production mode limited shortcuts
     stage: ['easterIsland', 'internetArchive', 'mlk', 'grok_easter_island', 'short_test', ],  // staging shows a little more for testing
-    other: ['grok_easter_island', 'grok_internet_archive', 'grok_island_local', 'assam', 'marc_bolan', 'easterIsland', 'easter_island_short', 'kennewick_man', 'mlk', 'internetArchive', 'short_test'],  // everything else (my dev env, e.g.) shows lots more
+    other: ['grok_easter_island', 'grok_internet_archive', 'missMeyers', 'grok_island_local', 'assam', 'marc_bolan', 'easterIsland', 'easter_island_short', 'kennewick_man', 'mlk', 'internetArchive', 'short_test'],  // everything else (my dev env, e.g.) shows lots more
 }
 
 
@@ -115,4 +115,11 @@ export const ShortcutDefs = {
         label : "DeSantis PDF",
         value : "https://ia601600.us.archive.org/31/items/Book_URLs/DeSantis.pdf"
     },
+    "missMeyers"  : {
+        label : "Miss Meyers",
+        value : "https://en.wikipedia.org/wiki/Miss_Meyers"
+    },
+
+
+
 }

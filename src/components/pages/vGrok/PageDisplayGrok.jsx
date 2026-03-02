@@ -11,9 +11,11 @@ export default function PageDisplayGrok( { pageData }) {
             ? pageData.page_errors
             : [pageData.page_errors];
         const pageErrors = errors.map((err, i) => <div key={i}>{err}</div>)
-        return <div className={"iari-wiki-display iare-ux-container"}>
+        return <div className={"iari-grok-display iare-ux-container"}>
             <div className={"iare-ux-header"}>Page Errors</div>
-            <div className={"iare-ux-body"}>{pageErrors}</div>
+            <div className={"iare-ux-body"}>
+                <div className={"error-display"}>{pageErrors}</div>
+            </div>
         </div>
     }
         
@@ -27,7 +29,7 @@ export default function PageDisplayGrok( { pageData }) {
         setShowViewOptions(prevState => !prevState)
     }
 
-    return <div className={"iari-wiki-display iare-ux-container"}>
+    return <div className={"iari-grok-display iare-ux-container"}>
         <div className={"iare-ux-header"}>
             <PageInfoGrok
                 pageData={pageData}

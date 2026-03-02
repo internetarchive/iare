@@ -104,7 +104,13 @@
     /*max-width: var(--width-url-list);*/
 }
 
-/* duh */
+/* table scrolling stuff
+ NB this is for url tables - should be more generic for generic flock display, not just urls
+*/
+.url-table-scroll {
+    overflow-x: auto;
+}
+
 .url-list-header {
     /*position: sticky;*/
     /*flex: 1;*/

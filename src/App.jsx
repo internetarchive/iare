@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState, useRef} from "react";
 import {Tooltip as AppTooltip} from "react-tooltip";
 import package_json from "../package.json";
 
-import { IariError } from "./errors/IariError";
+import {IariError} from "./errors/IariError";
 
 // import {debounce} from "./utils/generalUtils.js";
 import {getPagePathEndpoint} from "./utils/iariUtils.js";
@@ -26,7 +26,6 @@ export default function App(
     {
         env,
         myPath,
-        myCacheData,
         myUseLocalCache,
         myRefresh,
         myCheckMethod,
@@ -36,28 +35,6 @@ export default function App(
     }) {
 
     const appTitle = "Internet Archive Reference Explorer"
-
-    // Add CSS styles for logo
-    const styles = {
-        '.header-title-section': {
-            display: 'flex',
-            alignItems: 'center',
-            gap: '.45rem'
-        },
-        '.app-logo': {
-            height: '1.65rem',
-            width: 'auto',
-            marginLeft: '0.27rem',
-        }
-    }
-
-    // Add styles to document
-    Object.entries(styles).forEach(([selector, rules]) => {
-        const styleEl = document.createElement('style')
-        styleEl.textContent = `${selector} { ${Object.entries(rules).map(([prop, value]) =>
-            `${prop.replace(/[A-Z]/g, m => '-' + m.toLowerCase())}: ${value}`).join(';')} }`
-        document.head.appendChild(styleEl)
-    })
 
     const [isDebug, setDebug] = useState(myDebug);
     const [isScrollFix, setIsScrollFix] = useState(() => {
@@ -70,7 +47,7 @@ export default function App(
     // these are config values to show/hide certain UI features, available from debug info box
     const [isShowUrlOverview, setIsShowUrlOverview] = useState(true);
     const [isShowShortcuts, setIsShowShortcuts] = useState(true);
-        // TODO set this based on local storage or cookie value
+    // TODO set this based on local storage or cookie value
     const [isShowUseLocalCache, setIsShowUseLocalCache] = useState(
         env === "env-local"
     );
@@ -83,7 +60,6 @@ export default function App(
 
     // params settable from from address url
     const [targetPath, setTargetPath] = useState(myPath);
-    const [cacheData, setCacheData] = useState(myCacheData);
     const [useLocalCache, setUseLocalCache] = useState(myUseLocalCache);
     const [refreshCheck, setRefreshCheck] = useState(myRefresh);
     const [checkMethod, setCheckMethod] = useState(myCheckMethod);
@@ -99,7 +75,7 @@ export default function App(
         'IARI': 'IARI failure: ',
         'DEFAULT': 'Unhandled error'
     };
-    const [myError, setMyError] = useState(null);
+    const [appError, setAppError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
     // values of screen elements
@@ -108,6 +84,26 @@ export default function App(
     // const lowerSectionElementRef = useRef(null);
     const [lowerSectionTopY, setLowerSectionTopY] = useState(0);
     // const [lowerSectionHeight, setLowerSectionHeight] = useState(0);
+
+    // Define CSS styles for logo and add to document
+    const styles = {
+        '.header-title-section': {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '.45rem'
+        },
+        '.app-logo': {
+            height: '1.65rem',
+            width: 'auto',
+            marginLeft: '0.27rem',
+        }
+    }
+    Object.entries(styles).forEach(([selector, rules]) => {
+        const styleEl = document.createElement('style')
+        styleEl.textContent = `${selector} { ${Object.entries(rules).map(([prop, value]) =>
+            `${prop.replace(/[A-Z]/g, m => '-' + m.toLowerCase())}: ${value}`).join(';')} }`
+        document.head.appendChild(styleEl)
+    })
 
 
     const toggleDebug = () => {
@@ -136,16 +132,16 @@ export default function App(
         setScrollY(window.scrollY);
     }
 
-                // // resize components when window size changed
-                // const handleResize = useCallback(() => {
-                //     setWindowHeight(window.innerHeight);  // for window height display purposes only
-                //
-                //     if (lowerSectionElementRef.current) {
-                //         const rect = lowerSectionElementRef.current.getBoundingClientRect();
-                //         setLowerSectionTopY(rect.top); // Get the top Y-coordinate
-                //         setLowerSectionHeight(window.innerHeight - rect.top);// Set the new element height
-                //     }
-                // }, [])
+    // // resize components when window size changed
+    // const handleResize = useCallback(() => {
+    //     setWindowHeight(window.innerHeight);  // for window height display purposes only
+    //
+    //     if (lowerSectionElementRef.current) {
+    //         const rect = lowerSectionElementRef.current.getBoundingClientRect();
+    //         setLowerSectionTopY(rect.top); // Get the top Y-coordinate
+    //         setLowerSectionHeight(window.innerHeight - rect.top);// Set the new element height
+    //     }
+    // }, [])
 
 
     const myShortcutList = React.useMemo(() => {
@@ -159,14 +155,16 @@ export default function App(
     const shortcuts = React.useMemo(() => {
         return myShortcutList
             // output array of objects with label and value props (to send to PathNameFetch)
-            ? myShortcutList.map( sKey => {
+            ? myShortcutList.map(sKey => {
                 return ShortcutDefs[sKey]
                     ? ShortcutDefs[sKey]
                     : {
                         label: "Unknown Shortcut '" + sKey + "'",
                         value: "unknown"
                     }
-            }).filter( sc => {return sc.value !== "unknown"}) // filter out the unknown ones
+            }).filter(sc => {
+                return sc.value !== "unknown"
+            }) // filter out the unknown ones
             : []
     }, [myShortcutList, ShortcutDefs]);
 
@@ -176,38 +174,38 @@ export default function App(
         console.log('APP: useEffect[env]: app name: ' + package_json.name, ', version: ' + package_json.version)
         document.body.classList.add(env);
 
-                        // // pull local storage settings
-                        // const savedScrollFix = localStorage.getItem('isScrollFix');
-                        // if (savedScrollFix !== null) {
-                        //     setIsScrollFix(JSON.parse(savedScrollFix));
-                        // }
+        // // pull local storage settings
+        // const savedScrollFix = localStorage.getItem('isScrollFix');
+        // if (savedScrollFix !== null) {
+        //     setIsScrollFix(JSON.parse(savedScrollFix));
+        // }
     }, [env])
 
-                // add event listener for scroll and resize events
-                // useEffect(() => {
-                //
-                //     const debounceHandleResize = debounce(() => {
-                //         handleResize();
-                //     }, 200);
-                //
-                //     // Update the Y-coordinate when the component mounts
-                //     handleResize();
-                //
-                //     // listen for events on window
-                //     window.addEventListener('scroll', handleScroll);
-                //     window.addEventListener('resize', debounceHandleResize);
-                //
-                //     // Clean up the event listener on component unmount
-                //     return () => {
-                //         window.removeEventListener('scroll', handleScroll);
-                //         window.removeEventListener('resize', handleResize);
-                //     };
-                // }, [handleResize]);
+    // add event listener for scroll and resize events
+    // useEffect(() => {
+    //
+    //     const debounceHandleResize = debounce(() => {
+    //         handleResize();
+    //     }, 200);
+    //
+    //     // Update the Y-coordinate when the component mounts
+    //     handleResize();
+    //
+    //     // listen for events on window
+    //     window.addEventListener('scroll', handleScroll);
+    //     window.addEventListener('resize', debounceHandleResize);
+    //
+    //     // Clean up the event listener on component unmount
+    //     return () => {
+    //         window.removeEventListener('scroll', handleScroll);
+    //         window.removeEventListener('resize', handleResize);
+    //     };
+    // }, [handleResize]);
 
-                // // when debug shows/hides, readjust onscreen component sizes
-                // useEffect(() => {
-                //     handleResize()
-                // }, [isDebug, handleResize]);
+    // // when debug shows/hides, readjust onscreen component sizes
+    // useEffect(() => {
+    //     handleResize()
+    // }, [isDebug, handleResize]);
 
 
     function getIariVersion(pageData, endpointPath) {
@@ -293,7 +291,7 @@ export default function App(
 
         // TODO: maybe also always clear pageData, so components get
         //  cleared while waiting?
-        setMyError(null);
+        // setAppError(null);
         setIsLoading(true);
 
         // fetch the article data
@@ -343,15 +341,15 @@ export default function App(
 
             .catch((err) => {
                 if (err.name === IariError.name) {
-                    setMyError(ERROR_MESSAGES.IARI + err.message);
+                    setAppError(ERROR_MESSAGES.IARI + err.message);
                 } else if (err.message === "404") {
-                    setMyError(ERROR_MESSAGES.NOT_FOUND);
+                    setAppError(ERROR_MESSAGES.NOT_FOUND);
                 } else if (err.message === "502") {
-                    setMyError(ERROR_MESSAGES.SERVER);
+                    setAppError(ERROR_MESSAGES.SERVER);
                 } else if (err.name === "TypeError" && err.message === "Failed to fetch") {
-                    setMyError(ERROR_MESSAGES.NETWORK);
+                    setAppError(ERROR_MESSAGES.NETWORK);
                 } else {
-                    setMyError(`${ERROR_MESSAGES.DEFAULT} ${err.name}: ${err.message}`);
+                    setAppError(`${ERROR_MESSAGES.DEFAULT} ${err.name}: ${err.message}`);
                 }
                 setPageData(null);
             })
@@ -387,9 +385,9 @@ export default function App(
             url = '',
             cache_data = '',
             use_local_cache = '',
-            refresh=false,
+            refresh = false,
             iari_source = IariSources.iari_prod.key
-        } ) => {
+        }) => {
 
         const newUrl = window.location.protocol + "//"
             + window.location.host + window.location.pathname
@@ -416,35 +414,32 @@ export default function App(
 
         // set these states for debug display, essentially
         setTargetPath(myPath);
-        setCacheData(myCacheData)
         setUseLocalCache(myUseLocalCache)
         setRefreshCheck(myRefresh);
 
-        console.log(`APP: useEffect[myIariSourceId, myPath, myCacheData, myUseLocalCache, myRefresh, fetchArticleData]: calling fetchArticleData: ${myPath}, ${myCacheData}, ${myUseLocalCache}, ${myRefresh}`)
+        console.log(`APP: useEffect[myIariSourceId, myPath, myUseLocalCache, myRefresh, fetchArticleData]: calling fetchArticleData: ${myPath}, ${myUseLocalCache}, ${myRefresh}`)
 
         // and do the fetching for the path specified (pulled from URL address)
         fetchArticleData({
             pathName: myPath,
-            // cacheData: myCacheData,
-            //     // cacheData means get parsed file contents from local cache.
-            //     // This is a debug helper mechanism.
-            use_local_cache: myUseLocalCache,
+            use_local_cache: myUseLocalCache,  // debug helper mechanism to get parsed file contents from local cache
             refresh: myRefresh
         })
 
 
-    }, [myIariSourceId, myPath, myCacheData, myRefresh, myUseLocalCache, fetchArticleData])
+    }, [myIariSourceId, myPath, myRefresh, myUseLocalCache, fetchArticleData])
 
 
     const handleCheckMethodChange = (methodId) => {
         // console.log(`handleStatusMethodChange: new method is: ${methodId}`)
         setCheckMethod(methodId);
     }
-    const methodChoices = Object.keys(UrlStatusCheckMethods).filter(f => !["IARI", "IABOT_SEARCHURL"].includes(f)).map( key => {
-        return { caption: UrlStatusCheckMethods[key].caption, value: UrlStatusCheckMethods[key].key }
+    const methodChoices = Object.keys(UrlStatusCheckMethods).filter(f => !["IARI", "IABOT_SEARCHURL"].includes(f)).map(key => {
+        return {caption: UrlStatusCheckMethods[key].caption, value: UrlStatusCheckMethods[key].key}
     })
     const methodChoiceSelect = <div className={"choice-wrapper check-method-wrapper"}>
-        <Dropdown choices={methodChoices} label={'Check Method:'} onSelect={handleCheckMethodChange} defaultChoice={checkMethod}/>
+        <Dropdown choices={methodChoices} label={'Check Method:'} onSelect={handleCheckMethodChange}
+                  defaultChoice={checkMethod}/>
     </div>
 
     const handleArticleVersionChange = (articleVersionId) => {
@@ -452,7 +447,7 @@ export default function App(
         setParseMethod(articleVersionId);
     };
     const articleVersionChoices = Object.keys(ParseMethods).map(key => {
-        return { caption: ParseMethods[key].caption, value: ParseMethods[key].key }
+        return {caption: ParseMethods[key].caption, value: ParseMethods[key].key}
     })
     const articleVersionChoiceSelect = <div className={"choice-wrapper article-version-wrapper"}>
         <Dropdown choices={articleVersionChoices}
@@ -463,11 +458,11 @@ export default function App(
 
     const handleIariSourceIdChange = (sourceId) => {
         // console.log(`handleIariSourceChange: new iari source is: ${sourceId}`)
-        refreshPageResults( {
-            url : targetPath,
-            cache_data : cacheData,
-            use_local_cache : use_local_cache,
-            refresh : refreshCheck,
+        refreshPageResults({
+            url: targetPath,
+            cache_data: cacheData,
+            use_local_cache: use_local_cache,
+            refresh: refreshCheck,
             iari_source: sourceId,
         })
         // setIariSourceId(sourceId);
@@ -491,12 +486,14 @@ export default function App(
                                : "Currently pegged - Click to release scroll to screen"}>
             {isScrollFix
                 ?
-                <svg className={"svg-icon-box"} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <svg className={"svg-icon-box"} xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                     fill="currentColor" viewBox="0 0 16 16">
                     <path
                         d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2z"/>
                 </svg>
                 :
-                <svg className={"svg-icon-box"} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <svg className={"svg-icon-box"} xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                     fill="currentColor" viewBox="0 0 16 16">
                     <path
                         d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
                 </svg>
@@ -507,7 +504,7 @@ export default function App(
 
     const buttonShowDebug = (env !== 'env-production') &&
         <button className={"utility-button debug-button small-button"}
-                onClick={toggleDebug} >{
+                onClick={toggleDebug}>{
             isDebug
                 ? <>&#8212;</>
                 : "+"  // dash (&#8212;) and plus sign
@@ -519,39 +516,39 @@ export default function App(
     const debugButtonFilters = <button // this is the 'show urls list' button
         className={"utility-button debug-button"}
         onClick={() => {
-            setIsShowUrlOverview(prevState => !prevState )
+            setIsShowUrlOverview(prevState => !prevState)
         }
-        } >{isShowUrlOverview ? "Hide" : "Show"} Filters</button>
+        }>{isShowUrlOverview ? "Hide" : "Show"} Filters</button>
 
 
     const debugButtonShortcuts = <button // this is the 'show shortcuts' button
         className={"utility-button debug-button"}
         onClick={() => {
-            setIsShowShortcuts(prevState => !prevState )
+            setIsShowShortcuts(prevState => !prevState)
         }
-        } >{isShowShortcuts ? "Hide" : "Show"} Shortcuts</button>
+        }>{isShowShortcuts ? "Hide" : "Show"} Shortcuts</button>
 
 
     const debugButtonViewTypes = <button // this is the 'show view options' button
         className={"utility-button debug-button"}
         onClick={() => {
-            setIsShowViewOptions(prevState => !prevState )
+            setIsShowViewOptions(prevState => !prevState)
         }
-        } >{isShowViewOptions ? "Hide" : "Show"} View Options</button>
+        }>{isShowViewOptions ? "Hide" : "Show"} View Options</button>
 
     const debugButtonDetails = <button // this is the 'show New Features' button
         className={"utility-button debug-button"}
         onClick={() => {
-            setIsShowDebugInfo(prevState => !prevState )
+            setIsShowDebugInfo(prevState => !prevState)
         }
-        } >{isShowDebugInfo ? "Hide" : "Show"} Debug Details</button>
+        }>{isShowDebugInfo ? "Hide" : "Show"} Debug Details</button>
 
     const debugButtonComponents = <button // this is the 'show New Features' button
         className={"utility-button debug-button"}
         onClick={() => {
-            setIsShowDebugComponents(prevState => !prevState )
+            setIsShowDebugComponents(prevState => !prevState)
         }
-        } >{isShowDebugComponents ? "Hide" : "Show"} Debug Components</button>
+        }>{isShowDebugComponents ? "Hide" : "Show"} Debug Components</button>
 
     const debugButtons = <>
         {debugButtonViewTypes}
@@ -571,12 +568,13 @@ export default function App(
                 ? !(key === "iari_local" || key === "iari")  // filter out iari_local and iari on Staging
                 : true
         })
-        .map( key => {
-            return { caption: IariSources[key].caption, value: IariSources[key].key }
+        .map(key => {
+            return {caption: IariSources[key].caption, value: IariSources[key].key}
         })
 
     const iariChoiceSelect = <div className={"choice-wrapper iari-source-wrapper"}>
-        <Dropdown choices={iariChoices} label={'Iari Source:'} onSelect={handleIariSourceIdChange} defaultChoice={myIariSourceId}/>
+        <Dropdown choices={iariChoices} label={'Iari Source:'} onSelect={handleIariSourceIdChange}
+                  defaultChoice={myIariSourceId}/>
     </div>
 
     const versionInfo = `version ${package_json.version}`
@@ -585,14 +583,17 @@ export default function App(
         {/*<div style={{marginBottom:".5rem"}}*/}
         {/*>{iariChoiceSelect} {methodChoiceSelect} {articleVersionChoiceSelect}</div>*/}
         <div>{iariChoiceSelect} {methodChoiceSelect} {articleVersionChoiceSelect}</div>
-        <p><span className={'label'}>Environment:</span> {env} <span className={'lolite'}>(host: {window.location.host})</span></p>
+        <p><span className={'label'}>Environment:</span> {env} <span
+            className={'lolite'}>(host: {window.location.host})</span></p>
         <p><span className={'label'}>IARE Version:</span> {versionInfo}</p>
-        <p><span className={'label'}>IARI Source:</span> {myIariSourceId} <span className={'lolite'}>({IariSources[myIariSourceId]?.proxy})</span></p>
-        <p><span className={'label'}>IARI Version:</span> {pageData?.iari_version ? pageData.iari_version : "unknown"} </p>
+        <p><span className={'label'}>IARI Source:</span> {myIariSourceId} <span
+            className={'lolite'}>({IariSources[myIariSourceId]?.proxy})</span></p>
+        <p><span className={'label'}>IARI Version:</span> {pageData?.iari_version ? pageData.iari_version : "unknown"}
+        </p>
         <p><span className={'label'}>Parse Method:</span> {ParseMethods[parseMethod].caption}</p>
-        <p><span className={'label'}>Check Method:</span> {checkMethod} <span className={'lolite'}>({UrlStatusCheckMethods[checkMethod].caption})</span></p>
+        <p><span className={'label'}>Check Method:</span> {checkMethod} <span
+            className={'lolite'}>({UrlStatusCheckMethods[checkMethod].caption})</span></p>
         <p><span className={'label'}>Target URL from query param:</span> {myPath}</p>
-        <p><span className={'label'}>Use Cache Data:</span> {myCacheData ? myCacheData : 'N/A'}</p>
         <p><span className={'label'}>Force Refresh:</span> {refreshCheck ? "TRUE" : "false"}</p>
         <p><span className={'label'}>Use Local Cache:</span> {useLocalCache ? "TRUE" : "false"}</p>
         <div>{debugButtons}</div>
@@ -635,7 +636,7 @@ export default function App(
     </div>
 
 
-    useEffect( () => {
+    useEffect(() => {
         // setMyError("Fake Error here!")
     }, [])
 
@@ -648,9 +649,10 @@ export default function App(
                                    noArrow={true}
                                    offset={5}
                                    className={"app-tooltip"}
-                                   style={{ zIndex: 999, backgroundColor: "rgba(0,0,255,0.8)" }}
+                                   style={{zIndex: 999, backgroundColor: "rgba(0,0,255,0.8)"}}
     />
 
+    console.log(`appError: ${appError}`)
 
     return <>
 
@@ -660,77 +662,77 @@ export default function App(
 
             {/*<div className="iare-view">*/}
 
-                <div className={"iare-ux-container main-container"}>
+            <div className={"iare-ux-container main-container"}>
 
-                    <div className={"iare-ux-header main-header"}>
+                <div className={"iare-ux-header main-header"}>
 
-                        <div className={"main-header-contents"}>
-                            <div className="header-title-section">
-                                <img src={"logo192.png"} alt="App Logo" className="app-logo"/>
-                                <h1 className={"app-title"}>{appTitle}</h1>
-                            </div>
-                            <div className={"iare-header-aux1"}>
-                                {buttonScrollFix}&nbsp;
-                                <div>{versionInfo}{siteInfo} ({iariSourceInfo})&nbsp;</div>
-                                {buttonShowDebug}
-                            </div>
+                    <div className={"main-header-contents"}>
+                        <div className="header-title-section">
+                            <img src={"logo192.png"} alt="App Logo" className="app-logo"/>
+                            <h1 className={"app-title"}>{appTitle}</h1>
                         </div>
-
-                        {debug}
-
+                        <div className={"iare-header-aux1"}>
+                            {buttonScrollFix}&nbsp;
+                            <div>{versionInfo}{siteInfo} ({iariSourceInfo})&nbsp;</div>
+                            {buttonShowDebug}
+                        </div>
                     </div>
 
-                    <div className={"iare-ux-body main-body"}>
+                    {debug}
 
-                        <div className={"iare-ux-container page-container"}>
+                </div>
 
-                            <div className={"iare-ux-header page-header"}>
+                <div className={"iare-ux-body main-body"}>
 
-                                <PathNameFetch pathInitial={targetPath?.length > 0 ? targetPath : defaultIfEmpty}
-                                               className={"iare-path-fetch"}
-                                               checkboxInitialRefresh={refreshCheck}
-                                               checkboxInitialUseLocalCache={useLocalCache}
-                                               placeholder={"Enter a Wikipedia article or PDF url here"}
-                                               shortcuts={shortcuts}
-                                               handlePathResults={handlePathResults}
-                                               options = {{
-                                                   showShortcuts: isShowShortcuts,
-                                                   showUseLocalCache: isShowUseLocalCache,
-                                               }}
+                    <div className={"iare-ux-container page-container"}>
 
-                                />
+                        <div className={"iare-ux-header page-header"}>
 
-                                {myError
-                                    ? <div className={myError ? "error-display" : "error-display-none"}>
-                                        {myError}
-                                    </div>
-                                    : ""
-                                }
+                            <PathNameFetch pathInitial={targetPath?.length > 0 ? targetPath : defaultIfEmpty}
+                                           className={"iare-path-fetch"}
+                                           checkboxInitialRefresh={refreshCheck}
+                                           checkboxInitialUseLocalCache={useLocalCache}
+                                           placeholder={"Enter a Wikipedia article or PDF url here"}
+                                           shortcuts={shortcuts}
+                                           handlePathResults={handlePathResults}
+                                           options={{
+                                               showShortcuts: isShowShortcuts,
+                                               showUseLocalCache: isShowUseLocalCache,
+                                           }}
 
-                            </div>
+                            />
 
-                            <div className={"iare-ux-body page-body"}>
+                            {appError
+                                ? <div className={appError ? "error-display" : "error-display-none"}>
+                                    {appError}
+                                </div>
+                                : ""
+                            }
 
-                                {/*<div className={"test-contents"} >*/}
-                                {/*    <h2>test-contents</h2>*/}
-                                {/*    {Array.from({length: 20}, (_, i) => {return <p>Body Here!</p>})}*/}
-                                {/*</div>*/}
-                                {isLoading
-                                    ? <Loader message={"Analyzing Page References..."}/>
-                                    : <>
-                                        { /* component is re-rendered when pageData changes, which is
+                        </div>
+
+                        <div className={"iare-ux-body page-body"}>
+
+                            {/*<div className={"test-contents"} >*/}
+                            {/*    <h2>test-contents</h2>*/}
+                            {/*    {Array.from({length: 20}, (_, i) => {return <p>Body Here!</p>})}*/}
+                            {/*</div>*/}
+                            {isLoading
+                                ? <Loader message={"Analyzing Page References..."}/>
+                                : <>
+                                    { /* component is re-rendered when pageData changes, which is
                              only once per URL invocation, really */}
-                                        <PageDisplay pageData={pageData}/>
-                                        { /* TODO: pass in an error callback here? */}
-                                    </>
-                                }
-                            </div>
-
+                                    <PageDisplay pageData={pageData}/>
+                                    { /* TODO: pass in an error callback here? */}
+                                </>
+                            }
                         </div>
 
                     </div>
 
                 </div>
+
+            </div>
 
             {/*</div>*/}
 

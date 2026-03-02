@@ -108,31 +108,18 @@ const getParseMethod = (qParams, targetEnvironment) => {
 const queryParameters = new URLSearchParams(window.location.search)
 const env = getEnvironment();
 const myDebug = queryParameters.has("debug") ? queryParameters.get("debug").toLowerCase() === 'true' : false;
+
 const myPath = queryParameters.has("url") ? queryParameters.get("url") : '';
-const myCacheData = queryParameters.has("cache_data") ? queryParameters.get("cache_data") : '';
 const myUseLocalCache = queryParameters.has("use_local_cache") ? queryParameters.get("use_local_cache") : '';
 const myRefresh = queryParameters.has("refresh") ? queryParameters.get("refresh").toLowerCase() === 'true' : false;
 const myIariSourceId = getIariSource(queryParameters, env);
 const myCheckMethod = getCheckMethod(queryParameters, env);
 const myParseMethod = getParseMethod(queryParameters, env);
 
-// root.render(<App env={env}
-//                  myPath={myPath}
-//                  myCacheData={myCacheData}
-//                  myRefresh={myRefresh}
-//                  myCheckMethod={myCheckMethod}
-//                  myParseMethod={myParseMethod}
-//                  myIariSourceId={myIariSourceId}
-//                  myDebug={myDebug}
-// />);
-
-// ReactDOM.createRoot(document.getElementById('root')).render(<App />)
-
 ReactDOM.createRoot(document.getElementById("root")).render(
     // <React.StrictMode>
         <App env={env}
              myPath={myPath}
-             myCacheData={myCacheData}
              myUseLocalCache={myUseLocalCache}
              myRefresh={myRefresh}
              myCheckMethod={myCheckMethod}
@@ -141,14 +128,3 @@ ReactDOM.createRoot(document.getElementById("root")).render(
              myDebug={myDebug} />
     // </React.StrictMode>
 );
-
-// ReactDOM.createRoot(document.getElementById('root'))
-//     .render(<App env={env}
-//                  myPath={myPath}
-//                  myCacheData={myCacheData}
-//                  myRefresh={myRefresh}
-//                  myCheckMethod={myCheckMethod}
-//                  myParseMethod={myParseMethod}
-//                  myIariSourceId={myIariSourceId}
-//                  myDebug={myDebug}
-// />)

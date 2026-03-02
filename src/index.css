@@ -470,6 +470,10 @@ table td {
 .error-display-many .title {
     font-weight:bold;
 }
+.page-errors {
+
+}
+
 table.single-detail {
     table-layout: fixed;
     width:24rem;

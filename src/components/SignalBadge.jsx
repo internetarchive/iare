@@ -75,14 +75,14 @@ export default function SignalBadge({
     }
 
     else if (signalAction === SignalHandlers.mbfc.action) {
-        signalContents = mbfc_display(signals, signals)
+        signalContents = mbfc_display(signals)
     }
 
-    // else if (signalHandler === "wayback_display") {
-    //     // base display on mbfc_ratings
-    //     signalContents = wayback_display(signalData, signals)
-    // }
-    //
+    else if (signalAction === SignalHandlers.wayback.action) {
+        // base display on wayback stats
+        signalContents = wayback_display(signals)
+    }
+
     // else if (signalHandler === "wiki_display") {
     //     signalContents = wiki_display(signalData, signals)
     // }

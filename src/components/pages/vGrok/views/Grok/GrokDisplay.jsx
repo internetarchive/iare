@@ -155,9 +155,9 @@ export default function GrokDisplay ({ pageData, options, tooltipId = null } ) {
                 fontStyle: "italic",
                 color: "red"}}>all urls from Citations</span></h3>
 
-            <div className={"url-display-body"} style={{display: "flex", height:'100%'}}>
+            <div className={"grok-display-body"} style={{display: "flex", height:'100%'}}>
 
-                <div className={"grok-filter-panel-column"}>
+                <div className={"grok-filter-panel-column flock-filter-panel"}>
                     <GrokFilterPanel pageData={pageData}
                                     options={{}}
                                     onAction={handleAction}
@@ -176,6 +176,10 @@ export default function GrokDisplay ({ pageData, options, tooltipId = null } ) {
                                selectedUrl={selectedUrl}
                                fetchMethod={myConfig.urlStatusMethod}
                     />
+                </div>
+
+                <div className={"debug-extra-column"}>
+                    <div>stuff for debug column</div>
                 </div>
             </div>
 

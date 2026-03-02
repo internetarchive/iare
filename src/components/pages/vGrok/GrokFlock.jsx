@@ -623,11 +623,15 @@ const grokFlock = React.memo(function GrokFlock({
         const flockHeaderRow = getHeaderRow()
 
         return <>
-            {flockHeaderRow}
-            <div className={"url-list-rows"}
-                 onClick={handleRowClick}
-                 onMouseOver={onHoverDataRow}
-            >{rows}</div>
+            <div className={"url-table-scroll"}>
+
+                {flockHeaderRow}
+                <div className={"url-list-rows"}
+                     onClick={handleRowClick}
+                     onMouseOver={onHoverDataRow}
+                >{rows}</div>
+
+            </div>
         </>
     }  // end getFlock
 
