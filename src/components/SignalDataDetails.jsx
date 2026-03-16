@@ -1,12 +1,12 @@
 import React from "react";
 import JsonTable from "./JsonTable.jsx";
 import {isEmpty} from "../utils/generalUtils.js";
-//// import {SignalDefs} from "../constants/signalDefs.jsx";
+import './css/signals.css';
 
 /* sample signal data:
 
     signal_data: {
-        signals: {
+        signalValues: {
           id: 4709,
           domain: "nytimes.com",
           slug: "nytimes-com",
@@ -72,7 +72,7 @@ import {isEmpty} from "../utils/generalUtils.js";
     }
 
    */
-export default function SignalPopupContents({urlLink, score, rawSignalData}) {
+export default function SignalDataDetails({urlLink, score, rawSignalData}) {
 
 
     const [isFiltered, setIsFiltered] = React.useState(false);
@@ -83,7 +83,7 @@ export default function SignalPopupContents({urlLink, score, rawSignalData}) {
     if (rawSignalData?.error) {
         signal_content = <div>{rawSignalData.error}</div>;
 
-    } else if (isEmpty(rawSignalData?.signals)) {
+    } else if (isEmpty(rawSignalData?.signalValues)) {
         signal_content = <div>No Signal Content Available</div>;
 
     } else {
@@ -91,16 +91,16 @@ export default function SignalPopupContents({urlLink, score, rawSignalData}) {
         // do meta values
 
         // simplify signal data for this URL
-        const signals = Object.entries(rawSignalData.signals?.meta).map(([key, value]) => ({
+        const signals = Object.entries(rawSignalData.signalValues?.meta).map(([key, value]) => ({
             signal_name: key,
             value: value
         }));
 
         // const displayedSignals = isFiltered && false  // NB TODO force false while debugging
-        //     ? signals.filter(s => {
+        //     ? signalValues.filter(s => {
         //         return s.value != null && s.value !== "False" && s.value !== false
         //     })
-        //     : signals;
+        //     : signalValues;
         const displayedSignals=signals
 
         // const filterControls = showFilterControls && false  // force false for now...debugging

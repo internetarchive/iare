@@ -270,7 +270,8 @@ export default function UrlDisplay ({ pageData, options } ) {
             setFilterState(filters.templates, value)
 
         } else if (action ===
-            "setLinkStatusFilter"
+            ACTIONS_IARE.SET_LINK_STATUS_FILTER.key
+            // "setLinkStatusFilter"
         ) {
             // value is key into LINK_STATUS_MAP
             const f = value ? LINK_STATUS_MAP[value] : null

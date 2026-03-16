@@ -220,10 +220,10 @@ const GrokFilterPanel = React.memo(({
             </FilterBox>
 
 
-            <FilterBox name={"signals"} caption="Wiki Signals" showContents={expanded.signals}
+            <FilterBox name={"signalValues"} caption="Wiki Signals" showContents={expanded.signals}
                        onToggle={onToggleShow}>
                 <SignalsChart pageData={pageData} onAction={onAction}
-                                currentState={currentState?.signals}/>
+                                currentState={currentState?.signalValues}/>
             </FilterBox>
 
 

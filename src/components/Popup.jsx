@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { Rnd } from 'react-rnd';
+import "./css/popup.css"
 
 const Popup = ({ isOpen, onClose, title, children, initialSize = { width: 600, height: 480 }, initialPosition = { x: 200, y: 200 } }) => {
 
@@ -136,7 +137,7 @@ const Popup = ({ isOpen, onClose, title, children, initialSize = { width: 600, h
 
             >
 
-                <div className="modal-header"
+                <div className="modal-header rnd-modal-popup-header"
                      style={{
                          // backgroundColor: '#bde2cf',
                          // backgroundColor: '#b1dbf7',
@@ -170,7 +171,8 @@ const Popup = ({ isOpen, onClose, title, children, initialSize = { width: 600, h
                     <div>ResizeText: {resizeText}</div>
                 </div>}
 
-                <div style={{ flex: 1, overflow: 'auto', padding:"0 .3rem .2rem .3rem" }}>
+                <div className={"rnd-modal-popup-body"}
+                     style={{ flex: 1, overflow: 'auto' }}>
                     {children}
                 </div>
 

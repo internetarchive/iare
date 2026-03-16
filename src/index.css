@@ -32,11 +32,14 @@
     --color-list-fg-hover: #fffde5; /*blue;*/
 
     --color-list-bg-hover: #f0f0f0;
+    --color-list-bg-hover-fancy: #eaf4fb;
+
     /*--color-list-bg-hover: #81c8e7;*/
     /*--color-list-bg-hover: #CFF0FF;*/
     /*--color-list-bg-hover: #cfdeff;*/
 
     --color-list-label: grey;
+    --color-list-line: #cccccc;
 
     --color-button-bg: #81c8e7;
     --color-button-bg-hover: white;

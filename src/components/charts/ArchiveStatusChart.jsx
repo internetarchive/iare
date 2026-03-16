@@ -84,7 +84,7 @@ const ArchiveStatusChart = ({pageData, options, onAction, currentState = null}) 
 
     const onClickLegend = e => {
         const archiveStatus = e.target.closest('.legend-entry').dataset['link'];
-        onAction({action: ACTIONS_IARE.SET_ARCHIVE_STATUS_FILTER, value: archiveStatus})
+        onAction({action: ACTIONS_IARE.SET_ARCHIVE_STATUS_FILTER.key, value: archiveStatus})
     }
 
     return <>

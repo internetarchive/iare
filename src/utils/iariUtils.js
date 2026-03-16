@@ -861,7 +861,7 @@ const fetchSignalInfo = async ({iariBase, url, refresh=false, timeout=0, tag = '
                 return Promise.resolve({
                     url: url,
                     error_code: -1, // we don't know why this happened
-                    error_text: "Failure fetching signals", // is there an error message available here?
+                    error_text: "Failure fetching signalValues", // is there an error message available here?
                 })
             }
         );

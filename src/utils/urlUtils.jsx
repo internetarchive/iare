@@ -48,11 +48,11 @@ export const getProbePopupData = (probeKey, urlLink, score, rawProbeData) => {
 //         signal_content = <div>No Signal Content Available</div>
 //     } else {
 //         // flatten signal_data.value to just value
-//         const signals = rawSignalData.signals.map(s => ({
+//         const signalValues = rawSignalData.signalValues.map(s => ({
 //             signal_name: s.signal_name,
 //             value: s.signal_data?.value
 //         }));
-//         signal_content = <JsonTable data={signals} />
+//         signal_content = <JsonTable data={signalValues} />
 //     }
 //
 //     const buttonFilter = <label>

@@ -1,0 +1,35 @@
+.rnd-modal-popup {
+    background-color: #f0f0f0;
+    border:1pt solid black;
+    z-index: 1100;
+    box-shadow: 2px 2px 8px #8a8a8a;
+}
+.rnd-modal-popup-contents {
+    padding:.5rem;
+}
+.rnd-modal-popup-header {
+    padding:.5rem;
+}
+.rnd-modal-popup-body {
+    padding:0 .3rem .2rem .3rem;
+    font-size:1.15rem;
+}
+
+.rnd-modal-popup .debug{
+    color: #699191;
+    background-color: #d3e9e9;
+    border: 1px solid #b1bdbd;
+    border-radius: 4pt;
+    padding: 2pt 3pt;
+    margin-bottom: 4pt;
+}
+
+.rnd-modal-popup pre {
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    /*white-space: -moz-pre-wrap;  !* Mozilla, since 1999 *!*/
+    /*white-space: -pre-wrap;      !* Opera 4-6 *!*/
+    /*white-space: -o-pre-wrap;    !* Opera 7 *!*/
+    /*word-wrap: break-word;*/
+
+    /*text-wrap: wrap;*/
+}

@@ -4,7 +4,7 @@ import {ACTIONS_IARE} from "../../constants/actionsIare.jsx";
 
 const SignalsChart = ({pageData, options, onAction, currentState = null}) => {
 /*
-placeholder - using pay level domain data just to hold a place until signals chart is figured
+placeholder - using pay level domain data just to hold a place until signalValues chart is figured
  */
     if (!pageData?.pld_statistics) return <div>
         <p>No Signals data to show.</p>

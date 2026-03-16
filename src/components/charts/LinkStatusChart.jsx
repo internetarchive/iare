@@ -43,7 +43,7 @@ const LinkStatusChart = ({pageData, options, onAction, currentState = null}) => 
 
     const onClickChart = (link) => {
         // console.log("pie chart clicked, link=", link)
-        onAction({action: ACTIONS_IARE.SET_LINK_STATUS_FILTER, value: link})
+        onAction({action: ACTIONS_IARE.SET_LINK_STATUS_FILTER.key, value: link})
     }
 
     const linkStatusChartOptions = {
@@ -66,7 +66,7 @@ const LinkStatusChart = ({pageData, options, onAction, currentState = null}) => 
 
     const onClickLegend = e => {
         const linkStatus = e.target.closest('.legend-entry').dataset['link'];
-        onAction({action: ACTIONS_IARE.SET_LINK_STATUS_FILTER, value: linkStatus})
+        onAction({action: ACTIONS_IARE.SET_LINK_STATUS_FILTER.key, value: linkStatus})
     }
 
     return <>

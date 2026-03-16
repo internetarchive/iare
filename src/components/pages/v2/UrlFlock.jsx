@@ -1,5 +1,6 @@
 import React, {useCallback, useState} from 'react';
 import FlockBox from "../../FlockBox.jsx";
+import "../../css/flock.css"
 
 import {convertToCSV, copyToClipboard} from "../../../utils/generalUtils.js";
 import {getArchiveStatusInfo, getProbePopupData} from "../../../utils/urlUtils.jsx";
@@ -10,12 +11,15 @@ import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../../constants
 import {httpStatusCodes, iabotLiveStatusCodes} from "../../../constants/httpStatusCodes.jsx"
 import {reliabilityMap} from "../../../constants/perennialList.jsx";
 import {urlColumnDefs} from "../../../constants/urlColumnDefs.jsx";
-import ProbesDisplay from "../../ProbesDisplay.jsx";
+
 import Popup from "../../Popup.jsx";
-import SignalsDisplay from "../../SignalsDisplay.jsx";
-import SignalPopupTitle from "../../SignalPopupTitle.jsx";
-import SignalPopupContents from "../../SignalPopupContents.jsx";
-import {SignalHandlers} from "../../../constants/signalHandlers.jsx";
+
+import SignalDataInlineDisplay from "../../SignalDataInlineDisplay.jsx";
+import SignalDataDetails from "../../SignalDataDetails.jsx";
+import SignalsDocs from "../../SignalsDocs.jsx";
+import SignalsSort from "../../SignalsSort.jsx";
+
+import SignalDataDetailsTitle from "../../SignalDataDetailsTitle.jsx";
 
 
 /*
@@ -57,16 +61,12 @@ const urlFlock = React.memo(function UrlFlock({
     // TODO maybe should not/don't have to use memo here??
     //  making it a memo seemed to reduce the re-renders of the flock when the tooltip text was updated
 
-    // TODO how do we make the Probe Popup a global, like a tooltip, sort of?
-    const [isProbePopupOpen, setIsProbePopupOpen] = useState(false)
-    const [probePopupTitle, setProbePopupTitle] = useState(<>Modal Title</>);
-    const [probePopupData, setProbePopupData] = useState(null);
+    const [signalDetailsPopupTitle, setSignalDetailsPopupTitle] = useState(<>Modal Title</>);
+    const [signalDetailsPopupContents, setSignalDetailsPopupContents] = useState(null);
 
-    const [isSignalPopupOpen, setIsSignalPopupOpen] = useState(false)
-    const [signalPopupTitle, setSignalPopupTitle] = useState(<>Modal Title</>);
-    const [signalPopupContents, setSignalPopupContents] = useState(null);
-
-    const [isSignalDocPopupOpen, setIsSignalDocPopupOpen] = useState(false)
+    const [isSignalDetailsPopupOpen, setIsSignalDetailsPopupOpen] = useState(false)
+    const [isSignalsDocsPopupOpen, setIsSignalsDocsPopupOpen] = useState(false)
+    const [isSignalsSortPopupOpen, setIsSignalsSortPopupOpen] = useState(false)
 
 
     const [feedbackText, setFeedbackText] = useState("")
@@ -89,48 +89,10 @@ const urlFlock = React.memo(function UrlFlock({
         sortOrder: ["status"]  // array indicating which sorts get applied and in what order. NB this is not implemented yet, but will be
     })
 
-    const columns = {
+    const columnsToShow = {
         "reliability": {show: true},
         "probes": {show: true},
         "signals": {show: true}
-    }
-
-    const activeSignalKeys = [
-        SignalHandlers.tranco.key,
-        SignalHandlers.mbfc.key,
-        SignalHandlers.enwiki.key,
-        SignalHandlers.wayback.key,
-    ]
-    // TODO: get these from a more shared context, like config or state
-
-    const handleProbeClick = (e) => {
-        // target element is probe badge, "inside" url row...
-        //
-        // displays popup describing probe details of url
-        // - url determined by row clicked
-        // - probe determined by probe badge (small icon) clicked
-
-        const targetElement = e.target
-
-        const urlElement = targetElement.closest('.url-row')
-        const urlLink = urlElement.dataset.url
-        const urlObj = urlDict[urlLink]
-
-        const probeKey = targetElement.dataset.probeKey
-
-
-        const probeData = urlObj?.probe_results?.probes?.[probeKey] ?? null
-
-        console.log(`Clicked ${probeKey} probe details for url: ${urlLink}, probeData is: ${JSON.stringify(probeData, null, 2)}`)
-
-        const rawProbeData = <pre>{JSON.stringify(probeData, null, 2)}</pre>
-        const score = probeData ? probeData.score : "?"
-
-        const [pTitle, pContents] = getProbePopupData(probeKey, urlLink, score, rawProbeData)
-        setProbePopupTitle(pTitle)
-        setProbePopupData(pContents)
-        setIsProbePopupOpen(true)
-
     }
 
     const updateFlockSort = (sortKey) => {
@@ -165,7 +127,13 @@ const urlFlock = React.memo(function UrlFlock({
         e.stopPropagation()
         console.log(`onSignalHeaderClick: e.target.className = ${e.target.className}`)
 
-        setIsSignalDocPopupOpen(true)
+        if (e.target.className.includes("wiki-signalValues-docs")) {
+            setIsSignalsDocsPopupOpen(true)
+        } else if (e.target.className.includes("wiki-signalValues-sort")) {
+            setIsSignalsSortPopupOpen(true)
+
+        }
+
         // alert("Signal Header column clicked")
     }
 
@@ -267,8 +235,8 @@ const urlFlock = React.memo(function UrlFlock({
         const signalA = a?.signal_data?.error ? 0 : 1;
         const signalB = b?.signal_data?.error ? 0 : 1;
 
-        if (signalA > signalB) return sortDefs.sorts['signals'].dir * -1;
-        if (signalA < signalB) return sortDefs.sorts['signals'].dir;
+        if (signalA > signalB) return sortDefs.sorts['signalValues'].dir * -1;
+        if (signalA < signalB) return sortDefs.sorts['signalValues'].dir;
         return 0;
     }
 
@@ -325,6 +293,8 @@ const urlFlock = React.memo(function UrlFlock({
     const handleSignalClick = (e) => {
         // target element is Signal badge, "inside" of url row...
 
+        console.log("Signal clicked")
+
         e.stopPropagation()  // stops row click from engaging
 
         const targetElement = e.target
@@ -339,15 +309,15 @@ const urlFlock = React.memo(function UrlFlock({
 
         // const [pTitle, pContents] = getSignalPopupContents(urlLink, score, rawSignalData)
 
-        setSignalPopupTitle(<SignalPopupTitle urlLink={urlLink}/>)
+        setSignalDetailsPopupTitle(<SignalDataDetailsTitle urlLink={urlLink}/>)
 
-        setSignalPopupContents(<SignalPopupContents
+        setSignalDetailsPopupContents(<SignalDataDetails
             urlLink={urlLink}
             score={score}
             rawSignalData={rawSignalData}
         />)
 
-        setIsSignalPopupOpen(true)
+        setIsSignalDetailsPopupOpen(true)
 
     }
 
@@ -549,7 +519,7 @@ const urlFlock = React.memo(function UrlFlock({
                         data-citation_status={citationStatus}
                         data-live_state={u.archive_status?.live_state}
                         // data-perennial={u.rsp ? u.rsp[0] : null}  // just return first perennial if found for now...dont deal with > 1
-                        // data-signals={u.signals ? u.signals : null}
+                        // data-signalValues={u.signalValues ? u.signalValues : null}
 
             >
                 <div className={"url-name"}>{u.url}</div>
@@ -571,16 +541,15 @@ const urlFlock = React.memo(function UrlFlock({
                 {/*/!* idea: use UrlDataCol component when columns become dynamically described (in the future) *!/*/}
                 {/*/!* <UrlDataCol urlObj={u} column_name={"probes"} options={{onProbeClick: handleProbeClick}}/> *!/*/}
 
-                {/*{columns.probes.show ?*/}
-                {/*    <div className={"url-probes"}>*/}
-                {/*        <ProbesDisplay urlObj={u} onProbeClick={handleProbeClick}/>*/}
-                {/*    </div>*/}
-                {/*    : null*/}
-                {/*}*/}
-
-                {columns.signals.show ?
-                    <div className={"url-signals"}>
-                        <SignalsDisplay urlObj={u} activeSignalKeys={activeSignalKeys} onSignalClick={handleSignalClick} />
+                {columnsToShow.signals.show ?
+                    <div className={"url-signals"}
+                         onClick={(e) => {
+                             console.log("signals div clicked");
+                         }}>
+                        <SignalDataInlineDisplay
+                            urlObj={u}
+                            onSignalClick={handleSignalClick}
+                        />
                     </div>
 
                     : null
@@ -660,11 +629,12 @@ const urlFlock = React.memo(function UrlFlock({
 
     const getHeaderRow = (columns) => {
         return <div
-            className={"url-list-header"}
+
+            className={"url-list-header flock-list-header"}
             onClick={onClickHeader}
             onMouseOver={onHoverHeaderRow}>
 
-            <div className={"url-header-row"}>
+            <div className={"url-header-row flock-header-row"}>
 
                 <div className={"url-name"} onClick={() => {
                     updateFlockSort("name")
@@ -706,23 +676,21 @@ const urlFlock = React.memo(function UrlFlock({
                 {/*    : null*/}
                 {/*}*/}
 
-                {/*{columns.probes.show ?*/}
-                {/*    <div className={"url-probes"} onClick={() => { handleSortClick("probes"); }}*/}
-                {/*    >Probe<br/>Results*/}
-                {/*    </div>*/}
-
                 {/*    : null*/}
                 {/*}*/}
 
-                {columns.signals.show ?
+                {columns.signals?.show ?
                     <div className={"flock-col url-signals"} onClick={(e) => {
                         // skip sort click, as Signal will do something different
 
-                        // handleSortClick("signals");
+                        // handleSortClick("signalValues");
                         onSignalHeaderClick(e)
                     }}
-                    >Signal Results<br/>
-                        <div className={"descriptor-text"}>Click for more info</div>
+                    >
+                        <div className={"wiki-signalValues-docs"}>WikiSignals Data
+                            <span className={"info-icon"}> (i) </span>
+                        </div>
+                        <div className={"wiki-signalValues-sort descriptor-text"}>Click to sort</div>
                     </div>
 
                     : null
@@ -735,7 +703,7 @@ const urlFlock = React.memo(function UrlFlock({
 
     const getFlock = (rows) => {
 
-        const flockHeaderRow = getHeaderRow(columns)
+        const flockHeaderRow = getHeaderRow(columnsToShow)
 
         return <>
             {flockHeaderRow}
@@ -842,6 +810,7 @@ const urlFlock = React.memo(function UrlFlock({
         </div>
     </>
 
+    // TODO implement tooltip id somehow
     return <>
         {/*<div data-tooltip-id={tooltipId}  // passed in tooltipId for this flock)*/}
         {/*     data-tooltip-html={urlTooltipHtml}*/}
@@ -851,60 +820,35 @@ const urlFlock = React.memo(function UrlFlock({
 
         <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>
 
-        {/*/!* popup title, data and open status set in handleProbeClick function *!/*/}
-        {/*<Popup isOpen={isProbePopupOpen}*/}
-        {/*       onClose={() => {*/}
-        {/*           setIsProbePopupOpen(false)*/}
-        {/*       }}*/}
-        {/*       title={probePopupTitle}>*/}
-        {/*    {probePopupData}*/}
-        {/*</Popup>*/}
-
-        {/* popup title, data and open status set in handleSignalClick function */}
-        <Popup isOpen={isSignalPopupOpen}
+        <Popup isOpen={isSignalsDocsPopupOpen}
                onClose={() => {
-                   setIsSignalPopupOpen(false)
+                   setIsSignalsDocsPopupOpen(false)
                }}
-               title={signalPopupTitle}>
-            {signalPopupContents}
-        </Popup>
-
-
-        <Popup isOpen={isSignalDocPopupOpen}
-               onClose={() => {
-                   setIsSignalDocPopupOpen(false)
-               }}
-               title="What is Wiki Signals?"
-               initialSize={{ width: 600, height: 200 }}
+               title={"WikiSignals Documentation"}
+               initialSize={{ width: 600, height: 400 }}
                initialPosition={{ x: 600, y: 160 }}
         >
-            <div>Wiki Signals is a system that allows you to create and share signals for URLs.</div>
-            <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                // gap: '10px',
-                alignItems: 'left',
-                marginTop: '10px'
-            }}>
-                <button className={"utility-button no-margin"}
-                        style={{width: '200px'}}
-                        onClick={() => {
-                            updateFlockSort("signal_wayback")
-                        }}>Sort By Wayback snapshots
-                </button>
-                <button className={"utility-button no-margin"}
-                        style={{width: '200px'}}
-                        onClick={() => {
-                            updateFlockSort("signal_wiki")
-                        }}>Sort By Wikipedia uses
-                </button>
-                <button className={"utility-button no-margin"}
-                        style={{width: '200px'}}
-                        onClick={() => {
-                            updateFlockSort("none")
-                        }}>Remove Sort
-                </button>
-            </div>
+            <SignalsDocs/>
+        </Popup>
+
+        {/* popup title, data and open status set in handleSignalClick function */}
+        <Popup isOpen={isSignalDetailsPopupOpen}
+               onClose={() => {
+                   setIsSignalDetailsPopupOpen(false)
+               }}
+               title={signalDetailsPopupTitle}>
+            {signalDetailsPopupContents}
+        </Popup>
+
+        <Popup isOpen={isSignalsSortPopupOpen}
+               onClose={() => {
+                   setIsSignalsSortPopupOpen(false)
+               }}
+               title={"WikiSignals Sort"}
+               initialSize={{ width: 600, height: 300 }}
+               initialPosition={{ x: 600, y: 160 }}
+        >
+            <SignalsSort onSort={updateFlockSort} />
         </Popup>
 
 
