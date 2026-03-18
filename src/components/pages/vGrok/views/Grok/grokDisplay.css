@@ -16,7 +16,7 @@
 
 
 
-.grok-filter-panel-column {
+.grok-filter-panel {
     /*overflow: hidden;*/
     width: var(--width-filter-panel-column);
     min-width: var(--width-filter-panel-column);

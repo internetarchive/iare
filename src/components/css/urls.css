@@ -75,6 +75,11 @@
 
 }
 
+/* prevents the tooltip wrapper for affecting layout of contents it is containing */
+[data-tooltip-id] {
+    display: contents;
+}
+
 #url-display-tooltip {
     font-size:1.25em;
     font-weight:normal;
@@ -82,9 +87,8 @@
 
 .flock-box.url-flock {
     flex: 1 1 0%;
-    width: 25%;
+    min-width: 25%;
 }
-
 
 .url-chart-display {
     width:327px;
@@ -93,11 +97,6 @@
     height:300px;
 }
 
-
-.flock-box.url-flock {
-    flex: 1 1 0%;
-    width: 25%;
-}
 
 .url-flock {
     /*width: var(--width-url-list);*/
@@ -156,11 +155,16 @@
     padding:var(--padding-url-column);
 }
 
-.url-header-row > div {
-    cursor: pointer;
-    text-align:center;
-    padding:0 0 .5rem 0;
-}
+
+/*.url-list-header {*/
+/*    padding-bottom:.5rem;*/
+/*}*/
+
+            .url-header-row > div {
+                cursor: pointer;
+                text-align:center;
+                padding:0 0 .5rem 0;
+            }
 
 /* url list column widths for different column types */
 

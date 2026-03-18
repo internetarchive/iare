@@ -286,7 +286,7 @@ const urlFlock = React.memo(function UrlFlock({
         })
     }
 
-    const onClickHeader = (e) => {
+    const onClickHeaderRow = (e) => {
     }
 
 
@@ -348,50 +348,46 @@ const urlFlock = React.memo(function UrlFlock({
                 ? "url-probes"
                 : e.target.parentElement.className)
 
-        let html = ''
+        console.log(`UrlFlock onHoverDataRow: column class = ${columnClass}`)
 
-        console.log(`UrlFlock onHover: columnClass = ${columnClass}`)
+        const html = getTooltipForColumn(e, row, columnClass)
+
+        setUrlTooltipHtml(html)
+    }
+
+    const getTooltipForColumn = (e, row, columnClass) => {
 
         if (columnClass === "url-live_status") {
             const statusDescription = httpStatusCodes[row.dataset.status_code]
-            html = `<div>${row.dataset.status_code} : ${statusDescription}</div>`
+            return `<div>${row.dataset.status_code} : ${statusDescription}</div>`
+        }
 
-        } else if (columnClass === "url-archive_status") {
-            html = row.dataset.live_state
+        if (columnClass === "url-archive_status") {
+            return row.dataset.live_state
                 ? `<div>${row.dataset.archive_status === "true" ? 'Archived' : 'Not Archived'}` +
                 `<br/>` +
                 `IABot live_state: ${row.dataset.live_state} - ${iabotLiveStatusCodes[row.dataset.live_state]}</div>`
                 : `IABot archive_status = ${row.dataset.archive_status}<br/>IABot live_state = ${row.dataset.live_state}`
+        }
 
-        } else if (columnClass === "url-citations") {
-            html = row.dataset.citation_status && row.dataset.citation_status !== '--'
+        if (columnClass === "url-citations") {
+            return row.dataset.citation_status && row.dataset.citation_status !== '--'
                 ? `<div>Link Status ${'"' + row.dataset.citation_status + '"'} as indicated in Citation</div>`
                 : `<div>No Link Status defined in Citation</div>`
 
-        } else if (columnClass === "url-actionable" || columnClass === "yes-actionable") {
+        }
+
+        if (columnClass === "url-actionable" || columnClass === "yes-actionable") {
             const actionableKey = row.dataset.actionable
             const desc = ACTIONABLE_FILTER_MAP[actionableKey]?.desc
-            html = desc
+            return desc
                 ? `<div>${desc}</div>`
                 : ""
 
-        } else if (columnClass === "url-probes") {
-            if (e.target.classList.contains("probe-badge")) {
-                const probeKey = e.target.dataset.probeKey
-                const probeScore = e.target.dataset.probeScore
-                html = probeScore === "error"
-                    ? "Error with probe data"
-                    : probeScore === "nodata"
-                        ? "No probe data for this URL"
-                        : `<div>${probeKey} score is ${probeScore}</div>`
-            }
-
-        } else {
-            // if not a special case column, show tooltip from column definition
-            html = urlColumnDefs.columns[columnClass]?.ttData
         }
 
-        setUrlTooltipHtml(html)
+        // if not a special case column, show tooltip from column definition
+        return urlColumnDefs.columns[columnClass]?.ttData
     }
 
     const onHoverErrorRow = e => {
@@ -518,8 +514,8 @@ const urlFlock = React.memo(function UrlFlock({
                         data-is_book={u.isBook}
                         data-citation_status={citationStatus}
                         data-live_state={u.archive_status?.live_state}
-                        // data-perennial={u.rsp ? u.rsp[0] : null}  // just return first perennial if found for now...dont deal with > 1
-                        // data-signalValues={u.signalValues ? u.signalValues : null}
+                // data-perennial={u.rsp ? u.rsp[0] : null}  // just return first perennial if found for now...dont deal with > 1
+                // data-signalValues={u.signalValues ? u.signalValues : null}
 
             >
                 <div className={"url-name"}>{u.url}</div>
@@ -629,9 +625,10 @@ const urlFlock = React.memo(function UrlFlock({
 
     const getHeaderRow = (columns) => {
         return <div
+            // className={"url-header-row flock-header-row"}
 
-            className={"url-list-header flock-list-header"}
-            onClick={onClickHeader}
+            className={"flock-list-header url-list-header"}
+            onClick={onClickHeaderRow}
             onMouseOver={onHoverHeaderRow}>
 
             <div className={"url-header-row flock-header-row"}>
@@ -695,10 +692,9 @@ const urlFlock = React.memo(function UrlFlock({
 
                     : null
                 }
-
             </div>
-
         </div>
+
     }
 
     const getFlock = (rows) => {
@@ -794,65 +790,77 @@ const urlFlock = React.memo(function UrlFlock({
 
     }
 
-    const buttonCopyList = <button onClick={handleCopyUrlList} className={'btn utility-button small-button'}><span>Copy URL List</span>
-    </button>
-    const buttonCopyDetails = <button onClick={handleCopyUrlDetails} className={'btn utility-button small-button'}>
-        <span>Copy URL Details</span></button>
-    const spanFeedback = <div className={`feedback-div ${feedbackText ? 'feedback-fade-text' : ''}`}>
-        {feedbackText && <span>{feedbackText}</span>}
-    </div>
-
-    const flockCaption = <>
-        <div>URL Links</div>
-        <div className={"sub-caption"}>
-            <div>{flockRows.length} {flockRows.length === 1 ? 'URL' : 'URLs'}</div>
-            <div>{spanFeedback} {buttonCopyList} {buttonCopyDetails}</div>
+    const buttonCopyList =
+        <button onClick={handleCopyUrlList} className={'btn utility-button small-button'}><span>Copy URL List</span>
+        </button>
+    const buttonCopyDetails =
+        <button onClick={handleCopyUrlDetails} className={'btn utility-button small-button'}>
+            <span>Copy URL Details</span></button>
+    const spanFeedback =
+        <div className={`feedback-div ${feedbackText ? 'feedback-fade-text' : ''}`}>
+            {feedbackText && <span>{feedbackText}</span>}
         </div>
-    </>
+
+    const flockCaption =
+        <>
+            <div>URL Links</div>
+            <div className={"sub-caption"}>
+                <div>{flockRows.length} {flockRows.length === 1 ? 'URL' : 'URLs'}</div>
+                <div>{spanFeedback} {buttonCopyList} {buttonCopyDetails}</div>
+            </div>
+        </>
 
     // TODO implement tooltip id somehow
     return <>
-        {/*<div data-tooltip-id={tooltipId}  // passed in tooltipId for this flock)*/}
-        {/*     data-tooltip-html={urlTooltipHtml}*/}
-        {/*     onMouseOver={onHoverUrlFlock}>*/}
-        {/*    <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>*/}
-        {/*</div>*/}
 
-        <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>
+            {/*{ 1 ?*/}
+            {/*    <div data-tooltip-id={tooltipId}  // passed in tooltipId for this flock)*/}
+            {/*         data-tooltip-html={urlTooltipHtml}*/}
+            {/*         onMouseOver={onHoverUrlFlock}>*/}
+            {/*        <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>*/}
+            {/*    </div>*/}
+            {/*: <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>*/}
+            {/*}*/}
 
-        <Popup isOpen={isSignalsDocsPopupOpen}
-               onClose={() => {
-                   setIsSignalsDocsPopupOpen(false)
-               }}
-               title={"WikiSignals Documentation"}
-               initialSize={{ width: 600, height: 400 }}
-               initialPosition={{ x: 600, y: 160 }}
-        >
-            <SignalsDocs/>
-        </Popup>
+            <div data-tooltip-id={tooltipId}  // passed in tooltipId for this flock)
+                 data-tooltip-html={urlTooltipHtml}
+                 onMouseOver={onHoverUrlFlock}>
+                <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>
+            </div>
 
-        {/* popup title, data and open status set in handleSignalClick function */}
-        <Popup isOpen={isSignalDetailsPopupOpen}
-               onClose={() => {
-                   setIsSignalDetailsPopupOpen(false)
-               }}
-               title={signalDetailsPopupTitle}>
-            {signalDetailsPopupContents}
-        </Popup>
+            <Popup isOpen={isSignalsDocsPopupOpen}
+                   onClose={() => {
+                       setIsSignalsDocsPopupOpen(false)
+                   }}
+                   title={"WikiSignals Documentation"}
+                   initialSize={{width: 600, height: 400}}
+                   initialPosition={{x: 600, y: 160}}
+            >
+                <SignalsDocs/>
+            </Popup>
 
-        <Popup isOpen={isSignalsSortPopupOpen}
-               onClose={() => {
-                   setIsSignalsSortPopupOpen(false)
-               }}
-               title={"WikiSignals Sort"}
-               initialSize={{ width: 600, height: 300 }}
-               initialPosition={{ x: 600, y: 160 }}
-        >
-            <SignalsSort onSort={updateFlockSort} />
-        </Popup>
+            {/* popup title, data and open status set in handleSignalClick function */}
+            <Popup isOpen={isSignalDetailsPopupOpen}
+                   onClose={() => {
+                       setIsSignalDetailsPopupOpen(false)
+                   }}
+                   title={signalDetailsPopupTitle}>
+                {signalDetailsPopupContents}
+            </Popup>
+
+            <Popup isOpen={isSignalsSortPopupOpen}
+                   onClose={() => {
+                       setIsSignalsSortPopupOpen(false)
+                   }}
+                   title={"WikiSignals Sort"}
+                   initialSize={{width: 600, height: 300}}
+                   initialPosition={{x: 600, y: 160}}
+            >
+                <SignalsSort onSort={updateFlockSort}/>
+            </Popup>
 
 
-    </>
-})
+        </>
+    })
 
-export default urlFlock
+    export default urlFlock

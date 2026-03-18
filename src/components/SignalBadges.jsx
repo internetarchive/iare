@@ -29,8 +29,6 @@ export default function SignalBadges({
         const monitoredSignals = Object.keys(signalBadgeRegistry)
             .sort((a, b) => signalBadgeRegistry[b].priority - signalBadgeRegistry[a].priority)
 
-        console.log(`SignalBadges: monitoredSignals: ${monitoredSignals}`)
-
         badges = monitoredSignals.map(signalKey => {
             const Badge = signalBadgeRegistry[signalKey].component
             //         // TODO what to do if null Badge?

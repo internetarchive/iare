@@ -8,7 +8,6 @@
     flex: 1;
 }
 
-
 .flock-box {
     margin-bottom:var(--margin-box-bottom);
     margin-left:var(--margin-box-left);
@@ -44,6 +43,38 @@
     flex-direction: row;
     justify-content: space-between;
 }
+
+.flock-box-contents {
+    display: contents;
+}
+
+
+
+
+.flock-list-header {
+    position: sticky;
+    top: 0;
+    z-index: 10; /* keep it above rows */
+    background: var(--g-color-list-header-bg);
+}
+
+.flock-list-header .flock-header-row {
+    display: flex;
+    flex-direction: row;
+
+    position:relative;
+
+    border: 1px solid black;
+    border-top-left-radius: var(--border-box-radius);
+    border-top-right-radius: var(--border-box-radius);
+
+    padding-top: .5rem;
+    /*background-color: var(--g-color-list-header-bg);*/
+    color:var(--g-color-list-header-fg);
+}
+
+/* make these use the flock-*/
+
 
 /*.flock-box-contents {*/
 /*    display:flex;*/

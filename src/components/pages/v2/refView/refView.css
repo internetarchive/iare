@@ -395,20 +395,23 @@ button.truth-probe-button
     flex-shrink: 1;
     flex-grow: 1;
 }
-.ref-view-url .url-row.url-header-row {
-    border-top: 1px solid black;
-    background-color: var(--g-color-list-header-bg);
-    color: var(--g-color-list-header-fg);
-}
-.ref-view-url .url-header-row .url-name,
-.ref-view-url .url-header-row .url-status,
-.ref-view-url .url-header-row .url-archive_status,
-.ref-view-url .url-header-row .url-iabot_status,
-.ref-view-url .url-header-row .url-citations,
-.ref-view-url .url-header-row .url-templates,
-.ref-view-url .url-header-row .url-sections,
-.ref-view-url .url-header-row .url-perennial
-.ref-view-url .url-header-row .url-probes
+
+
+/*.ref-view-url .url-row.url-header-row {*/
+/*    border-top: 1px solid black;*/
+/*    background-color: var(--g-color-list-header-bg);*/
+/*    color: var(--g-color-list-header-fg);*/
+/*}*/
+/*.ref-view-url .url-header-row .url-name,*/
+/*.ref-view-url .url-header-row .url-status,*/
+/*.ref-view-url .url-header-row .url-archive_status,*/
+/*.ref-view-url .url-header-row .url-iabot_status,*/
+/*.ref-view-url .url-header-row .url-citations,*/
+/*.ref-view-url .url-header-row .url-templates,*/
+/*.ref-view-url .url-header-row .url-sections,*/
+/*.ref-view-url .url-header-row .url-perennial*/
+/*.ref-view-url .url-header-row .url-probes*/
+
 {
     padding-top: .15rem !important;
     padding-bottom: .15rem !important;

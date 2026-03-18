@@ -157,7 +157,7 @@ export default function GrokDisplay ({ pageData, options, tooltipId = null } ) {
 
             <div className={"grok-display-body"} style={{display: "flex", height:'100%'}}>
 
-                <div className={"grok-filter-panel-column flock-filter-panel"}>
+                <div className={"grok-filter-panel-column grok-filter-panel"}>
                     <GrokFilterPanel pageData={pageData}
                                     options={{}}
                                     onAction={handleAction}

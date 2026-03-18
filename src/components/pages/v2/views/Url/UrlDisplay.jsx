@@ -707,7 +707,7 @@ export default function UrlDisplay ({ pageData, options } ) {
                         conditions={currentConditions}
                         onAction={handleAction}/>
 
-                </div>
+                </div>{/* iare-ux-header */}
 
                 <div className={"iare-ux-body"}>
                     {urlDisplayBody}
@@ -734,6 +734,7 @@ export default function UrlDisplay ({ pageData, options } ) {
 
         {/* TODO tooltip should be passed in to this UrlDisplay component.
               It should be universal and not created here... */}
+
         {tooltipForUrlDisplay}
 
     </div>
