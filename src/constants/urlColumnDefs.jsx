@@ -18,6 +18,10 @@ export const urlColumnDefs = {
             ttCaption: `<div>HTTP Status Code of Primary URL</div>`,
             ttData: `<div>{status_code} : {statusDescription}</div>`
         },
+        "url-live_status": {
+            ttCaption: `<div>HTTP Status Code of URL</div>`,
+            ttData: `<div>{status_code} : {statusDescription}</div>`
+        },
 
         "url-archive_status": {
             ttCaption: `<div>Archive exists in IABot database</div>`,
@@ -47,6 +51,16 @@ export const urlColumnDefs = {
         "url-perennial": {
             ttCaption: `<div>Reliability Rating of URL, according to Wikipedia Reliable Sources</div>`,
             ttData: `Reliability Rating`,
+        },
+
+        "url-signals": {
+            ttCaption: `<div>Reliability and Credibility insight via WikiSignals</div>`,
+        },
+        "wiki-signals-docs": {
+            ttCaption: `<div>Show WikiSignals documentation</div>`,
+        },
+        "wiki-signals-sort": {
+            ttCaption: `<div>Show popup window to sort by signal values</div>`,
         },
 
         // "url-iabot_status": {

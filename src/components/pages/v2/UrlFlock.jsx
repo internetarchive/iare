@@ -127,12 +127,21 @@ const urlFlock = React.memo(function UrlFlock({
         e.stopPropagation()
         console.log(`onSignalHeaderClick: e.target.className = ${e.target.className}`)
 
-        if (e.target.className.includes("wiki-signalValues-docs")) {
-            setIsSignalsDocsPopupOpen(true)
-        } else if (e.target.className.includes("wiki-signalValues-sort")) {
-            setIsSignalsSortPopupOpen(true)
+        const docsEl = e.target.closest(".wiki-signals-docs");
+        const sortEl = e.target.closest(".wiki-signals-sort");
 
+        if (docsEl) {
+            setIsSignalsDocsPopupOpen(true);
+        } else if (sortEl) {
+            setIsSignalsSortPopupOpen(true);
         }
+
+        // if (e.target.classList.contains("wiki-signals-docs")) {
+        //     setIsSignalsDocsPopupOpen(true)
+        // } else if (e.target.classList.contains("wiki-signals-sort")) {
+        //     setIsSignalsSortPopupOpen(true)
+        //
+        // }
 
         // alert("Signal Header column clicked")
     }
@@ -290,10 +299,10 @@ const urlFlock = React.memo(function UrlFlock({
     }
 
 
-    const handleSignalClick = (e) => {
-        // target element is Signal badge, "inside" of url row...
+    const onClickSignalData = (e) => {
+        // triggered when Signal column in url row is clicked.
 
-        console.log("Signal clicked")
+        console.log("Signal column clicked")
 
         e.stopPropagation()  // stops row click from engaging
 
@@ -305,15 +314,11 @@ const urlFlock = React.memo(function UrlFlock({
 
         // const rawSignalData = <pre>{JSON.stringify(urlObj.signal_data, null, 2)}</pre>
         const rawSignalData = urlObj.signal_data
-        const score = "TBD"
-
-        // const [pTitle, pContents] = getSignalPopupContents(urlLink, score, rawSignalData)
 
         setSignalDetailsPopupTitle(<SignalDataDetailsTitle urlLink={urlLink}/>)
 
         setSignalDetailsPopupContents(<SignalDataDetails
             urlLink={urlLink}
-            score={score}
             rawSignalData={rawSignalData}
         />)
 
@@ -321,17 +326,30 @@ const urlFlock = React.memo(function UrlFlock({
 
     }
 
+    const onClickSignalDetail = (e) => {
+        // triggered when a single Signal is clicked.
+
+        console.log("Signal clicked")
+
+        e.stopPropagation()  // stops row click from engaging
+
+        alert("Will implement this later - will show details for one Signal value here.")
+    }
+
+
 
     const onHoverUrlFlock = (e) => {
         // clears tooltip html...only if no other sub-elements got there first
         setUrlTooltipHtml('')
     }
 
-    const onHoverHeaderRow = useCallback((e) => {  // useCallback prevents re-render upon hover???
+    const onHoverHeaderRow = e => {  // useCallback prevents re-render upon hover???
         e.stopPropagation()  // prevents default onHover of UrlFlock from engaging and erasing tooltip
-        const html = urlColumnDefs.columns[e.target.className]?.ttCaption
-        setUrlTooltipHtml(html)
-    }, [])
+        const el = e.target.closest('.flock-col')
+        const firstClassName = el?.classList[0];  // handles potential null and extract the first class name
+        const html = urlColumnDefs.columns[firstClassName]?.ttCaption;
+        setUrlTooltipHtml(html);
+    }
 
     const onHoverDataRow = e => {
         // show tool tip for targeted column of hovered row
@@ -340,13 +358,13 @@ const urlFlock = React.memo(function UrlFlock({
 
         const row = e.target.closest('.url-row')
 
-        // get the class name of the column we are in...this is
-        // a little tricky because of possible sub elements
-        const columnClass = e.target.parentElement.classList.contains('url-row')
-            ? e.target.className
-            : (e.target.parentElement.classList.contains("probe-results")
-                ? "url-probes"
-                : e.target.parentElement.className)
+        // // get the class name of the column we are in...this is
+        // // a little tricky because of possible sub elements
+        // const columnClass = e.target.parentElement.classList.contains('url-row')
+        //     ? e.target.className
+        //     : "x"
+
+        const columnClass = e.target.closest('.url-row > *').classList[0]
 
         console.log(`UrlFlock onHoverDataRow: column class = ${columnClass}`)
 
@@ -359,7 +377,7 @@ const urlFlock = React.memo(function UrlFlock({
 
         if (columnClass === "url-live_status") {
             const statusDescription = httpStatusCodes[row.dataset.status_code]
-            return `<div>${row.dataset.status_code} : ${statusDescription}</div>`
+            return `<div>Live Status:<br/>${row.dataset.status_code} : ${statusDescription}</div>`
         }
 
         if (columnClass === "url-archive_status") {
@@ -381,13 +399,18 @@ const urlFlock = React.memo(function UrlFlock({
             const actionableKey = row.dataset.actionable
             const desc = ACTIONABLE_FILTER_MAP[actionableKey]?.desc
             return desc
-                ? `<div>${desc}</div>`
+                ? `<div>Actionable Item:<br/>${desc}<br/>Click to fix.</div>`
                 : ""
 
         }
 
+        if (columnClass === "url-signals") {
+            return `<div>${urlColumnDefs.columns[columnClass]?.ttCaption}Click to see details</div>`
+
+        }
+
         // if not a special case column, show tooltip from column definition
-        return urlColumnDefs.columns[columnClass]?.ttData
+        return urlColumnDefs.columns[columnClass]?.ttCaption
     }
 
     const onHoverErrorRow = e => {
@@ -514,10 +537,10 @@ const urlFlock = React.memo(function UrlFlock({
                         data-is_book={u.isBook}
                         data-citation_status={citationStatus}
                         data-live_state={u.archive_status?.live_state}
-                // data-perennial={u.rsp ? u.rsp[0] : null}  // just return first perennial if found for now...dont deal with > 1
-                // data-signalValues={u.signalValues ? u.signalValues : null}
-
+                        // data-perennial={u.rsp ? u.rsp[0] : null}  // just return first perennial if found for now...dont deal with > 1
+                        // data-signalValues={u.signalValues ? u.signalValues : null}
             >
+
                 <div className={"url-name"}>{u.url}</div>
                 <div className={"url-live_status"}>{u.status_code ? u.status_code : "?"}</div>
                 <div className={"url-archive_status"}>{getArchiveStatusInfo(u)}</div>
@@ -539,12 +562,14 @@ const urlFlock = React.memo(function UrlFlock({
 
                 {columnsToShow.signals.show ?
                     <div className={"url-signals"}
-                         onClick={(e) => {
-                             console.log("signals div clicked");
-                         }}>
+                         // onClick={(e) => {
+                         //     console.log("signals div clicked");
+                         // }}
+                        onClick={onClickSignalData}
+                    >
                         <SignalDataInlineDisplay
                             urlObj={u}
-                            onSignalClick={handleSignalClick}
+                            onSignalClick={onClickSignalDetail}
                         />
                     </div>
 
@@ -573,12 +598,6 @@ const urlFlock = React.memo(function UrlFlock({
                 <div className={"url-actionable"}>&nbsp;</div>
 
                 {/*<div className={"url-sections"}>&nbsp;</div>*/}
-
-                {/*{columns.reliability.show*/}
-                {/*    ? <div className={"url-perennial"}>&nbsp;</div>*/}
-                {/*    : null*/}
-                {/*}*/}
-                {/*<div className={"url-probes"}>&nbsp;</div>*/}
 
                 <div className={"url-signals"}>&nbsp;</div>
 
@@ -625,74 +644,58 @@ const urlFlock = React.memo(function UrlFlock({
 
     const getHeaderRow = (columns) => {
         return <div
-            // className={"url-header-row flock-header-row"}
-
             className={"flock-list-header url-list-header"}
             onClick={onClickHeaderRow}
             onMouseOver={onHoverHeaderRow}>
 
-            <div className={"url-header-row flock-header-row"}>
-
-                <div className={"url-name"} onClick={() => {
-                    updateFlockSort("name")
-                }}
-                ><br/>URL Link
-                </div>
-
-                <div className={"url-live_status"} onClick={() => {
-                    updateFlockSort("status")
-                }}
-                >Live<br/>Status
-                </div>
-
-                <div className={"url-archive_status"} onClick={() => {
-                    updateFlockSort("archive_status");
-                }}
-                >{archiveFilterDefs['iabot']._.name}</div>
-
-                {/*<div className={"url-citations"} onProbeClick={() => { handleSortClick("references"); } }*/}
-                {/*>Citation<br/>Priority</div>*/}
-
-                {/*<div className={"url-templates"} onProbeClick={() => { handleSortClick("templates"); } }*/}
-                {/*>Template<br/>Type</div>*/}
-
-                <div className={"url-actionable"} onClick={() => {
-                    updateFlockSort("actionable");
-                }}
-                >Action<br/>Items
-                </div>
-
-                {/*<div className={"url-sections"} onClick={() => { handleSortClick("sections"); }}*/}
-                {/*>Section<br/>of Origin*/}
-                {/*</div>*/}
-
-                {/*{columns.reliability.show*/}
-                {/*    ? <div className={"url-perennial"} onClick={*/}
-                {/*        () => { handleSortClick("perennial"); }*/}
-                {/*    }>Reliability<br/>Rating</div>*/}
-                {/*    : null*/}
-                {/*}*/}
-
-                {/*    : null*/}
-                {/*}*/}
-
-                {columns.signals?.show ?
-                    <div className={"flock-col url-signals"} onClick={(e) => {
-                        // skip sort click, as Signal will do something different
-
-                        // handleSortClick("signalValues");
-                        onSignalHeaderClick(e)
-                    }}
-                    >
-                        <div className={"wiki-signalValues-docs"}>WikiSignals Data
-                            <span className={"info-icon"}> (i) </span>
-                        </div>
-                        <div className={"wiki-signalValues-sort descriptor-text"}>Click to sort</div>
-                    </div>
-
-                    : null
-                }
+            <div className={"url-name flock-col"} onClick={() => {
+                updateFlockSort("name")
+            }}
+            ><br/>URL Link
             </div>
+
+            <div className={"url-live_status flock-col"} onClick={() => {
+                updateFlockSort("status")
+            }}
+            >Live<br/>Status
+            </div>
+
+            <div className={"url-archive_status flock-col"} onClick={() => {
+                updateFlockSort("archive_status");
+            }}
+            >{archiveFilterDefs['iabot']._.name}</div>
+
+            {/*<div className={"url-citations"} onProbeClick={() => { handleSortClick("references"); } }*/}
+            {/*>Citation<br/>Priority</div>*/}
+
+            {/*<div className={"url-templates"} onProbeClick={() => { handleSortClick("templates"); } }*/}
+            {/*>Template<br/>Type</div>*/}
+
+            <div className={"url-actionable flock-col"} onClick={() => {
+                updateFlockSort("actionable");
+            }}
+            >Action<br/>Items
+            </div>
+
+            {/*<div className={"url-sections"} onClick={() => { handleSortClick("sections"); }}*/}
+            {/*>Section<br/>of Origin*/}
+            {/*</div>*/}
+
+            {columns.signals?.show ?
+                <div className={"url-signals flock-col"} onClick={(e) => {
+                    // don't use default sort click, as Signal-type clicks do something special
+                    onSignalHeaderClick(e)
+                }}
+                >
+                    <div className={"wiki-signals-docs flock-col"}>WikiSignals Data
+                        <span className={"info-icon descriptor-text"}> (Click for information) </span>
+                    </div>
+                    <div className={"wiki-signals-sort flock-col"}>Sorted by: none <span className={"descriptor-text"}>(Click to sort)</span></div>
+                </div>
+
+                : null
+            }
+
         </div>
 
     }
@@ -703,7 +706,7 @@ const urlFlock = React.memo(function UrlFlock({
 
         return <>
             {flockHeaderRow}
-            <div className={"url-list-rows"}
+            <div className={"flock-list-rows url-list-rows"}
                  onClick={handleRowClick}
                  onMouseOver={onHoverDataRow}>{rows}</div>
         </>
@@ -813,54 +816,44 @@ const urlFlock = React.memo(function UrlFlock({
     // TODO implement tooltip id somehow
     return <>
 
-            {/*{ 1 ?*/}
-            {/*    <div data-tooltip-id={tooltipId}  // passed in tooltipId for this flock)*/}
-            {/*         data-tooltip-html={urlTooltipHtml}*/}
-            {/*         onMouseOver={onHoverUrlFlock}>*/}
-            {/*        <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>*/}
-            {/*    </div>*/}
-            {/*: <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>*/}
-            {/*}*/}
+        <div data-tooltip-id={tooltipId}  // passed in tooltipId for this flock)
+             data-tooltip-html={urlTooltipHtml}
+             onMouseOver={onHoverUrlFlock}>
+            <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>
+        </div>
 
-            <div data-tooltip-id={tooltipId}  // passed in tooltipId for this flock)
-                 data-tooltip-html={urlTooltipHtml}
-                 onMouseOver={onHoverUrlFlock}>
-                <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>
-            </div>
+        <Popup isOpen={isSignalsDocsPopupOpen}
+               onClose={() => {
+                   setIsSignalsDocsPopupOpen(false)
+               }}
+               title={"WikiSignals Documentation"}
+               initialSize={{width: 600, height: 400}}
+               initialPosition={{x: 600, y: 160}}
+        >
+            <SignalsDocs/>
+        </Popup>
 
-            <Popup isOpen={isSignalsDocsPopupOpen}
-                   onClose={() => {
-                       setIsSignalsDocsPopupOpen(false)
-                   }}
-                   title={"WikiSignals Documentation"}
-                   initialSize={{width: 600, height: 400}}
-                   initialPosition={{x: 600, y: 160}}
-            >
-                <SignalsDocs/>
-            </Popup>
+        {/* popup title, data and open status set in handleSignalClick function */}
+        <Popup isOpen={isSignalDetailsPopupOpen}
+               onClose={() => {
+                   setIsSignalDetailsPopupOpen(false)
+               }}
+               title={signalDetailsPopupTitle}>
+            {signalDetailsPopupContents}
+        </Popup>
 
-            {/* popup title, data and open status set in handleSignalClick function */}
-            <Popup isOpen={isSignalDetailsPopupOpen}
-                   onClose={() => {
-                       setIsSignalDetailsPopupOpen(false)
-                   }}
-                   title={signalDetailsPopupTitle}>
-                {signalDetailsPopupContents}
-            </Popup>
+        <Popup isOpen={isSignalsSortPopupOpen}
+               onClose={() => {
+                   setIsSignalsSortPopupOpen(false)
+               }}
+               title={"WikiSignals Sort"}
+               initialSize={{width: 600, height: 300}}
+               initialPosition={{x: 600, y: 160}}
+        >
+            <SignalsSort onSort={updateFlockSort}/>
+        </Popup>
 
-            <Popup isOpen={isSignalsSortPopupOpen}
-                   onClose={() => {
-                       setIsSignalsSortPopupOpen(false)
-                   }}
-                   title={"WikiSignals Sort"}
-                   initialSize={{width: 600, height: 300}}
-                   initialPosition={{x: 600, y: 160}}
-            >
-                <SignalsSort onSort={updateFlockSort}/>
-            </Popup>
-
-
-        </>
+    </>
     })
 
     export default urlFlock

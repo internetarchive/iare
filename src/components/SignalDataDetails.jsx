@@ -1,7 +1,9 @@
 import React from "react";
 import JsonTable from "./JsonTable.jsx";
 import {isEmpty} from "../utils/generalUtils.js";
+// import {extractRootDomain} from "../utils/urlUtils.js";
 import './css/signals.css';
+import {extractRootDomain} from "../utils/urlUtils.jsx";
 
 /* sample signal data:
 
@@ -72,38 +74,27 @@ import './css/signals.css';
     }
 
    */
-export default function SignalDataDetails({urlLink, score, rawSignalData}) {
+export default function SignalDataDetails({urlLink, rawSignalData}) {
 
+    // const [isFiltered, setIsFiltered] = React.useState(false);
+    // const [showFilterControls, setShowFilterControls] = React.useState(false);
 
-    const [isFiltered, setIsFiltered] = React.useState(false);
-    const [showFilterControls, setShowFilterControls] = React.useState(false);
+    const getSignalContent = () => {
+        if (isEmpty(rawSignalData))
+            return <div>No Signal Data exists for this domain</div>
 
-    let signal_content = null;
+        if (rawSignalData?.error)
+            return <div>{rawSignalData.error}</div>
 
-    if (rawSignalData?.error) {
-        signal_content = <div>{rawSignalData.error}</div>;
+        if (isEmpty(rawSignalData?.signals))
+            return <div>No Signal Content Available</div>
 
-    } else if (isEmpty(rawSignalData?.signalValues)) {
-        signal_content = <div>No Signal Content Available</div>;
-
-    } else {
-
-        // do meta values
-
-        // simplify signal data for this URL
-        const signals = Object.entries(rawSignalData.signalValues?.meta).map(([key, value]) => ({
+        const signals = Object.entries(rawSignalData.signals?.meta).map(([key, value]) => ({
             signal_name: key,
             value: value
         }));
 
-        // const displayedSignals = isFiltered && false  // NB TODO force false while debugging
-        //     ? signalValues.filter(s => {
-        //         return s.value != null && s.value !== "False" && s.value !== false
-        //     })
-        //     : signalValues;
-        const displayedSignals=signals
-
-        // const filterControls = showFilterControls && false  // force false for now...debugging
+        // const customControls = showFilterControls && false  // force false for now...debugging
         //     ? <label>
         //         <input
         //             type="checkbox"
@@ -114,13 +105,31 @@ export default function SignalDataDetails({urlLink, score, rawSignalData}) {
         //         : <span>&nbsp;Apply Filter (Hide all null and false Signals)</span>}
         //     </label>
         //     : null
-        const filterControls = null
+        const customControls = null
 
-        signal_content = <>
-            {filterControls}
-            <JsonTable data={displayedSignals}/>
+        return <>
+            {customControls}
+            <JsonTable data={signals}/>
         </>
     }
+
+
+    const getDomain = () => {
+        if (isEmpty(rawSignalData?.signals)) {
+            // cannot get domain from signal data, so interpret it here.
+            return extractRootDomain(urlLink)
+        } else
+            return rawSignalData?.signals?.domain
+    }
+
+
+    const signalContent = getSignalContent()
+    const urlDomain = getDomain(urlLink, rawSignalData)
+    // const score = (typeof rawSignalData?.signals?.meta?.ws_score === "string" && !isNaN(rawSignalData.signals.meta.ws_score)
+    //     ? Number(rawSignalData.signals.meta.ws_score)
+    //     : rawSignalData?.signals?.meta?.ws_score ?? 0).toFixed(2)
+    const score = Number(rawSignalData?.signals?.meta?.ws_score).toFixed(2)
+
 
     return (
         <>
@@ -133,11 +142,13 @@ export default function SignalDataDetails({urlLink, score, rawSignalData}) {
                 }}>
                     <div className={"grid-caption"}>URL:</div>
                     <div>{urlLink}</div>
+                    <div className={"grid-caption"}>Domain:</div>
+                    <div>{urlDomain}</div>
                     <div className={"grid-caption"}>Score:</div>
                     <div>{score}</div>
                 </div>
                 <hr/>
-                {signal_content}
+                {signalContent}
             </div>
         </>
     );

@@ -424,7 +424,7 @@ const grokFlock = React.memo(function GrokFlock({
             // onClick={onClickHeaderRow}
             onMouseOver={onHoverHeaderRow}>
 
-            <div className={"url-header-row"}>
+            {/*<div className={"url-header-row"}>*/}
 
                 <div className={"flock-col url-name"} onClick={() => {
                     updateFlockSort("name")
@@ -456,11 +456,11 @@ const grokFlock = React.memo(function GrokFlock({
                     onSignalHeaderClick(e)
                 }}
                 >
-                    <div className={"wiki-signalValues-docs"}>WikiSignals Data</div>
-                    <div className={"wiki-signalValues-sort descriptor-text"}>Click to sort</div>
+                    <div className={"wiki-signals-docs"}>WikiSignals Data</div>
+                    <div className={"wiki-signals-sort descriptor-text"}>Click to sort</div>
                 </div>
 
-            </div>
+            {/*</div>*/}
 
         </div>
     }

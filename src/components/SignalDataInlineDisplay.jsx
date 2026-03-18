@@ -1,7 +1,5 @@
 import React from "react";
 import SignalBadges from "./SignalBadges.jsx";
-import {signalBadgeRegistry} from "../constants/badges/signalBadgeRegistry.jsx";
-import {isEmpty} from "../utils/generalUtils.js";
 import './css/signals.css';
 
 

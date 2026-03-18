@@ -619,16 +619,20 @@ export default function UrlDisplay ({ pageData, options } ) {
     console.log(`UrlDisplay: render; refFilter.caption = ${refFilter?.caption}`);
 
 
-    const tooltipForUrlDisplay = <MyTooltip id="url-display-tooltip"
-                                    float={true}
-                                    closeOnEsc={true}
-                                    delayShow={420}
-                                    variant={"info"}
-                                    noArrow={true}
-                                    offset={5}
-                                    className={"url-display-tooltip"}
-                                    style={{ zIndex: 99 }}
-                            />
+    const tooltipForUrlDisplay = <MyTooltip
+        id="url-display-tooltip"
+        float={true}
+        closeOnEsc={true}
+        delayShow={420}
+        variant={"info"}
+        noArrow={true}
+        offset={5}
+        className={"url-display-tooltip"}
+        style={{ zIndex: 9999 }}
+
+        place="top"
+        positionStrategy="fixed"
+    />
 
                 // const testUrlOverviewDisplay=<div className={"url-overview-column"} style={{backgroundColor: "chartreuse"}}>
                 //     <h2>test-contents</h2>

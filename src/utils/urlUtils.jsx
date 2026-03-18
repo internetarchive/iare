@@ -1,6 +1,6 @@
-import React, {useState} from "react";
+import React from "react";
 import {reliabilityMap} from "../constants/perennialList.jsx";
-import JsonTable from "../components/JsonTable.jsx";
+import { parse } from 'tldts';
 
 
 export const setUrlProbeResults = ( (urlObj, rawProbeResults) => {
@@ -29,53 +29,15 @@ export const getProbePopupData = (probeKey, urlLink, score, rawProbeData) => {
 }
 
 
-// export const getSignalPopupContents = (urlLink, score, rawSignalData) => {
-//     // returns [popup_title, popup_content]
-//
-//     const [isFiltered, setIsFiltered] = useState(false);
-//
-//     const popup_title = <>
-//         <div>Signal results for URL:</div>
-//         <div style={{fontWeight: "normal"}}> {urlLink}</div>
-//     </>
-//
-//
-//     /* take signal data and create a table out of it */
-//
-//     let signal_content = null
-//
-//     if (rawSignalData.error) {
-//         signal_content = <div>No Signal Content Available</div>
-//     } else {
-//         // flatten signal_data.value to just value
-//         const signalValues = rawSignalData.signalValues.map(s => ({
-//             signal_name: s.signal_name,
-//             value: s.signal_data?.value
-//         }));
-//         signal_content = <JsonTable data={signalValues} />
-//     }
-//
-//     const buttonFilter = <label>
-//         <input
-//             type="checkbox"
-//             checked={isFiltered}
-//             onChange={(e) => {
-//                 setIsFiltered(e.target.checked);
-//                 console.log("filter checkbox clicked!", e.target.checked);
-//             }}
-//         />
-//         Filter
-//     </label>
-//
-//     const popup_content = <div>
-//         <div className={"signal-score"}>Score: {score}</div>
-//         <hr/>
-//         {buttonFilter}
-//         {signal_content}
-//     </div>
-//
-//     return [popup_title, popup_content]
-// }
+export const extractRootDomain = (url) => {
+    const result = parse(url);
+
+    if (!result.domain || !result.publicSuffix) {
+        return null; // no valid domain found
+    }
+
+    return `${result.domain}.${result.publicSuffix}`;
+}
 
 
 export const getArchiveStatusInfo = (u => {
