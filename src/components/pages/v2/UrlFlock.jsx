@@ -168,8 +168,8 @@ const urlFlock = React.memo(function UrlFlock({
     }
 
     const sortByArchiveStatus = (a, b) => {
-        const archiveA = a?.archive_status.hasArchive ? 1 : 0;
-        const archiveB = b?.archive_status.hasArchive ? 1 : 0;
+        const archiveA = a?.archive_status?.hasArchive ? 1 : 0;
+        const archiveB = b?.archive_status?.hasArchive ? 1 : 0;
         const bookA = a?.isBook ? 1 : 0;
         const bookB = b?.isBook ? 1 : 0;
 
