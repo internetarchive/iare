@@ -48,7 +48,7 @@
     display: contents;  /* makes flock-box-contents "disappear" from layout logic - good for "sticky" header row */
 }
 
-.flock-list-header {
+.flock-row-header {
     position: sticky;
     top: 0;
     z-index: 10; /* keep it above rows */
@@ -65,13 +65,13 @@
     padding: .35rem 0;
 }
 
-.flock-list-header > div {
+.flock-row-header > div {
     text-align: center;
 }
 
-.flock-list-header .flock-col {
-    cursor: pointer;
-}
+/*.flock-row-header .flock-col {*/
+/*    cursor: pointer;*/
+/*}*/
 
 
 /* make these use the flock-*/

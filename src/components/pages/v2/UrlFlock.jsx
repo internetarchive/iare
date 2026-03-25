@@ -343,6 +343,21 @@ const urlFlock = React.memo(function UrlFlock({
         setUrlTooltipHtml('')
     }
 
+    const onHoverAllRows = e => {
+        // diver to onHoverHeader or onHoverData
+        e.stopPropagation()  // prevents default onHover of UrlFlock from engaging and erasing tooltip
+
+        // if class is list-header or flock-heder-row, then divert to OnHoveDataRow
+        //
+        // else onHoverDataRow()
+
+        
+        const el = e.target.closest('.flock-col')
+        const firstClassName = el?.classList[0];  // handles potential null and extract the first class name
+        const html = urlColumnDefs.columns[firstClassName]?.ttCaption;
+        setUrlTooltipHtml(html);
+    }
+
     const onHoverHeaderRow = e => {  // useCallback prevents re-render upon hover???
         e.stopPropagation()  // prevents default onHover of UrlFlock from engaging and erasing tooltip
         const el = e.target.closest('.flock-col')
@@ -364,7 +379,7 @@ const urlFlock = React.memo(function UrlFlock({
         //     ? e.target.className
         //     : "x"
 
-        const columnClass = e.target.closest('.url-row > *').classList[0]
+        const columnClass = e.target.closest('.url-row > *').classList[0]  // get first class in the array
 
         console.log(`UrlFlock onHoverDataRow: column class = ${columnClass}`)
 
@@ -420,7 +435,9 @@ const urlFlock = React.memo(function UrlFlock({
         setUrlTooltipHtml(text)
     }
 
-    const getDataRows = (flockArray, flockFilters) => {
+    const getDataRows = (flockArray, flockFilters, columnsToShow) => {
+        // TODO implement columnsToShow (ignoring for now)
+        
         // returns [flockRow markup, array of filtered urls]
         if (!flockArray || flockArray.length === 0) {
             return [<h4>No URLs to show</h4>, []]
@@ -644,7 +661,7 @@ const urlFlock = React.memo(function UrlFlock({
 
     const getHeaderRow = (columns) => {
         return <div
-            className={"flock-list-header url-list-header"}
+            className={"xxxurl-row url-row-header flock-row-header"}
             onClick={onClickHeaderRow}
             onMouseOver={onHoverHeaderRow}>
 
@@ -700,17 +717,17 @@ const urlFlock = React.memo(function UrlFlock({
 
     }
 
-    const getFlock = (rows) => {
-
-        const flockHeaderRow = getHeaderRow(columnsToShow)
-
-        return <>
-            {flockHeaderRow}
-            <div className={"flock-list-rows url-list-rows"}
-                 onClick={handleRowClick}
-                 onMouseOver={onHoverDataRow}>{rows}</div>
-        </>
-    }  // end getFlock
+    // const getFlock = (rows) => {
+    //
+    //     const flockHeaderRow = getHeaderRow(columnsToShow)
+    //
+    //     return <>
+    //         {flockHeaderRow}
+    //         <div className={"flock-list-rows url-list-rows"}
+    //              onClick={handleRowClick}
+    //              onMouseOver={onHoverDataRow}>{rows}</div>
+    //     </>
+    // }  // end getFlock
 
     // fades in feedback text and then fades it out
     React.useEffect(() => {
@@ -740,8 +757,33 @@ const urlFlock = React.memo(function UrlFlock({
     }, [feedbackText]);
 
 
-    const [flockRows, flockArray] = getDataRows(urlArray, urlFilters)
-    const flock = getFlock(flockRows)
+    const [flockDataRows, flockArray] = getDataRows(urlArray, urlFilters, columnsToShow);
+        // returns row markup and array of url's used for that markup
+    
+    const flockHeaderRow = getHeaderRow(columnsToShow)
+    const flockAllRows = [flockHeaderRow, ...flockDataRows];
+
+    // const flock = getFlock(flockAllRows)
+    //
+    // // this is all getFlock does - wrap around with header and rows...BAD!
+    //
+    //
+    // // append header row to flock rows
+
+
+    // return <>
+    //     {flockHeaderRow}
+    //     <div className={"flock-list-rows url-list-rows"}
+    //          onClick={handleRowClick}
+    //          onMouseOver={onHoverDataRow}>{rows}</div>
+    // </>
+
+    return <>
+        <div className={"flock-list-rows url-list-rows"}
+             onClick={handleRowClick}
+             onMouseOver={onHoverAllRows}>{flockAllRows}</div>
+    </>
+
 
     const handleCopyUrlDetails = () => {
 
@@ -808,7 +850,7 @@ const urlFlock = React.memo(function UrlFlock({
         <>
             <div>URL Links</div>
             <div className={"sub-caption"}>
-                <div>{flockRows.length} {flockRows.length === 1 ? 'URL' : 'URLs'}</div>
+                <div>{flockAllRows.length} {flockAllRows.length === 1 ? 'URL' : 'URLs'}</div>
                 <div>{spanFeedback} {buttonCopyList} {buttonCopyDetails}</div>
             </div>
         </>
