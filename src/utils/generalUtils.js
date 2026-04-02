@@ -196,3 +196,12 @@ export const trimifyNumber = (n) => {
         `${(n / 1000000).toFixed(1)}M` :
         `${Math.round(n / 1000)}K`
 }
+
+
+export const iareAlert = (s, contextId) => {
+    // if contextId specified, use that element to fade in alert text and then fadeout
+    // otherwise just use alert
+
+    alert(s)
+}
+

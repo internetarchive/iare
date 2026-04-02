@@ -30,15 +30,15 @@ export default function WaybackBadge({
         wayback_total: n
     }
 
-    const badgeText = <div className={"signal-badge-element badge-text"}>
-        {/* abbreviate number if big */}
+    // abbreviate number if big
+    const badgeText = <>
         {n >= 1000000
             ? `${(n / 1000000).toFixed(1)}M`
             : (n >= 1000
                 ? `${Math.round(n / 1000)}K`
                 : n)} snapshots<br/>
         {wayback_first.split(' ')[0]} to {wayback_last.split(' ')[0]}
-    </div>
+    </>
 
     return <Badge
         badgeContext={badgeContext}
@@ -49,9 +49,4 @@ export default function WaybackBadge({
         badgeClass={"wayback-badge"}
     />
 
-    // return <div className={"badge-wayback signal-badge"}
-    //             data-badgedata={JSON.stringify(badgeData)}>
-    //     {badgeIcon}
-    //     {badgeText}
-    // </div>
 }

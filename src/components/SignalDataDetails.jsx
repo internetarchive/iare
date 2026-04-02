@@ -1,9 +1,10 @@
 import React from "react";
 import JsonTable from "./JsonTable.jsx";
-import {isEmpty} from "../utils/generalUtils.js";
-// import {extractRootDomain} from "../utils/urlUtils.js";
+import {iareAlert, isEmpty} from "../utils/generalUtils.js";
 import './css/signals.css';
 import {extractRootDomain} from "../utils/urlUtils.jsx";
+import SignalBadges from "./SignalBadges.jsx";
+import {BadgeContextEnum as badgeContext} from "../constants/badgeDisplayTypes.jsx";
 
 /* sample signal data:
 
@@ -79,6 +80,19 @@ export default function SignalDataDetails({urlLink, rawSignalData}) {
     // const [isFiltered, setIsFiltered] = React.useState(false);
     // const [showFilterControls, setShowFilterControls] = React.useState(false);
 
+    const getDomain = () => {
+        if (isEmpty(rawSignalData?.signals)) {
+            // cannot get domain from signal data, so interpret it here.
+            return extractRootDomain(urlLink)
+        } else
+            return rawSignalData?.signals?.domain
+    }
+
+    const getScore = (rawScore) => {
+        if (rawScore === undefined) return "undefined"
+        return Number(rawScore).toFixed(2)
+    }
+
     const getSignalContent = () => {
         if (isEmpty(rawSignalData))
             return <div>No Signal Data exists for this domain</div>
@@ -89,7 +103,7 @@ export default function SignalDataDetails({urlLink, rawSignalData}) {
         if (isEmpty(rawSignalData?.signals))
             return <div>No Signal Content Available</div>
 
-        const signals = Object.entries(rawSignalData.signals?.meta).map(([key, value]) => ({
+        const signalDataRows = Object.entries(rawSignalData.signals?.meta).map(([key, value]) => ({
             signal_name: key,
             value: value
         }));
@@ -107,46 +121,51 @@ export default function SignalDataDetails({urlLink, rawSignalData}) {
         //     : null
         const customControls = null
 
+        const onSignalClick = (e) => {
+            iareAlert("Signal Clicked: " + e.target.dataset.signalKey)
+        }
+
         return <>
             {customControls}
-            <JsonTable data={signals}/>
+
+            <SignalBadges signals={rawSignalData?.signals}
+                          onSignalClick={onSignalClick}
+                          badgeContext={badgeContext.DETAIL}
+                          fromCache = {rawSignalData?.retrieved_from_cache}
+            />
+
+            <hr/>
+
+            <JsonTable data={signalDataRows}/>
         </>
-    }
-
-
-    const getDomain = () => {
-        if (isEmpty(rawSignalData?.signals)) {
-            // cannot get domain from signal data, so interpret it here.
-            return extractRootDomain(urlLink)
-        } else
-            return rawSignalData?.signals?.domain
     }
 
 
     const signalContent = getSignalContent()
     const urlDomain = getDomain(urlLink, rawSignalData)
-    // const score = (typeof rawSignalData?.signals?.meta?.ws_score === "string" && !isNaN(rawSignalData.signals.meta.ws_score)
-    //     ? Number(rawSignalData.signals.meta.ws_score)
-    //     : rawSignalData?.signals?.meta?.ws_score ?? 0).toFixed(2)
-    const score = Number(rawSignalData?.signals?.meta?.ws_score).toFixed(2)
+    const score = getScore(rawSignalData?.signals?.meta?.ws_score)
 
+    const signalHeader = <div
+        style={{
+            display: "grid",
+            gridTemplateColumns: "minmax(6.5rem, auto) minmax(auto, 1fr)",
+            gap: "10px",
+            marginBottom: "10px"
+        }}>
+        <div className={"grid-caption"}>URL:</div>
+        <div>{urlLink}</div>
+
+        <div className={"grid-caption"}>Domain:</div>
+        <div>{urlDomain}</div>
+
+        <div className={"grid-caption"}>Score:</div>
+        <div>{score}</div>
+    </div>
 
     return (
         <>
-            <div>
-                <div style={{
-                    display: "grid",
-                    gridTemplateColumns: "auto auto",
-                    gap: "10px",
-                    marginBottom: "10px"
-                }}>
-                    <div className={"grid-caption"}>URL:</div>
-                    <div>{urlLink}</div>
-                    <div className={"grid-caption"}>Domain:</div>
-                    <div>{urlDomain}</div>
-                    <div className={"grid-caption"}>Score:</div>
-                    <div>{score}</div>
-                </div>
+            <div className={"signal-data-details"}>
+                {signalHeader}
                 <hr/>
                 {signalContent}
             </div>

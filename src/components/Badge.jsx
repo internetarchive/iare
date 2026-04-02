@@ -20,7 +20,9 @@ export default function Badge({
             <img src={badgeImg} alt={badgeAlt} className={"logo-image"}/>
         </div>
 
-        {badgeContext !== BadgeContextEnum.INLINE ? badgeText : null}
+        {badgeContext !== BadgeContextEnum.INLINE
+            ? <div className={"signal-badge-element badge-text"}>{badgeText}</div>
+            : null}
 
     </div>
 }

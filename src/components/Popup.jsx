@@ -115,54 +115,21 @@ const Popup = ({ isOpen, onClose, title, children, initialSize = { width: 600, h
             }}
 
         >
-            <div
-                className="rnd-modal-popup-contents"
-                style={{
-                    // position: "absolute",
-                    border: '1pt solid black',
-                    padding: '.35rem',
-                    width: '100%',
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    backgroundColor: "white",
-                    pointerEvents: "auto",
-                }}
+            <div className="rnd-modal-popup-contents">
 
-                // onClick={(e) => {stopAndShow(e, "contents:onProbeClick")}}
-                // // onMouseMove={(e) => {stopAndShow(e, "contents:onMouseMove")}}
-                // // onMouseDown={(e) => {stopAndShow(e, "onMouseDown")}}
-                // onScroll={(e) => {stopAndShow(e, "contents:onScroll")}}
-                // onScrollCapture={(e) => {stopAndShow(e, "contents:onScrollCapture")}}
+                {/*// onClick={(e) => {stopAndShow(e, "contents:onProbeClick")}}*/}
+                {/*// // onMouseMove={(e) => {stopAndShow(e, "contents:onMouseMove")}}*/}
+                {/*// // onMouseDown={(e) => {stopAndShow(e, "onMouseDown")}}*/}
+                {/*// onScroll={(e) => {stopAndShow(e, "contents:onScroll")}}*/}
+                {/*// onScrollCapture={(e) => {stopAndShow(e, "contents:onScrollCapture")}}*/}
 
-            >
-
-                <div className="modal-header rnd-modal-popup-header"
-                     style={{
-                         // backgroundColor: '#bde2cf',
-                         // backgroundColor: '#b1dbf7',
-                         backgroundColor: 'hsl(204deg 81.4% 83.14%)',
-                         border:'1pt solid black',
-                         borderRadius:'3pt',
-                         padding: '5px',
-                         cursor: 'move',
-                         display: 'flex',
-                         justifyContent: 'space-between',
-                         alignItems: 'center',
-                         marginBottom: '.5rem',
-                     }}>
+                <div className="modal-header rnd-modal-popup-header">
                     <div style={{overflow:"hidden"}}>
                         <span style={{fontWeight: "bold", overflow:"hidden"}}>{title ? title : "Popup"}</span>
-                        <button style={{
-                            position:"absolute",
-                            borderRadius:"8pt",
-                            border:"1px solid grey",
-                            right:"10pt",
-                            top:"10pt",
-                            opacity:"0.85",
-                            fontSize:"88%",
-                            padding:"1pt 4pt"
-                        }} onClick={onClose}>Close</button>
+                        <button
+                            className="rnd-popup-header-close-button"
+                            onClick={onClose}
+                        >Close</button>
                     </div>
                 </div>
 
