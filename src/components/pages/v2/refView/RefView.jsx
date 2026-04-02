@@ -347,7 +347,8 @@ export default function RefView({
                                       context: "RefView",
                                       caption: "References List",
                                     }}
-                                  tooltipId={"url-display-tooltip"}
+                                  // tooltipId={"tooltip-url-display"}
+                                  tooltipId={tooltipId}
                         />
                     {/*</div>*/}
                     </div>

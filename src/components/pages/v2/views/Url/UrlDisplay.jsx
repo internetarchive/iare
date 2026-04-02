@@ -620,14 +620,14 @@ export default function UrlDisplay ({ pageData, options } ) {
 
 
     const tooltipForUrlDisplay = <MyTooltip
-        id="url-display-tooltip"
+        id="tooltip-url-display"
         float={true}
         closeOnEsc={true}
         delayShow={420}
         variant={"info"}
         noArrow={true}
         offset={5}
-        className={"url-display-tooltip"}
+        className={"tooltip-iare-display"}
         style={{ zIndex: 9999 }}
 
         place="top"
@@ -658,7 +658,7 @@ export default function UrlDisplay ({ pageData, options } ) {
                                 options={{}}
                                 onAction={handleAction}
                                 currentState={currentState}
-                                tooltipId={"url-display-tooltip"}/>
+                                tooltipId={"tooltip-url-display"}/>
             </div>
 
         : {getTestOverviewColumnData}
@@ -672,7 +672,7 @@ export default function UrlDisplay ({ pageData, options } ) {
                       onAction={handleAction}
                       selectedUrl={selectedUrl}
                       fetchMethod={myConfig.urlStatusMethod}
-                      tooltipId={"url-display-tooltip"} />
+                      tooltipId={"tooltip-url-display"} />
 
             <RefFlock pageData={pageData}
                       refArray={refArray}
@@ -683,7 +683,7 @@ export default function UrlDisplay ({ pageData, options } ) {
                           show_filter_description: false,
                           caption: "References List",
                       }}
-                      tooltipId={"url-display-tooltip"}
+                      tooltipId={"tooltip-url-display"}
                       context={"UrlDisplay"} />
         </div>
     </>
@@ -734,7 +734,7 @@ export default function UrlDisplay ({ pageData, options } ) {
                  selectedRefIndex={selectedRefIndex}
                  refFilter={refFilter}
 
-                 tooltipId={"url-display-tooltip"}/>
+                 tooltipId={"tooltip-url-display"}/>
 
         {/* TODO tooltip should be passed in to this UrlDisplay component.
               It should be universal and not created here... */}

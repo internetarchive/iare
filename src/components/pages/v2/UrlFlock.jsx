@@ -388,32 +388,34 @@ const urlFlock = React.memo(function UrlFlock({
         const d = rowEl.dataset
         
         if (columnClass === "url-live_status") {
-            const statusDescription = httpStatusCodes[rowEl.dataset.status_code]
-            return `<div>Live Status:<br/>${rowEl.dataset.status_code} : ${statusDescription}</div>`
+            const statusDescription = httpStatusCodes[d.status_code]
+            return `<div>Live Status:<br/>${d.status_code} :${statusDescription}</div>`
         }
 
         if (columnClass === "url-archive_status") {
-            if (rowEl.dataset.is_book === "true") {
+            if (d.is_book === "true") {
                 return `<div>Book</div>`
             }
             // TODO should
-            return rowEl.dataset.live_state
-                ? `<div>${rowEl.dataset.archive_status === "true" ? 'Archived' : 'Not Archived'}` +
+            return d.live_state
+                ? `<div>${d.archive_status === "true" 
+                    ? 'Archived' 
+                    : 'Not Archived'}` +
                 `<br/>` +
-                `IABot live_state: ${rowEl.dataset.live_state} - ${iabotLiveStatusCodes[rowEl.dataset.live_state]}</div>`
+                `IABot live_state: ${d.live_state} - ${iabotLiveStatusCodes[d.live_state]}</div>`
 
-                : `IABot archive_status = ${rowEl.dataset.archive_status}<br/>IABot live_state = ${rowEl.dataset.live_state}`
+                : `Archive status = ${d.archive_status}<br/>IABot live_state is undefined`
         }
 
         if (columnClass === "url-citations") {
-            return rowEl.dataset.citation_status && rowEl.dataset.citation_status !== '--'
-                ? `<div>Link Status ${'"' + rowEl.dataset.citation_status + '"'} as indicated in Citation</div>`
+            return d.citation_status && d.citation_status !== '--'
+                ? `<div>Link Status ${'"' + d.citation_status + '"'} as indicated in Citation</div>`
                 : `<div>No Link Status defined in Citation</div>`
 
         }
 
         if (columnClass === "url-actionable" || columnClass === "yes-actionable") {
-            const actionableKey = rowEl.dataset.actionable
+            const actionableKey = d.actionable
             const desc = ACTIONABLE_FILTER_MAP[actionableKey]?.desc
             return desc
                 ? `<div>Actionable Item:<br/>${desc}<br/>Click to fix.</div>`
