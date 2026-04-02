@@ -1,29 +1,21 @@
 import React, {useCallback, useState} from 'react';
 import FlockBox from "../../FlockBox.jsx";
-import {SignalHandlers} from "../../../../_notes/_archive/signalHandlers.jsx";
 
 import {convertToCSV, copyToClipboard} from "../../../utils/generalUtils.js";
-// import {getArchiveStatusInfo, getProbePopupData} from "../../utils/urlUtils.jsx";
-import {getArchiveStatusInfo, getArchiveStatusInfoGrok} from "../../../utils/urlUtils.jsx";
+import {getArchiveStatusInfoGrok} from "../../../utils/urlUtils.jsx";
 
-import {ACTIONS_IARE} from "../../../constants/actionsIare.jsx";
 import {ACTIONABLE_FILTER_MAP} from "../../../constants/actionableMap.jsx";
 import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../../constants/urlFilterMaps.jsx";
 import {httpStatusCodes, iabotLiveStatusCodes} from "../../../constants/httpStatusCodes.jsx"
-import {reliabilityMap} from "../../../constants/perennialList.jsx";
 import {urlColumnDefs} from "../../../constants/urlColumnDefs.jsx";
-// import ProbesDisplay from "../../ProbesDisplay.jsx";
-// import ProbesDisplay from "../../ProbesDisplay.jsx";
 import Popup from "../../Popup.jsx";
 import SignalDisplay from "../../SignalDisplay.jsx";
 import SignalDataDetailsTitle from "../../SignalDataDetailsTitle.jsx";
 import SignalDataDetails from "../../SignalDataDetails.jsx";
-// import SignalDataDetails from "../../SignalDataDetails.jsx";
 
 import '../../css/grok.css';
 import Checkbox from "../../Checkbox.jsx";
 import MakeLink from "../../MakeLink.jsx";
-import {UI_STRINGS} from "../../../constants/uiStrings.jsx";
 import SignalsSort from "../../SignalsSort.jsx";
 import SignalsDocs from "../../SignalsDocs.jsx";
 
@@ -469,7 +461,7 @@ const grokFlock = React.memo(function GrokFlock({
         // returns [flockRow markup, array of filtered urls, filter caption]
 
         if (!flockArray || flockArray.length === 0) {
-            return [<h4>No URLs to show</h4>, []]
+            return [<h4>No URLs to show.<br/><span style={{color:"red"}}>(Grok has changed format - will fix ASAP)</span></h4>, []]
         }
 
         if (!flockFilters) flockFilters = {}  // prevent null errors
