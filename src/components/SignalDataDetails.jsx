@@ -79,6 +79,11 @@ export default function SignalDataDetails({urlLink, rawSignalData}) {
 
     // const [isFiltered, setIsFiltered] = React.useState(false);
     // const [showFilterControls, setShowFilterControls] = React.useState(false);
+    const [isTableVisible, setIsTableVisible] = React.useState(false);
+
+    const onSignalClick = (e) => {
+        iareAlert("Signal Clicked: " + e.target.dataset.signalKey)
+    }
 
     const getDomain = () => {
         if (isEmpty(rawSignalData?.signals)) {
@@ -93,7 +98,7 @@ export default function SignalDataDetails({urlLink, rawSignalData}) {
         return Number(rawScore).toFixed(2)
     }
 
-    const getSignalContent = () => {
+    const getRawSignalDataDisplay = () => {
         if (isEmpty(rawSignalData))
             return <div>No Signal Data exists for this domain</div>
 
@@ -119,39 +124,37 @@ export default function SignalDataDetails({urlLink, rawSignalData}) {
         //         : <span>&nbsp;Apply Filter (Hide all null and false Signals)</span>}
         //     </label>
         //     : null
-        const customControls = null
 
-        const onSignalClick = (e) => {
-            iareAlert("Signal Clicked: " + e.target.dataset.signalKey)
-        }
+        const toggleTableVisibility = () => {
+            setIsTableVisible(!isTableVisible);
+        };
 
-        return <>
-            {customControls}
 
-            <SignalBadges signals={rawSignalData?.signals}
-                          onSignalClick={onSignalClick}
-                          badgeContext={badgeContext.DETAIL}
-                          fromCache = {rawSignalData?.retrieved_from_cache}
-            />
-
-            <hr/>
-
-            <JsonTable data={signalDataRows}/>
-        </>
+        return <div className={"signal-details-raw-data"}>
+            <div
+                onClick={toggleTableVisibility}
+                style={{marginBottom: "10px", cursor: "pointer", display: "inline-block"}}
+            >Raw Signal Data&nbsp;
+                {isTableVisible ? "▼" : "▶"}
+            </div>
+            {isTableVisible ? <JsonTable data={signalDataRows}/> : null}
+        </div>
     }
 
 
-    const signalContent = getSignalContent()
+
+    const rawDataDisplay = getRawSignalDataDisplay();
     const urlDomain = getDomain(urlLink, rawSignalData)
     const score = getScore(rawSignalData?.signals?.meta?.ws_score)
 
-    const signalHeader = <div
-        style={{
-            display: "grid",
-            gridTemplateColumns: "minmax(6.5rem, auto) minmax(auto, 1fr)",
-            gap: "10px",
-            marginBottom: "10px"
-        }}>
+    const signalHeader = <div className={"signal-details-header"}
+    //     style={{
+    //         display: "grid",
+    //         gridTemplateColumns: "minmax(6.5rem, auto) minmax(auto, 1fr)",
+    //         gap: "10px",
+    //         marginBottom: "10px"
+    //     }}
+    >
         <div className={"grid-caption"}>URL:</div>
         <div>{urlLink}</div>
 
@@ -160,15 +163,18 @@ export default function SignalDataDetails({urlLink, rawSignalData}) {
 
         <div className={"grid-caption"}>Score:</div>
         <div>{score}</div>
+
+        <hr style={{gridColumn: "1 / -1"}}/>
     </div>
 
-    return (
-        <>
-            <div className={"signal-data-details"}>
-                {signalHeader}
-                <hr/>
-                {signalContent}
-            </div>
-        </>
-    );
+    return <div className={"signal-data-details"}>
+        {signalHeader}
+        <SignalBadges signals={rawSignalData?.signals}
+                      onSignalClick={onSignalClick}
+                      badgeContext={badgeContext.DETAIL}
+                      fromCache={rawSignalData?.retrieved_from_cache}
+        />
+        <hr/>
+        {rawDataDisplay}
+    </div>
 }

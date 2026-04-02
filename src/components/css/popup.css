@@ -11,9 +11,7 @@
     border: 2pt solid black;
     border-radius:var(--border-radious-popup) !important;
     box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
-    /*background-color: #f0f0f0;*/
     background-color: white;
-
 }
 
 .rnd-modal-popup-contents {
@@ -32,14 +30,13 @@
 
     background-color: var(--color-popup-header-bg);
     border-bottom:1.5pt solid var(--color-popup-header-border);
-    /*border-radius:3pt;*/
     border-radius:var(--border-radious-popup) var(--border-radious-popup) 0 0;
     cursor: move;
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: .25rem;
-
+    font-size: .85rem;
 }
 
 .rnd-popup-header-close-button {

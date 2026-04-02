@@ -12,7 +12,6 @@ export default function SignalBadges({
                                          options = {},
                                     }) {
 
-        
     /*
         for each signal in signalBadgeRegistry, render its badge with
         the appropriate Badge renderer using the signal's data.               
@@ -43,7 +42,6 @@ export default function SignalBadges({
     }
 
     const badges = getBadges()
-    // const badgeDisplayClass = BadgeContextEnum[badgeContext]?.className || "signal-badges-default";
     const badgeDisplayClass = badgeContext?.className || "signal-badges-default";
     return <>
         <div className={`signal-badges ${badgeDisplayClass}`}>

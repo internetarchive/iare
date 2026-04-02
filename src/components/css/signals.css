@@ -104,7 +104,20 @@
     padding-left:1rem;
 }
 
-
+.signal-details-header {
+    display: grid;
+    grid-template-columns: minmax(6.5rem, auto) minmax(auto, 1fr);
+    gap: 10px;
+    margin-bottom: 10px;
+    position:sticky;
+    top:0;
+    background-color: white;
+    z-index: 10;
+    padding: .25rem;
+}
+.signal-details-raw-data {
+    margin-top: .65rem;
+}
             /*.signals-badge:hover {*/
             /*    background-color: #d1d2d4;*/
             /*}*/

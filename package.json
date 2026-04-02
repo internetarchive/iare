@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.3.1.25",
-  "version_name": "0.3.1.26 Signal Display icons with grid",
+  "version": "0.3.1.26",
+  "version_name": "0.3.1.26 Signal Details Display",
   "private": true,
   "type": "module",
   "dependencies": {

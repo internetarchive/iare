@@ -9,8 +9,7 @@ import mbfcLogo from "./images/badge.logo.mbfc.small.png";
  * @param {Object} props
  * @param {Object} [props.signals]
  * @param {Function} [props.onSignalClick]
- * @param {"inline"|"small"|"large"} [props.badgeContext]
- */
+ * @param {BadgeContextEnum} [props.badgeContext]*/
 export default function TrancoBadge({
                                         signals = {},
                                         onSignalClick,

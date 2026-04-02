@@ -9,7 +9,7 @@ import {trimifyNumber} from "../../utils/generalUtils.js";
  * @param {Object} props
  * @param {Object} [props.signals]
  * @param {Function} [props.onSignalClick]
- * @param {"inline"|"small"|"large"} [props.badgeContext]
+ * @param {BadgeContextEnum} [props.badgeContext]
  */
 export default function EnwikiBadge({
                                         signals = {},
