@@ -424,7 +424,8 @@ const urlFlock = React.memo(function UrlFlock({
         }
 
         if (columnClass === "url-signals") {
-            return `<div>${urlColumnDefs.columns[columnClass]?.ttCaption}Click to see details</div>`
+            return null
+            // return `<div>${urlColumnDefs.columns[columnClass]?.ttCaption}Click to see details</div>`
 
         }
 
@@ -812,9 +813,10 @@ const urlFlock = React.memo(function UrlFlock({
                onClose={() => {
                    setIsSignalsDocsPopupOpen(false)
                }}
-               title={"WikiSignals Documentation"}
-               initialSize={{width: 600, height: 400}}
-               initialPosition={{x: 600, y: 160}}
+               title={"What is WikiSignals?"}
+               className={"wiki-signals-docs-popup"}
+               initialSize={{width: 684, height: 441}}
+               initialPosition={{x: 420, y: 160}}
         >
             <SignalsDocs/>
         </Popup>

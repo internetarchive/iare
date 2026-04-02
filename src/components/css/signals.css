@@ -14,6 +14,15 @@
 /* * * * * * * * * * * * * * * * * *
  *  S I G N A L S   G E N E R I C  *
  * * * * * * * * * * * * * * * * * */
+
+button.fetch-signal-button {
+    margin-top: 0 !important;
+    background-color: #dbeaf5 !important;
+}
+button.fetch-signal-button:hover {
+    background-color: #cce6f9 !important;
+}
+
 .signal-badges {
 
 }
@@ -118,6 +127,15 @@
 .signal-details-raw-data {
     margin-top: .65rem;
 }
+
+
+
+.wiki-signals-docs-popup .rnd-modal-popup-body {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    padding: .75rem;
+}
+
+
             /*.signals-badge:hover {*/
             /*    background-color: #d1d2d4;*/
             /*}*/

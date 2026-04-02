@@ -3,7 +3,11 @@ import ReactDOM from 'react-dom';
 import { Rnd } from 'react-rnd';
 import "./css/popup.css"
 
-const Popup = ({ isOpen, onClose, title, children, initialSize = { width: 600, height: 480 }, initialPosition = { x: 200, y: 200 } }) => {
+const Popup = ({ isOpen, onClose, className="",
+                   title,
+                   children,
+                   initialSize = { width: 600, height: 480 },
+                   initialPosition = { x: 200, y: 200 } }) => {
 
     // const [size, setSize] = useState({ width: 600, height: 480 });
     // const [position, setPosition] = useState({ x: 200, y: 200 });
@@ -75,7 +79,7 @@ const Popup = ({ isOpen, onClose, title, children, initialSize = { width: 600, h
 
     return ReactDOM.createPortal(
         <Rnd
-            className={"rnd-modal-popup"}
+            className={`rnd-modal-popup${className ? ' ' + className : ''}`}
             style={{
                 pointerEvents: "auto",
             }}

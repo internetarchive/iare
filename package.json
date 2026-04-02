@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.3.1.26",
-  "version_name": "0.3.1.26 Signal Details Display",
+  "version": "0.3.1.27",
+  "version_name": "0.3.1.27 WikiSignals Docs",
   "private": true,
   "type": "module",
   "dependencies": {

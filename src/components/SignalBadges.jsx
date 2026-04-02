@@ -19,7 +19,12 @@ export default function SignalBadges({
 
     const getBadges = () => {
 
-        if (isEmpty(signals)) { return <div className={"signal-badges-extra-msg"}>Signal data is empty.</div>}
+        if (isEmpty(signals)) {
+            return <div className={"signal-badges-extra-msg"}>Signal data is empty.
+            <button className={"fetch-signal-button utility-button small-button"} onClick={() => {}}>Fetch Signal Data</button>
+            </div>
+        }
+
         if (signals.error) {return <div className={"lolite"}>{signals.error}</div>}
 
         // render all the signals in registry, sorted by priority
