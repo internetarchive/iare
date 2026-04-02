@@ -1,38 +1,52 @@
 import React from "react";
 import trancoLogo from './images/badge.logo.tranco.png';
+import {BadgeContextEnum} from "../badgeDisplayTypes.jsx";
+import Badge from "../../components/Badge.jsx";
+import mbfcLogo from "./images/badge.logo.mbfc.small.png";
 
+/**
+ * Shared Badge interface
+ * @param {Object} props
+ * @param {Object} [props.signals]
+ * @param {Function} [props.onSignalClick]
+ * @param {"inline"|"small"|"large"} [props.badgeContext]
+ */
 export default function TrancoBadge({
                                         signals = {},
-                                        onSignalClick
+                                        onSignalClick,
+                                        badgeContext = BadgeContextEnum.INLINE,
                                     }
 ) {
     /*
         we're gonna assume tranco rating is from signals.meta.ws_web_rank
     */
 
-    let badge = null
-
     if (!signals) {
-        badge = <div>No Signal Data provided</div>
-
-    } else {
-
-        try {
-            const meta = signals?.meta || {};
-            const tranco = meta["ws_web_rank"] ?? 0;  // placeholder for now
-            badge = <div>Tranco rating: {tranco}</div>
-
-        } catch (e) {
-            badge = <div>MBFC: Error encountered ({e.message})</div>
-        }
+        return <div className={"signal-badge-error"}><img src={mbfcLogo}
+                                                          alt="Wayback ERROR"/> {'Error: No signal data available'}
+        </div>;
     }
 
-    return <div className={"badge-tranco signal-badge"}>
-        <div className={"signal-badge-element"}>
-            <img src={trancoLogo} alt="Tranco" className={"logo-image"}/>
-        </div>
-        <div className={"signal-badge-element"}>
-            {badge}
-        </div>
-    </div>
+    let badgeData = {}
+    let badgeText = null
+
+    try {
+        const meta = signals?.meta || {};
+        const tranco = meta["ws_web_rank"] ?? 0;  // placeholder for now
+        badgeData = {"tranco": tranco}
+        badgeText = <div>Tranco rating: {tranco}</div>
+
+    } catch (e) {
+        badgeData = {"error": e.message}
+        badgeText = <div>MBFC Error Encountered: {e.message}</div>
+    }
+
+    return <Badge
+        badgeContext={badgeContext}
+        badgeImg={trancoLogo}
+        badgeAlt="Tranco"
+        badgeClass={"tranco-badge"}
+        badgeData={badgeData}
+        badgeText={badgeText}
+    />
 }

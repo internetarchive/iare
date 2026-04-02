@@ -1,6 +1,12 @@
+:root {
+    --width-signal-badge: 4rem;
+    --width-signal-wayback: var(--width-signal-badge);
+    --width-signal-wiki: var(--width-signal-badge);
+    --width-signal-tranco: var(--width-signal-badge);
+    --width-signal-mbfc: var(--width-signal-badge);
+}
 
-
-            /*.signals-badge {*/
+    /*.signals-badge {*/
             /*    min-width:1.25rem;*/
             /*    border:1.5pt solid var(--color-badge-border);*/
             /*    padding:1pt 3pt;*/
@@ -44,40 +50,43 @@
     /*background-color: #d1d2d4;*/
 }
 
-/* * * * * * * * * * * * * * * * * *
- *  S I G N A L S   G E N E R I C  *
- * * * * * * * * * * * * * * * * * */
-.signal-badges {
-    /*display:flex;*/
-    /*flex-direction: column;*/
-    
-    /*display: grid;*/
-    /*grid-template-columns: '3em minmax(10rem, 1fr)', height: '100%' }*/
-
-}
-/*.signal-badges .lolite {*/
-/*    color: var(--color-text-muted);*/
-/*}*/
-
 .signal-badges-extra-msg {
     font-style: italic;
     color: var(--color-text-muted);
     padding:0 0 .15rem .25rem;
     margin-top: -.25rem;
 }
+.signal-badges-inline .signal-badges-extra-msg {
+    grid-column: 1 / -1;
+}
 
-.signal-badge {
-    /*display:flex;*/
-    /*flex-direction: row;*/
+/* * * * * * * * * * * * * * * * * *
+ *  S I G N A L S   G E N E R I C  *
+ * * * * * * * * * * * * * * * * * */
+.signal-badges {
 
+}
+
+.signal-badges-inline {
     display: grid;
-    grid-template-columns: 5em minmax(20rem, 1fr);
-    column-gap: .5rem;
+    grid-template-columns: var(--width-signal-wayback) var(--width-signal-wiki) var(--width-signal-tranco) var(--width-signal-mbfc) minmax(10rem, 1fr);
+}
 
+/*.signal-badges .lolite {*/
+/*    color: var(--color-text-muted);*/
+/*}*/
+
+
+.signal-badges-inline.signal-badge {
+    /*display: grid;*/
+    /*grid-template-columns: 5em minmax(20rem, 1fr);*/
+    /*column-gap: .5rem;*/
+
+    display: block;
     padding: .25rem;
     height: 100%;
     align-items: center;
-    border-top: 1px solid var(--color-list-line);
+    /*border-top: 1px solid var(--color-list-line);*/
 }
 
 /*!* "sub" elements, or "columns", of a badge display row *!*/
@@ -100,4 +109,5 @@
 
 .signal-badge .logo-image {
     width: 100%;
+    padding:.25rem;
 }

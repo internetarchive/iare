@@ -15,7 +15,7 @@ import {urlColumnDefs} from "../../../constants/urlColumnDefs.jsx";
 // import ProbesDisplay from "../../ProbesDisplay.jsx";
 // import ProbesDisplay from "../../ProbesDisplay.jsx";
 import Popup from "../../Popup.jsx";
-import SignalDataInlineDisplay from "../../SignalDataInlineDisplay.jsx";
+import SignalDisplay from "../../SignalDisplay.jsx";
 import SignalDataDetailsTitle from "../../SignalDataDetailsTitle.jsx";
 import SignalDataDetails from "../../SignalDataDetails.jsx";
 // import SignalDataDetails from "../../SignalDataDetails.jsx";
@@ -538,9 +538,6 @@ const grokFlock = React.memo(function GrokFlock({
                         data-live_status={u.live_status}
                         data-archive_status={u.archive_status?.hasArchive}
 
-                        // data-signalValues={u.signal_data?.signalValues ? u.signal_data.signalValues : null}
-                        // data-status_code={u.live_status}
-
                         data-is_book={u.isBook}
                         data-citation_status={citationStatus}
                         data-live_state={u.archive_status?.live_state}
@@ -556,7 +553,7 @@ const grokFlock = React.memo(function GrokFlock({
                 {/* <UrlDataCol urlObj={u} column_name={"probes"} options={{onProbeClick: handleProbeClick}}/> */}
 
                 <div className={"flock-col url-signals"}>
-                    <SignalDataInlineDisplay urlObj={u} onSignalClick={handleSignalClick} />
+                    <SignalDisplay urlObj={u} onSignalClick={handleSignalClick} />
                 </div>
 
             </div>
@@ -624,7 +621,7 @@ const grokFlock = React.memo(function GrokFlock({
             <div className={"url-table-scroll"}>
 
                 {flockHeaderRow}
-                <div className={"url-list-rows"}
+                <div className={"url-rows"}
                      onClick={handleRowClick}
                      onMouseOver={onHoverDataRow}
                 >{rows}</div>

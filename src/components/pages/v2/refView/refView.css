@@ -52,15 +52,16 @@
 
     --width-param-name: 10rem;
 
-    --width-url-name: 20rem;
-    --width-url-live_status: 4.0rem;
-    --width-url-archive-status: 3.5rem;
-    --width-url-citations: 3.5rem;
-    --width-url-templates: 4.0rem;
-    --width-url-actionable: 3.5rem;
-    --width-url-sections: 4.5rem;
-    --width-url-perennial: 5.0rem;
-    --width-url-probes: 6.0rem;
+    /* repeat from urls.css */
+    /*--width-url-name: 20rem;*/
+    /*--width-url-live_status: 3.0rem;*/
+    /*--width-url-archive-status: 3.5rem;*/
+    /*--width-url-citations: 3.5rem;*/
+    /*--width-url-templates: 4.0rem;*/
+    /*--width-url-actionable: 3.5rem;*/
+    /*--width-url-sections: 4.5rem;*/
+    /*--width-url-perennial: 5.0rem;*/
+    /*--width-url-probes: 6.0rem;*/
 
 }
 
@@ -357,13 +358,13 @@ button.truth-probe-button
     margin-top:1rem;
 }
 
-.ref-view-section .url-list-rows {
+.ref-view-section .url-rows {
     height: inherit; /* override urls.css */
     border: var(--border-box-light);
     border-radius: var(--border-radius-ref-section);
 
 }
-.ref-view-section .url-list-rows .url-row {
+.ref-view-section .url-rows .url-row {
     border: none; /* override urls.css */
 
 }

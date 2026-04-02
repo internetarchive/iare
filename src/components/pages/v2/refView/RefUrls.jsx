@@ -174,7 +174,7 @@ export default function RefUrls({ urls, pageData, tooltipId, showDebug=false }) 
 
         const urlRowHeader = getUrlRowHeader()
 
-        return <div className={"url-list-rows"}>
+        return <div className={"url-rows"}>
             {urlRowHeader}
             {urlRows}
         </div>

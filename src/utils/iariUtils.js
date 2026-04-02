@@ -106,6 +106,7 @@ export const getPagePathEndpoint = ({
 }
 
 
+// TODO deprecate / delete
 export const getProbeEndpoint = (
     {
         url = '',

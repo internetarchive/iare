@@ -6,11 +6,11 @@ export const urlColumnDefs = {
     columns : {  // keys match class names
 
         "url-name": {
-            ttCaption: `<div>URL Link Text</div>`,
+            ttCaption: `<div>URL link text</div>`,
             ttData: `<div>Link Text of URL</div>`,
             tooltip: {
-                header: `<div>URL Link Text</div>`,
-                rows: `<div>Link Text of URL</div>`,
+                header: `<div>URL link text</div>`,
+                rows: `<div>Link text of URL</div>`,
             }
         },
 

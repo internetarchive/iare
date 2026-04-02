@@ -45,7 +45,7 @@
 }
 
 .flock-box-contents {
-    display: contents;  /* makes flock-box-contents "disappear" from layout logic - good for "sticky" header row */
+    /*display: contents;  !* makes flock-box-contents "disappear" from layout logic - good for "sticky" header row *!*/
 }
 
 .flock-row-header {
@@ -69,36 +69,36 @@
     text-align: center;
 }
 
-/*.flock-row-header .flock-col {*/
-/*    cursor: pointer;*/
-/*}*/
+                /*.flock-row-header .flock-col {*/
+                /*    cursor: pointer;*/
+                /*}*/
 
 
-/* make these use the flock-*/
+                /* make these use the flock-*/
 
 
-/*.flock-box-contents {*/
-/*    display:flex;*/
-/*    flex-direction: column;*/
-/*    height:100%;*/
+                /*.flock-box-contents {*/
+                /*    display:flex;*/
+                /*    flex-direction: column;*/
+                /*    height:100%;*/
 
-/*    padding: 0;*/
-/*    padding-top:var(--margin-box-space);*/
+                /*    padding: 0;*/
+                /*    padding-top:var(--margin-box-space);*/
 
-/*    border: none;*/
-/*    background-color: inherit;*/
-/*}*/
+                /*    border: none;*/
+                /*    background-color: inherit;*/
+                /*}*/
 
-/*.flock-box-contents button{*/
-/*    margin-bottom: var(--margin-button-list);*/
-/*}*/
+                /*.flock-box-contents button{*/
+                /*    margin-bottom: var(--margin-button-list);*/
+                /*}*/
 
-/*.flock-box label.chk-checkbox {*/
-/*    font-weight: normal;*/
-/*}*/
-/*.flock-box label.chk-checkbox input[type=checkbox] {*/
-/*    margin-right: .25rem;*/
-/*}*/
+                /*.flock-box label.chk-checkbox {*/
+                /*    font-weight: normal;*/
+                /*}*/
+                /*.flock-box label.chk-checkbox input[type=checkbox] {*/
+                /*    margin-right: .25rem;*/
+                /*}*/
 
 .debug-extra-column {
     flex: 0 0 auto;

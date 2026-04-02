@@ -2,15 +2,15 @@
     /*--width-url-list: 40rem;*/
 
     --width-url-name: 20rem;
-    --width-url-live_status: 2.0rem;
+    --width-url-live_status: 3.0rem;
     --width-url-archive-status: 3.5rem;
     --width-url-citations: 3.5rem;
     --width-url-templates: 4.0rem;
-    --width-url-actionable: 3.5rem;
-    --width-url-signals: 25.5rem;
+    --width-url-actionable: 3.0rem;
     --width-url-sections: 4.5rem;
     --width-url-perennial: 5.0rem;
     --width-url-probes: 6.0rem;
+    --width-url-signals: 25.5rem;
 
     --width-col-url-overview: 327px;
     /*--width-cell-border: 1pt solid black;*/
@@ -110,13 +110,14 @@
     overflow-x: auto;
 }
 
-.url-list-rows {
+.url-rows {
+    display: contents;
     overflow-y: auto;
     flex: 1;
     background-color: var(--iare-test-color)
 }
 
-.url-list-rows .url-row
+.url-rows .url-row
 {
     display: flex;
     flex-direction: row;
@@ -128,7 +129,7 @@
     cursor: pointer;
 
 }
-.url-list-rows .url-row.url-row-error {
+.url-rows .url-row.url-row-error {
     background-color: darkred;
     color:white;
 
@@ -136,12 +137,12 @@
 
 }
 
-.url-list-rows .url-row:hover {
+.url-rows .url-row:hover {
     /*color:var(--color-list-fg-hover);*/
     background-color: var(--color-list-bg-hover-fancy);
 }
 
-.url-list-rows .url-selected {
+.url-rows .url-selected {
     color:var(--color-list-fg-selected);
     background-color: var(--color-list-bg-selected);
 }

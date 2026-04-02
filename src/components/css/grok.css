@@ -1,4 +1,4 @@
-.grok-flock .url-list-rows .url-row:hover {
+.grok-flock .url-rows .url-row:hover {
     color:inherit;
     background-color: var(--color-list-bg-hover);
 }

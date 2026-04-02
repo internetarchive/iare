@@ -1,44 +1,59 @@
 import React from "react";
 import wikiLogo from './images/badge.logo.wiki.png';
+import {BadgeContextEnum} from "../badgeDisplayTypes.jsx";
+import Badge from "../../components/Badge.jsx";
+import {trimifyNumber} from "../../utils/generalUtils.js";
 
-function trimifyNumber(n) {
-    return n >= 1000000 ?
-        `${(n / 1000000).toFixed(1)}M` :
-        `${Math.round(n / 1000)}K`
-}
-
+/**
+ * Shared Badge interface
+ * @param {Object} props
+ * @param {Object} [props.signals]
+ * @param {Function} [props.onSignalClick]
+ * @param {"inline"|"small"|"large"} [props.badgeContext]
+ */
 export default function EnwikiBadge({
                                         signals = {},
-                                        onSignalClick
+                                        onSignalClick,
+                                        badgeContext = BadgeContextEnum.INLINE,
                                     }
 ) {
 
 
-    let badge = null
-
     if (!signals) {
-        badge = <div>No Signal Data provided</div>
+        return <div className={"signal-badge-error"}><img src={wikiLogo} alt="Wayback ERROR"/> {'Error: No signal data available'}</div>;
 
-    } else {
+    }
 
-        try {
-            const meta = signals?.meta || {};
-            const wikiCount = trimifyNumber(meta["ws_wiki_cite_en"] ?? 0)
-            badge = <div>Wiki Count: {wikiCount}</div>
+    let badgeData = {}
+    let badgeText = null
 
-        } catch (e) {
-            badge = <div>En Wiki: Error encountered ({e.message})</div>
-        }
+    try {
+        const meta = signals?.meta || {}
+        const wikiCount = trimifyNumber(meta["ws_wiki_cite_en"] ?? 0)
+        badgeData = {"wikicount": wikiCount}
+        badgeText = <div>Wiki Count: {wikiCount}</div>
+    } catch (e) {
+        badgeData = {"error": e.message}
+        badgeText = <div>Error Encountered: {e.message}</div>
     }
 
 
-    return <div className={"badge-enwiki signal-badge"}>
-        <div className={"signal-badge-element"}>
-            <img src={wikiLogo} alt="Wikipedia" className={"logo-image"}/>
-        </div>
-        <div className={"signal-badge-element"}>
-            {badge}
-        </div>
-    </div>
+    return <Badge
+        badgeContext={badgeContext}
+        badgeImg={wikiLogo}
+        badgeAlt="Wikipedia"
+        badgeData={badgeData}
+        badgeText={badgeText}
+        badgeClass={"enwiki-badge"}
+    />
+
+    // return <div className={"badge-enwiki signal-badge"}>
+    //     <div className={"signal-badge-element"}>
+    //         <img src={wikiLogo} alt="Wikipedia" className={"logo-image"}/>
+    //     </div>
+    //     <div className={"signal-badge-element"}>
+    //         {badge}
+    //     </div>
+    // </div>
 
 }

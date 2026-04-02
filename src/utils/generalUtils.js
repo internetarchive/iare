@@ -189,3 +189,10 @@ export const debounce = (fn, delay) => {
         timeoutId = setTimeout(() => fn(...args), delay);
     };
 }
+
+
+export const trimifyNumber = (n) => {
+    return n >= 1000000 ?
+        `${(n / 1000000).toFixed(1)}M` :
+        `${Math.round(n / 1000)}K`
+}
