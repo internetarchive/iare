@@ -28,7 +28,7 @@ export default function SignalsDocs({}) {
 
             By retrieving and analysing various signals from the internet,
             recommendations are produced pertaining to the reliability and
-            credibility of a url domain.
+            credibility of a URL domain.
         </div>
 <br/>
         <div>

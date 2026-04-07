@@ -21,6 +21,7 @@ import SignalsDocs from "../../SignalsDocs.jsx";
 import SignalsSort from "../../SignalsSort.jsx";
 
 import SignalDataDetailsTitle from "../../SignalDataDetailsTitle.jsx";
+import PureJson from "../../PureJson.jsx";
 
 
 /*
@@ -80,6 +81,7 @@ const urlFlock = React.memo(function UrlFlock({
     const [sort, setSort] = useState({
         sorts: {  // holds sort value for all different sort types
             "status": {name: "status", dir: 1},  // dir: 1 is asc, -1 is desc, 0 is do not sort
+            "signals_score": {name: "signals_score", dir: -1},
             "archive_status": {name: "archive_status", dir: -1},
             "references": {name: "references", dir: -1},
             "templates": {name: "templates", dir: -1},
@@ -134,17 +136,9 @@ const urlFlock = React.memo(function UrlFlock({
         if (docsEl) {
             setIsSignalsDocsPopupOpen(true);
         } else if (sortEl) {
-            setIsSignalsSortPopupOpen(true);
+            // setIsSignalsSortPopupOpen(true);
+            updateFlockSort("signals_score")
         }
-
-        // if (e.target.classList.contains("wiki-signals-docs")) {
-        //     setIsSignalsDocsPopupOpen(true)
-        // } else if (e.target.classList.contains("wiki-signals-sort")) {
-        //     setIsSignalsSortPopupOpen(true)
-        //
-        // }
-
-        // alert("Signal Header column clicked")
     }
 
 
@@ -241,27 +235,50 @@ const urlFlock = React.memo(function UrlFlock({
     }
 
 
-    const sortBySignals = (a, b) => {
-        const signalA = a?.signal_data?.error ? 0 : 1;
-        const signalB = b?.signal_data?.error ? 0 : 1;
+                // const sortBySignals = (a, b) => {
+                //     const signalA = a?.signal_data?.error ? 0 : 1;
+                //     const signalB = b?.signal_data?.error ? 0 : 1;
+                //
+                //     if (signalA > signalB) return sortDefs.sorts['signalValues'].dir * -1;
+                //     if (signalA < signalB) return sortDefs.sorts['signalValues'].dir;
+                //     return 0;
+                // }
 
-        if (signalA > signalB) return sortDefs.sorts['signalValues'].dir * -1;
-        if (signalA < signalB) return sortDefs.sorts['signalValues'].dir;
+
+    const sortByWikiSignalsScore = (a, b) => {
+        // const signalA = a?.signal_data?.signals?.meta?.ws_score ?? 0;
+        // const signalB = b?.signal_data?.signals?.meta?.ws_score ?? 0;
+        const signalA = a?.signal_data?.signals?.meta
+            ? a?.signal_data?.signals?.meta?.ws_score ?? 0
+            : -1
+        const signalB = b?.signal_data?.signals?.meta
+            ? b?.signal_data?.signals?.meta?.ws_score ?? 0
+            : -1
+        
+        if (signalA > signalB) return sort.sorts['signals_score'].dir * -1;
+        if (signalA < signalB) return sort.sorts['signals_score'].dir;
         return 0;
     }
-
-
+    
+    
     const sortFunctions = {
         name: sortByName,
         status: sortByStatus,
         references: sortByReference,
-        templates: sortByTemplate,
         actionable: sortByActionable,
-        sections: sortBySection,
-        perennial: sortByPerennial,
         archive_status: sortByArchiveStatus,
+
+                    // signals: sortBySignals,
+        signals_score: sortByWikiSignalsScore,
+
+        // not really used
+        templates: sortByTemplate,
+        sections: sortBySection,
+
+        // deprecated
+        perennial: sortByPerennial,
         probes: sortByProbes,
-        signals: sortBySignals,
+
     }
 
     const sortFunction = (a, b) => {
@@ -827,8 +844,8 @@ const urlFlock = React.memo(function UrlFlock({
                    setIsSignalDetailsPopupOpen(false)
                }}
                title={signalDetailsPopupTitle}
-               initialSize={{width: 800, height: 600}}
-               initialPosition={{x: 160, y: 175}}
+               initialSize={{width: 800, height: 780}}
+               initialPosition={{x: 160, y: 50}}
         >
             {signalDetailsPopupContents}
         </Popup>

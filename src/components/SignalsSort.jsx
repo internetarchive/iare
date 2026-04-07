@@ -16,15 +16,21 @@ export default function SignalsSort({
             <button className={"utility-button no-margin"}
                     style={{width: '200px'}}
                     onClick={() => {
-                        onSort("signal_wayback")
-                    }}>Sort By Wayback snapshots
+                        onSort("signals_score")
+                    }}>Sort By WikiSignals score
             </button>
-            <button className={"utility-button no-margin"}
-                    style={{width: '200px'}}
-                    onClick={() => {
-                        onSort("signal_wiki")
-                    }}>Sort By Wikipedia uses
-            </button>
+            {/*<button className={"utility-button no-margin"}*/}
+            {/*        style={{width: '200px'}}*/}
+            {/*        onClick={() => {*/}
+            {/*            onSort("signal_wayback")*/}
+            {/*        }}>Sort By Wayback snapshots*/}
+            {/*</button>*/}
+            {/*<button className={"utility-button no-margin"}*/}
+            {/*        style={{width: '200px'}}*/}
+            {/*        onClick={() => {*/}
+            {/*            onSort("signal_wiki")*/}
+            {/*        }}>Sort By Wikipedia uses*/}
+            {/*</button>*/}
             <button className={"utility-button no-margin"}
                     style={{width: '200px'}}
                     onClick={() => {

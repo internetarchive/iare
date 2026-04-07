@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.3.1.27",
-  "version_name": "0.3.1.27 WikiSignals Docs",
+  "version": "0.3.1.28",
+  "version_name": "0.3.1.28 better wikisignals data and docs",
   "private": true,
   "type": "module",
   "dependencies": {

@@ -1,6 +1,8 @@
 :root {
     --width-signal-badge: 4rem;
     --width-signal-text: 10rem;
+
+    --width-signal-score: var(--width-signal-badge);
     --width-signal-wayback: var(--width-signal-badge);
     --width-signal-wiki: var(--width-signal-badge);
     --width-signal-tranco: var(--width-signal-badge);
@@ -57,14 +59,34 @@ button.fetch-signal-button:hover {
     /*padding:.25rem;*/
 }
 
+.signal-data-details .lolite{
+    color:var(--color-lolite);
+    font-style: italic;
+}
+
+.section-expander {
+    margin-bottom: 10px;
+    cursor: pointer;
+    display: inline-block;
+}
+
+
+
 /* * * * * * * * * * * * * * * * * * * * * * *
  *  S I G N A L   B A D G E S   I N L I N E  *
  * * * * * * * * * * * * * * * * * * * * * * */
 
 .signal-badges-inline {
     display: grid;
-    grid-template-columns: var(--width-signal-wayback) var(--width-signal-wiki) var(--width-signal-tranco) var(--width-signal-mbfc) minmax(10rem, 1fr);
+    grid-template-columns:
+            var(--width-signal-score)
+            var(--width-signal-wayback)
+            var(--width-signal-wiki)
+            var(--width-signal-tranco)
+            var(--width-signal-mbfc)
+            minmax(10rem, 1fr);
 }
+
 .signal-badges-inline .signal-badge .badge-icon {
     padding:0 .25rem;
 }
@@ -125,16 +147,32 @@ button.fetch-signal-button:hover {
     padding: .25rem;
 }
 .signal-details-raw-data {
+    display:flex;
+    flex-direction: column;
     margin-top: .65rem;
+}
+.signal-details-raw-data .grid-level-1 {
+    margin-left: 1.8rem;
 }
 
 
+.signal-details-raw-data th {
+    color: var(--grid-caption-color);
+    font-weight: var(--grid-caption-font-weight);
+}
 
 .wiki-signals-docs-popup .rnd-modal-popup-body {
     font-family: Georgia, 'Times New Roman', Times, serif;
     padding: .75rem;
 }
 
+.signal-badge.missing-value .badge-icon {
+    opacity: .3;
+}
+.signal-badge.missing-value .badge-text, .missing-value {
+    color: var(--color-text-muted);
+    font-style: italic;
+}
 
             /*.signals-badge:hover {*/
             /*    background-color: #d1d2d4;*/

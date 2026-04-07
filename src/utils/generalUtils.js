@@ -191,10 +191,40 @@ export const debounce = (fn, delay) => {
 }
 
 
+// assumes score is between 0 and 1
+// if not defined, return -1, a negative value indicating it is not valid
+export const getNormalizedScore = (rawScore) => {
+    if (rawScore === undefined || rawScore === "") {
+        return -1;
+    }
+    return Number(rawScore).toFixed(2)
+}
+
+// like getNormalizedScore but no decimal fix
+export const getNormalizedCount = (count) => {
+    if (count === undefined || count === "") {
+        return -1;
+    }
+    return Number(count)
+}
+
+
+// returns -1 if not provided
+export const getPrettyCount = (rawScore) => {
+    if (rawScore === undefined || rawScore === "") {
+        return -1;
+    }
+    return trimifyNumber(Number(rawScore))
+}
+
+
 export const trimifyNumber = (n) => {
-    return n >= 1000000 ?
-        `${(n / 1000000).toFixed(1)}M` :
-        `${Math.round(n / 1000)}K`
+    return n >= 1000000 
+        ? `${(n / 1000000).toFixed(1)}M` 
+        : (n > 1000
+                ? `${(n / 1000).toFixed(1)}K`
+                : `${n}`
+        )
 }
 
 

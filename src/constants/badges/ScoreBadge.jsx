@@ -1,8 +1,8 @@
 import React from "react";
-import trancoLogo from './images/badge.logo.tranco.png';
 import {BadgeContextEnum} from "../badgeDisplayTypes.jsx";
 import Badge from "../../components/Badge.jsx";
-import {getNormalizedCount, getNormalizedScore, getPrettyCount} from "../../utils/generalUtils.js";
+import {signalBadgeRegistry} from "./signalBadgeRegistry.jsx";
+import {getNormalizedScore} from "../../utils/generalUtils.js";
 
 /**
  * Shared Badge interface
@@ -10,47 +10,44 @@ import {getNormalizedCount, getNormalizedScore, getPrettyCount} from "../../util
  * @param {Object} [props.signals]
  * @param {Function} [props.onSignalClick]
  * @param {BadgeContextEnum} [props.badgeContext]*/
-export default function TrancoBadge({
+export default function ScoreBadge({
                                         signals = {},
                                         onSignalClick,
                                         badgeContext = BadgeContextEnum.INLINE,
                                     }
 ) {
-    /*
-        we're gonna assume tranco rating is from signals.meta.ws_web_rank
-    */
+    const badge = signalBadgeRegistry.score
 
     if (!signals) {
-        return <div className={"signal-badge-error"}><img src={trancoLogo}
-                                                          alt="Tranco ERROR"/> {'Error: No signal data available'}
+        return <div className={"signal-badge-error"}
+            ><img src={badge.logo_source} alt="Score ERROR"
+        /> {'Error: No signal data available'}
         </div>;
     }
 
-    let badgeData = {}
-    let badgeText = null
-    let badgeClass = "tranco-badge"
+    let badgeData = {}  // what to send to dataset for badge element
+    let badgeText = null  // what to show patron
+    let badgeClass = "score-badge"
 
     try {
         const meta = signals?.meta || {};
-        const count = getNormalizedCount(meta["ws_web_rank"]);
-
-        badgeData = {"tranco": count}
-        badgeText = count < 0  // -1 means not provided
+        const score = getNormalizedScore(meta["ws_score"]);
+        badgeData = {"score": score}
+        badgeText = score < 0  // -1 means not provided
             ? <div>Not provided.</div>
-            : <div>Tranco rating: {count}</div>
-        if (count < 0) badgeClass += " missing-value"
-
+            : <div>WikiSignals Overall Score: {score}</div>
+        if (score < 0) badgeClass += " missing-value"
 
     } catch (e) {
         badgeData = {"error": e.message}
-        badgeText = <div>Tranco Error Encountered: {e.message}</div>
+        badgeText = <div>Score Error Encountered: {e.message}</div>
         badgeClass += " missing-value"
     }
 
     return <Badge
         badgeContext={badgeContext}
-        badgeImg={trancoLogo}
-        badgeAlt="Tranco"
+        badgeImg={badge.image}
+        badgeAlt="Score"
         badgeClass={badgeClass}
         badgeData={badgeData}
         badgeText={badgeText}

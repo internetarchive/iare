@@ -33,12 +33,12 @@ export default function SignalBadges({
             .sort((a, b) => signalBadgeRegistry[b].priority - signalBadgeRegistry[a].priority)
 
         return monitoredSignals.map(signalKey => {
-            const Badge = signalBadgeRegistry[signalKey].component
+            const BadgeComponent = signalBadgeRegistry[signalKey].component
                     // TODO what to do if null Badge?
                     //  shouldn't happen as BadgeRegistry is what gave us monitoredSignals
                     //  (but we dont kjnow that...) so, good practice is to check that
                     //  Badge resolves to a valid Badge Handler/Renderer function
-            return <Badge signals={signals}
+            return <BadgeComponent signals={signals}
                           onSignalClick={onSignalClick}
                           badgeContext = {badgeContext}
                           key={signalKey} />

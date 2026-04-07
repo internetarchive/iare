@@ -8,8 +8,26 @@ import WaybackBadge from "./WaybackBadge.jsx";
 import EnwikiBadge from "./EnwikiBadge.jsx";
 import TrancoBadge from "./TrancoBadge";
 import MbfcBadge from "./MbfcBadge";
+import ScoreBadge from "./ScoreBadge.jsx";
+
+import logoImage from "./images/wikisignals.logo.v1r1.png";
 
 export const signalBadgeRegistry = {
+
+    score: {
+        key: "score",
+        caption: "SCORE",
+        description: "Overall WikiSignals Score",
+        component: ScoreBadge,
+        priority: 1000,
+        group: "",
+
+        // logo_source: "./images/wikisignals.logo.v1r1.png",
+        image: logoImage,
+
+
+    },
+
     tranco: {
         key: "tranco",
         caption: "TRANCO",

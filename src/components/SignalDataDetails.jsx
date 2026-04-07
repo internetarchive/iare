@@ -5,6 +5,8 @@ import './css/signals.css';
 import {extractRootDomain} from "../utils/urlUtils.jsx";
 import SignalBadges from "./SignalBadges.jsx";
 import {BadgeContextEnum as badgeContext} from "../constants/badgeDisplayTypes.jsx";
+import {getNormalizedScore} from "../utils/generalUtils.js";
+import PureJson from "./PureJson.jsx";
 
 /* sample signal data:
 
@@ -79,7 +81,10 @@ export default function SignalDataDetails({urlLink, rawSignalData}) {
 
     // const [isFiltered, setIsFiltered] = React.useState(false);
     // const [showFilterControls, setShowFilterControls] = React.useState(false);
-    const [isTableVisible, setIsTableVisible] = React.useState(false);
+    const [isRawDataVisible, setIsRawDataVisible] = React.useState(true);
+    const [isMetaVisible, setIsMetaVisible] = React.useState(false);
+    const [isListsVisible, setIsListsVisible] = React.useState(false);
+    const [isRatingsVisible, setIsRatingsVisible] = React.useState(false);
 
     const onSignalClick = (e) => {
         iareAlert("Signal Clicked: " + e.target.dataset.signalKey)
@@ -95,6 +100,8 @@ export default function SignalDataDetails({urlLink, rawSignalData}) {
 
     const getScore = (rawScore) => {
         if (rawScore === undefined) return "undefined"
+        if (rawScore === "") return <span className={"lolite"}>Not Supplied</span>
+
         return Number(rawScore).toFixed(2)
     }
 
@@ -106,38 +113,81 @@ export default function SignalDataDetails({urlLink, rawSignalData}) {
             return <div>{rawSignalData.error}</div>
 
         if (isEmpty(rawSignalData?.signals))
-            return <div>No Signal Content Available</div>
+            return <div className={"missing-value"}>No Signal Content Available</div>
 
-        const signalDataRows = Object.entries(rawSignalData.signals?.meta).map(([key, value]) => ({
-            signal_name: key,
+        const signalMetaRows = Object.entries(rawSignalData.signals?.meta).map(([key, value]) => ({
+            field_name: key,
             value: value
         }));
 
-        // const customControls = showFilterControls && false  // force false for now...debugging
-        //     ? <label>
-        //         <input
-        //             type="checkbox"
-        //             checked={isFiltered}
-        //             onChange={e => setIsFiltered(e.target.checked)}
-        //         />{isFiltered
-        //         ? <span>&nbsp;Remove Filter (Show all Signals)</span>
-        //         : <span>&nbsp;Apply Filter (Hide all null and false Signals)</span>}
-        //     </label>
-        //     : null
+        const signalMetaDisplay = <div className={"grid-level-1"}>
+            <div onClick={() => setIsMetaVisible(!isMetaVisible)} className="section-expander">
+                Meta Signal Data&nbsp;{isMetaVisible ? "▼" : "▶"}
+            </div>
+            {isMetaVisible
+                ? <JsonTable data={signalMetaRows}/>
+                : null }
+        </div>
+
+
+        const filtered = Object.fromEntries(
+            Object.entries(rawSignalData.signals?.lists).filter(([_, value]) => Array.isArray(value) && value.length > 0)
+        );
+        const signalListsDisplay = <div className={"grid-level-1"}>
+            <div onClick={() => setIsListsVisible(!isListsVisible)} className="section-expander">
+                Lists Signal Data&nbsp;{isListsVisible ? "▼" : "▶"}
+            </div>
+            {isListsVisible
+
+                // filter lists so that only entries with non-zero arrays are shown
+                ?  <PureJson data={Object.fromEntries(
+                    Object.entries(rawSignalData.signals?.lists)
+                        .filter(([_, value]) => Array.isArray(value) && value.length > 0)
+                        )}
+                        caption={null} />
+
+                // ? <div>Lists data goes here</div>
+                : null }
+        </div>
+
+        const signalRatingsDisplay = <div className={"grid-level-1"}>
+            <div onClick={() => setIsRatingsVisible(!isRatingsVisible)} className="section-expander">
+                Ratings Signal Data&nbsp;{isRatingsVisible ? "▼" : "▶"}
+            </div>
+            {isRatingsVisible
+                ? <PureJson data={rawSignalData.signals?.ratings} caption={null} />
+                : null }
+        </div>
+
+
+                    // const customControls = showFilterControls && false  // force false for now...debugging
+                    //     ? <label>
+                    //         <input
+                    //             type="checkbox"
+                    //             checked={isFiltered}
+                    //             onChange={e => setIsFiltered(e.target.checked)}
+                    //         />{isFiltered
+                    //         ? <span>&nbsp;Remove Filter (Show all Signals)</span>
+                    //         : <span>&nbsp;Apply Filter (Hide all null and false Signals)</span>}
+                    //     </label>
+                    //     : null
 
         const toggleTableVisibility = () => {
-            setIsTableVisible(!isTableVisible);
+            setIsRawDataVisible(!isRawDataVisible);
         };
 
 
         return <div className={"signal-details-raw-data"}>
-            <div
-                onClick={toggleTableVisibility}
-                style={{marginBottom: "10px", cursor: "pointer", display: "inline-block"}}
-            >Raw Signal Data&nbsp;
-                {isTableVisible ? "▼" : "▶"}
+            <div onClick={toggleTableVisibility} className="section-expander">
+                Raw Signal Data&nbsp;{isRawDataVisible ? "▼" : "▶"}
             </div>
-            {isTableVisible ? <JsonTable data={signalDataRows}/> : null}
+            {isRawDataVisible
+                ? <>
+                    {signalMetaDisplay}
+                    {signalListsDisplay}
+                    {signalRatingsDisplay}
+                </>
+                :  null}
         </div>
     }
 
@@ -145,7 +195,9 @@ export default function SignalDataDetails({urlLink, rawSignalData}) {
 
     const rawDataDisplay = getRawSignalDataDisplay();
     const urlDomain = getDomain(urlLink, rawSignalData)
-    const score = getScore(rawSignalData?.signals?.meta?.ws_score)
+    // const score = getScore(rawSignalData?.signals?.meta?.ws_score)
+    const score = getNormalizedScore(rawSignalData?.signals?.meta?.ws_score);
+
 
     const signalHeader = <div className={"signal-details-header"}
     //     style={{
@@ -155,14 +207,17 @@ export default function SignalDataDetails({urlLink, rawSignalData}) {
     //         marginBottom: "10px"
     //     }}
     >
-        <div className={"grid-caption"}>URL:</div>
-        <div>{urlLink}</div>
-
         <div className={"grid-caption"}>Domain:</div>
         <div>{urlDomain}</div>
 
-        <div className={"grid-caption"}>Score:</div>
-        <div>{score}</div>
+        <div className={"grid-caption"}>URL:</div>
+        <div>{urlLink}</div>
+
+        {/*<div className={"grid-caption"}>Score:</div>*/}
+        {/*{ score < 0  // -1 means not provided*/}
+        {/*    ? <div className={"missing-value"}>Not provided.</div>*/}
+        {/*    : <div>WikiSignals Overall Score: {score}</div>*/}
+        {/*}*/}
 
         <hr style={{gridColumn: "1 / -1"}}/>
     </div>

@@ -2,7 +2,7 @@ import React from "react";
 import wikiLogo from './images/badge.logo.wiki.png';
 import {BadgeContextEnum} from "../badgeDisplayTypes.jsx";
 import Badge from "../../components/Badge.jsx";
-import {trimifyNumber} from "../../utils/generalUtils.js";
+import {trimifyNumber, getPrettyCount, getNormalizedScore} from "../../utils/generalUtils.js";
 
 /**
  * Shared Badge interface
@@ -26,15 +26,25 @@ export default function EnwikiBadge({
 
     let badgeData = {}
     let badgeText = null
+    let badgeClass = "enwiki-badge"
 
     try {
         const meta = signals?.meta || {}
-        const wikiCount = trimifyNumber(meta["ws_wiki_cite_en"] ?? 0)
-        badgeData = {"wikicount": wikiCount}
-        badgeText = <div>Wiki Count: {wikiCount}</div>
+        // const wikiCount = trimifyNumber(meta["ws_wiki_cite_en"] ?? 0)
+        const count = getPrettyCount(meta["ws_wiki_cite_en"]);
+        badgeData = {"wikicount": count}
+
+        if (count < 0) {  // -1 means not provided
+            badgeText = <div>Not provided.</div>
+            badgeClass += " missing-value"
+        } else {
+            badgeText = <div>Wiki Count: {count}</div>
+        }
+
     } catch (e) {
         badgeData = {"error": e.message}
         badgeText = <div>Error Encountered: {e.message}</div>
+        badgeClass += " missing-value"  // format for error
     }
 
 
@@ -44,7 +54,7 @@ export default function EnwikiBadge({
         badgeAlt="Wikipedia"
         badgeData={badgeData}
         badgeText={badgeText}
-        badgeClass={"enwiki-badge"}
+        badgeClass={badgeClass}
     />
 
     // return <div className={"badge-enwiki signal-badge"}>
