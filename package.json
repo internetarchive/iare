@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.3.1.28",
-  "version_name": "0.3.1.28 better wikisignals data and docs",
+  "version": "0.3.1.29",
+  "version_name": "0.3.1.29 badge refinements",
   "private": true,
   "type": "module",
   "dependencies": {
