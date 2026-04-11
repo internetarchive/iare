@@ -13,7 +13,7 @@ export default function SignalDisplay({
         Displays values of any signals represented in the signal data described in sigData.
         Props:
           - urlObj: Object containing signal data.
-          - onSignalClick: Callback triggered upon signal click.
+          - onBadgeClick: Callback triggered upon signal click.
           - displayType: Enum-like property with possible values "inline", "small", or "large". Default is "inline".
      */
 
@@ -29,7 +29,7 @@ export default function SignalDisplay({
     return <>
         {/*{cacheMsg}*/}
         <SignalBadges signals={signals}
-                      onSignalClick={onSignalClick}
+                      onBadgeClick={onSignalClick}
                       badgeContext={badgeContext}
                       fromCache = {urlObj?.signal_data?.retrieved_from_cache}
         />

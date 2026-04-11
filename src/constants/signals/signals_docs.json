@@ -1,0 +1,1209 @@
+{
+  "iari_version": "4.4.26",
+  "iari_command": "signals_docs",
+  "endpoint": "signalsdocsv2",
+  "timestamp": 1775670772,
+  "isodate": "2026-04-08T17:52:52.026910",
+  "execution_time": "0.1321 seconds",
+  "signals_docs": {
+    "signals_docs": {
+      "api": {
+        "label": "WikiSignals API Definitions",
+        "mission": "We are building the reliability infrastructure for the internet.",
+        "content": "Explanation of domain data, metrics, and terms.",
+        "version": "1.0.0"
+      },
+      "meta": {
+        "ws_web_name": {
+          "type": "string",
+          "label": "Site name",
+          "description": "The entity that controls the website of the domain."
+        },
+        "ws_web_url": {
+          "type": "string",
+          "label": "Effective URL",
+          "description": "The first URL that returns HTTP status code 200 (via cURL)."
+        },
+        "ws_web_lang": {
+          "type": "string",
+          "label": "Language",
+          "description": "The primary language of the website (as declared on the HTML 'lang' attribute)."
+        },
+        "ws_score": {
+          "type": "number",
+          "label": "WikiSignals score (0.0-1.0)",
+          "description": "The WikiSignals estimate (0.0-1.0) of the website's credibility as an information source, based an external ratings, press-association memberships, inclusion in vetted news indices, and other factors."
+        },
+        "ws_mbfc_score": {
+          "type": "number",
+          "label": "MBFC score",
+          "description": "A numeric estimate (0.0-1.0) of the website's credibility as an information source, calculated by assigning number values to the domain's Media Bias/Fact Check credibilty and fact-reporting ratings."
+        },
+        "ws_rate_domainq": {
+          "type": "number",
+          "label": "Domain Quality score",
+          "description": "A numeric estimate (0.0-1.0) of the website's credibility as an information source, as calculated by Domain Quality."
+        },
+        "ws_web_reg": {
+          "type": "string",
+          "label": "Domain registration date",
+          "description": "The date the domain name was registered (source: RDAP)."
+        },
+        "ws_web_rank": {
+          "type": "number",
+          "label": "Global site rank",
+          "description": "The Tranco estimate of the website's global traffic ranking (from 1 to 20,000,000)"
+        },
+        "ws_wbm_first": {
+          "type": "string",
+          "label": "Wayback Machine: First capture",
+          "description": "The first snapshot of the website by the Internet Archive's Wayback Machine."
+        },
+        "ws_wbm_last": {
+          "type": "string",
+          "label": "Wayback Machine: Latest capture",
+          "description": "The most recent snapshot of the website by the Internet Archive's Wayback Machine."
+        },
+        "ws_wbm_total": {
+          "type": "integer",
+          "label": "Wayback Machine: Total captures",
+          "description": "The total snapshots of the website by the Internet Archive's Wayback Machine."
+        },
+        "ws_wikidata_qid": {
+          "type": "string",
+          "label": "Wikidata QID",
+          "description": "The unique identifier at Wikidata for the website."
+        },
+        "ws_wiki_cite_en": {
+          "type": "integer",
+          "label": "Wikipedia link count",
+          "description": "The number of times the domain appeared in links within Wikipedia (English) articles (including the Citations, References, Notes and External Links sections)."
+        },
+        "ws_wiki_rsp_en_cats": {
+          "type": "string",
+          "label": "Wikipedia Perennial Source",
+          "description": "The category assigned the domain if it appears in the Wikipedia Reliable/Perennial Sources list (Deprecated, Generally Reliable, etc.)."
+        },
+        "ws_wiki_spam_hits": {
+          "type": "string",
+          "label": "Wikimedia Spam Blocklist hits",
+          "description": "The Spam blocklists at Wikimedia that include the domain."
+        },
+        "ws_mbfc_cats": {
+          "type": "string",
+          "label": "Media Bias/Fact Check ratings",
+          "description": "The domain's ratings by Media Bias/Fact Check."
+        },
+        "ws_mbfc_url": {
+          "type": "string",
+          "label": "Media Bias/Fact Check URL",
+          "description": "The domain's rating page at Media Bias/Fact Check."
+        }
+      },
+      "lists": {
+        "press_assoc": {
+          "about": "Members of Press Associations, state and national (USA)\n",
+          "lists_link": "https://wikisignals.org/wp-json/wp/v2/list/6311",
+          "terms": {
+            "AAM": {
+              "name": "Alliance for Audited Media",
+              "url": "https://auditedmedia.com/",
+              "wikipedia": "https://en.wikipedia.org/wiki/Alliance_for_Audited_Media",
+              "wikidata": "",
+              "description": "Members of &lt;a href=&quot;https://auditedmedia.com/&quot;&gt;Alliance for Audited Media&lt;/a&gt;",
+              "count": 816,
+              "slug": "list-aam",
+              "term_id": 6316,
+              "parent": 6311,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6316"
+            },
+            "AAN": {
+              "name": "Association of Alternative Newsmedia",
+              "url": "https://aan.org/",
+              "wikipedia": "https://en.wikipedia.org/wiki/Association_of_Alternative_Newsmedia",
+              "wikidata": "",
+              "description": "Members of &lt;a href=&quot;https://aan.org/&quot;&gt;Association of Alternative Newsmedia&lt;/a&gt;",
+              "count": 77,
+              "slug": "list-aan",
+              "term_id": 6317,
+              "parent": 6311,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6317"
+            },
+            "CoLab": {
+              "name": "CoLab News",
+              "url": "https://colabnews.co/",
+              "wikipedia": "",
+              "wikidata": "",
+              "description": "Members of &lt;a href=&quot;https://colabnews.co/&quot;&gt;CoLab News&lt;/a&gt;",
+              "count": 163,
+              "slug": "list-colab",
+              "term_id": 6318,
+              "parent": 6311,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6318"
+            },
+            "CPB": {
+              "name": "Corporation for Public Broadcasting",
+              "url": "https://cpb.org/",
+              "wikipedia": "https://en.wikipedia.org/wiki/Corporation_for_Public_Broadcasting",
+              "wikidata": "Q2628754",
+              "description": "Members of &lt;a href=&quot;https://cpb.org/&quot;&gt;Corporation for Public Broadcasting&lt;/a&gt;",
+              "count": 307,
+              "slug": "list-cpb",
+              "term_id": 6407,
+              "parent": 6311,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6407"
+            },
+            "GFMD": {
+              "name": "Global Forum for Media Development",
+              "url": "https://gfmd.info/",
+              "wikipedia": "https://en.wikipedia.org/wiki/Draft%3AGlobal_Forum_for_Media_Development",
+              "wikidata": "",
+              "description": "Members of &lt;a href=&quot;https://gfmd.info/&quot;&gt;Global Forum for Media Development&lt;/a&gt;\r\n\r\n",
+              "count": 185,
+              "slug": "list-gfmd",
+              "term_id": 6319,
+              "parent": 6311,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6319"
+            },
+            "Impress": {
+              "name": "Impress",
+              "url": "https://www.impressorg.com/",
+              "wikipedia": "https://en.wikipedia.org/wiki/Impress_(regulator)",
+              "wikidata": "Q28136767",
+              "description": "Members of &lt;a href=&quot;https://www.impressorg.com/&quot;&gt;Impress&lt;/a&gt;",
+              "count": 173,
+              "slug": "list-impress",
+              "term_id": 6320,
+              "parent": 6311,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6320"
+            },
+            "INN": {
+              "name": "Institute for Nonprofit News",
+              "url": "https://inn.org/",
+              "wikipedia": "https://en.wikipedia.org/wiki/Institute_for_Nonprofit_News",
+              "wikidata": "Q6060703",
+              "description": "Members of &lt;a href=&quot;https://inn.org/&quot;&gt;Institute for Nonprofit News&lt;/a&gt;",
+              "count": 385,
+              "slug": "list-inn",
+              "term_id": 6321,
+              "parent": 6311,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6321"
+            },
+            "LION": {
+              "name": "Local Independent Online News Publishers",
+              "url": "https://www.lionpublishers.com/",
+              "wikipedia": "https://en.wikipedia.org/wiki/Draft:Local_Independent_Online_News_Publishers",
+              "wikidata": "",
+              "description": "Members of &lt;a href=&quot;https://www.lionpublishers.com/&quot;&gt;Local Independent Online News Publishers&lt;/a&gt;",
+              "count": 493,
+              "slug": "list-lion",
+              "term_id": 6323,
+              "parent": 6311,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6323"
+            },
+            "NNA": {
+              "name": "National Newspaper Association",
+              "url": "https://www.nna.org/",
+              "wikipedia": "https://en.wikipedia.org/wiki/National_Newspaper_Association",
+              "wikidata": "Q6974580",
+              "description": "Members of &lt;a href=&quot;https://www.nna.org/&quot;&gt;National Newspaper Association&lt;/a&gt;",
+              "count": 1200,
+              "slug": "list-nna",
+              "term_id": 6322,
+              "parent": 6311,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6322"
+            },
+            "NNPA": {
+              "name": "National Newspaper Publishers Association",
+              "url": "https://nnpa.org/",
+              "wikipedia": "https://en.wikipedia.org/wiki/National_Newspaper_Publishers_Association",
+              "wikidata": "Q6974584",
+              "description": "Members of &lt;a href=&quot;https://nnpa.org/&quot;&gt;National Newspaper Publishers Association&lt;/a&gt;",
+              "count": 130,
+              "slug": "list-nnpa",
+              "term_id": 6338,
+              "parent": 6311,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6338"
+            },
+            "TrustTxt": {
+              "name": "JournalList: trust.txt",
+              "url": "https://journallist.net/",
+              "wikipedia": "https://en.wikipedia.org/wiki/Trust.txt",
+              "wikidata": "",
+              "description": "Members of &lt;a href=&quot;https://journallist.net/&quot;&gt;JournalList: trust.txt&lt;/a&gt;",
+              "count": 2220,
+              "slug": "list-trusttxt",
+              "term_id": 6324,
+              "parent": 6311,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6324"
+            }
+          }
+        },
+        "press_state": {
+          "about": "Members of state Press Associations (USA)\n",
+          "lists_link": "https://wikisignals.org/wp-json/wp/v2/list/6339",
+          "terms": {
+            "AL": {
+              "name": "Alabama Press Association",
+              "url": "https://www.alabamapress.org/",
+              "wikipedia": "",
+              "wikidata": "Q117804046",
+              "description": "Members of &lt;a href=&quot;https://www.alabamapress.org/&quot;&gt;Alabama Press Association&lt;/a&gt; (state)",
+              "count": 91,
+              "slug": "list-state-al",
+              "term_id": 6340,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6340"
+            },
+            "AR": {
+              "name": "Arkansas Press Association",
+              "url": "https://arkansaspress.org/",
+              "wikipedia": "",
+              "wikidata": "Q117804346",
+              "description": "Members of &lt;a href=&quot;https://arkansaspress.org/&quot;&gt;Arkansas Press Association&lt;/a&gt; (state)",
+              "count": 84,
+              "slug": "list-state-ar",
+              "term_id": 6342,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6342"
+            },
+            "AZ": {
+              "name": "Arizona Newspaper Association",
+              "url": "https://ananews.com/",
+              "wikipedia": "",
+              "wikidata": "Q117804231",
+              "description": "Members of &lt;a href=&quot;https://ananews.com/&quot;&gt;Arizona Newspaper Association&lt;/a&gt; (state)",
+              "count": 61,
+              "slug": "list-state-az",
+              "term_id": 6341,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6341"
+            },
+            "CA": {
+              "name": "California News Publishers Association",
+              "url": "https://cnpa.com/",
+              "wikipedia": "",
+              "wikidata": "Q16972121",
+              "description": "Members of &lt;a href=&quot;https://cnpa.com/&quot;&gt;California News Publishers Association&lt;/a&gt; (state)",
+              "count": 327,
+              "slug": "list-state-ca",
+              "term_id": 6343,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6343"
+            },
+            "CO": {
+              "name": "Colorado Press Association",
+              "url": "https://coloradopressassociation.com/",
+              "wikipedia": "",
+              "wikidata": "Q5148862",
+              "description": "Members of &lt;a href=&quot;https://coloradopressassociation.com/&quot;&gt;Colorado Press Association&lt;/a&gt; (state)",
+              "count": 144,
+              "slug": "list-state-co",
+              "term_id": 6344,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6344"
+            },
+            "FL": {
+              "name": "Florida Press Association",
+              "url": "https://flpress.com/",
+              "wikipedia": "",
+              "wikidata": "Q117804347",
+              "description": "Members of &lt;a href=&quot;https://flpress.com/&quot;&gt;Florida Press Association&lt;/a&gt; (state)",
+              "count": 116,
+              "slug": "list-state-fl",
+              "term_id": 6345,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6345"
+            },
+            "GA": {
+              "name": "Georgia Press Association",
+              "url": "https://gapress.org/",
+              "wikipedia": "",
+              "wikidata": "Q117804348",
+              "description": "Members of &lt;a href=&quot;https://gapress.org/&quot;&gt;Georgia Press Association&lt;/a&gt; (state)",
+              "count": 104,
+              "slug": "list-state-ga",
+              "term_id": 6346,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6346"
+            },
+            "IA": {
+              "name": "Iowa Newspaper Association",
+              "url": "https://inanews.com/",
+              "wikipedia": "",
+              "wikidata": "Q123210383",
+              "description": "Members of &lt;a href=&quot;https://inanews.com/&quot;&gt;Iowa Newspaper Association&lt;/a&gt; (state)",
+              "count": 161,
+              "slug": "list-state-ia",
+              "term_id": 6350,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6350"
+            },
+            "ID": {
+              "name": "Newspaper Association of Idaho",
+              "url": "https://www.newspaperassociationofidaho.com/",
+              "wikipedia": "",
+              "wikidata": "Q117804349",
+              "description": "Members of &lt;a href=&quot;https://www.newspaperassociationofidaho.com/&quot;&gt;Newspaper Association of Idaho&lt;/a&gt; (state)",
+              "count": 30,
+              "slug": "list-state-id",
+              "term_id": 6347,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6347"
+            },
+            "IN": {
+              "name": "Hoosier State Press Association",
+              "url": "https://www.hspa.com/",
+              "wikipedia": "",
+              "wikidata": "Q99306326",
+              "description": "Members of &lt;a href=&quot;https://www.hspa.com/&quot;&gt;Hoosier State Press Association&lt;/a&gt; (state)",
+              "count": 65,
+              "slug": "list-state-in",
+              "term_id": 6348,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6348"
+            },
+            "KA": {
+              "name": "Kansas Press Association",
+              "url": "https://kspress.com/",
+              "wikipedia": "",
+              "wikidata": "Q104169386",
+              "description": "Members of &lt;a href=&quot;https://kspress.com/&quot;&gt;Kansas Press Association&lt;/a&gt; (state)",
+              "count": 124,
+              "slug": "list-state-ka",
+              "term_id": 6351,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6351"
+            },
+            "KY": {
+              "name": "Kentucky Press Association",
+              "url": "https://www.kypress.com/",
+              "wikipedia": "",
+              "wikidata": "Q117804415",
+              "description": "Members of &lt;a href=&quot;https://www.kypress.com/&quot;&gt;Kentucky Press Association&lt;/a&gt; (state)",
+              "count": 81,
+              "slug": "list-state-ky",
+              "term_id": 6352,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6352"
+            },
+            "LA": {
+              "name": "Louisiana Press Association",
+              "url": "https://www.lapress.com/",
+              "wikipedia": "",
+              "wikidata": "Q117804416",
+              "description": "Members of &lt;a href=&quot;https://www.lapress.com/&quot;&gt;Louisiana Press Association&lt;/a&gt; (state)",
+              "count": 81,
+              "slug": "list-state-la",
+              "term_id": 6353,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6353"
+            },
+            "MD": {
+              "name": "MDDC Press Association",
+              "url": "https://mddcpress.com/",
+              "wikipedia": "",
+              "wikidata": "Q117804418",
+              "description": "Members of &lt;a href=&quot;https://mddcpress.com/&quot;&gt;MDDC Press Association&lt;/a&gt; (state)",
+              "count": 9,
+              "slug": "list-state-md",
+              "term_id": 6355,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6355"
+            },
+            "ME": {
+              "name": "Maine Press Association",
+              "url": "https://mainepressassociation.org/",
+              "wikipedia": "",
+              "wikidata": "Q117804417",
+              "description": "Members of &lt;a href=&quot;https://mainepressassociation.org/&quot;&gt;Maine Press Association&lt;/a&gt; (state)",
+              "count": 36,
+              "slug": "list-state-me",
+              "term_id": 6354,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6354"
+            },
+            "MN": {
+              "name": "Minnesota Newspaper Association",
+              "url": "https://mna.org/",
+              "wikipedia": "",
+              "wikidata": "Q123211728",
+              "description": "Members of &lt;a href=&quot;https://mna.org/&quot;&gt;Minnesota Newspaper Association&lt;/a&gt; (state)",
+              "count": 206,
+              "slug": "list-state-mn",
+              "term_id": 6358,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6358"
+            },
+            "MO": {
+              "name": "Missouri Press Association",
+              "url": "https://mopress.com/",
+              "wikipedia": "",
+              "wikidata": "Q100181432",
+              "description": "Members of &lt;a href=&quot;https://mopress.com/&quot;&gt;Missouri Press Association&lt;/a&gt; (state)",
+              "count": 117,
+              "slug": "list-state-mo",
+              "term_id": 6360,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6360"
+            },
+            "MS": {
+              "name": "Mississippi Press Association",
+              "url": "https://www.mspress.org/",
+              "wikipedia": "",
+              "wikidata": "Q6879247",
+              "description": "Members of &lt;a href=&quot;https://www.mspress.org/&quot;&gt;Mississippi Press Association&lt;/a&gt; (state)",
+              "count": 79,
+              "slug": "list-state-ms",
+              "term_id": 6359,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6359"
+            },
+            "MT": {
+              "name": "Montana Newspaper Association",
+              "url": "https://www.mtnewspapers.com/",
+              "wikipedia": "",
+              "wikidata": "Q117804419",
+              "description": "Members of &lt;a href=&quot;https://www.mtnewspapers.com/&quot;&gt;Montana Newspaper Association&lt;/a&gt; (state)",
+              "count": 69,
+              "slug": "list-state-mt",
+              "term_id": 6361,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6361"
+            },
+            "NC": {
+              "name": "North Carolina Press Association",
+              "url": "https://www.ncpress.com/",
+              "wikipedia": "",
+              "wikidata": "Q85789527",
+              "description": "Members of &lt;a href=&quot;https://www.ncpress.com/&quot;&gt;North Carolina Press Association&lt;/a&gt; (state)",
+              "count": 141,
+              "slug": "list-state-nc",
+              "term_id": 6368,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6368"
+            },
+            "ND": {
+              "name": "North Dakota Newspaper Association",
+              "url": "https://www.ndna.com/",
+              "wikipedia": "",
+              "wikidata": "Q117804425",
+              "description": "Members of &lt;a href=&quot;https://www.ndna.com/&quot;&gt;North Dakota Newspaper Association&lt;/a&gt; (state)",
+              "count": 35,
+              "slug": "list-state-nd",
+              "term_id": 6369,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6369"
+            },
+            "NE": {
+              "name": "Nebraska Press Association",
+              "url": "https://nebpress.com/",
+              "wikipedia": "",
+              "wikidata": "Q30268658",
+              "description": "Members of &lt;a href=&quot;https://nebpress.com/&quot;&gt;Nebraska Press Association&lt;/a&gt; (state)",
+              "count": 112,
+              "slug": "list-state-ne",
+              "term_id": 6362,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6362"
+            },
+            "NH": {
+              "name": "New Hampshire Press Association",
+              "url": "https://pressnh.org/",
+              "wikipedia": "",
+              "wikidata": "Q124306672",
+              "description": "Members of &lt;a href=&quot;https://pressnh.org/&quot;&gt;New Hampshire Press Association&lt;/a&gt; (state)",
+              "count": 27,
+              "slug": "list-state-nh",
+              "term_id": 6364,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6364"
+            },
+            "NJ": {
+              "name": "New Jersey Press Association",
+              "url": "http://www.njpa.org/",
+              "wikipedia": "",
+              "wikidata": "Q106339935",
+              "description": "Members of &lt;a href=&quot;http://www.njpa.org/&quot;&gt;New Jersey Press Association&lt;/a&gt; (state)",
+              "count": 51,
+              "slug": "list-state-nj",
+              "term_id": 6365,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6365"
+            },
+            "NM": {
+              "name": "New Mexico Press Association",
+              "url": "https://www.nmpress.org/",
+              "wikipedia": "",
+              "wikidata": "Q117804484",
+              "description": "Members of &lt;a href=&quot;https://www.nmpress.org/&quot;&gt;New Mexico Press Association&lt;/a&gt; (state)",
+              "count": 33,
+              "slug": "list-state-nm",
+              "term_id": 6366,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6366"
+            },
+            "NV": {
+              "name": "Nevada Press Association",
+              "url": "https://nevadapress.com/",
+              "wikipedia": "",
+              "wikidata": "Q7003473",
+              "description": "Members of &lt;a href=&quot;https://nevadapress.com/&quot;&gt;Nevada Press Association&lt;/a&gt; (state)",
+              "count": 36,
+              "slug": "list-state-nv",
+              "term_id": 6363,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6363"
+            },
+            "NY": {
+              "name": "New York News Publishers Association",
+              "url": "https://www.nynpa.com/",
+              "wikipedia": "",
+              "wikidata": "Q123213584",
+              "description": "Members of &lt;a href=&quot;https://www.nynpa.com/&quot;&gt;New York News Publishers Association&lt;/a&gt; (state)",
+              "count": 54,
+              "slug": "list-state-ny",
+              "term_id": 6367,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6367"
+            },
+            "OH": {
+              "name": "Ohio News Media Association",
+              "url": "https://www.ohionews.org/",
+              "wikipedia": "",
+              "wikidata": "Q30272898",
+              "description": "Members of &lt;a href=&quot;https://www.ohionews.org/&quot;&gt;Ohio News Media Association&lt;/a&gt; (state)",
+              "count": 128,
+              "slug": "list-state-oh",
+              "term_id": 6370,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6370"
+            },
+            "OK": {
+              "name": "Oklahoma Press Association",
+              "url": "https://okpress.com/",
+              "wikipedia": "",
+              "wikidata": "Q117804427",
+              "description": "Members of &lt;a href=&quot;https://okpress.com/&quot;&gt;Oklahoma Press Association&lt;/a&gt; (state)",
+              "count": 132,
+              "slug": "list-state-ok",
+              "term_id": 6371,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6371"
+            },
+            "OR": {
+              "name": "Oregon Newspaper Publishers Association",
+              "url": "http://www.orenews.com/",
+              "wikipedia": "",
+              "wikidata": "Q19599505",
+              "description": "Members of &lt;a href=&quot;http://www.orenews.com/&quot;&gt;Oregon Newspaper Publishers Association&lt;/a&gt; (state)",
+              "count": 51,
+              "slug": "list-state-or",
+              "term_id": 6372,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6372"
+            },
+            "PA": {
+              "name": "Pennsylvania NewsMedia Association",
+              "url": "https://panewsmedia.org/",
+              "wikipedia": "",
+              "wikidata": "Q7164018",
+              "description": "Members of &lt;a href=&quot;https://panewsmedia.org/&quot;&gt;Pennsylvania NewsMedia Association&lt;/a&gt; (state)",
+              "count": 158,
+              "slug": "list-state-pa",
+              "term_id": 6373,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6373"
+            },
+            "SC": {
+              "name": "South Carolina Press Association",
+              "url": "https://www.scpress.org/",
+              "wikipedia": "",
+              "wikidata": "Q117804428",
+              "description": "Members of &lt;a href=&quot;https://www.scpress.org/&quot;&gt;South Carolina Press Association&lt;/a&gt; (state)",
+              "count": 82,
+              "slug": "list-state-sc",
+              "term_id": 6374,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6374"
+            },
+            "SD": {
+              "name": "South Dakota Newspaper Association",
+              "url": "https://www.sdna.com/",
+              "wikipedia": "",
+              "wikidata": "Q123213918",
+              "description": "Members of &lt;a href=&quot;https://www.sdna.com/&quot;&gt;South Dakota Newspaper Association&lt;/a&gt; (state)",
+              "count": 60,
+              "slug": "list-state-sd",
+              "term_id": 6375,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6375"
+            },
+            "TN": {
+              "name": "Tennessee Press Association",
+              "url": "https://tnpress.com/",
+              "wikipedia": "",
+              "wikidata": "Q123213981",
+              "description": "Members of &lt;a href=&quot;https://tnpress.com/&quot;&gt;Tennessee Press Association&lt;/a&gt; (state)",
+              "count": 61,
+              "slug": "list-state-tn",
+              "term_id": 6376,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6376"
+            },
+            "TX": {
+              "name": "Texas Press Association",
+              "url": "https://www.texaspress.com/",
+              "wikipedia": "",
+              "wikidata": "Q117804429",
+              "description": "Members of &lt;a href=&quot;https://www.texaspress.com/&quot;&gt;Texas Press Association&lt;/a&gt; (state)",
+              "count": 387,
+              "slug": "list-state-tx",
+              "term_id": 6377,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6377"
+            },
+            "UT": {
+              "name": "Utah Press Association",
+              "url": "https://utahpress.com/",
+              "wikipedia": "",
+              "wikidata": "Q117804430",
+              "description": "Members of &lt;a href=&quot;https://utahpress.com/&quot;&gt;Utah Press Association&lt;/a&gt; (state)",
+              "count": 40,
+              "slug": "list-state-ut",
+              "term_id": 6378,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6378"
+            },
+            "VA": {
+              "name": "Virginia Press Association",
+              "url": "https://www.vpa.net/",
+              "wikipedia": "",
+              "wikidata": "Q117804432",
+              "description": "Members of &lt;a href=&quot;https://www.vpa.net/&quot;&gt;Virginia Press Association&lt;/a&gt; (state)",
+              "count": 132,
+              "slug": "list-state-va",
+              "term_id": 6380,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6380"
+            },
+            "VT": {
+              "name": "Vermont Press Association",
+              "url": "https://www.vtpress.org/",
+              "wikipedia": "",
+              "wikidata": "Q117804485",
+              "description": "Members of &lt;a href=&quot;https://www.vtpress.org/&quot;&gt;Vermont Press Association&lt;/a&gt; (state)",
+              "count": 38,
+              "slug": "list-state-vt",
+              "term_id": 6379,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6379"
+            },
+            "WA": {
+              "name": "Washington Newspaper Publishers Association",
+              "url": "https://www.wnpa.com/",
+              "wikipedia": "",
+              "wikidata": "Q123214059",
+              "description": "Members of &lt;a href=&quot;https://www.wnpa.com/&quot;&gt;Washington Newspaper Publishers Association&lt;/a&gt; (state)",
+              "count": 60,
+              "slug": "list-state-wa",
+              "term_id": 6381,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6381"
+            },
+            "WI": {
+              "name": "Wisconsin Newspaper Association",
+              "url": "https://wnanews.com/",
+              "wikipedia": "",
+              "wikidata": "Q117804487",
+              "description": "Members of &lt;a href=&quot;https://wnanews.com/&quot;&gt;Wisconsin Newspaper Association&lt;/a&gt; (state)",
+              "count": 127,
+              "slug": "list-state-wi",
+              "term_id": 6383,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6383"
+            },
+            "WV": {
+              "name": "West Virginia Press Association",
+              "url": "https://wvpress.org/",
+              "wikipedia": "",
+              "wikidata": "Q117804486",
+              "description": "Members of &lt;a href=&quot;https://wvpress.org/&quot;&gt;West Virginia Press Association&lt;/a&gt; (state)",
+              "count": 56,
+              "slug": "list-state-wv",
+              "term_id": 6382,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6382"
+            },
+            "WY": {
+              "name": "Wyoming Press Association",
+              "url": "https://www.wyopress.org/",
+              "wikipedia": "",
+              "wikidata": "Q123214106",
+              "description": "Members of &lt;a href=&quot;https://www.wyopress.org/&quot;&gt;Wyoming Press Association&lt;/a&gt; (state)",
+              "count": 38,
+              "slug": "list-state-wy",
+              "term_id": 6384,
+              "parent": 6339,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6384"
+            }
+          }
+        },
+        "news_index": {
+          "about": "Site in vetted News Indexes\n",
+          "lists_link": "https://wikisignals.org/wp-json/wp/v2/list/6312",
+          "terms": {
+            "GoogleNews": {
+              "name": "Google News",
+              "url": "https://news.google.com/",
+              "wikipedia": "https://en.wikipedia.org/wiki/Google_News",
+              "wikidata": "Q12020",
+              "description": "Sites indexed by &lt;a href=&quot;https://news.google.com/&quot;&gt;Google News&lt;/a&gt;",
+              "count": 22484,
+              "slug": "list-googlenews",
+              "term_id": 6325,
+              "parent": 6312,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6325"
+            },
+            "LNI-Digital": {
+              "name": "Local News Initiative: Digital",
+              "url": "https://localnewsinitiative.northwestern.edu/",
+              "wikipedia": "",
+              "wikidata": "",
+              "description": "Sites indexed by &lt;a href=&quot;https://localnewsinitiative.northwestern.edu/&quot;&gt;Local News Initiative: Digital&lt;/a&gt;",
+              "count": 513,
+              "slug": "list-lni-digital",
+              "term_id": 6328,
+              "parent": 6312,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6328"
+            },
+            "MBFC": {
+              "name": "Media Bias/Fact Check",
+              "url": "https://mediabiasfactcheck.com/methodology/",
+              "wikipedia": "https://en.wikipedia.org/wiki/Media_Bias/Fact_Check",
+              "wikidata": "Q60741379",
+              "description": "Sites indexed by &lt;a href=&quot;https://mediabiasfactcheck.com/methodology/&quot;&gt;Media Bias/Fact Check&lt;/a&gt;",
+              "count": 7625,
+              "slug": "list-mbfc",
+              "term_id": 6327,
+              "parent": 6312,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6327"
+            },
+            "Oasis": {
+              "name": "Project Oasis",
+              "url": "https://www.projectnewsoasis.com/",
+              "wikipedia": "",
+              "wikidata": "",
+              "description": "Sites indexed by &lt;a href=&quot;https://www.projectnewsoasis.com/&quot;&gt;Project Oasis&lt;/a&gt;",
+              "count": 1440,
+              "slug": "list-oasis",
+              "term_id": 6329,
+              "parent": 6312,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6329"
+            },
+            "USNPL": {
+              "name": "US Newspaper Links",
+              "url": "https://web.archive.org/web/20210125042820/https://www.usnpl.com/index.php",
+              "wikipedia": "",
+              "wikidata": "",
+              "description": "Sites indexed by &lt;a href=&quot;https://web.archive.org/web/20210125042820/https://www.usnpl.com/index.php&quot;&gt;US Newspaper Links&lt;/a&gt;",
+              "count": 4304,
+              "slug": "list-usnpl",
+              "term_id": 6330,
+              "parent": 6312,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6330"
+            },
+            "WikiRSP-en": {
+              "name": "Wikipedia (en): Reliable/Perennial Sources",
+              "url": "https://en.wikipedia.org/wiki/Wikipedia:Reliable_sources/Perennial_sources",
+              "wikipedia": "",
+              "wikidata": "",
+              "description": "Sites indexed by &lt;a href=&quot;https://en.wikipedia.org/wiki/Wikipedia:Reliable_sources/Perennial_sources&quot;&gt;Wikipedia (en): Reliable/Perennial Sources&lt;/a&gt;",
+              "count": 699,
+              "slug": "list-wikirsp-en",
+              "term_id": 6337,
+              "parent": 6312,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6337"
+            }
+          }
+        },
+        "unreliable": {
+          "about": "Sites included in a list of Unreliable Sources\n",
+          "lists_link": "https://wikisignals.org/wp-json/wp/v2/list/6314",
+          "terms": {
+            "Iffy": {
+              "name": "Iffy.news Index of Unreliable Sources",
+              "url": "https://iffy.news/index/",
+              "wikipedia": "",
+              "wikidata": "",
+              "description": "Sites listed in the Iffy.news &lt;a href=&quot;https://iffy.news/index/&quot;&gt;Index of Unreliable Sources&lt;/a&gt;",
+              "count": 1941,
+              "slug": "list-iffy",
+              "term_id": 6331,
+              "parent": 6314,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6331"
+            },
+            "OpenSrc": {
+              "name": "Open Sources",
+              "url": "https://docs.google.com/document/d/10eA5-mCZLSS4MQY5QGb5ewC3VAL6pLkT53V_81ZyitM/preview?tab=t.0",
+              "wikipedia": "",
+              "wikidata": "",
+              "description": "Sites listed in &lt;a href=&quot;https://docs.google.com/document/d/10eA5-mCZLSS4MQY5QGb5ewC3VAL6pLkT53V_81ZyitM/preview?tab=t.0&quot;&gt;Open Sources&lt;/a&gt; (false, misleading, clickbait-y, and satirical \u201cnews\u201d)",
+              "count": 407,
+              "slug": "list-opensrc",
+              "term_id": 6332,
+              "parent": 6314,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6332"
+            },
+            "PinkSlime": {
+              "name": "Pink Slime (fake-local news)",
+              "url": "https://iffy.news/pink-slime-fake-local-news/",
+              "wikipedia": "",
+              "wikidata": "",
+              "description": "Sites identified as &lt;a href=&quot;https://iffy.news/pink-slime-fake-local-news/&quot;&gt;Pink Slime (fake-local news)&lt;/a&gt;",
+              "count": 1316,
+              "slug": "pinkslime",
+              "term_id": 6315,
+              "parent": 6314,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6315"
+            },
+            "WikiFake-en": {
+              "name": "Wikipedia (en): List of fake news websites",
+              "url": "https://en.wikipedia.org/wiki/List_of_fake_news_websites",
+              "wikipedia": "",
+              "wikidata": "",
+              "description": "Sites in Wikipedia (en): &lt;a href=&quot;https://en.wikipedia.org/wiki/List_of_fake_news_websites&quot;&gt;List of fake news websites&lt;/a&gt;",
+              "count": 333,
+              "slug": "list-wikifake-en",
+              "term_id": 6333,
+              "parent": 6314,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6333"
+            },
+            "WikiSatire-en": {
+              "name": "Wikipedia (en): List of satirical news websites",
+              "url": "https://en.wikipedia.org/wiki/List_of_satirical_news_websites",
+              "wikipedia": "",
+              "wikidata": "",
+              "description": "Sites in Wikipedia (en): &lt;a&gt;List of satirical news websites&lt;/a&gt;",
+              "count": 32,
+              "slug": "list-wikisatire-en",
+              "term_id": 6336,
+              "parent": 6314,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6336"
+            },
+            "WikiSpam": {
+              "name": "MediaWiki: SpamBlacklist",
+              "url": "https://www.mediawiki.org/wiki/Extension:SpamBlacklist",
+              "wikipedia": "",
+              "wikidata": "",
+              "description": "Sites in &lt;a&gt;MediaWiki: SpamBlocklist&lt;/a&gt;",
+              "count": 177,
+              "slug": "list-wikispam",
+              "term_id": 6335,
+              "parent": 6314,
+              "taxonomy": "list",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6335"
+            }
+          }
+        }
+      },
+      "ratings": {
+        "mbfc_bias": {
+          "about": "Sites with a Media Bias/Fact Check Bias rating\n",
+          "ratings_link": "https://wikisignals.org/wp-json/wp/v2/rating/6300",
+          "terms": {
+            "Center": {
+              "description": "Sites with &lt;a href=&quot;https://mediabiasfactcheck.com/methodology/&quot;&gt;Media Bias/Fact Check&lt;/a&gt; Bias rating of Center",
+              "count": 1719,
+              "slug": "mbfc-bias-100-ctr",
+              "term_id": 6306,
+              "parent": 6300,
+              "taxonomy": "rating",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6306"
+            },
+            "Conspiracy-Pseudoscience": {
+              "description": "Sites with &lt;a href=&quot;https://mediabiasfactcheck.com/methodology/&quot;&gt;Media Bias/Fact Check&lt;/a&gt; Bias rating of Conspiracy-Pseudoscience",
+              "count": 540,
+              "slug": "mbfc-bias-000-conspiracy",
+              "term_id": 6396,
+              "parent": 6300,
+              "taxonomy": "rating",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6396"
+            },
+            "Fake-News": {
+              "description": "Sites with &lt;a href=&quot;https://mediabiasfactcheck.com/methodology/&quot;&gt;Media Bias/Fact Check&lt;/a&gt; Bias rating of Fake-News",
+              "count": 2151,
+              "slug": "mbfc-bias-000-x-fake",
+              "term_id": 6398,
+              "parent": 6300,
+              "taxonomy": "rating",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6398"
+            },
+            "Left": {
+              "description": "Sites with &lt;a href=&quot;https://mediabiasfactcheck.com/methodology/&quot;&gt;Media Bias/Fact Check&lt;/a&gt; Bias rating of Left",
+              "count": 606,
+              "slug": "mbfc-bias-050-left",
+              "term_id": 6307,
+              "parent": 6300,
+              "taxonomy": "rating",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6307"
+            },
+            "Left-Center": {
+              "description": "Sites with &lt;a href=&quot;https://mediabiasfactcheck.com/methodology/&quot;&gt;Media Bias/Fact Check&lt;/a&gt; Bias rating of Left-Center",
+              "count": 1551,
+              "slug": "mbfc-bias-075-ctr-left",
+              "term_id": 6305,
+              "parent": 6300,
+              "taxonomy": "rating",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6305"
+            },
+            "Pro-Science": {
+              "description": "Sites with &lt;a href=&quot;https://mediabiasfactcheck.com/methodology/&quot;&gt;Media Bias/Fact Check&lt;/a&gt; Bias rating of Pro-Science",
+              "count": 199,
+              "slug": "mbfc-bias-100-ctr-pro-sci",
+              "term_id": 6395,
+              "parent": 6300,
+              "taxonomy": "rating",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6395"
+            },
+            "Right": {
+              "description": "Sites with &lt;a href=&quot;https://mediabiasfactcheck.com/methodology/&quot;&gt;Media Bias/Fact Check&lt;/a&gt; Bias rating of Right",
+              "count": 488,
+              "slug": "mbfc-bias-050-right",
+              "term_id": 6310,
+              "parent": 6300,
+              "taxonomy": "rating",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6310"
+            },
+            "Right-Center": {
+              "description": "Sites with &lt;a href=&quot;https://mediabiasfactcheck.com/methodology/&quot;&gt;Media Bias/Fact Check&lt;/a&gt; Bias rating of Right-Center",
+              "count": 744,
+              "slug": "mbfc-bias-075-ctr-right",
+              "term_id": 6303,
+              "parent": 6300,
+              "taxonomy": "rating",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6303"
+            },
+            "Satire": {
+              "description": "Sites with &lt;a href=&quot;https://mediabiasfactcheck.com/methodology/&quot;&gt;Media Bias/Fact Check&lt;/a&gt; Bias rating of Satire",
+              "count": 147,
+              "slug": "mbfc-bias-050-ctr-satire",
+              "term_id": 6397,
+              "parent": 6300,
+              "taxonomy": "rating",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6397"
+            }
+          }
+        },
+        "mbfc_cred": {
+          "about": "Sites with a Media Bias/Fact Check Credibility rating\n",
+          "ratings_link": "https://wikisignals.org/wp-json/wp/v2/rating/6386",
+          "terms": {
+            "High-credibility": {
+              "description": "Sites with &lt;a href=&quot;https://mediabiasfactcheck.com/methodology/&quot;&gt;Media Bias/Fact Check&lt;/a&gt; Credibility rating of High-credibility",
+              "count": 4219,
+              "slug": "mbfc-cred-100-high",
+              "term_id": 6389,
+              "parent": 6386,
+              "taxonomy": "rating",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6389"
+            },
+            "Low-credibility": {
+              "description": "Sites with &lt;a href=&quot;https://mediabiasfactcheck.com/methodology/&quot;&gt;Media Bias/Fact Check&lt;/a&gt; Credibility rating of Low-credibility",
+              "count": 2695,
+              "slug": "mbfc-cred-000-low",
+              "term_id": 6387,
+              "parent": 6386,
+              "taxonomy": "rating",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6387"
+            },
+            "Medium-credibility": {
+              "description": "Sites with &lt;a href=&quot;https://mediabiasfactcheck.com/methodology/&quot;&gt;Media Bias/Fact Check&lt;/a&gt; Credibility rating of Medium-credibility",
+              "count": 1085,
+              "slug": "mbfc-cred-050-med",
+              "term_id": 6388,
+              "parent": 6386,
+              "taxonomy": "rating",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6388"
+            }
+          }
+        },
+        "mbfc_fact": {
+          "about": "Sites with a Media Bias/Fact Check Factual-Reporting rating\n",
+          "ratings_link": "https://wikisignals.org/wp-json/wp/v2/rating/6301",
+          "terms": {
+            "High": {
+              "description": "Sites with &lt;a href=&quot;https://mediabiasfactcheck.com/methodology/&quot;&gt;Media Bias/Fact Check&lt;/a&gt; Factual-Reporting rating of High",
+              "count": 3682,
+              "slug": "mbfc-fact-080-high",
+              "term_id": 6302,
+              "parent": 6301,
+              "taxonomy": "rating",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6302"
+            },
+            "Low": {
+              "description": "Sites with &lt;a href=&quot;https://mediabiasfactcheck.com/methodology/&quot;&gt;Media Bias/Fact Check&lt;/a&gt; Factual-Reporting rating of Low",
+              "count": 796,
+              "slug": "mbfc-fact-020-low",
+              "term_id": 6391,
+              "parent": 6301,
+              "taxonomy": "rating",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6391"
+            },
+            "Mixed": {
+              "description": "Sites with &lt;a href=&quot;https://mediabiasfactcheck.com/methodology/&quot;&gt;Media Bias/Fact Check&lt;/a&gt; Factual-Reporting rating of Mixed",
+              "count": 2316,
+              "slug": "mbfc-fact-040-mixed",
+              "term_id": 6308,
+              "parent": 6301,
+              "taxonomy": "rating",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6308"
+            },
+            "Mostly-Factual": {
+              "description": "Sites with &lt;a href=&quot;https://mediabiasfactcheck.com/methodology/&quot;&gt;Media Bias/Fact Check&lt;/a&gt; Factual-Reporting rating of Mostly-Factual",
+              "count": 692,
+              "slug": "mbfc-fact-060-mostly-fact",
+              "term_id": 6309,
+              "parent": 6301,
+              "taxonomy": "rating",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6309"
+            },
+            "Very-High": {
+              "description": "Sites with &lt;a href=&quot;https://mediabiasfactcheck.com/methodology/&quot;&gt;Media Bias/Fact Check&lt;/a&gt; Factual-Reporting rating of Very-High",
+              "count": 102,
+              "slug": "mbfc-fact-100-very-high",
+              "term_id": 6390,
+              "parent": 6301,
+              "taxonomy": "rating",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6390"
+            },
+            "Very-Low": {
+              "description": "Sites with &lt;a href=&quot;https://mediabiasfactcheck.com/methodology/&quot;&gt;Media Bias/Fact Check&lt;/a&gt; Factual-Reporting rating of Very-Low",
+              "count": 411,
+              "slug": "mbfc-fact-000-very-low",
+              "term_id": 6392,
+              "parent": 6301,
+              "taxonomy": "rating",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6392"
+            }
+          }
+        },
+        "wiki_rsp": {
+          "about": "Sites with a Wikipedia (en) RSP rating\n",
+          "ratings_link": "https://wikisignals.org/wp-json/wp/v2/rating/6400",
+          "terms": {
+            "Blacklisted": {
+              "description": "Sites with &lt;a href=&quot;https://en.wikipedia.org/wiki/Wikipedia:Reliable_sources/Perennial_sources&quot;&gt;Wikipedia (en) RSP&lt;/a&gt; rating of Blacklisted",
+              "count": 43,
+              "slug": "wiki-rsp-020-blacklisted",
+              "term_id": 6405,
+              "parent": 6400,
+              "taxonomy": "rating",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6405"
+            },
+            "Deprecated": {
+              "description": "Sites with &lt;a href=&quot;https://en.wikipedia.org/wiki/Wikipedia:Reliable_sources/Perennial_sources&quot;&gt;Wikipedia (en) RSP&lt;/a&gt; rating of Deprecated",
+              "count": 148,
+              "slug": "wiki-rsp-000-deprecated",
+              "term_id": 6401,
+              "parent": 6400,
+              "taxonomy": "rating",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6401"
+            },
+            "Generally reliable": {
+              "description": "Sites with &lt;a href=&quot;https://en.wikipedia.org/wiki/Wikipedia:Reliable_sources/Perennial_sources&quot;&gt;Wikipedia (en) RSP&lt;/a&gt; rating of Generally reliable",
+              "count": 196,
+              "slug": "wiki-rsp-080-reliable",
+              "term_id": 6402,
+              "parent": 6400,
+              "taxonomy": "rating",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6402"
+            },
+            "Generally unreliable": {
+              "description": "Sites with &lt;a href=&quot;https://en.wikipedia.org/wiki/Wikipedia:Reliable_sources/Perennial_sources&quot;&gt;Wikipedia (en) RSP&lt;/a&gt; rating of Generally unreliable",
+              "count": 182,
+              "slug": "wiki-rsp-040-unreliable",
+              "term_id": 6403,
+              "parent": 6400,
+              "taxonomy": "rating",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6403"
+            },
+            "No consensus": {
+              "description": "Sites with &lt;a href=&quot;https://en.wikipedia.org/wiki/Wikipedia:Reliable_sources/Perennial_sources&quot;&gt;Wikipedia (en) RSP&lt;/a&gt; rating of No consensus",
+              "count": 153,
+              "slug": "wiki-rsp-060-no-consensus",
+              "term_id": 6404,
+              "parent": 6400,
+              "taxonomy": "rating",
+              "list_link": "https://wikisignals.org/wp-json/wp/v2/list/6404"
+            }
+          }
+        }
+      }
+    }
+  }
+}

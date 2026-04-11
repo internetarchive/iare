@@ -5,8 +5,10 @@ import waybackLogo from "../constants/badges/images/badge.logo.wayback.small.png
 export default function Badge({
                             badgeContext = BadgeContextEnum.INLINE,
                             badgeClass = "",
+                            badgeKey = "",
                             signals = {},
                             onBadgeClick,
+                            onBadgeHover,
                             badgeImg = null,
                             badgeAlt = null,
                             badgeData = {},
@@ -14,9 +16,12 @@ export default function Badge({
 ) {
 
     return <div className={`signal-badge ${badgeClass}`}
-                data-badgedata={JSON.stringify(badgeData)}>
+                data-badgedata={JSON.stringify(badgeData)}
+                data-badgekey={badgeKey}
+    >
 
-        <div className={"signal-badge-element badge-icon"}>
+        <div className={"signal-badge-element badge-icon"}
+             onMouseOver={onBadgeHover}>
             <img src={badgeImg} alt={badgeAlt} className={"logo-image"}/>
         </div>
 

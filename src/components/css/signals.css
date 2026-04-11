@@ -59,15 +59,13 @@ button.fetch-signal-button:hover {
     /*padding:.25rem;*/
 }
 
-.signal-data-details .lolite{
-    color:var(--color-lolite);
-    font-style: italic;
-}
-
 .section-expander {
-    margin-bottom: 10px;
+    margin-bottom: .5rem;
+    margin-top:.5rem;
     cursor: pointer;
     display: inline-block;
+    color: #5cb0de;
+    font-weight: var(--grid-caption-font-weight);
 }
 
 
@@ -113,6 +111,11 @@ button.fetch-signal-button:hover {
 .signal-badges-detail {
 }
 
+.signal-data-details .lolite{
+    color:var(--color-lolite);
+    font-style: italic;
+}
+
 .signal-data-details hr {
     margin-top: 0;
     margin-bottom: 0;
@@ -125,6 +128,10 @@ button.fetch-signal-button:hover {
     grid-template-columns: var(--width-signal-badge-detail) minmax(var(--width-signal-text), 1fr);
     border-bottom: 1pt solid var(--color-list-line);
     min-height: 4rem;
+}
+.signal-badges-detail .badge-icon:hover{
+    cursor: pointer;
+    /*border:1px solid black;*/
 }
 
 .signal-badges-detail .signal-badge:last-child {

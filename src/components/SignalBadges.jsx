@@ -6,8 +6,9 @@ import {BadgeContextEnum} from "../constants/badgeDisplayTypes.jsx";
 
 export default function SignalBadges({
                                          signals={},  // signal values from url object
-                                         onSignalClick,  // what to do if signal clicked
                                          badgeContext = BadgeContextEnum.INLINE,
+                                         onBadgeClick,  // what to do if signal clicked
+                                         onBadgeHover,
                                          fromCache = false,
                                          options = {},
                                     }) {
@@ -39,9 +40,9 @@ export default function SignalBadges({
                     //  (but we dont kjnow that...) so, good practice is to check that
                     //  Badge resolves to a valid Badge Handler/Renderer function
             return <BadgeComponent signals={signals}
-                          onSignalClick={onSignalClick}
-                          badgeContext = {badgeContext}
-                          key={signalKey} />
+                        badgeContext = {badgeContext}
+                        onBadgeClick={onBadgeClick}
+                        key={signalKey} />
 
         })
     }
@@ -49,7 +50,10 @@ export default function SignalBadges({
     const badges = getBadges()
     const badgeDisplayClass = badgeContext?.className || "signal-badges-default";
     return <>
-        <div className={`signal-badges ${badgeDisplayClass}`}>
+        <div
+            className={`signal-badges ${badgeDisplayClass}`}
+            // onMouseOver={onBadgeHover}
+        >
         {badges}
         </div>
     </>

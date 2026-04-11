@@ -1,8 +1,8 @@
 import React from "react";
-import trancoLogo from './images/badge.logo.tranco.png';
 import {BadgeContextEnum} from "../badgeDisplayTypes.jsx";
 import Badge from "../../components/Badge.jsx";
 import {getNormalizedCount, getNormalizedScore, getPrettyCount} from "../../utils/generalUtils.js";
+import {signalBadgeRegistry} from "./signalBadgeRegistry.jsx";
 
 /**
  * Shared Badge interface
@@ -12,16 +12,14 @@ import {getNormalizedCount, getNormalizedScore, getPrettyCount} from "../../util
  * @param {BadgeContextEnum} [props.badgeContext]*/
 export default function TrancoBadge({
                                         signals = {},
-                                        onSignalClick,
                                         badgeContext = BadgeContextEnum.INLINE,
+                                        onBadgeClick,
                                     }
 ) {
-    /*
-        we're gonna assume tranco rating is from signals.meta.ws_web_rank
-    */
+    const badgeDef = signalBadgeRegistry.tranco
 
     if (!signals) {
-        return <div className={"signal-badge-error"}><img src={trancoLogo}
+        return <div className={"signal-badge-error"}><img src={badgeDef.logo}
                                                           alt="Tranco ERROR"/> {'Error: No signal data available'}
         </div>;
     }
@@ -32,6 +30,7 @@ export default function TrancoBadge({
 
     try {
         const meta = signals?.meta || {};
+        // assume tranco rating is from signals.meta.ws_web_rank
         const count = getNormalizedCount(meta["ws_web_rank"]);
 
         badgeData = {"tranco": count}
@@ -49,10 +48,15 @@ export default function TrancoBadge({
 
     return <Badge
         badgeContext={badgeContext}
-        badgeImg={trancoLogo}
-        badgeAlt="Tranco"
-        badgeClass={badgeClass}
+
+        badgeKey={badgeDef.key}
+        badgeImg={badgeDef.logo}
+        badgeAlt={badgeDef.label}
+
+        // badgeImg={trancoLogo}
+        // badgeAlt="Tranco"
         badgeData={badgeData}
         badgeText={badgeText}
+        badgeClass={badgeClass}
     />
 }

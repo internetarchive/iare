@@ -12,15 +12,15 @@ import {getNormalizedScore} from "../../utils/generalUtils.js";
  * @param {BadgeContextEnum} [props.badgeContext]*/
 export default function ScoreBadge({
                                         signals = {},
-                                        onSignalClick,
+                                        onBadgeClick,
                                         badgeContext = BadgeContextEnum.INLINE,
                                     }
 ) {
-    const badge = signalBadgeRegistry.score
+    const badgeDef = signalBadgeRegistry.score
 
     if (!signals) {
         return <div className={"signal-badge-error"}
-            ><img src={badge.logo_source} alt="Score ERROR"
+            ><img src={badgeDef.logo_source} alt="Score ERROR"
         /> {'Error: No signal data available'}
         </div>;
     }
@@ -46,10 +46,11 @@ export default function ScoreBadge({
 
     return <Badge
         badgeContext={badgeContext}
-        badgeImg={badge.image}
         badgeAlt="Score"
         badgeClass={badgeClass}
+        badgeKey={badgeDef.key}
         badgeData={badgeData}
         badgeText={badgeText}
+        badgeImg={badgeDef.image}
     />
 }

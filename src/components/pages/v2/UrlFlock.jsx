@@ -254,7 +254,7 @@ const urlFlock = React.memo(function UrlFlock({
         const signalB = b?.signal_data?.signals?.meta
             ? b?.signal_data?.signals?.meta?.ws_score ?? 0
             : -1
-        
+
         if (signalA > signalB) return sort.sorts['signals_score'].dir * -1;
         if (signalA < signalB) return sort.sorts['signals_score'].dir;
         return 0;
@@ -338,6 +338,7 @@ const urlFlock = React.memo(function UrlFlock({
         setSignalDetailsPopupContents(<SignalDataDetails
             urlLink={urlLink}
             rawSignalData={rawSignalData}
+            tooltipId={tooltipId}
         />)
 
         setIsSignalDetailsPopupOpen(true)

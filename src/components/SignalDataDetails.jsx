@@ -1,12 +1,22 @@
-import React from "react";
+import React, {useState} from "react";
 import JsonTable from "./JsonTable.jsx";
-import {iareAlert, isEmpty} from "../utils/generalUtils.js";
-import './css/signals.css';
-import {extractRootDomain} from "../utils/urlUtils.jsx";
-import SignalBadges from "./SignalBadges.jsx";
-import {BadgeContextEnum as badgeContext} from "../constants/badgeDisplayTypes.jsx";
-import {getNormalizedScore} from "../utils/generalUtils.js";
 import PureJson from "./PureJson.jsx";
+
+import SignalBadges from "./SignalBadges.jsx";
+
+import {BadgeContextEnum as badgeContext} from "../constants/badgeDisplayTypes.jsx";
+
+import './css/signals.css';
+
+import {iareAlert, isEmpty} from "../utils/generalUtils.js";
+import {extractRootDomain} from "../utils/urlUtils.jsx";
+import {getNormalizedScore} from "../utils/generalUtils.js";
+// import {urlColumnDefs} from "../constants/urlColumnDefs.jsx";
+import {signalBadgeRegistry, extractInfoFromPath} from "../constants/badges/signalBadgeRegistry.jsx";
+import signalsDefs from "../constants/signals/signals_docs.json"
+
+const signalsDocData = signalsDefs.signals_docs.signals_docs
+
 
 /* sample signal data:
 
@@ -77,7 +87,11 @@ import PureJson from "./PureJson.jsx";
     }
 
    */
-export default function SignalDataDetails({urlLink, rawSignalData}) {
+export default function SignalDataDetails({
+                                              urlLink,
+                                              rawSignalData,
+                                              tooltipId
+                                          }) {
 
     // const [isFiltered, setIsFiltered] = React.useState(false);
     // const [showFilterControls, setShowFilterControls] = React.useState(false);
@@ -86,8 +100,70 @@ export default function SignalDataDetails({urlLink, rawSignalData}) {
     const [isListsVisible, setIsListsVisible] = React.useState(false);
     const [isRatingsVisible, setIsRatingsVisible] = React.useState(false);
 
-    const onSignalClick = (e) => {
-        iareAlert("Signal Clicked: " + e.target.dataset.signalKey)
+    // const [tooltipHtml, setTooltipHtml] = useState('<div>SignalDataDetails tooltip</div>');
+    const [tooltipHtml, setTooltipHtml] = useState(null);
+
+    const onBadgeClick = (e) => {
+        iareAlert("Signal Badge Clicked: " + e.target.dataset.signalKey)
+    }
+
+    const onBadgeHover = (e) => {
+        // console.log("Signal Badge Hover: " + e.target.dataset.signalKey)
+        // setTooltipHtml('<div>onBadgeHover: tooltip</div>')
+
+        e.stopPropagation()  // prevents onHover from engaging and erasing tooltip
+
+        // only show tooltip for badge icons
+        if (e?.target.closest('.badge-icon')) {
+            let elBadge = e.target.closest('.signal-badge')
+            if (elBadge) {
+                const badgeKey = elBadge.dataset["badgekey"]
+                const badgeData = elBadge.dataset["badgedata"]
+                // setTooltipHtml(`<div>onBadgeHover: badgeKey: ${badgeKey}</div>`)
+
+                // grab infopath data from badgeDef
+                const badgeDef = signalBadgeRegistry[badgeKey]
+                if (!badgeDef) {
+                    setTooltipHtml(`<div>Unknown badgeKey: ${badgeKey}</div>`)
+                    return
+                }
+
+                // go thru badgeDef.info_spec.sourcefields
+                /*
+                source_fields: [
+                {
+                    name: "Total Captures",
+                    label: "meta|ws_wbm_total|label",
+                    desc: "meta|ws_wbm_total|description"
+                },
+                 */
+                const sourceFields = badgeDef.info_spec?.source_fields
+                if (!Array.isArray(sourceFields)) {  // not an array?
+                    setTooltipHtml(`<div>No field info to show.</div>`);
+                    return
+                }
+
+                            // const infoDetails = sourceFields.map(field => {
+                            //     return `${field.label}: ${field.desc}`
+                            // }).join('<br/>')
+                            //
+
+                // for each item in info_spec.source_fields:
+                const infoDetails = sourceFields.map(item => {
+                    const label = extractInfoFromPath(signalsDocData, item.label)
+                    const desc = extractInfoFromPath(signalsDocData, item.desc)
+                    return `${label}: ${desc}`
+                }).join('<br/>')
+
+                setTooltipHtml(`<div>${infoDetails}</div>`);
+                return
+
+            }
+        }
+
+        // otherwise clear tooltip
+        setTooltipHtml(null)
+
     }
 
     const getDomain = () => {
@@ -126,7 +202,7 @@ export default function SignalDataDetails({urlLink, rawSignalData}) {
             </div>
             {isMetaVisible
                 ? <JsonTable data={signalMetaRows}/>
-                : null }
+                : null}
         </div>
 
 
@@ -140,14 +216,14 @@ export default function SignalDataDetails({urlLink, rawSignalData}) {
             {isListsVisible
 
                 // filter lists so that only entries with non-zero arrays are shown
-                ?  <PureJson data={Object.fromEntries(
+                ? <PureJson data={Object.fromEntries(
                     Object.entries(rawSignalData.signals?.lists)
                         .filter(([_, value]) => Array.isArray(value) && value.length > 0)
-                        )}
-                        caption={null} />
+                )}
+                            caption={null}/>
 
                 // ? <div>Lists data goes here</div>
-                : null }
+                : null}
         </div>
 
         const signalRatingsDisplay = <div className={"grid-level-1"}>
@@ -155,22 +231,22 @@ export default function SignalDataDetails({urlLink, rawSignalData}) {
                 Ratings Signal Data&nbsp;{isRatingsVisible ? "▼" : "▶"}
             </div>
             {isRatingsVisible
-                ? <PureJson data={rawSignalData.signals?.ratings} caption={null} />
-                : null }
+                ? <PureJson data={rawSignalData.signals?.ratings} caption={null}/>
+                : null}
         </div>
 
 
-                    // const customControls = showFilterControls && false  // force false for now...debugging
-                    //     ? <label>
-                    //         <input
-                    //             type="checkbox"
-                    //             checked={isFiltered}
-                    //             onChange={e => setIsFiltered(e.target.checked)}
-                    //         />{isFiltered
-                    //         ? <span>&nbsp;Remove Filter (Show all Signals)</span>
-                    //         : <span>&nbsp;Apply Filter (Hide all null and false Signals)</span>}
-                    //     </label>
-                    //     : null
+        // const customControls = showFilterControls && false  // force false for now...debugging
+        //     ? <label>
+        //         <input
+        //             type="checkbox"
+        //             checked={isFiltered}
+        //             onChange={e => setIsFiltered(e.target.checked)}
+        //         />{isFiltered
+        //         ? <span>&nbsp;Remove Filter (Show all Signals)</span>
+        //         : <span>&nbsp;Apply Filter (Hide all null and false Signals)</span>}
+        //     </label>
+        //     : null
 
         const toggleTableVisibility = () => {
             setIsRawDataVisible(!isRawDataVisible);
@@ -187,10 +263,9 @@ export default function SignalDataDetails({urlLink, rawSignalData}) {
                     {signalListsDisplay}
                     {signalRatingsDisplay}
                 </>
-                :  null}
+                : null}
         </div>
     }
-
 
 
     const rawDataDisplay = getRawSignalDataDisplay();
@@ -200,12 +275,12 @@ export default function SignalDataDetails({urlLink, rawSignalData}) {
 
 
     const signalHeader = <div className={"signal-details-header"}
-    //     style={{
-    //         display: "grid",
-    //         gridTemplateColumns: "minmax(6.5rem, auto) minmax(auto, 1fr)",
-    //         gap: "10px",
-    //         marginBottom: "10px"
-    //     }}
+        //     style={{
+        //         display: "grid",
+        //         gridTemplateColumns: "minmax(6.5rem, auto) minmax(auto, 1fr)",
+        //         gap: "10px",
+        //         marginBottom: "10px"
+        //     }}
     >
         <div className={"grid-caption"}>Domain:</div>
         <div>{urlDomain}</div>
@@ -222,14 +297,22 @@ export default function SignalDataDetails({urlLink, rawSignalData}) {
         <hr style={{gridColumn: "1 / -1"}}/>
     </div>
 
-    return <div className={"signal-data-details"}>
-        {signalHeader}
-        <SignalBadges signals={rawSignalData?.signals}
-                      onSignalClick={onSignalClick}
-                      badgeContext={badgeContext.DETAIL}
-                      fromCache={rawSignalData?.retrieved_from_cache}
-        />
-        <hr/>
-        {rawDataDisplay}
+    return <div data-tooltip-id={tooltipId}  // passed in tooltipId for this flock)
+                data-tooltip-html={tooltipHtml}
+    >
+        <div
+            className={"signal-data-details"}
+            onMouseOver={onBadgeHover}
+        >
+            {signalHeader}
+            <SignalBadges signals={rawSignalData?.signals}
+                          badgeContext={badgeContext.DETAIL}
+                          onBadgeClick={onBadgeClick}
+                          // onBadgeHover={onBadgeHover}
+                          fromCache={rawSignalData?.retrieved_from_cache}
+            />
+            <hr/>
+            {rawDataDisplay}
+        </div>
     </div>
 }

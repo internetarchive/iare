@@ -1,8 +1,9 @@
 import React from "react";
-import waybackLogo from "./images/badge.logo.wayback.small.png";
 import {BadgeContextEnum} from "../badgeDisplayTypes.jsx";
 import Badge from "../../components/Badge.jsx";
 import {getNormalizedCount, trimifyNumber} from "../../utils/generalUtils.js";
+import {signalBadgeRegistry} from "./signalBadgeRegistry.jsx";
+// import waybackLogo from "./images/badge.logo.wayback.small.png";
 
 /**
  * Shared Badge interface
@@ -12,8 +13,8 @@ import {getNormalizedCount, trimifyNumber} from "../../utils/generalUtils.js";
  * @param {BadgeContextEnum} [props.badgeContext]*/
 export default function WaybackBadge({
                                          signals = {},
-                                         onSignalClick,
-                                         badgeContext = BadgeContextEnum.INLINE
+                                         badgeContext = BadgeContextEnum.INLINE,
+                                         onBadgeClick,
                                      }
 ) {
     if (!signals) {
@@ -64,11 +65,16 @@ export default function WaybackBadge({
         badgeClass += " missing-value"
     }
 
+    const badgeDef = signalBadgeRegistry.wayback
 
     return <Badge
         badgeContext={badgeContext}
-        badgeImg={waybackLogo}
-        badgeAlt="Wayback"
+
+        badgeKey={badgeDef.key}
+        badgeImg={badgeDef.logo}
+        badgeAlt={badgeDef.label}
+        // badgeImg={waybackLogo}
+
         badgeData={badgeData}
         badgeText={badgeText}
         badgeClass={badgeClass}

@@ -3,6 +3,7 @@ import wikiLogo from './images/badge.logo.wiki.png';
 import {BadgeContextEnum} from "../badgeDisplayTypes.jsx";
 import Badge from "../../components/Badge.jsx";
 import {trimifyNumber, getPrettyCount, getNormalizedScore} from "../../utils/generalUtils.js";
+import {signalBadgeRegistry} from "./signalBadgeRegistry.jsx";
 
 /**
  * Shared Badge interface
@@ -13,14 +14,15 @@ import {trimifyNumber, getPrettyCount, getNormalizedScore} from "../../utils/gen
  */
 export default function EnwikiBadge({
                                         signals = {},
-                                        onSignalClick,
                                         badgeContext = BadgeContextEnum.INLINE,
+                                        onBadgeClick,
                                     }
 ) {
 
+    const badgeDef = signalBadgeRegistry.enwiki
 
     if (!signals) {
-        return <div className={"signal-badge-error"}><img src={wikiLogo} alt="Wayback ERROR"/> {'Error: No signal data available'}</div>;
+        return <div className={"signal-badge-error"}><img src={badgeDef.logo} alt="Enwiki ERROR"/> {'Error: No signal data available'}</div>;
 
     }
 
@@ -47,11 +49,15 @@ export default function EnwikiBadge({
         badgeClass += " missing-value"  // format for error
     }
 
-
     return <Badge
         badgeContext={badgeContext}
-        badgeImg={wikiLogo}
-        badgeAlt="Wikipedia"
+
+        badgeKey={badgeDef.key}
+        badgeImg={badgeDef.logo}
+        badgeAlt={badgeDef.label}
+        // badgeImg={wikiLogo}
+        // badgeAlt="Wikipedia"
+
         badgeData={badgeData}
         badgeText={badgeText}
         badgeClass={badgeClass}

@@ -1,7 +1,7 @@
 import React from "react";
-import mbfcLogo from "./images/badge.logo.mbfc.small.png";
 import {BadgeContextEnum} from "../badgeDisplayTypes.jsx";
 import Badge from "../../components/Badge.jsx";
+import {signalBadgeRegistry} from "./signalBadgeRegistry.jsx";
 
 /**
  * Shared Badge interface
@@ -11,13 +11,15 @@ import Badge from "../../components/Badge.jsx";
  * @param {BadgeContextEnum} [props.badgeContext]*/
 export default function MbfcBadge({
                                       signals = {},
-                                      onSignalClick,
                                       badgeContext = BadgeContextEnum.INLINE,
+                                      onBadgeClick,
                                   }
 ) {
 
+    const badgeDef = signalBadgeRegistry.mbfc
+
     if (!signals) {
-        return <div className={"signal-badge-error"}><img src={mbfcLogo}
+        return <div className={"signal-badge-error"}><img src={badgeDef.logo}
                                                           alt="Wayback ERROR"/> {'Error: No signal data available'}
         </div>;
     }
@@ -62,8 +64,13 @@ export default function MbfcBadge({
 
     return <Badge
         badgeContext={badgeContext}
-        badgeImg={mbfcLogo}
-        badgeAlt="MBFC"
+
+        badgeKey={badgeDef.key}
+        badgeImg={badgeDef.logo}
+        badgeAlt={badgeDef.label}
+        // badgeImg={mbfcLogo}
+        // badgeAlt="MBFC"
+
         badgeData={badgeData}
         badgeText={badgeText}
         badgeClass={"mbfc-badge"}
