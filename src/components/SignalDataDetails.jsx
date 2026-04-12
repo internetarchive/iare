@@ -119,41 +119,26 @@ export default function SignalDataDetails({
             if (elBadge) {
                 const badgeKey = elBadge.dataset["badgekey"]
                 const badgeData = elBadge.dataset["badgedata"]
-                // setTooltipHtml(`<div>onBadgeHover: badgeKey: ${badgeKey}</div>`)
 
-                // grab infopath data from badgeDef
                 const badgeDef = signalBadgeRegistry[badgeKey]
                 if (!badgeDef) {
                     setTooltipHtml(`<div>Unknown badgeKey: ${badgeKey}</div>`)
                     return
                 }
 
-                // go thru badgeDef.info_spec.sourcefields
-                /*
-                source_fields: [
-                {
-                    name: "Total Captures",
-                    label: "meta|ws_wbm_total|label",
-                    desc: "meta|ws_wbm_total|description"
-                },
-                 */
+                // grab info_spec data from badgeDef
                 const sourceFields = badgeDef.info_spec?.source_fields
                 if (!Array.isArray(sourceFields)) {  // not an array?
                     setTooltipHtml(`<div>No field info to show.</div>`);
                     return
                 }
 
-                            // const infoDetails = sourceFields.map(field => {
-                            //     return `${field.label}: ${field.desc}`
-                            // }).join('<br/>')
-                            //
-
                 // for each item in info_spec.source_fields:
                 const infoDetails = sourceFields.map(item => {
                     const label = extractInfoFromPath(signalsDocData, item.label)
                     const desc = extractInfoFromPath(signalsDocData, item.desc)
-                    return `${label}: ${desc}`
-                }).join('<br/>')
+                    return `<div class="info-spec"><span class="info-label">${label}</span>${desc}</div>`
+                }).join("")
 
                 setTooltipHtml(`<div>${infoDetails}</div>`);
                 return
@@ -274,26 +259,14 @@ export default function SignalDataDetails({
     const score = getNormalizedScore(rawSignalData?.signals?.meta?.ws_score);
 
 
-    const signalHeader = <div className={"signal-details-header"}
-        //     style={{
-        //         display: "grid",
-        //         gridTemplateColumns: "minmax(6.5rem, auto) minmax(auto, 1fr)",
-        //         gap: "10px",
-        //         marginBottom: "10px"
-        //     }}
-    >
-        <div className={"grid-caption"}>Domain:</div>
-        <div>{urlDomain}</div>
+    const signalHeader = <div className={"signal-details-header"}>
+        <div className={"wrapper"}>
+            <div className={"grid-caption"}>Domain:</div>
+            <div>{urlDomain}</div>
 
-        <div className={"grid-caption"}>URL:</div>
-        <div>{urlLink}</div>
-
-        {/*<div className={"grid-caption"}>Score:</div>*/}
-        {/*{ score < 0  // -1 means not provided*/}
-        {/*    ? <div className={"missing-value"}>Not provided.</div>*/}
-        {/*    : <div>WikiSignals Overall Score: {score}</div>*/}
-        {/*}*/}
-
+            <div className={"grid-caption"}>URL:</div>
+            <div>{urlLink}</div>
+        </div>
         <hr style={{gridColumn: "1 / -1"}}/>
     </div>
 

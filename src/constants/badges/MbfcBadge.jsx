@@ -15,17 +15,19 @@ export default function MbfcBadge({
                                       onBadgeClick,
                                   }
 ) {
-
-    const badgeDef = signalBadgeRegistry.mbfc
-
     if (!signals) {
         return <div className={"signal-badge-error"}><img src={badgeDef.logo}
                                                           alt="Wayback ERROR"/> {'Error: No signal data available'}
         </div>;
     }
 
+
+    const badgeDef = signalBadgeRegistry.mbfc
+    const badgeIcon = <img src={badgeDef.logo} alt={badgeDef.label} className={"logo-image"}/>
+
     let badgeData = {}
     let badgeText = null
+    let badgeClass = "mbfc-badge"
 
     try {
         let wsMeta = null  // WikiSignalMeta
@@ -60,19 +62,15 @@ export default function MbfcBadge({
     } catch (e) {
         badgeText = <div>Error Encountered: {e.message}</div>
         badgeData = {"error": e.message}
+        badgeClass += " missing-value"
     }
 
     return <Badge
         badgeContext={badgeContext}
-
         badgeKey={badgeDef.key}
-        badgeImg={badgeDef.logo}
-        badgeAlt={badgeDef.label}
-        // badgeImg={mbfcLogo}
-        // badgeAlt="MBFC"
-
-        badgeData={badgeData}
+        badgeClass={badgeClass}
+        badgeIcon={badgeIcon}
         badgeText={badgeText}
-        badgeClass={"mbfc-badge"}
+        badgeData={badgeData}
     />
 }

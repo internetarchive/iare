@@ -32,7 +32,7 @@
         "ws_score": {
           "type": "number",
           "label": "WikiSignals score (0.0-1.0)",
-          "description": "The WikiSignals estimate (0.0-1.0) of the website's credibility as an information source, based an external ratings, press-association memberships, inclusion in vetted news indices, and other factors."
+          "description": "The WikiSignals estimate (0.0-1.0) of the website's credibility as an information source, based on external ratings, press-association memberships, inclusion in vetted news indices, and other factors."
         },
         "ws_mbfc_score": {
           "type": "number",

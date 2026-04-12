@@ -80,20 +80,6 @@
     display: contents;
 }
 
-#tooltip-url-display {
-    font-size:1.0rem;
-    font-weight:normal;
-    line-height:1.5rem;
-    border:1.5pt solid black;
-    border-radius: .38rem;
-    opacity: .9;
-    padding:.3rem .5rem;
-}
-.tooltip-iare-display {
-    background-color: #6a99c7 !important;
-    border-color: #326692 !important;
-}
-
 
 .flock-box.url-flock {
     flex: 1 1 0%;
@@ -178,6 +164,9 @@
 /*    padding:0 0 .5rem 0;*/
 /*}*/
 
+.url-row-header {
+    cursor: pointer;
+}
 /* url list column widths for different column types */
 
 .url-row-header .url-name,

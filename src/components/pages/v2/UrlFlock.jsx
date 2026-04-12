@@ -21,7 +21,7 @@ import SignalsDocs from "../../SignalsDocs.jsx";
 import SignalsSort from "../../SignalsSort.jsx";
 
 import SignalDataDetailsTitle from "../../SignalDataDetailsTitle.jsx";
-import PureJson from "../../PureJson.jsx";
+
 
 
 /*
@@ -694,10 +694,10 @@ const urlFlock = React.memo(function UrlFlock({
                     onSignalHeaderClick(e)
                 }}
                 >
-                    <div className={"wiki-signals-docs flock-col"}>WikiSignals
-                        <span className={"info-icon descriptor-text"}> (Click for information) </span>
+                    <div className={"wiki-signals-docs flock-col"}>WikiSignals ℹ️
+                        <span className={"info-icon descriptor-text"}> (Click to show information) </span>
                     </div>
-                    <div className={"wiki-signals-sort flock-col"}>WikiSignal Sort by: none <span className={"descriptor-text"}>(Click to sort)</span>
+                    <div className={"wiki-signals-sort flock-col"}>WikiSignal Sort <span className={"descriptor-text"}>(Click to sort)</span>
                     </div>
                 </div>
 

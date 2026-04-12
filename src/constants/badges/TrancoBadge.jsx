@@ -16,13 +16,14 @@ export default function TrancoBadge({
                                         onBadgeClick,
                                     }
 ) {
-    const badgeDef = signalBadgeRegistry.tranco
-
     if (!signals) {
         return <div className={"signal-badge-error"}><img src={badgeDef.logo}
                                                           alt="Tranco ERROR"/> {'Error: No signal data available'}
         </div>;
     }
+
+    const badgeDef = signalBadgeRegistry.tranco
+    const badgeIcon = <img src={badgeDef.logo} alt={badgeDef.label} className={"logo-image"}/>
 
     let badgeData = {}
     let badgeText = null
@@ -48,15 +49,10 @@ export default function TrancoBadge({
 
     return <Badge
         badgeContext={badgeContext}
-
         badgeKey={badgeDef.key}
-        badgeImg={badgeDef.logo}
-        badgeAlt={badgeDef.label}
-
-        // badgeImg={trancoLogo}
-        // badgeAlt="Tranco"
-        badgeData={badgeData}
-        badgeText={badgeText}
         badgeClass={badgeClass}
+        badgeIcon={badgeIcon}
+        badgeText={badgeText}
+        badgeData={badgeData}
     />
 }

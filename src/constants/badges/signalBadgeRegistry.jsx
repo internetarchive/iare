@@ -4,11 +4,11 @@
 // import ArchiveBadge from "./badges/ArchiveBadge";
 // import PaywallBadge from "./badges/PaywallBadge";
 
+import ScoreBadge from "./ScoreBadge.jsx";
 import WaybackBadge from "./WaybackBadge.jsx";
 import EnwikiBadge from "./EnwikiBadge.jsx";
 import TrancoBadge from "./TrancoBadge";
 import MbfcBadge from "./MbfcBadge";
-import ScoreBadge from "./ScoreBadge.jsx";
 
 // import logoImage from "./images/wikisignals.logo.v1r1.png";
 import imgScoreLogo from "./images/wikisignals.logo.v1r4.png"
@@ -29,15 +29,25 @@ export const signalBadgeRegistry = {
 
     score: {
         key: "score",
+        label: "Score",
         caption: "SCORE",
         description: "Overall WikiSignals Score",
         component: ScoreBadge,
         priority: 1000,
+        logo: imgScoreLogo,
+
         group: "",
 
-        // logo_source: "./images/wikisignals.logo.v1r1.png",
-        image: imgScoreLogo,
-
+        info_spec: {
+            description: "",
+            source_fields: [
+                {
+                    name: "Wikisignals score",
+                    label: "meta|ws_score|label",
+                    desc: "meta|ws_score|description"
+                },
+            ],
+        }
 
     },
 
@@ -48,8 +58,10 @@ export const signalBadgeRegistry = {
         description: "Tranco rating (website)",
         component: TrancoBadge,
         priority: 100,
-        group: "",
         logo: imgTrancoLogo,
+
+        group: "",
+
         info_spec: {
             description: "",
             source_fields: [
@@ -82,6 +94,16 @@ export const signalBadgeRegistry = {
         priority: 300,
         group: "",
         logo: imgEnwikiLogo,
+        info_spec: {
+            description: "",
+            source_fields: [
+                {
+                    name: "Wikipedia links",
+                    label: "meta|ws_wiki_cite_en|label",
+                    desc: "meta|ws_wiki_cite_en|description"
+                },
+            ],
+        }
     },
 
     wayback: {

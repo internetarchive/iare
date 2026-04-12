@@ -3,7 +3,6 @@ import {BadgeContextEnum} from "../badgeDisplayTypes.jsx";
 import Badge from "../../components/Badge.jsx";
 import {getNormalizedCount, trimifyNumber} from "../../utils/generalUtils.js";
 import {signalBadgeRegistry} from "./signalBadgeRegistry.jsx";
-// import waybackLogo from "./images/badge.logo.wayback.small.png";
 
 /**
  * Shared Badge interface
@@ -21,21 +20,12 @@ export default function WaybackBadge({
         return <div className={"signal-badge-error"}><img src={waybackLogo} alt="Wayback ERROR"/> {'Error: No signal data available'}</div>;
     }
 
+    const badgeDef = signalBadgeRegistry.wayback
+    const badgeIcon = <img src={badgeDef.logo} alt={badgeDef.label} className={"logo-image"}/>
+
     let badgeData = {}
     let badgeText = null
     let badgeClass = "wayback-badge"
-
-
-    // // abbreviate number if big
-                    // const badgeText = <>
-                    //     {n >= 1000000
-                    //         ? `${(n / 1000000).toFixed(1)}M`
-                    //         : (n >= 1000
-                    //             ? `${Math.round(n / 1000)}K`
-                    //             : n)} snapshots<br/>
-                    //     {wayback_first.split(' ')[0]} to {wayback_last.split(' ')[0]}
-                    // </>
-
 
     try {
         const meta = signals?.meta || {};
@@ -47,8 +37,12 @@ export default function WaybackBadge({
             badgeText = <div>Not provided.</div>
         } else {
             badgeText = <>
-                {trimifyNumber(count)} snapshots<br/>
-                {wayback_first.split(' ')[0]} to {wayback_last.split(' ')[0]}
+                {trimifyNumber(count)} total snapshots<br/>
+
+                {new Date(wayback_first.split(' ')[0]).toLocaleString('en-US', {
+                    month: 'long',
+                    year: 'numeric'
+                })} to {new Date(wayback_last.split(' ')[0]).toLocaleString('en-US', {month: 'long', year: 'numeric'})}
             </>
         }
         if (count < 0) badgeClass += " missing-value"
@@ -65,19 +59,13 @@ export default function WaybackBadge({
         badgeClass += " missing-value"
     }
 
-    const badgeDef = signalBadgeRegistry.wayback
-
     return <Badge
         badgeContext={badgeContext}
-
         badgeKey={badgeDef.key}
-        badgeImg={badgeDef.logo}
-        badgeAlt={badgeDef.label}
-        // badgeImg={waybackLogo}
-
-        badgeData={badgeData}
-        badgeText={badgeText}
         badgeClass={badgeClass}
+        badgeIcon={badgeIcon}
+        badgeText={badgeText}
+        badgeData={badgeData}
     />
 
 }

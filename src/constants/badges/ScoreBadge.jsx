@@ -4,6 +4,35 @@ import Badge from "../../components/Badge.jsx";
 import {signalBadgeRegistry} from "./signalBadgeRegistry.jsx";
 import {getNormalizedScore} from "../../utils/generalUtils.js";
 
+function getTemperatureColor(value) {
+    const v = Math.max(0, Math.min(1, value)); // clamp 0–1
+
+    let r, g;
+
+    const greenMax = 210; // darker than 255
+
+    if (v < 0.5) {
+        // red → yellow (increase green)
+        r = 255;
+        g = Math.round(greenMax * (v / 0.5));
+    } else {
+        // yellow → green (decrease red)
+        r = Math.round(255 * (1 - (v - 0.5) / 0.5));
+        g = greenMax;
+    }
+
+    return `rgb(${r}, ${g}, 0)`;
+}
+
+function getTemperatureColor2(value) {
+    const v = Math.max(0, Math.min(1, value));
+
+    const hue = v * 120; // red → green
+    const lightness = 45; // darker than default 50%
+
+    return `hsl(${hue}, 100%, ${lightness}%)`;
+}
+
 /**
  * Shared Badge interface
  * @param {Object} props
@@ -28,6 +57,7 @@ export default function ScoreBadge({
     let badgeData = {}  // what to send to dataset for badge element
     let badgeText = null  // what to show patron
     let badgeClass = "score-badge"
+    let scoreColor = "#888888"
 
     try {
         const meta = signals?.meta || {};
@@ -37,6 +67,9 @@ export default function ScoreBadge({
             ? <div>Not provided.</div>
             : <div>WikiSignals Overall Score: {score}</div>
         if (score < 0) badgeClass += " missing-value"
+        if (score > 0) {
+            scoreColor = getTemperatureColor(score);
+        }
 
     } catch (e) {
         badgeData = {"error": e.message}
@@ -44,13 +77,17 @@ export default function ScoreBadge({
         badgeClass += " missing-value"
     }
 
+    const badgeIcon = <div className={"badge-icon-wrapper"}
+                           style={{"--badge-color": scoreColor}}>
+        <img src={badgeDef.logo} alt={badgeDef.label} className={"logo-image"}/>
+    </div>
+
     return <Badge
         badgeContext={badgeContext}
-        badgeAlt="Score"
-        badgeClass={badgeClass}
         badgeKey={badgeDef.key}
-        badgeData={badgeData}
+        badgeClass={badgeClass}
+        badgeIcon={badgeIcon}
         badgeText={badgeText}
-        badgeImg={badgeDef.image}
+        badgeData={badgeData}
     />
 }

@@ -11,6 +11,8 @@
     --width-signal-badge-detail: 6rem;
     --width-signal-text-detail: 10rem;
 
+    --width-hot-meter: .5rem;
+
 }
 
 /* * * * * * * * * * * * * * * * * *
@@ -25,6 +27,30 @@ button.fetch-signal-button:hover {
     background-color: #cce6f9 !important;
 }
 
+
+/* * * * * * * * * * * * * * * * *
+ *  S I G N A L S   H E A D E R  *
+ * * * * * * * * * * * * * * * * */
+
+.signal-details-header {
+    position:sticky;
+    top:0;
+    background-color: white;
+}
+.signal-details-header .wrapper {
+    display: grid;
+    grid-template-columns: minmax(6.5rem, auto) minmax(auto, 1fr);
+    gap: 10px;
+    margin-bottom: 10px;
+    z-index: 10;
+    overflow: scroll;
+    padding: .25rem;
+}
+
+/* * * * * * * * * * * * * * * * * *
+ *  S I G N A L S   G E N E R I C  *
+ * * * * * * * * * * * * * * * * * */
+
 .signal-badges {
 
 }
@@ -32,11 +58,13 @@ button.fetch-signal-button:hover {
 .signal-badges .signal-badge {
     display: flex;
     align-items: center;
+    /*border: 1px solid var(--color-list-line);*/
 }
 
 .signal-badge .signal-badge-element {
     /*display: flex;*/
     /*align-items: center;*/
+    overflow: hidden;
 }
 
 .signal-badge .signal-badge-element:nth-of-type(2) {
@@ -46,17 +74,30 @@ button.fetch-signal-button:hover {
 .signal-badges-extra-msg {
     font-style: italic;
     color: var(--color-text-muted);
-    padding:0 0 .15rem .25rem;
+    padding:0;
     margin-top: -.25rem;
-}
-
-.signal-badge .badge-icon {
-    padding:.25rem;
 }
 
 .signal-badge .logo-image {
     width: 100%;
-    /*padding:.25rem;*/
+    /*padding:0 .25rem;*/
+}
+.signal-badge.score-badge .badge-icon {
+    display: block;
+    padding-right: var(--width-hot-meter); /* makes space for the bar */
+
+}
+.score-badge .signal-badge-element {
+    position: relative;
+}
+.score-badge .badge-icon-wrapper::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: var(--width-hot-meter);
+    height: 100%;
+    background: var(--badge-color, deeppink); /* fallback included; --badge-color defined in badge-icon wrapper div */
 }
 
 .section-expander {
@@ -77,7 +118,7 @@ button.fetch-signal-button:hover {
 .signal-badges-inline {
     display: grid;
     grid-template-columns:
-            var(--width-signal-score)
+            6rem /*var(--width-signal-score)*/
             var(--width-signal-wayback)
             var(--width-signal-wiki)
             var(--width-signal-tranco)
@@ -85,8 +126,10 @@ button.fetch-signal-button:hover {
             minmax(10rem, 1fr);
 }
 
-.signal-badges-inline .signal-badge .badge-icon {
-    padding:0 .25rem;
+/*.signal-badges-inline .signal-badge .badge-icon {*/
+.signal-badges-inline .signal-badge {
+    padding:0 .2rem;
+    /*background-color: limegreen;*/
 }
 
 .signal-badges-inline .signal-badges-extra-msg {
@@ -117,17 +160,18 @@ button.fetch-signal-button:hover {
 }
 
 .signal-data-details hr {
-    margin-top: 0;
-    margin-bottom: 0;
+    margin-top: .5rem;
+    margin-bottom: .5rem;
     border: none;
     border-top: 5px solid;
 }
 
 .signal-badges-detail .signal-badge{
     display: grid;
-    grid-template-columns: var(--width-signal-badge-detail) minmax(var(--width-signal-text), 1fr);
+    grid-template-columns: 6rem 1fr;
     border-bottom: 1pt solid var(--color-list-line);
     min-height: 4rem;
+    padding: .25rem 0;
 }
 .signal-badges-detail .badge-icon:hover{
     cursor: pointer;
@@ -140,19 +184,9 @@ button.fetch-signal-button:hover {
 
 .signal-badges-detail .badge-text{
     padding-left:1rem;
+    flex: 1 0 auto;
 }
 
-.signal-details-header {
-    display: grid;
-    grid-template-columns: minmax(6.5rem, auto) minmax(auto, 1fr);
-    gap: 10px;
-    margin-bottom: 10px;
-    position:sticky;
-    top:0;
-    background-color: white;
-    z-index: 10;
-    padding: .25rem;
-}
 .signal-details-raw-data {
     display:flex;
     flex-direction: column;
@@ -181,6 +215,17 @@ button.fetch-signal-button:hover {
     font-style: italic;
 }
 
+.tooltip-iare-display .info-spec {
+    margin-bottom: .5rem;
+
+}
+.tooltip-iare-display .info-label {
+    display: block;
+    font-style: italic;
+    /*color: color-mix(in srgb, currentColor 80%, black);*/
+    color: #ddd;
+    font-weight: bold;
+}
             /*.signals-badge:hover {*/
             /*    background-color: #d1d2d4;*/
             /*}*/

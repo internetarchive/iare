@@ -1,8 +1,7 @@
 import React from "react";
-import wikiLogo from './images/badge.logo.wiki.png';
 import {BadgeContextEnum} from "../badgeDisplayTypes.jsx";
 import Badge from "../../components/Badge.jsx";
-import {trimifyNumber, getPrettyCount, getNormalizedScore} from "../../utils/generalUtils.js";
+import {getPrettyCount} from "../../utils/generalUtils.js";
 import {signalBadgeRegistry} from "./signalBadgeRegistry.jsx";
 
 /**
@@ -23,7 +22,6 @@ export default function EnwikiBadge({
 
     if (!signals) {
         return <div className={"signal-badge-error"}><img src={badgeDef.logo} alt="Enwiki ERROR"/> {'Error: No signal data available'}</div>;
-
     }
 
     let badgeData = {}
@@ -49,27 +47,15 @@ export default function EnwikiBadge({
         badgeClass += " missing-value"  // format for error
     }
 
+    const badgeIcon = <img src={badgeDef.logo} alt={badgeDef.label} className={"logo-image"}/>
+
     return <Badge
         badgeContext={badgeContext}
-
         badgeKey={badgeDef.key}
-        badgeImg={badgeDef.logo}
-        badgeAlt={badgeDef.label}
-        // badgeImg={wikiLogo}
-        // badgeAlt="Wikipedia"
-
-        badgeData={badgeData}
-        badgeText={badgeText}
         badgeClass={badgeClass}
+        badgeIcon={badgeIcon}
+        badgeText={badgeText}
+        badgeData={badgeData}
     />
-
-    // return <div className={"badge-enwiki signal-badge"}>
-    //     <div className={"signal-badge-element"}>
-    //         <img src={wikiLogo} alt="Wikipedia" className={"logo-image"}/>
-    //     </div>
-    //     <div className={"signal-badge-element"}>
-    //         {badge}
-    //     </div>
-    // </div>
 
 }

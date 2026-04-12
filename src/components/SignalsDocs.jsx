@@ -1,6 +1,8 @@
 import React from "react";
 import MakeLink from "./MakeLink.jsx";
 import './css/signals.css';
+import imgScoreLogo from "../constants/badges/images/wikisignals.logo.v1r4.png"
+
 
 export default function SignalsDocs({}) {
 
@@ -13,7 +15,8 @@ export default function SignalsDocs({}) {
             fontSize: "1.75rem",
             paddingBottom: ".75rem",
             color: "#0097f8",
-        }}>WikiSignals</div>
+        }}><img src={imgScoreLogo} alt={"WikiSignals logo"}
+            style={{"height" : "2.5rem"}}/> WikiSignals</div>
         <div>
             We are building the reliability infrastructure for the internet.
             We want to empower internet users with the ability to identify
@@ -28,7 +31,7 @@ export default function SignalsDocs({}) {
 
             By retrieving and analysing various signals from the internet,
             recommendations are produced pertaining to the reliability and
-            credibility of a URL domain.
+            credibility of URL domains.
         </div>
 <br/>
         <div>

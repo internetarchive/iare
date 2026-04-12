@@ -484,12 +484,6 @@ table.single-detail tr td:not(:first-child) {
     width:19rem;
 }
 
-
-            /*.iare-view .path-fetch {*/
-            /*    margin-top:.5rem;*/
-            /*    margin-bottom:.25rem;*/
-            /*}*/
-
 /* loader images */
 
 
@@ -511,6 +505,21 @@ font-style:italic;
 font-weight:normal;
 }
 
+#tooltip-url-display {
+    font-size:1.0rem;
+    font-weight:normal;
+    line-height:1.5rem;
+    border:1.5pt solid black;
+    border-radius: .38rem;
+    /*opacity: .9;*/
+    opacity: .95;
+    padding:.3rem .5rem;
+    max-width: 40rem;
+}
+.tooltip-iare-display {
+    background-color: #6a99c7 !important;
+    border-color: #326692 !important;
+}
 .tooltip-active {
     cursor: pointer;
 }
