@@ -11,7 +11,7 @@
     --width-signal-badge-detail: 6rem;
     --width-signal-text-detail: 10rem;
 
-    --width-hot-meter: .5rem;
+    --width-hot-meter: .6rem;
 
 }
 
@@ -84,7 +84,7 @@ button.fetch-signal-button:hover {
 }
 .signal-badge.score-badge .badge-icon {
     display: block;
-    padding-right: var(--width-hot-meter); /* makes space for the bar */
+    padding-right: calc(var(--width-hot-meter) + 2px); /* makes space for the bar */
 
 }
 .score-badge .signal-badge-element {
