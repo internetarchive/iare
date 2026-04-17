@@ -836,7 +836,10 @@ const urlFlock = React.memo(function UrlFlock({
                initialSize={{width: 684, height: 441}}
                initialPosition={{x: 420, y: 160}}
         >
-            <SignalsDocs/>
+            <SignalsDocs onClose={() => {
+                setIsSignalsDocsPopupOpen(false)
+            }}/>
+
         </Popup>
 
         {/* popup title, data and open status set in handleSignalClick function */}

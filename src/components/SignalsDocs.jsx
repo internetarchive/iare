@@ -1,11 +1,29 @@
-import React from "react";
+import React, {useEffect} from "react";
 import MakeLink from "./MakeLink.jsx";
 import './css/signals.css';
 import imgScoreLogo from "../constants/badges/images/wikisignals.logo.v1r4.png"
 
 
-export default function SignalsDocs({}) {
+export default function SignalsDocs({
+    onClose,
+}) {
 
+    useEffect(() => {
+            // adds "Escape Key closes modal" feature
+
+            const handleKeyDown = (event) => {
+                if (event.key === 'Escape') {
+                    onClose()
+                }
+            };
+            window.addEventListener('keydown', handleKeyDown);
+            // return value is function to call upon component close; we unload event listeners here
+            return () => {
+                window.removeEventListener('keydown', handleKeyDown);
+            };
+        },
+        [onClose]
+    );
 
 
 
