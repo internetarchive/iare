@@ -36,6 +36,7 @@ button.fetch-signal-button:hover {
     position:sticky;
     top:0;
     background-color: white;
+    z-index: 10;
 }
 .signal-details-header .wrapper {
     display: grid;
@@ -90,14 +91,35 @@ button.fetch-signal-button:hover {
 .score-badge .signal-badge-element {
     position: relative;
 }
-.score-badge .badge-icon-wrapper::after {
+xxx.score-badge .badge-icon-wrapper::after {
     content: "";
     position: absolute;
     top: 0;
     right: 0;
     width: var(--width-hot-meter);
     height: 100%;
-    background: var(--badge-color, deeppink); /* fallback included; --badge-color defined in badge-icon wrapper div */
+    /* score-color var defined in surrounding div */
+    background: var(--score-color, deeppink); /* fallback included; --badge-color defined in badge-icon wrapper div */
+}
+
+.score-badge .badge-icon-wrapper {
+    display: flex;
+    align-items: stretch;
+}
+
+.badge-icon-bar {
+    display: block;
+
+}
+
+.score-badge .logo-image {
+    display: block;
+}
+
+.score-badge .badge-icon-bar {
+    width: 10px;
+    margin-left: 8px;
+    display: inline-block;
 }
 
 .section-expander {
@@ -206,6 +228,55 @@ button.fetch-signal-button:hover {
     font-family: Georgia, 'Times New Roman', Times, serif;
     padding: .75rem;
 }
+
+
+/* * * * * * * * * * * * * * * *
+ *  S I G N A L   O T H E R S  *
+ * * * * * * * * * * * * * * * */
+
+:root {
+    --color-fore: #ffdb29;
+    --color-stroke: #555555;
+    --color-shadow: grey;
+    --color-neutral-bar: #e7e8e9;
+}
+
+.badge-icon-wrapper {
+    position: relative;
+    height: 2.8rem;
+}
+.missing-value .badge-overlay {
+    display: none;
+}
+
+svg.score-badge-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    dominant-baseline:middle;
+    text-anchor:middle;
+
+    font-size:1.5rem;
+    pointer-events: none;
+}
+
+svg.score-badge-text .text-fore {
+    fill: var(--color-fore);
+}
+svg.score-badge-text .text-stroke {
+    stroke: var(--color-stroke);
+    stroke-width: 5pt;
+}
+svg.score-badge-text .text-shadow {
+    text-shadow:
+            0 0 2pt black,
+            0 0 5pt black,
+            0 0 8pt black;
+}
+
 
 .signal-badge.missing-value .badge-icon {
     opacity: .3;

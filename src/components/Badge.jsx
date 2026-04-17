@@ -22,6 +22,7 @@ export default function Badge({
         <div className={"signal-badge-element badge-icon"}
              onMouseOver={onBadgeHover}
         >{badgeIcon}</div>
+
         {badgeContext !== BadgeContextEnum.INLINE
             ? <div className={"signal-badge-element badge-text"}>{badgeText}</div>
             : null}
