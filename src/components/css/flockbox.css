@@ -34,6 +34,28 @@
     line-height: .85rem;
 }
 
+.flock-box-caption .main-caption {
+    display:flex;
+    flex-flow: wrap;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.flock-box-caption .main-caption button {
+    margin-top: 0;
+    padding-top: 0;
+    font-family: inherit;
+    font-size: inherit;
+    /*font-weight: inherit;*/
+    font-weight: normal;
+    margin-right: 0;
+    padding-right: 0;
+    /*color: limegreen;*/
+    color: inherit;
+    text-decoration: underline;
+}
+.flock-box-caption .main-caption button:hover {
+    color: var(--color-text-muted);
+}
 .flock-box-caption .sub-caption {
     font-size:88%;
     font-weight:normal;

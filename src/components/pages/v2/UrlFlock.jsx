@@ -56,6 +56,7 @@ const urlFlock = React.memo(function UrlFlock({
                                                   urlArray,
                                                   urlFilters = {},  // keyed object of filter definitions to apply to urlArray for final url list display
                                                   onAction,
+                                                  options = {showRefs: true},
                                                   selectedUrl = '',
                                                   fetchMethod = "",
                                                   tooltipId = ''
@@ -662,10 +663,7 @@ const urlFlock = React.memo(function UrlFlock({
 
 
     const getHeaderRow = () => {
-        return <div
-            className={"url-row-header flock-row-header"}
-            // onClick={onClickHeaderRow}
-        >
+        return <div className={"url-row-header flock-row-header"}>
 
             <div className={"url-name flock-col"} onClick={() => {
                 updateFlockSort("name")
@@ -802,16 +800,26 @@ const urlFlock = React.memo(function UrlFlock({
     const buttonCopyDetails =
         <button onClick={handleCopyUrlDetails} className={'btn utility-button small-button'}>
             <span>Copy URL Details</span></button>
-    const spanFeedback =
+    const spanFeedback =  // placeholder to show disappearing messages
         <div className={`feedback-div ${feedbackText ? 'feedback-fade-text' : ''}`}>
             {feedbackText && <span>{feedbackText}</span>}
         </div>
 
+    const flockInfo = `${flockAllRows.length} ` +
+        `${flockAllRows.length === 1 ? 'URL' : 'URLs'}`
+
+    const buttonShowHideRefs =
+        <button onClick={() => onAction({action: ACTIONS_IARE.TOGGLE_SHOW_REFS.key})}
+                className={'btn text-button'}
+        >
+            <span>{options.showRefs ? "Hide Refs" : "Show Refs"}</span>
+        </button>
+
     const flockCaption =
         <>
-            <div>URL Links</div>
+            <div className={"main-caption"}>URL Links {buttonShowHideRefs}</div>
             <div className={"sub-caption"}>
-                <div>{flockAllRows.length} {flockAllRows.length === 1 ? 'URL' : 'URLs'}</div>
+                <div>{flockInfo}</div>
                 <div>{spanFeedback} {buttonCopyList} {buttonCopyDetails}</div>
             </div>
         </>
@@ -822,7 +830,8 @@ const urlFlock = React.memo(function UrlFlock({
         <div data-tooltip-id={tooltipId}  // passed in tooltipId for this flock)
              data-tooltip-html={urlTooltipHtml}
         >
-            <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>
+            <FlockBox className={"url-flock"}
+                      caption={flockCaption} >{flock}</FlockBox>
         </div>
 
         <Popup isOpen={isSignalsDocsPopupOpen}

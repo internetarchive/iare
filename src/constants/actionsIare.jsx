@@ -93,4 +93,8 @@ export const ACTIONS_IARE = {
         key: "POPUP_SIGNALS_DETAILS"
     },
 
+    TOGGLE_SHOW_REFS: {
+        key: "TOGGLE_SHOW_REFS"
+    },
+
 }
