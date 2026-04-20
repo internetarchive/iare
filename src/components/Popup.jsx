@@ -3,11 +3,15 @@ import ReactDOM from 'react-dom';
 import { Rnd } from 'react-rnd';
 import "./css/popup.css"
 
-const Popup = ({ isOpen, onClose, className="",
+const Popup = ({ isOpen,
+                   onClose,
+                   className="",
                    title,
                    children,
                    initialSize = { width: 600, height: 480 },
-                   initialPosition = { x: 200, y: 200 } }) => {
+                   initialPosition = { x: 200, y: 200 },
+                   onClickHeader = null
+}) => {
 
     // const [size, setSize] = useState({ width: 600, height: 480 });
     // const [position, setPosition] = useState({ x: 200, y: 200 });
@@ -127,7 +131,8 @@ const Popup = ({ isOpen, onClose, className="",
                 {/*// onScroll={(e) => {stopAndShow(e, "contents:onScroll")}}*/}
                 {/*// onScrollCapture={(e) => {stopAndShow(e, "contents:onScrollCapture")}}*/}
 
-                <div className="modal-header rnd-modal-popup-header">
+                <div className="modal-header rnd-modal-popup-header"
+                onClick={onClickHeader}>
                     <div style={{overflow:"hidden"}}>
                         <span style={{fontWeight: "bold", overflow:"hidden"}}>{title ? title : "Popup"}</span>
                         <button

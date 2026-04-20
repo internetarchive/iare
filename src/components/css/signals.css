@@ -229,6 +229,9 @@ xxx.score-badge .badge-icon-wrapper::after {
     padding: .75rem;
 }
 
+.signal-details-popup .info-click {
+    cursor: pointer;
+}
 
 /* * * * * * * * * * * * * * * *
  *  S I G N A L   O T H E R S  *

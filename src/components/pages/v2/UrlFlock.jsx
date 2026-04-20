@@ -2,7 +2,7 @@ import React, {useCallback, useState} from 'react';
 import FlockBox from "../../FlockBox.jsx";
 import "../../css/flock.css"
 
-import {convertToCSV, copyToClipboard} from "../../../utils/generalUtils.js";
+import {convertToCSV, copyToClipboard, iareAlert} from "../../../utils/generalUtils.js";
 import {getArchiveStatusInfo, getProbePopupData} from "../../../utils/urlUtils.jsx";
 import {BadgeContextEnum as badgeContext, BadgeContextEnum} from "../../../constants/badgeDisplayTypes.jsx";
 
@@ -355,6 +355,18 @@ const urlFlock = React.memo(function UrlFlock({
         alert("Will implement this later - will show details for one Signal value here.")
     }
 
+
+    const onClickDetailsPopupHeader = (e) => {
+
+        const targetElement = e.target
+        const targetClass = targetElement.className
+
+        if (targetClass === "info-click") {
+            console.log("Info for Details Popup Header Clicked")
+            setIsSignalsDocsPopupOpen(true)
+        }
+
+    }
 
     const onHoverUrlFlock = (e) => {
         // clears tooltip html...only if no other sub-elements got there first
@@ -848,8 +860,10 @@ const urlFlock = React.memo(function UrlFlock({
                    setIsSignalDetailsPopupOpen(false)
                }}
                title={signalDetailsPopupTitle}
+               className={"signal-details-popup"}
                initialSize={{width: 800, height: 780}}
                initialPosition={{x: 160, y: 50}}
+               onClickHeader={onClickDetailsPopupHeader}
         >
             {signalDetailsPopupContents}
         </Popup>
