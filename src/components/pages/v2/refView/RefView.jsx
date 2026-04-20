@@ -6,6 +6,9 @@ import RefDetails from "./RefDetails.jsx";
 import "./refView.css"
 import {ACTIONS_IARE} from "../../../../constants/actionsIare.jsx";
 import {createInstance} from "i18next";
+import Popup from "../../../Popup.jsx";
+import SignalDataDetailsTitle from "../../../SignalDataDetailsTitle.jsx";
+import SignalDataDetails from "../../../SignalDataDetails.jsx";
 
 const STORAGE_KEY = "modalPositionSize";
 
@@ -43,6 +46,9 @@ export default function RefView({
         y: modalDefaults.margin,
     });
 
+    const [isSignalDetailsPopupOpen, setIsSignalDetailsPopupOpen] = useState(false)
+    const [signalDetailsPopupTitle, setSignalDetailsPopupTitle] = useState(<>Modal Title</>);
+    const [signalDetailsPopupContents, setSignalDetailsPopupContents] = useState(null);
 
 
     const handleDragStart = (e, data) => {
@@ -104,6 +110,33 @@ export default function RefView({
     //     height: window.innerHeight - modalDefaults.margin,
     // });
 
+    const onClickSignalData = (e) => {
+        // triggered when Signal column in url row is clicked.
+
+        console.log("Signal column clicked")
+
+        e.stopPropagation()  // stops row click from engaging
+
+        const targetElement = e.target
+
+        const urlElement = targetElement.closest('.url-row')
+        const urlLink = urlElement.dataset.url
+        const urlObj = pageData.urlDict[urlLink]
+
+        // const rawSignalData = <pre>{JSON.stringify(urlObj.signal_data, null, 2)}</pre>
+        const rawSignalData = urlObj.signal_data
+
+        setSignalDetailsPopupTitle(<SignalDataDetailsTitle urlLink={urlLink}/>)
+
+        setSignalDetailsPopupContents(<SignalDataDetails
+            urlLink={urlLink}
+            rawSignalData={rawSignalData}
+            tooltipId={tooltipId}
+        />)
+
+        setIsSignalDetailsPopupOpen(true)
+
+    }
 
 
     // const [modalState, setModalState] = useState(() => {
@@ -236,6 +269,46 @@ export default function RefView({
         console.log(`RefView:Rnd: ${eventName} (stopped propagation)`)
     }
 
+    const handleRefViewAction = (result) => {
+        // alert ("handleRefViewAction")
+
+        const {action, value} = result;
+        console.log (`RefView: handleRefViewAction: action=${action}, value=${value}`);
+
+        // handle Signal Details popup click - "value" is urlLink
+        if (action === ACTIONS_IARE.POPUP_SIGNALS_DETAILS.key) {
+            const urlLink = value
+            const urlObj = pageData.urlDict[urlLink]
+            const rawSignalData = urlObj.signal_data
+
+            setSignalDetailsPopupTitle(<SignalDataDetailsTitle urlLink={urlLink}/>)
+            setSignalDetailsPopupContents(<SignalDataDetails
+                urlLink={urlLink}
+                rawSignalData={rawSignalData}
+                tooltipId={tooltipId}
+            />)
+            setIsSignalDetailsPopupOpen(true)
+            return
+        }
+
+        // else send back up action tree
+        onAction(result)
+    }
+
+
+    const onClickPopupHeaderDetails = (e) => {
+
+        const targetElement = e.target
+        const targetClass = targetElement.className
+
+        if (targetClass === "info-click") {
+            console.log("Info for Details Popup Header Clicked")
+            setIsSignalsDocsPopupOpen(true)
+        }
+
+    }
+
+    
     // return <div className='ref-modal-overlay' onProbeClick={onClose} >
     return <div
         className='ref-modal-overlay'
@@ -361,7 +434,7 @@ export default function RefView({
                             pageData={pageData}
                             tooltipId={tooltipId}
                             config={myConfig}
-                            onAction={onAction}
+                            onAction={handleRefViewAction}
                         />
                     </div>
 
@@ -369,6 +442,21 @@ export default function RefView({
 
             </div>
         </Rnd>
+
+        {/* popup title, data and open status set in handleSignalClick function */}
+        <Popup isOpen={isSignalDetailsPopupOpen}
+               onClose={() => {
+                   setIsSignalDetailsPopupOpen(false)
+               }}
+               title={signalDetailsPopupTitle}
+               className={"signal-details-popup"}
+               initialSize={{width: 800, height: 780}}
+               initialPosition={{x: 160, y: 50}}
+               onClickHeader={onClickPopupHeaderDetails}
+        >
+            {signalDetailsPopupContents}
+        </Popup>
+
     </div>
 
 }

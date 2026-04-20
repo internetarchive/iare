@@ -5,6 +5,10 @@ system. Many action handlers in various components make use of these
  */
 export const ACTIONS_IARE = {
 
+    _TEST_MESSAGE: {
+        key:"_TEST_MESSAGE",
+    },
+
     REMOVE_ALL_FILTERS: {
         key:"REMOVE_ALL_FILTERS",
     },
@@ -83,6 +87,10 @@ export const ACTIONS_IARE = {
 
     SET_LIVE_STATUS_FILTER: {
         key: "SET_LIVE_STATUS_FILTER"
+    },
+
+    POPUP_SIGNALS_DETAILS: {
+        key: "POPUP_SIGNALS_DETAILS"
     },
 
 }

@@ -151,7 +151,6 @@ function RefDetails({ refDetails,
             </div>
         </div>
 
-
         <RefCitationDisplayHtml reference={refDetails} onClick={handleCitationClick} onAction={onAction} />
 
         <RefCitationDisplay _ref={refDetails}
@@ -166,7 +165,9 @@ function RefDetails({ refDetails,
         {/*<RefProbes reference={refDetails} pageData={pageData} />*/}
         <RefActionables actionables={refDetails?.actionable} />
         <RefCitationClaim reference={refDetails} />
-        <RefUrls urls={refDetails?.urls} pageData={pageData} />
+
+        <RefUrls urls={refDetails?.urls} pageData={pageData} onAction={onAction} />
+
         {showWikitext && <RefWikitext wikitext={refDetails?.wikitext} ref_details={refDetails} onAction={handleRefViewAction} />}
         <RefTemplates templates={refDetails?.templates} pageData={pageData} tooltipId={tooltipId} />
         {/*<RefWikitextNew wikitext="" onAction={handleRefViewAction} />*/}

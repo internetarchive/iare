@@ -92,12 +92,6 @@ const urlFlock = React.memo(function UrlFlock({
         sortOrder: ["status"]  // array indicating which sorts get applied and in what order. NB this is not implemented yet, but will be
     })
 
-    const columnsToShow = {
-        "reliability": {show: true},
-        "probes": {show: true},
-        "signals": {show: true}
-    }
-
     const updateFlockSort = (sortKey) => {
         // set new sort State:
         // - toggle sort direction of specified sort
@@ -470,7 +464,7 @@ const urlFlock = React.memo(function UrlFlock({
                 //     setUrlTooltipHtml(text)
                 // }
 
-    const getDataRows = (flockArray, flockFilters, columnsToShow) => {
+    const getDataRows = (flockArray, flockFilters) => {
         // TODO implement columnsToShow (ignoring for now)
 
         // returns [flockRow markup, array of filtered urls]
@@ -608,17 +602,13 @@ const urlFlock = React.memo(function UrlFlock({
                 <div className={"url-archive_status"}>{getArchiveStatusInfo(u)}</div>
                 <div className={"url-actionable"}>{getActionableInfo(u)}</div>
 
-                {columnsToShow.signals.show ?
-                    <div className={"url-signals"} onClick={onClickSignalData}>
-                        <SignalDisplay
-                            urlObj={u}
-                            onSignalClick={onClickSignalDetail}
-                            badgeContext={badgeContext.INLINE}
-                        />
-                    </div>
-
-                    : null
-                }
+                <div className={"url-signals"} onClick={onClickSignalData}>
+                    <SignalDisplay
+                        urlObj={u}
+                        onSignalClick={onClickSignalDetail}
+                        badgeContext={badgeContext.INLINE}
+                    />
+                </div>
 
             </div>
 
@@ -671,7 +661,7 @@ const urlFlock = React.memo(function UrlFlock({
     }  // end getFlockRows
 
 
-    const getHeaderRow = (columns) => {
+    const getHeaderRow = () => {
         return <div
             className={"url-row-header flock-row-header"}
             // onClick={onClickHeaderRow}
@@ -700,21 +690,17 @@ const urlFlock = React.memo(function UrlFlock({
             >Action<br/>Items
             </div>
 
-            {columns.signals?.show ?
-                <div className={"url-signals flock-col"} onClick={(e) => {
-                    // don't use default sort click, as Signal-type clicks do something special
-                    onSignalHeaderClick(e)
-                }}
-                >
-                    <div className={"wiki-signals-docs flock-col"}>WikiSignals ℹ️
-                        <span className={"info-icon descriptor-text"}> (Click to show information) </span>
-                    </div>
-                    <div className={"wiki-signals-sort flock-col"}>WikiSignal Sort <span className={"descriptor-text"}>(Click to sort)</span>
-                    </div>
+            <div className={"url-signals flock-col"} onClick={(e) => {
+                // don't use default sort click, as Signal-type clicks do something special
+                onSignalHeaderClick(e)
+            }}
+            >
+                <div className={"wiki-signals-docs flock-col"}>WikiSignals ℹ️
+                    <span className={"info-icon descriptor-text"}> (Click to show information) </span>
                 </div>
-
-                : null
-            }
+                <div className={"wiki-signals-sort flock-col"}>WikiSignal Sort <span className={"descriptor-text"}>(Click to sort)</span>
+                </div>
+            </div>
 
         </div>
 
@@ -749,8 +735,8 @@ const urlFlock = React.memo(function UrlFlock({
 
 
     // flockDataRows is markup for all rows and flockArray is array of url's used for that markup
-    const [flockDataRows, flockArray] = getDataRows(urlArray, urlFilters, columnsToShow);
-    const flockHeaderRow = getHeaderRow(columnsToShow)
+    const [flockDataRows, flockArray] = getDataRows(urlArray, urlFilters);
+    const flockHeaderRow = getHeaderRow()
     const flockAllRows = [flockHeaderRow, ...flockDataRows]
     const flock = <div
         className={"flock-rows url-rows"}

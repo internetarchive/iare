@@ -18,6 +18,7 @@ import {REFERENCE_STATS_MAP} from "../../../../../constants/referenceStatsMap.js
 import {ACTIONS_IARE} from "../../../../../constants/actionsIare.jsx";
 import {isBookUrl, bookTemplates, noBookLink, bookDefs} from "../../../../../utils/iariUtils.js";
 import {getTestOverviewColumnData} from "../../../../../utils/testUtils.jsx";
+import {iareAlert} from "../../../../../utils/generalUtils.js";
 
 
 export default function UrlDisplay ({ pageData, options } ) {
@@ -127,6 +128,12 @@ export default function UrlDisplay ({ pageData, options } ) {
 
         if (0) {
             // allows for easy addition of "else if"
+        }
+
+        else if (action ===
+            ACTIONS_IARE._TEST_MESSAGE.key
+        ) {
+            iareAlert(value)  // value is reference index
         }
 
         else if (action ===

@@ -10,6 +10,9 @@ import {
 import {Button} from "react-bootstrap";
 import Popup from "../../../Popup.jsx";
 import RefUrlProbe from "./RefUrlProbe.jsx";
+import SignalDisplay from "../../../SignalDisplay.jsx";
+import {BadgeContextEnum as badgeContext} from "../../../../constants/badgeDisplayTypes.jsx";
+import {ACTIONS_IARE} from "../../../../constants/actionsIare.jsx";
 
 
 /* include for probePopup, maybe
@@ -29,7 +32,7 @@ const probePopup = null
 /*
 shows template urls and their status codes in a tabular form
  */
-export default function RefUrls({ urls, pageData, tooltipId, showDebug=false }) {
+export default function RefUrls({ urls, pageData, onAction, tooltipId, showDebug=false }) {
 
     const [isProbePopupOpen, setIsProbePopupOpen] = useState(false)
     const [probePopupTitle, setProbePopupTitle] = useState(<>Modal Title</>);
@@ -77,6 +80,25 @@ export default function RefUrls({ urls, pageData, tooltipId, showDebug=false }) 
         setIsProbePopupOpen(true)
 
     }
+
+
+    const handleSignalClick = (e) => {
+        const targetElement = e.target
+
+        const urlElement = targetElement.closest('.url-row')
+        const urlLink = urlElement.dataset.url
+        const urlObj = pageData.urlDict[urlLink]
+
+        const urlLinkFromData = targetElement.dataset.url
+        console.log(`Url from Signal Badge data is: ${urlLinkFromData}`)
+
+        onAction(
+            {
+                action: ACTIONS_IARE.POPUP_SIGNALS_DETAILS.key, value: urlLink
+            }
+        )
+    }
+
 
     // assumes u is an url object
     const getUrlRow = (u, i) => {
@@ -135,9 +157,17 @@ export default function RefUrls({ urls, pageData, tooltipId, showDebug=false }) 
             <div className={"url-archive_status"}>{getArchiveStatusInfo(u)}</div>
 
             {/*<div className={"url-citations"}>{getCitationInfo(u)}</div>*/}
-            <div className={"url-perennial"}>{getPerennialInfo(u)}</div>
-            <div className={"url-probes"}>
-                <RefUrlProbe urlObj={u} pageData={pageData} onProbeClick={handleProbeClick} />
+            {/*<div className={"url-perennial"}>{getPerennialInfo(u)}</div>*/}
+            {/*<div className={"url-probes"}>*/}
+            {/*    <RefUrlProbe urlObj={u} pageData={pageData} onProbeClick={handleProbeClick} />*/}
+            {/*</div>*/}
+
+            <div className={"url-signals"} onClick={handleSignalClick}>
+                <SignalDisplay
+                    urlObj={u}
+                    onSignalClick={handleSignalClick}
+                    badgeContext={badgeContext.INLINE}
+                />
             </div>
 
         </div>
@@ -151,9 +181,12 @@ export default function RefUrls({ urls, pageData, tooltipId, showDebug=false }) 
             <div className={"url-row-label url-status"}>Status</div>
             <div className={"url-row-label url-archive_status"}>Archive</div>
 
-            {/*<div className={"url-citations"}>{getCitationInfo(u)}</div>*/}
-            <div className={"url-row-label url-perennial"}>Reliability</div>
-            <div className={"url-row-label url-probes"}>Probe Results</div>
+            {/*/!*<div className={"url-citations"}>{getCitationInfo(u)}</div>*!/*/}
+            {/*<div className={"url-row-label url-perennial"}>Reliability</div>*/}
+            {/*<div className={"url-row-label url-probes"}>Probe Results</div>*/}
+
+            <div className={"url-row-label url-signals"}>WikiSignals</div>
+
         </div>
 
     }
