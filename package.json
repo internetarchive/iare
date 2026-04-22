@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.3.1.31",
-  "version_name": "0.3.1.31 Show/Hide Refs in UrlDisplay view",
+  "version": "0.3.1.32",
+  "version_name": "0.3.1.32 Include iari source researcher6 ",
   "private": true,
   "type": "module",
   "dependencies": {

@@ -31,5 +31,11 @@ export const IariSources = {
         caption: 'IARI Local',
         proxy: 'http://localhost:5001/v2',
     },
+    iari_r6_stage: {  // iari_researcher6
+        key: 'iari_r6_stage',
+        caption: 'IARI researcher6',
+        api_base: 'http://researcher6.fnf.archive.org:5088/v2/',
+    },
+
 }
 
