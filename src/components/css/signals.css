@@ -4,14 +4,32 @@
 
     --width-signal-score: var(--width-signal-badge);
     --width-signal-wayback: var(--width-signal-badge);
-    --width-signal-wiki: var(--width-signal-badge);
+    --width-signal-wiki: 3rem; /*var(--width-signal-badge);*/
     --width-signal-tranco: var(--width-signal-badge);
     --width-signal-mbfc: var(--width-signal-badge);
+
+    --width-signal-details-icon: 4rem;
+    --width-signal-details-info: 10rem;
 
     --width-signal-badge-detail: 6rem;
     --width-signal-text-detail: 10rem;
 
     --width-hot-meter: .6rem;
+
+    --signal-grid-columns-inline:
+            var(--width-signal-score)
+            var(--width-signal-wayback)
+            var(--width-signal-wiki)
+            var(--width-signal-tranco)
+            var(--width-signal-mbfc)
+            minmax(10rem, 1fr);
+
+    --signal-grid-columns-details:
+            var(--width-signal-details-icon)
+            minmax(var(--width-signal-details-info), 1fr);
+
+    --signal-badge-height-inline: 1.5rem;
+    --signal-badge-height-details: auto;
 
 }
 
@@ -49,16 +67,18 @@ button.fetch-signal-button:hover {
 }
 
 /* * * * * * * * * * * * * * * * * *
- *  S I G N A L S   G E N E R I C  *
+ *  S I G N A L   B A D G E S   G E N E R I C  *
  * * * * * * * * * * * * * * * * * */
 
 .signal-badges {
 
 }
 
-.signal-badges .signal-badge {
+.signal-badge {
     display: flex;
     align-items: center;
+    height: 100%;
+    padding:0 .12rem;
     /*border: 1px solid var(--color-list-line);*/
 }
 
@@ -66,6 +86,7 @@ button.fetch-signal-button:hover {
     /*display: flex;*/
     /*align-items: center;*/
     overflow: hidden;
+    height:100%
 }
 
 .signal-badge .signal-badge-element:nth-of-type(2) {
@@ -80,57 +101,42 @@ button.fetch-signal-button:hover {
 }
 
 .signal-badge .logo-image {
-    width: 100%;
+    /*width: 100%;*/
     /*padding:0 .25rem;*/
 }
-.signal-badge.score-badge .badge-icon {
-    display: block;
-    padding-right: calc(var(--width-hot-meter) + 2px); /* makes space for the bar */
 
-}
-.score-badge .signal-badge-element {
-    position: relative;
-}
-xxx.score-badge .badge-icon-wrapper::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: var(--width-hot-meter);
+.signal-badge .badge-icon {
     height: 100%;
-    /* score-color var defined in surrounding div */
-    background: var(--score-color, deeppink); /* fallback included; --badge-color defined in badge-icon wrapper div */
+    display: flex;
 }
-
-.score-badge .badge-icon-wrapper {
+.signal-badge .badge-icon img,
+.signal-badge .badge-icon-wrapper img {
+    height: 100%;
+    width: 100%;           /* maintain aspect ratio */
+    /*width: auto;           !* maintain aspect ratio *!*/
+    object-fit: contain;   /* prevent distortion */
+    display: block;        /* removes inline gap */
+}
+.signal-badge .badge-icon-wrapper {
+    position: relative;
     display: flex;
     align-items: stretch;
+    height:100%;
 }
 
-.badge-icon-bar {
-    display: block;
-
+.signal-badge.missing-value .badge-icon {
+    opacity: .3;
 }
 
-.score-badge .logo-image {
-    display: block;
+.signal-badge.missing-value .badge-text, .missing-value {
+    color: var(--color-text-muted);
+    font-style: italic;
 }
 
-.score-badge .badge-icon-bar {
-    width: 10px;
-    margin-left: 8px;
-    display: inline-block;
+.signal-badge .signal-badge-element {
+    position: relative;
+    height: 100%;
 }
-
-.section-expander {
-    margin-bottom: .5rem;
-    margin-top:.5rem;
-    cursor: pointer;
-    display: inline-block;
-    color: #5cb0de;
-    font-weight: var(--grid-caption-font-weight);
-}
-
 
 
 /* * * * * * * * * * * * * * * * * * * * * * *
@@ -138,20 +144,11 @@ xxx.score-badge .badge-icon-wrapper::after {
  * * * * * * * * * * * * * * * * * * * * * * */
 
 .signal-badges-inline {
+    /*height: var(--signal-badge-height);*/
     display: grid;
-    grid-template-columns:
-            6rem /*var(--width-signal-score)*/
-            var(--width-signal-wayback)
-            var(--width-signal-wiki)
-            var(--width-signal-tranco)
-            var(--width-signal-mbfc)
-            minmax(10rem, 1fr);
-}
-
-/*.signal-badges-inline .signal-badge .badge-icon {*/
-.signal-badges-inline .signal-badge {
-    padding:0 .2rem;
-    /*background-color: limegreen;*/
+    grid-template-columns: var(--signal-grid-columns-inline);
+    grid-template-rows: var(--signal-badge-height-inline);
+    align-items: stretch;
 }
 
 .signal-badges-inline .signal-badges-extra-msg {
@@ -162,18 +159,15 @@ xxx.score-badge .badge-icon-wrapper::after {
 /*}*/
 
 
-.signal-badges-inline.signal-badge {
-    display: block;
-    padding: .25rem;
-    height: 100%;
-    align-items: center;
-}
-
 /* * * * * * * * * * * * * * * * * * * * * * *
  *  S I G N A L   B A D G E S   D E T A I L  *
  * * * * * * * * * * * * * * * * * * * * * * */
 
-.signal-badges-detail {
+.signal-badges-detail .signal-badge {
+    display: grid;
+    grid-template-columns: var(--signal-grid-columns-details);
+    grid-template-rows: var(--signal-badge-height-details);
+    align-items: stretch;
 }
 
 .signal-data-details .lolite{
@@ -229,13 +223,62 @@ xxx.score-badge .badge-icon-wrapper::after {
     padding: .75rem;
 }
 
+.signal-details-popup .rnd-modal-popup-body {
+    font-size:1.0rem;
+}
+
 .signal-details-popup .info-click {
     cursor: pointer;
 }
 
+/* * * * * * * * * * * * * *
+ *  S C O R E   B A D G E  *
+ * * * * * * * * * * * * * */
+
+.signal-badge.score-badge .badge-icon {
+    display: block;
+    padding-right: calc(var(--width-hot-meter) + 2px); /* makes space for the bar */
+
+}
+xxx.score-badge .badge-icon-wrapper::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: var(--width-hot-meter);
+    height: 100%;
+    /* score-color var defined in surrounding div */
+    background: var(--score-color, deeppink); /* fallback included; --badge-color defined in badge-icon wrapper div */
+}
+
+/*.badge-icon-bar {*/
+/*    display: block;*/
+
+/*}*/
+
+.score-badge .logo-image {
+    display: block;
+}
+
+.score-badge .badge-icon-bar {
+    width: 10px;
+    margin-left: 8px;
+    display: inline-block;
+}
+
+
 /* * * * * * * * * * * * * * * *
  *  S I G N A L   O T H E R S  *
  * * * * * * * * * * * * * * * */
+
+.section-expander {
+    margin-bottom: .5rem;
+    margin-top:.5rem;
+    cursor: pointer;
+    display: inline-block;
+    color: #5cb0de;
+    font-weight: var(--grid-caption-font-weight);
+}
 
 :root {
     --color-fore: #ffdb29;
@@ -244,10 +287,6 @@ xxx.score-badge .badge-icon-wrapper::after {
     --color-neutral-bar: #e7e8e9;
 }
 
-.badge-icon-wrapper {
-    position: relative;
-    height: 2.8rem;
-}
 .missing-value .badge-overlay {
     display: none;
 }
@@ -280,14 +319,6 @@ svg.score-badge-text .text-shadow {
             0 0 8pt black;
 }
 
-
-.signal-badge.missing-value .badge-icon {
-    opacity: .3;
-}
-.signal-badge.missing-value .badge-text, .missing-value {
-    color: var(--color-text-muted);
-    font-style: italic;
-}
 
 .tooltip-iare-display .info-spec {
     margin-bottom: .5rem;

@@ -153,7 +153,7 @@ export default function RefUrls({ urls, pageData, onAction, tooltipId, showDebug
         >
             <div className={"url-name"}><MakeLink href={u.url} linkText={u.url}/></div>
 
-            <div className={"url-status"}>{u.status_code}</div>
+            <div className={"url-live_status"}>{u.status_code}</div>
             <div className={"url-archive_status"}>{getArchiveStatusInfo(u)}</div>
 
             {/*<div className={"url-citations"}>{getCitationInfo(u)}</div>*/}
@@ -178,7 +178,7 @@ export default function RefUrls({ urls, pageData, onAction, tooltipId, showDebug
 
         return <div className={"url-row url-row-header"} key={0}>
             <div className={"url-row-label url-name"}>Url</div>
-            <div className={"url-row-label url-status"}>Status</div>
+            <div className={"url-row-label url-live_status"}>Status</div>
             <div className={"url-row-label url-archive_status"}>Archive</div>
 
             {/*/!*<div className={"url-citations"}>{getCitationInfo(u)}</div>*!/*/}
@@ -207,7 +207,7 @@ export default function RefUrls({ urls, pageData, onAction, tooltipId, showDebug
 
         const urlRowHeader = getUrlRowHeader()
 
-        return <div className={"url-rows"}>
+        return <div className={"url-rows-display"}>
             {urlRowHeader}
             {urlRows}
         </div>

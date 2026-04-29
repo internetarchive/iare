@@ -95,12 +95,11 @@ export default function SignalDataDetails({
 
     // const [isFiltered, setIsFiltered] = React.useState(false);
     // const [showFilterControls, setShowFilterControls] = React.useState(false);
-    const [isRawDataVisible, setIsRawDataVisible] = React.useState(true);
+    const [isRawDataVisible, setIsRawDataVisible] = React.useState(false);
     const [isMetaVisible, setIsMetaVisible] = React.useState(false);
     const [isListsVisible, setIsListsVisible] = React.useState(false);
     const [isRatingsVisible, setIsRatingsVisible] = React.useState(false);
 
-    // const [tooltipHtml, setTooltipHtml] = useState('<div>SignalDataDetails tooltip</div>');
     const [tooltipHtml, setTooltipHtml] = useState(null);
 
     const onBadgeClick = (e) => {
@@ -118,27 +117,31 @@ export default function SignalDataDetails({
             let elBadge = e.target.closest('.signal-badge')
             if (elBadge) {
                 const badgeKey = elBadge.dataset["badgekey"]
-                const badgeData = elBadge.dataset["badgedata"]
-
                 const badgeDef = signalBadgeRegistry[badgeKey]
                 if (!badgeDef) {
                     setTooltipHtml(`<div>Unknown badgeKey: ${badgeKey}</div>`)
                     return
                 }
 
-                // grab info_spec data from badgeDef
-                const sourceFields = badgeDef.info_spec?.source_fields
-                if (!Array.isArray(sourceFields)) {  // not an array?
-                    setTooltipHtml(`<div>No field info to show.</div>`);
-                    return
-                }
+                            // grab info_spec data from badgeDef
+
+                            // const badgeData = elBadge.dataset["badgedata"]
+
+                            // const sourceFields = badgeDef.info_spec?.source_fields
+                            // if (!Array.isArray(sourceFields)) {  // not an array?
+                            //     setTooltipHtml(`<div>No field info to show.</div>`);
+                            //     return
+                            // }
+
+                            // // for each item in info_spec.source_fields:
+                            // const infoDetails = sourceFields.map(item => {
+                            //     const label = extractInfoFromPath(signalsDocData, item.label)
+                            //     const desc = extractInfoFromPath(signalsDocData, item.desc)
+                            //     return `<div class="info-spec"><span class="info-label">${label}</span>${desc}</div>`
+                            // }).join("")
 
                 // for each item in info_spec.source_fields:
-                const infoDetails = sourceFields.map(item => {
-                    const label = extractInfoFromPath(signalsDocData, item.label)
-                    const desc = extractInfoFromPath(signalsDocData, item.desc)
-                    return `<div class="info-spec"><span class="info-label">${label}</span>${desc}</div>`
-                }).join("")
+                const infoDetails = badgeDef.info_spec?.description
 
                 setTooltipHtml(`<div>${infoDetails}</div>`);
                 return
@@ -157,13 +160,6 @@ export default function SignalDataDetails({
             return extractRootDomain(urlLink)
         } else
             return rawSignalData?.signals?.domain
-    }
-
-    const getScore = (rawScore) => {
-        if (rawScore === undefined) return "undefined"
-        if (rawScore === "") return <span className={"lolite"}>Not Supplied</span>
-
-        return Number(rawScore).toFixed(2)
     }
 
     const getRawSignalDataDisplay = () => {
@@ -255,7 +251,6 @@ export default function SignalDataDetails({
 
     const rawDataDisplay = getRawSignalDataDisplay();
     const urlDomain = getDomain(urlLink, rawSignalData)
-    // const score = getScore(rawSignalData?.signals?.meta?.ws_score)
     const score = getNormalizedScore(rawSignalData?.signals?.meta?.ws_score);
 
 
@@ -281,7 +276,6 @@ export default function SignalDataDetails({
             <SignalBadges signals={rawSignalData?.signals}
                           badgeContext={badgeContext.DETAIL}
                           onBadgeClick={onBadgeClick}
-                          // onBadgeHover={onBadgeHover}
                           fromCache={rawSignalData?.retrieved_from_cache}
             />
             <hr/>

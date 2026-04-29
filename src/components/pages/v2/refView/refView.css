@@ -32,8 +32,6 @@
     --color-raw-claim-bg: hsl(51deg 89.36% 85.81%);
     --color-raw-claim-border: #d9bc31;
 
-    /*--margin-ref-view-section:1.515rem;*/
-    /*--margin-ref-view-section:1.315rem;*/
     --margin-ref-view-section:1.2rem;
     --margin-ref-view-section-tight:.5rem;
 
@@ -49,6 +47,7 @@
 
     --width-url-list-refview: 55rem;
     --width-url-name-refview: 26rem;
+    --width-url-status-refview: 6rem;
 
     --width-param-name: 10rem;
 
@@ -292,7 +291,7 @@
     line-height: .7;
 }
 
-button.truth-probe-button
+button.truth-probe-button  /* deprecate? */
 {
     margin-bottom:0;
     height:1.8rem;
@@ -319,7 +318,6 @@ button.truth-probe-button
     position: relative;
 }
 
-/*.ref-view-wikitext .raw-wikitext {*/
 .raw-wikitext {
     font-size: .85rem;
     color: #808080;
@@ -348,7 +346,7 @@ button.truth-probe-button
     border-radius: .5rem;
 }
 
-.link-status-tooltip {
+.link-status-tooltip {  /* deprecate? */
     font-size:1.25em;
     font-weight:normal;
     z-index: 999;
@@ -358,11 +356,10 @@ button.truth-probe-button
     margin-top:1rem;
 }
 
-.ref-view-section .url-rows {
+.ref-view-section .url-rows-display {
     height: inherit; /* override urls.css */
     border: var(--border-box-light);
     border-radius: var(--border-radius-ref-section);
-
 }
 .ref-view-section .url-rows .url-row {
     border: none; /* override urls.css */
@@ -370,8 +367,6 @@ button.truth-probe-button
 }
 
 .ref-view-url {
-    /*border:var(--border-box);*/
-    /*padding:.5rem;*/
     margin-top:.25rem;
 }
 .ref-view-url p {
@@ -412,11 +407,11 @@ button.truth-probe-button
 /*.ref-view-url .url-header-row .url-sections,*/
 /*.ref-view-url .url-header-row .url-perennial*/
 /*.ref-view-url .url-header-row .url-probes*/
+/*{*/
+/*    padding-top: .15rem !important;*/
+/*    padding-bottom: .15rem !important;*/
+/*}*/
 
-{
-    padding-top: .15rem !important;
-    padding-bottom: .15rem !important;
-}
 .ref-view-url .url-row.no-template-url {
     padding: var(--padding-url-column)
 }
@@ -426,8 +421,8 @@ button.truth-probe-button
 {
     display: flex;
     flex-direction: row;
-    border:1px solid black;
-    border-radius: var(--border-radius-ref-section);
+    /*border:1px solid black;*/
+    /*border-radius: var(--border-radius-ref-section);*/
     position:relative;
     cursor: inherit;
 }
@@ -462,6 +457,8 @@ button.truth-probe-button
     padding-left:var(--padding-url-column);
 }
 .url-row-header .url-status {
+    width: var(--width-url-status-refview);
+
 }
 .url-row.url-row-header .url-row-label.url-archive_status {
     /*padding-bottom:0 !important;*/
@@ -693,9 +690,6 @@ button.truth-probe-button
 
 .ref-view-ref-list .flock-box-contents {
     padding:.0rem .13rem .33rem .13rem;
-    /*height: calc(100% - 145px);*/
-    /*height: calc(100% - 6.2rem);*/
-    /*height: calc(100% - var(--height-ref-view-list-caption));*/
     height: 100%;
     margin-top: .3rem;
 
@@ -703,7 +697,6 @@ button.truth-probe-button
 
 .ref-view-ref-list .ref-button.selected {
     background-color: var(--g-color-reference-display-selected-bg);
-
     /*width: 22rem;*/
     /*border: 3px solid #0966a4;*/
     outline: 3px solid #0966a4;

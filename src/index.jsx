@@ -35,8 +35,8 @@ const getIariSource = (qParams, targetEnvironment) => {
     const sourceKey = queryParameters.has("iari-source")
         ? queryParameters.get("iari-source")
         : (targetEnvironment === 'env-local')
-            ? IariSources.iari_local.key
-            : IariSources.iari_stage.key
+            ? IariSources.iari_local.key  // default when local
+            : IariSources.iari_stage.key  // default otherwise
 
     // if specified source not in our defined choices, default to stage, and error
     // TODO we should change this so we get a UI run time error

@@ -14,7 +14,7 @@ import {signalBadgeRegistry} from "./signalBadgeRegistry.jsx";
 export default function EnwikiBadge({
                                         signals = {},
                                         badgeContext = BadgeContextEnum.INLINE,
-                                        onBadgeClick,
+                                        onAction,
                                     }
 ) {
 

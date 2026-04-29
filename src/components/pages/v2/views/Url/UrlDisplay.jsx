@@ -157,7 +157,7 @@ export default function UrlDisplay ({ pageData, options } ) {
         else if (action ===
             ACTIONS_IARE.SHOW_REFERENCE_VIEWER_FOR_URL.key
         ) {
-            // value = url to show in RefView; more accurately, show the ref that "houses" the url
+            // value is url to show in RefView; more accurately, show the ref that "houses" the url
             const refIndex = pageData.urlDict[value]?.refs[0]?.ref_index
             const selectedRef = pageData.references.find(
                 r => {  // NB assumes ref_index and ref_index.toString() is valid
@@ -324,8 +324,14 @@ export default function UrlDisplay ({ pageData, options } ) {
         else if (action ===
             ACTIONS_IARE.TOGGLE_SHOW_REFS.key
         ) {
-
             setIsShowRefs((prevIsShowRefs) => !prevIsShowRefs);
+        }
+
+
+        else if (action ===
+            ACTIONS_IARE.FETCH_SIGNAL_DATA.key
+        ) {
+            iareAlert("Will fetch signal data for: \n\n" + value);
         }
 
 
@@ -714,7 +720,8 @@ export default function UrlDisplay ({ pageData, options } ) {
                                          caption: "References List",
                                      }}
                                      tooltipId={"tooltip-url-display"}
-                                     context={"UrlDisplay"} />}
+                                     context={"UrlDisplay"} />
+            }
 
         </div>
     </>

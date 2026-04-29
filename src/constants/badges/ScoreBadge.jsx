@@ -40,9 +40,9 @@ function getTemperatureColor2(value) {
  * @param {Function} [props.onSignalClick]
  * @param {BadgeContextEnum} [props.badgeContext]*/
 export default function ScoreBadge({
-                                        signals = {},
-                                        onBadgeClick,
-                                        badgeContext = BadgeContextEnum.INLINE,
+                                       signals = {},
+                                       badgeContext = BadgeContextEnum.INLINE,
+                                       onAction,
                                     }
 ) {
     const badgeDef = signalBadgeRegistry.score
@@ -79,7 +79,7 @@ export default function ScoreBadge({
         }
 
         badgeIcon = <div className={"badge-icon-wrapper"} style={{"--score-color": scoreColor}}>
-            <img src={badgeDef.logo} alt={"WikiSignal Score"} style={{height: "100%"}}/>
+            <img src={badgeDef.logo} alt={"WikiSignal Score"}/>
 
             <div className={"badge-overlay"}>
                 <svg
@@ -90,14 +90,16 @@ export default function ScoreBadge({
                     <rect x="0" y="0" width="10" height={100 - score100} fill="var(--color-neutral-bar)"></rect>
                 </svg>
 
-                <svg className={"score-badge-text"}
-                     viewBox="0 0 100 30"
-                >
-                    <text x="50" y="50%" dy="20%" className={"text-shadow"}>{score100}</text>
-                    <text x="50" y="50%" dy="20%" className={"text-stroke"}>{score100}</text>
-                    <text x="50" y="50%" dy="20%" className={"text-fore"}>{score100}</text>
-                </svg>
+            {/*    <svg className={"score-badge-text"}*/}
+            {/*         viewBox="0 0 100 30"*/}
+            {/*    >*/}
+            {/*        <text x="50" y="50%" dy="20%" className={"text-shadow"}>{score100}</text>*/}
+            {/*        <text x="50" y="50%" dy="20%" className={"text-stroke"}>{score100}</text>*/}
+            {/*        <text x="50" y="50%" dy="20%" className={"text-fore"}>{score100}</text>*/}
+            {/*    </svg>*/}
+
             </div>
+
         </div>
 
     } catch (e) {

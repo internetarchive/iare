@@ -93,6 +93,10 @@ export const ACTIONS_IARE = {
         key: "POPUP_SIGNALS_DETAILS"
     },
 
+    FETCH_SIGNAL_DATA: {
+        key: "FETCH_SIGNAL_DATA"
+    },
+
     TOGGLE_SHOW_REFS: {
         key: "TOGGLE_SHOW_REFS"
     },

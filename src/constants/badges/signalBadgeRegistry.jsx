@@ -14,7 +14,7 @@ import MbfcBadge from "./MbfcBadge";
 import imgScoreLogo from "./images/wikisignals.logo.v1r4.png"
 import imgWaybackLogo from "./images/badge.logo.wayback.small.png"
 import imgTrancoLogo from './images/badge.logo.tranco.png'
-import imgMbfcLogo from "./images/badge.logo.mbfc.small.png";
+import imgMbfcLogo from "./images/badge.logo.mbfc.png";
 import imgEnwikiLogo from "./images/badge.logo.wiki.png";
 
 
@@ -39,7 +39,7 @@ export const signalBadgeRegistry = {
         group: "",
 
         info_spec: {
-            description: "",
+            description: "Provides overall score determined by WikiSignals",
             source_fields: [
                 {
                     name: "Wikisignals score",
@@ -63,7 +63,7 @@ export const signalBadgeRegistry = {
         group: "",
 
         info_spec: {
-            description: "",
+            description: "Tranco rating",
             source_fields: [
                 {
                     name: "ranking",
@@ -84,6 +84,12 @@ export const signalBadgeRegistry = {
         priority: 200,
         group: "",
         logo: imgMbfcLogo,
+        info_spec: {
+            description: "Media Bias Fact Check",
+            source_fields: [
+
+            ],
+        }
     },
 
     enwiki: {
@@ -95,7 +101,7 @@ export const signalBadgeRegistry = {
         group: "",
         logo: imgEnwikiLogo,
         info_spec: {
-            description: "",
+            description: "How many external links with this domain in English Wikipedia.",
             source_fields: [
                 {
                     name: "Wikipedia links",
@@ -115,7 +121,7 @@ export const signalBadgeRegistry = {
         group: "",
         logo: imgWaybackLogo,
         info_spec: {
-            description: "",
+            description: "Total snapshots in Wayback Machine, and first/last capture dates.",
             source_fields: [
                 {
                     name: "Total Captures",

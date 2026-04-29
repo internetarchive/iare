@@ -13,7 +13,7 @@ import {signalBadgeRegistry} from "./signalBadgeRegistry.jsx";
 export default function WaybackBadge({
                                          signals = {},
                                          badgeContext = BadgeContextEnum.INLINE,
-                                         onBadgeClick,
+                                         onAction,
                                      }
 ) {
     if (!signals) {

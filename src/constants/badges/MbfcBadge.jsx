@@ -12,7 +12,7 @@ import {signalBadgeRegistry} from "./signalBadgeRegistry.jsx";
 export default function MbfcBadge({
                                       signals = {},
                                       badgeContext = BadgeContextEnum.INLINE,
-                                      onBadgeClick,
+                                      onAction,
                                   }
 ) {
     if (!signals) {

@@ -289,19 +289,13 @@ const urlFlock = React.memo(function UrlFlock({
 
 
     const onClickFlockRow = (e) => {
-        // get the url data from the row associated with the clicked element
-        // TODO fix this to use dataset property
-        // const url = e.target.closest('.url-row').getAttribute('data-url');
+        e.stopPropagation()
+
+        // get the url associated with the row of the clicked element
         const el = e.target.closest('.url-row')
         const url = el?.dataset.url
 
-        // if click on Probe badge, do not popup refView
-        if (e.target.classList.contains("probe-badge")) {
-            e.stopPropagation()
-            return
-        }
-
-        // send action back up the component tree to co-filter the references list
+        // send action back up component tree to co-filter references list
         onAction({
             "action": ACTIONS_IARE.SHOW_REFERENCE_VIEWER_FOR_URL.key,
             "value": url,
@@ -603,11 +597,14 @@ const urlFlock = React.memo(function UrlFlock({
                 <div className={"url-archive_status"}>{getArchiveStatusInfo(u)}</div>
                 <div className={"url-actionable"}>{getActionableInfo(u)}</div>
 
-                <div className={"url-signals"} onClick={onClickSignalData}>
+                <div className={"url-signals"}
+                     // onClick={onClickSignalData}
+                    >
                     <SignalDisplay
                         urlObj={u}
-                        onSignalClick={onClickSignalDetail}
+                        onAction={onAction}
                         badgeContext={badgeContext.INLINE}
+                        tooltipId={tooltipId}
                     />
                 </div>
 

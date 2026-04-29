@@ -6,8 +6,10 @@ import {BadgeContextEnum} from "../constants/badgeDisplayTypes.jsx";
 
 export default function SignalDisplay({
                                                     urlObj = {},
-                                                    onSignalClick,
-                                                    badgeContext = BadgeContextEnum.INLINE
+                                                    onAction,
+                                                    badgeContext = BadgeContextEnum.INLINE,
+                                                    tooltipId = null,
+
                                                 }) {
     /*
         Displays values of any signals represented in the signal data described in sigData.
@@ -29,8 +31,9 @@ export default function SignalDisplay({
     return <>
         {/*{cacheMsg}*/}
         <SignalBadges signals={signals}
-                      onBadgeClick={onSignalClick}
+                      onAction={onAction}
                       badgeContext={badgeContext}
+                      tooltipId = {tooltipId}
                       fromCache = {urlObj?.signal_data?.retrieved_from_cache}
         />
     </>

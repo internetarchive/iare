@@ -11,7 +11,7 @@ export const IariSources = {
     iari_prod: {
         key: 'iari_prod',
         caption: 'IARI Prod',
-        // proxy: 'https://archive.org/services/context/iari-prod/v2',
+        // proxy: 'https://archive.org/services/con text/iari-prod/v2',
         proxy: 'https://iabot-api.archive.org/services/context/iari-prod/v2',
     },
     iari_stage: {
@@ -33,8 +33,8 @@ export const IariSources = {
     },
     iari_r6_stage: {  // iari_researcher6
         key: 'iari_r6_stage',
-        caption: 'IARI researcher6',
-        api_base: 'http://researcher6.fnf.archive.org:5088/v2/',
+        caption: 'IARI researcher6 Stage',
+        proxy: 'http://researcher6.fnf.archive.org:5088/v2/',
     },
 
 }
