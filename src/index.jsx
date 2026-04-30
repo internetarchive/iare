@@ -31,19 +31,23 @@ const getIariSource = (qParams, targetEnvironment) => {
 
     // hard-set to iari_prod for production
     if (targetEnvironment === 'env-production') return IariSources.iari_prod.key
-    // else default to stage if not specified
+
+    const defaultIariSourceKey = IariSources.iari_stage_r6.key
+
+    // fall back to default if not specified as url parameter
     const sourceKey = queryParameters.has("iari-source")
         ? queryParameters.get("iari-source")
         : (targetEnvironment === 'env-local')
             ? IariSources.iari_local.key  // default when local
-            : IariSources.iari_stage.key  // default otherwise
+            : defaultIariSourceKey
 
-    // if specified source not in our defined choices, default to stage, and error
+    // if specified source not in our defined choices, set to default, and log error
     // TODO we should change this so we get a UI run time error
     if (!IariSources[sourceKey]) {
         console.error(`IARI Source ${sourceKey} not supported.`)
-        return IariSources.iari_stage.key
+        return defaultIariSourceKey
     }
+
     return sourceKey
 }
 
