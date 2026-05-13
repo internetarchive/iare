@@ -53,10 +53,17 @@ export default function Badge({
                 data-badgekey={badgeKey}
                 onMouseMove={onBadgeHover}
     >
+
+        {badgeContext.headerCell &&
         <HeaderCell
             content={headerContent}
             sort={headerSort}
             headerClass={headerCellClass}
-        />
+        />}
+
+        {!badgeContext.headerCell && <>
+        {headerContent}
+        </>}
+
     </div>
 }
