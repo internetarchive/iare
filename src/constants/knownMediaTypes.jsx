@@ -1,4 +1,4 @@
-export const MEDIA_TYPES = {
+export const KNOWN_MEDIA_TYPES = {
 
     WIKI: {
         key:"WIKI",
