@@ -742,7 +742,7 @@ export default function UrlDisplay ({ pageData, options } ) {
     return <div className={"url-display-container"}>
 
         <div className={"url-display-header"}>
-            <div>url-display-header</div>
+            {false && <div>url-display-header</div>}
             {overviewColumn}
         </div>
 
@@ -763,7 +763,7 @@ export default function UrlDisplay ({ pageData, options } ) {
                         conditions={currentConditions}
                         onAction={handleAction}/>
 
-                    <div>ShowRefs: {isShowRefs ? "true" : "false"}</div>
+                    {/*<div>ShowRefs: {isShowRefs ? "true" : "false"}</div>*/}
 
                 </div>{/* iare-ux-header */}
 

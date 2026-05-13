@@ -421,7 +421,9 @@ button.utility-button.disabled {
 
 .header-cell.url-name .header-cell-content,
 .header-cell.url-name .header-cell-sort {
-    justify-content: left;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    text-align: left;
 }
 
 /*

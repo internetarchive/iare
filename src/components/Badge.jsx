@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import {BadgeContexts} from "../constants/badgeContexts.jsx";
 import SortBox from "./SortBox.jsx";
 import HeaderCell from "./HeaderCell.jsx";
+import { ColumnSortContext } from "../contexts/ColumnSortContext"
 
 export default function Badge({
                                   badgeKey = "",
@@ -21,12 +22,26 @@ export default function Badge({
 ) {
 
     const badgeContext = BadgeContexts[badgeContextKey] || BadgeContexts.default
+    const columnSort = useContext(ColumnSortContext)
+    const mainSortKey = columnSort?.sortBy[0]
+    const mySortKey = `signal_${badgeKey}`
+    let myDir = 0
+    if (mySortKey === mainSortKey) {
+        const mySortDef = columnSort.sorts[mySortKey]
+        myDir = (mySortDef?.dir ?? 0) * -1
+    }
+
+    const debugContent = <div style={{display: "block", fontSize:"50%"}}>
+        <div>BK: {badgeKey}</div>
+        <div>MSK: {mainSortKey}</div>
+    </div>
 
     const headerContent = (
         <>
             {badgeContext.hasIcon && (
                 <div className={"signal-badge-element badge-icon"}>
                     {badgeIcon}
+                    {/*{debugContent}*/}
                 </div>
             )}
             {badgeContext.hasText && (
@@ -38,12 +53,17 @@ export default function Badge({
     );
 
 
+
     const headerSort = badgeContext.value === "sort"
-        ? <SortBox className={"signal-badge-element"}/>
+        ? <SortBox
+            className={"signal-badge-element"}
+            direction={myDir}
+        />
         : null
 
     const headerCellClass = [
         // "signal-badge",
+        "flock-col",
         badgeClass
     ]
         .filter(Boolean).join(" ")

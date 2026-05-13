@@ -1,10 +1,9 @@
 :root {
-    --width-signal-badge: 4rem;
+    --width-signal-badge: 4.8rem;
     --width-signal-text: 10rem;
 
     --width-signal-score: var(--width-signal-badge);
     --width-signal-wayback: var(--width-signal-badge);
-    /*--width-signal-wiki: 3rem; !*var(--width-signal-badge);*!*/
     --width-signal-wiki: var(--width-signal-badge);
     --width-signal-tranco: var(--width-signal-badge);
     --width-signal-mbfc: var(--width-signal-badge);
@@ -126,6 +125,7 @@ button.fetch-signal-button:hover {
 .signal-badge .badge-icon {
     height: 100%;
     display: flex;
+    flex-direction: column;
 }
 .signal-badge .badge-icon img,
 .signal-badge .badge-icon-wrapper img {
