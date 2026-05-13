@@ -20,10 +20,8 @@ import SignalDisplay from "../../SignalDisplay.jsx";
 import SignalsDocs from "../../SignalsDocs.jsx";
 import SignalsSort from "../../SignalsSort.jsx";
 
-// import SignalDataDetails from "../../SignalDataDetails.jsx";
-// import SignalDataDetailsTitle from "../../SignalDataDetailsTitle.jsx";
 import SignalBadges from "../../SignalBadges.jsx";
-import SortBox from "../../SortBox.jsx";
+import ColumnBox from "../../ColumnBox.jsx";
 
 
 
@@ -128,27 +126,6 @@ const urlFlock = React.memo(function UrlFlock({
             }
         })
     }
-
-
-                // const onSignalHeaderClick = (e) => {
-                //     e.stopPropagation()
-                //     console.log(`onSignalHeaderClick: e.target.className = ${e.target.className}`)
-                //
-                //     const docsEl = e.target.closest(".wiki-signals-docs");
-                //     const sortEl = e.target.closest(".wiki-signals-sort");
-                //
-                //     if (docsEl) {
-                //         setIsSignalsDocsPopupOpen(true);
-                //     } else if (sortEl) {
-                //         // setIsSignalsSortPopupOpen(true);
-                //
-                //         // TODO
-                //         // fetch signal badge (signal type) from which badge was clicked
-                //         // determine/calculate/extract from signalDef the "sort key"
-                //         // send that key to updateFlockSort
-                //         updateFlockSort("signals_score")
-                //     }
-                // }
 
     const handleSignalBadgesClick = (e) => {
         e.stopPropagation()
@@ -266,33 +243,6 @@ const urlFlock = React.memo(function UrlFlock({
         return 0  // for now...
     }
 
-
-                // const sortBySignals = (a, b) => {
-                //     const signalA = a?.signal_data?.error ? 0 : 1;
-                //     const signalB = b?.signal_data?.error ? 0 : 1;
-                //
-                //     if (signalA > signalB) return sortDefs.sorts['signalValues'].dir * -1;
-                //     if (signalA < signalB) return sortDefs.sorts['signalValues'].dir;
-                //     return 0;
-                // }
-
-
-                // const sortByWikiSignalsScore = (a, b) => {
-                //     // const signalA = a?.signal_data?.signals?.meta?.ws_score ?? 0;
-                //     // const signalB = b?.signal_data?.signals?.meta?.ws_score ?? 0;
-                //     const signalA = a?.signal_data?.signals?.meta
-                //         ? a?.signal_data?.signals?.meta?.ws_score ?? 0
-                //         : -1
-                //     const signalB = b?.signal_data?.signals?.meta
-                //         ? b?.signal_data?.signals?.meta?.ws_score ?? 0
-                //         : -1
-                //
-                //     if (signalA > signalB) return columnSort.sorts['signal_score'].dir * -1;
-                //     if (signalA < signalB) return columnSort.sorts['signal_score'].dir;
-                //     return 0;
-                // }
-    
-    
     const sortFunctions = {
         // TODO what we really want to do is use the
         //  sorting function defined in the column definition
@@ -317,7 +267,7 @@ const urlFlock = React.memo(function UrlFlock({
 
     }
 
-    const sortAssociation ={
+    const columnKeyAssociation ={
         "url-name": "name",
         "url-live_status": "status",
         "url-archive_status": "archive_status",
@@ -462,9 +412,8 @@ const urlFlock = React.memo(function UrlFlock({
         colEl = e.target.closest('.flock-col')
         if (colEl) {
 
-            const columnClass = colEl?.classList[0];  // handles potential null and extract the first class name
-            // TODO could get column identifying data from dataset?
-            const sortKey = sortAssociation[columnClass]
+            const columnKey = colEl.dataset.columnKey
+            const sortKey = columnKeyAssociation[columnKey]
 
             console.log(`Clicked on header column for ${sortKey}`)
             // iareAlert(`Click on column in header for ${columnClass}`)
@@ -473,51 +422,6 @@ const urlFlock = React.memo(function UrlFlock({
         }
 
     }
-
-
-
-
-    // const onClickHeaderRow = (e) => {
-                // }
-
-
-                // const onClickSignalData = (e) => {
-                //     // triggered when Signal column in url row is clicked.
-                //
-                //     console.log("Signal column clicked")
-                //
-                //     e.stopPropagation()  // stops row click from engaging
-                //
-                //     const targetElement = e.target
-                //
-                //     const urlElement = targetElement.closest('.url-row')
-                //     const urlLink = urlElement.dataset.url
-                //     const urlObj = urlDict[urlLink]
-                //
-                //     // const rawSignalData = <pre>{JSON.stringify(urlObj.signal_data, null, 2)}</pre>
-                //     const rawSignalData = urlObj.signal_data
-                //
-                //     setSignalDetailsPopupTitle(<SignalDataDetailsTitle urlLink={urlLink}/>)
-                //
-                //     setSignalDetailsPopupContents(<SignalDataDetails
-                //         urlLink={urlLink}
-                //         rawSignalData={rawSignalData}
-                //         tooltipId={tooltipId}
-                //     />)
-                //
-                //     setIsSignalDetailsPopupOpen(true)
-                //
-                // }
-
-                // const onClickSignalDetail = (e) => {
-                //     // triggered when a single Signal is clicked.
-                //
-                //     console.log("Signal clicked")
-                //
-                //     e.stopPropagation()  // stops row click from engaging
-                //
-                //     alert("Will implement this later - will show details for one Signal value here.")
-                // }
 
 
     const onClickDetailsPopupHeader = (e) => {
@@ -797,25 +701,27 @@ const urlFlock = React.memo(function UrlFlock({
     const getHeaderRow = () => {
         return <div className={"url-row-header flock-row-header"}>
 
+            <ColumnBox
+                content={<><br/>URL Link</>}
+                columnClass={"url-name flock-col"}
+                columnKey={"url-name"}
+            />
 
-            <div className={"url-name flock-col"}><br/>URL Link
-                <SortBox/>
-            </div>
-
-            <div className={"url-live_status flock-col"}
-            >Live<br/>Status
-                <SortBox/>
-            </div>
-
-            <div className={"url-archive_status flock-col"}
-            >{archiveFilterDefs['iabot']._.name}
-                <SortBox/>
-            </div>
-
-            <div className={"url-actionable flock-col"}
-            >Action<br/>Items
-                <SortBox/>
-            </div>
+            <ColumnBox
+                content={<>Live<br/>Status</>}
+                columnClass={"url-live_status flock-col"}
+                columnKey={"url-live_status"}
+            />
+            <ColumnBox
+                content={archiveFilterDefs['iabot']._.name}
+                columnClass={"url-archive_status flock-col"}
+                columnKey={"url-archive_status"}
+            />
+            <ColumnBox
+                content={<>Action<br/>Items</>}
+                columnClass={"url-actionable flock-col"}
+                columnKey={"url-actionable"}
+            />
 
             {/* signals column is special... */}
             <div className={"url-signals flock-col"}>
@@ -840,7 +746,7 @@ const urlFlock = React.memo(function UrlFlock({
 
     // fades feedback text in and out
     //
-    // //  NB T H I S   E F F E C T   I S   N O T   R E A D Y   Y E T
+    // //  NB   T H I S   E F F E C T   I S   N O T   R E A D Y   Y E T
     //
     //
 

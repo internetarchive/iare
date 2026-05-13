@@ -14,7 +14,8 @@ export const BadgeContexts = {
     "refview": {
         value: "refview",
         className: "signal-badges-refview",
-        hasIcon: true
+        hasIcon: true,
+        headerCell: true
     },
     "inline": {
         value: "inline",

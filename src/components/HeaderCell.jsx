@@ -6,41 +6,26 @@ export default function HeaderCell({
                                        sort = null,
                                        badgeKey = "",
                                        headerClass = "",
-                                       // columnSort,
-                                       //
-                                       // headerKey = "",
-                                       // headerContextKey = BadgeContexts.inline?.value ?? "",
-                                       // headerIcon = null,
-                                       // headerText = null,
-                                       // headerData = {},
-                                       //
-                                       // sortKey = "",
-                                       // sortDirection = "",
-                                       // isSortable = false,
-                                       // isActive = false,
-                                       // isDisabled = false,
-                                       //
-                                       // onHeaderHover,
-                                       // onHeaderClick,
-                                       // onSortClick,
-                                       //
-                                       // children = null,
+                                       cellData = {},
                                    }) {
 
     const headerCellClassName = [
         "header-cell",
         headerClass,
-        // isSortable ? "header-cell-sortable" : "",
-        // headerContextKey ? `header-cell-context-${headerContextKey}` : "",
-        // isActive ? "header-cell-active" : "",
-        // sortDirection ? `header-cell-sort-${sortDirection}` : "",
-        // isDisabled ? "header-cell-disabled" : "",
     ]
         .filter(Boolean)
         .join(" ");
 
+    const datasetProps = Object.fromEntries(
+        Object.entries(cellData).map(([key, value]) => [
+            `data-${key.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`)}`,
+            value
+        ])
+    )
     return (
-        <div className={headerCellClassName}>
+        <div className={headerCellClassName}
+             {...datasetProps}
+        >
             <div className={"header-cell-content"}>
                 {content}
                 {/*{children}*/}

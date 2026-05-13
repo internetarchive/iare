@@ -419,6 +419,10 @@ button.utility-button.disabled {
     color: var(--color-lolite)
 }
 
+.header-cell.url-name .header-cell-content,
+.header-cell.url-name .header-cell-sort {
+    justify-content: left;
+}
 
 /*
  **

@@ -160,6 +160,7 @@ button.fetch-signal-button:hover {
 /* special case enwiki logo, as it's aspect ratio makes it render naturally large */
 .signal-badge .enwiki-badge .logo-image {
     width: 80%;
+    margin:auto;
 }
 
 

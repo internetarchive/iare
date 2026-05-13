@@ -11,7 +11,8 @@ export const urlColumnDefs = {
             tooltip: {
                 header: `<div>URL link text</div>`,
                 rows: `<div>Link text of URL</div>`,
-            }
+            },
+            sortable: true,
         },
 
         "url-status": {
@@ -20,12 +21,14 @@ export const urlColumnDefs = {
         },
         "url-live_status": {
             ttCaption: `<div>HTTP Status Code of URL</div>`,
-            ttData: `<div>{status_code} : {statusDescription}</div>`
+            ttData: `<div>{status_code} : {statusDescription}</div>`,
+            sortable: true,
         },
 
         "url-archive_status": {
             ttCaption: `<div>Archive exists in IABot database</div>`,
             ttData: ``,
+            sortable: true,
         },
 
         "url-citations": {
@@ -41,6 +44,7 @@ export const urlColumnDefs = {
         "url-actionable": {
             ttCaption: `<div>Actions that can be taken to improve citation</div>`,
             ttData: `<div>Actions that can be taken to improve citation</div>`,
+            sortable: true,
         },
 
         "url-sections": {
