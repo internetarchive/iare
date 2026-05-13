@@ -87,7 +87,7 @@ const grokFlock = React.memo(function GrokFlock({
             // "perennial": {name: "perennial", dir: -1},
             "signals": {name: "signalValues", dir: -1},
         },
-        sortOrder: ["status"]  // array indicating which sorts get applied and in what order. NB this is not implemented yet, but will be
+        sortBy: ["status"]  // array indicating which sorts get applied and in what order. NB this is not implemented yet, but will be
     })
 
     // NB this is experimental - want to eventually control wgich columns are shown and not shown
@@ -147,8 +147,8 @@ const grokFlock = React.memo(function GrokFlock({
                         dir: -1 * prevState.sorts[sortKey].dir
                     }
                 },
-                sortOrder: [sortKey]  // set only one for now...
-                // TODO implement so that sortOrder contains an array of a list of sortKey's, not just one
+                sortBy: [sortKey]  // set only one for now...
+                // TODO implement so that sortBy contains an array of a list of sortKey's, not just one
             }
         })
     }
@@ -254,10 +254,10 @@ const grokFlock = React.memo(function GrokFlock({
         // returns sort function based on current value of sortDefs
 
         // TODO make sorting respect a list sort definitions as described in a
-        //  "sort.sortOrder" array of key names for sort methods.
-        //  "e.g: sort.sortOrder = ["references", "archive_status", "name"]
+        //  "sort.sortBy" array of key names for sort methods.
+        //  "e.g: sort.sortBy = ["references", "archive_status", "name"]
 
-        const sort_column = sortDefs.sortOrder[0];  // just sort one column for now, i.e., no cascading sorts
+        const sort_column = sortDefs.sortBy[0];  // just sort one column for now, i.e., no cascading sorts
         const sortFn = sortFunctions[sort_column];
         return sortFn ? sortFn(a, b) : 0;
 
@@ -497,8 +497,8 @@ const grokFlock = React.memo(function GrokFlock({
         })
 
         // sort filteredUrls if specified
-        if (sortDefs.sortOrder?.length > 0) {
-            console.log(`sorting urls by: ${sortDefs.sortOrder[0]}`)
+        if (sortDefs.sortBy?.length > 0) {
+            console.log(`sorting urls by: ${sortDefs.sortBy[0]}`)
             filteredUrls.sort(sortFunction)  // sorts according to "sort" object state
         }
 

@@ -19,7 +19,7 @@ import {ParseMethods} from "./constants/parseMethods.jsx";
 
 import {ConfigContext} from "./contexts/ConfigContext"
 import {ShortcutDefs, envShortcutLists} from "./constants/shortcutDefs.jsx";
-import {MEDIA_TYPES} from "./constants/mediaTypes.jsx";
+import {KNOWN_MEDIA_TYPES} from "./constants/knownMediaTypes.jsx";
 
 
 export default function App(
@@ -233,17 +233,17 @@ export default function App(
     const getMediaType = (path = '') => {
         // set media type based on heuristic:
 
-        if (MEDIA_TYPES.WIKI.regex.test(path))
-            return MEDIA_TYPES.WIKI.key
+        if (KNOWN_MEDIA_TYPES.WIKI.regex.test(path))
+            return KNOWN_MEDIA_TYPES.WIKI.key
 
-        else if (MEDIA_TYPES.GROK.regex.test(path))
-            return MEDIA_TYPES.GROK.key
+        else if (KNOWN_MEDIA_TYPES.GROK.regex.test(path))
+            return KNOWN_MEDIA_TYPES.GROK.key
 
-        else if (MEDIA_TYPES.PDF.regex.test(path))
-            return MEDIA_TYPES.PDF.key
+        else if (KNOWN_MEDIA_TYPES.PDF.regex.test(path))
+            return KNOWN_MEDIA_TYPES.PDF.key
 
         else
-            return MEDIA_TYPES.UNKNOWN.key
+            return KNOWN_MEDIA_TYPES.UNKNOWN.key
 
     };
 
@@ -467,11 +467,13 @@ export default function App(
         })
         // setIariSourceId(sourceId);
     };
+
     const siteInfo = (env !== 'env-production')  // TODO implement IareEnvironments
         ? (env !== 'env-staging'
             ? ` LOCAL `
             : ` STAGING `)
-        : ''
+        : ''  // do not show env in production environment
+
     const iariSourceInfo = IariSources[myIariSourceId]?.caption
 
     // scroll Fix - for small screens, turning on "scrollfix" allows more elements of
@@ -577,7 +579,7 @@ export default function App(
                   defaultChoice={myIariSourceId}/>
     </div>
 
-    const versionInfo = `version ${package_json.version}`
+    const versionInfo = `IARE version ${package_json.version}`
 
     const debug = <div className={"debug-section " + (isDebug ? "debug-on" : "debug-off")}>
         {/*<div style={{marginBottom:".5rem"}}*/}

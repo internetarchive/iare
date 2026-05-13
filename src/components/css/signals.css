@@ -4,7 +4,8 @@
 
     --width-signal-score: var(--width-signal-badge);
     --width-signal-wayback: var(--width-signal-badge);
-    --width-signal-wiki: 3rem; /*var(--width-signal-badge);*/
+    /*--width-signal-wiki: 3rem; !*var(--width-signal-badge);*!*/
+    --width-signal-wiki: var(--width-signal-badge);
     --width-signal-tranco: var(--width-signal-badge);
     --width-signal-mbfc: var(--width-signal-badge);
 
@@ -23,12 +24,29 @@
             var(--width-signal-tranco)
             var(--width-signal-mbfc)
             minmax(10rem, 1fr);
+    --signal-badge-height-inline: 1.9rem;
+
+    --signal-grid-columns-sort:
+            var(--width-signal-score)
+            var(--width-signal-wayback)
+            var(--width-signal-wiki)
+            var(--width-signal-tranco)
+            var(--width-signal-mbfc)
+            minmax(10rem, 1fr);
+    --signal-badge-height-sort: 3.0rem;
+
+    --signal-grid-columns-refview:
+            var(--width-signal-score)
+            var(--width-signal-wayback)
+            var(--width-signal-wiki)
+            var(--width-signal-tranco)
+            var(--width-signal-mbfc)
+            minmax(10rem, 1fr);
+    --signal-badge-height-refview: 3.0rem;
 
     --signal-grid-columns-details:
             var(--width-signal-details-icon)
             minmax(var(--width-signal-details-info), 1fr);
-
-    --signal-badge-height-inline: 1.5rem;
     --signal-badge-height-details: auto;
 
 }
@@ -136,6 +154,12 @@ button.fetch-signal-button:hover {
 .signal-badge .signal-badge-element {
     position: relative;
     height: 100%;
+    margin:auto;
+}
+
+/* special case enwiki logo, as it's aspect ratio makes it render naturally large */
+.signal-badge .enwiki-badge .logo-image {
+    width: 80%;
 }
 
 
@@ -157,6 +181,42 @@ button.fetch-signal-button:hover {
 /*.signal-badges .lolite {*/
 /*    color: var(--color-text-muted);*/
 /*}*/
+
+
+/* * * * * * * * * * * * * * * * * * * * *
+ *  S I G N A L   B A D G E S   S O R T  *
+ * * * * * * * * * * * * * * * * * * * * */
+
+.signal-badges-sort {
+    display: grid;
+    grid-template-columns: var(--signal-grid-columns-sort);
+    grid-template-rows: var(--signal-badge-height-sort);
+    align-items: stretch;
+}
+
+.signal-badges-sort .signal-badge {
+    /*background-color: var(--color-debug);*/
+    display:flex;
+    flex-direction: column;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * *
+ *  S I G N A L   B A D G E S   R E F V I E W  *
+ * * * * * * * * * * * * * * * * * * * * * * * */
+
+.signal-badges-refview {
+    display: grid;
+    grid-template-columns: var(--signal-grid-columns-refview);
+    grid-template-rows: var(--signal-badge-height-refview);
+    align-items: stretch;
+}
+
+.signal-badges-refview .signal-badge {
+    /*background-color: var(--color-debug);*/
+    display:flex;
+    flex-direction: column;
+}
 
 
 /* * * * * * * * * * * * * * * * * * * * * * *
@@ -202,6 +262,10 @@ button.fetch-signal-button:hover {
     padding-left:1rem;
     flex: 1 0 auto;
 }
+
+
+
+/* other? section? */
 
 .signal-details-raw-data {
     display:flex;

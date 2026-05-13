@@ -3,7 +3,7 @@ import {IariSources} from "../constants/iariSources.jsx";
 import {ParseMethods} from "../constants/parseMethods.jsx";
 import {IariMethods} from "../constants/iariMethods.js";
 import {ProbeDefs} from "../constants/probeDefs.jsx";
-import {MEDIA_TYPES} from "../constants/mediaTypes.jsx";
+import {KNOWN_MEDIA_TYPES} from "../constants/knownMediaTypes.jsx";
 
 
 export const getPagePathEndpoint = ({
@@ -11,7 +11,7 @@ export const getPagePathEndpoint = ({
                                         path = '',
                                         as_of = '',
                                         use_local_cache = false,
-                                        mediaType = MEDIA_TYPES.WIKI.key,
+                                        mediaType = KNOWN_MEDIA_TYPES.WIKI.key,
                                         refresh = false,
                                         parseMethod = "",  // NB should default to something useful
                                     }) => {
@@ -32,7 +32,7 @@ export const getPagePathEndpoint = ({
                 //     return `${iariBase}/article_cache?iari_id=${cacheData}`;
                 // }
 
-    if (mediaType === MEDIA_TYPES.WIKI.key) {
+    if (mediaType === KNOWN_MEDIA_TYPES.WIKI.key) {
 
         console.log(`getPagePathEndpoint: wiki:article version: ${parseMethod}`)
 
@@ -66,7 +66,7 @@ export const getPagePathEndpoint = ({
                 `${as_of ? "&as_of=" + as_of : ""}`;
         }
 
-    } else if (mediaType === MEDIA_TYPES.GROK.key) {
+    } else if (mediaType === KNOWN_MEDIA_TYPES.GROK.key) {
         console.log(`getPagePathEndpoint: grok`)
 
         const pageTitleExtractGrok = path.match(/\/grokipedia.com\/page\/([^?#]+)/);
@@ -83,7 +83,7 @@ export const getPagePathEndpoint = ({
         return `${iariBase}/extract_grok?${params.toString()}`;
 
 
-    } else if (mediaType === MEDIA_TYPES.PDF.key) {
+    } else if (mediaType === KNOWN_MEDIA_TYPES.PDF.key) {
         console.log(`getPagePathEndpoint: pdf`)
         return `${iariBase}/statistics/pdf?url=${path}${refresh ? "&refresh=true" : ''}`;
 

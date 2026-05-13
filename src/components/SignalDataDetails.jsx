@@ -4,7 +4,7 @@ import PureJson from "./PureJson.jsx";
 
 import SignalBadges from "./SignalBadges.jsx";
 
-import {BadgeContextEnum as badgeContext} from "../constants/badgeDisplayTypes.jsx";
+import {BadgeContexts as badgeContext} from "../constants/badgeContexts.jsx";
 
 import './css/signals.css';
 
@@ -12,7 +12,7 @@ import {iareAlert, isEmpty} from "../utils/generalUtils.js";
 import {extractRootDomain} from "../utils/urlUtils.jsx";
 import {getNormalizedScore} from "../utils/generalUtils.js";
 // import {urlColumnDefs} from "../constants/urlColumnDefs.jsx";
-import {signalBadgeRegistry, extractInfoFromPath} from "../constants/badges/signalBadgeRegistry.jsx";
+import signalBadgeRegistry, {extractInfoFromPath} from "../constants/badges/signalBadgeRegistry.jsx";
 import signalsDefs from "../constants/signals/signals_docs.json"
 
 const signalsDocData = signalsDefs.signals_docs.signals_docs
@@ -274,7 +274,7 @@ export default function SignalDataDetails({
         >
             {signalHeader}
             <SignalBadges signals={rawSignalData?.signals}
-                          badgeContext={badgeContext.DETAIL}
+                          badgeContextKey={badgeContext.sort.value}
                           onBadgeClick={onBadgeClick}
                           fromCache={rawSignalData?.retrieved_from_cache}
             />

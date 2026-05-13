@@ -429,3 +429,29 @@
     /*align-items: left;*/
     margin-top: 10px;
 }
+
+.header-cell {
+    width:100%;
+    display: grid;
+    grid-template-rows: 1fr 28px;
+}
+
+.header-cell-content {
+    width:100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-cell-sort {
+    width:100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.header-cell-sort .sort-indicator {
+    background-color: chartreuse;
+    text-align: center;
+}
+
+

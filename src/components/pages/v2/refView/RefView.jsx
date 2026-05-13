@@ -110,33 +110,33 @@ export default function RefView({
     //     height: window.innerHeight - modalDefaults.margin,
     // });
 
-    const onClickSignalData = (e) => {
-        // triggered when Signal column in url row is clicked.
-
-        console.log("Signal column clicked")
-
-        e.stopPropagation()  // stops row click from engaging
-
-        const targetElement = e.target
-
-        const urlElement = targetElement.closest('.url-row')
-        const urlLink = urlElement.dataset.url
-        const urlObj = pageData.urlDict[urlLink]
-
-        // const rawSignalData = <pre>{JSON.stringify(urlObj.signal_data, null, 2)}</pre>
-        const rawSignalData = urlObj.signal_data
-
-        setSignalDetailsPopupTitle(<SignalDataDetailsTitle urlLink={urlLink}/>)
-
-        setSignalDetailsPopupContents(<SignalDataDetails
-            urlLink={urlLink}
-            rawSignalData={rawSignalData}
-            tooltipId={tooltipId}
-        />)
-
-        setIsSignalDetailsPopupOpen(true)
-
-    }
+                    // const onClickSignalData = (e) => {
+                    //     // triggered when Signal column in url row is clicked.
+                    //
+                    //     console.log("Signal column clicked")
+                    //
+                    //     e.stopPropagation()  // stops row click from engaging
+                    //
+                    //     const targetElement = e.target
+                    //
+                    //     const urlElement = targetElement.closest('.url-row')
+                    //     const urlLink = urlElement.dataset.url
+                    //     const urlObj = pageData.urlDict[urlLink]
+                    //
+                    //     // const rawSignalData = <pre>{JSON.stringify(urlObj.signal_data, null, 2)}</pre>
+                    //     const rawSignalData = urlObj.signal_data
+                    //
+                    //     setSignalDetailsPopupTitle(<SignalDataDetailsTitle urlLink={urlLink}/>)
+                    //
+                    //     setSignalDetailsPopupContents(<SignalDataDetails
+                    //         urlLink={urlLink}
+                    //         rawSignalData={rawSignalData}
+                    //         tooltipId={tooltipId}
+                    //     />)
+                    //
+                    //     setIsSignalDetailsPopupOpen(true)
+                    //
+                    // }
 
 
     // const [modalState, setModalState] = useState(() => {

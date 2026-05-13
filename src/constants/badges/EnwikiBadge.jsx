@@ -1,57 +1,67 @@
 import React from "react";
-import {BadgeContextEnum} from "../badgeDisplayTypes.jsx";
+import {BadgeContexts} from "../badgeContexts.jsx";
 import Badge from "../../components/Badge.jsx";
 import {getPrettyCount} from "../../utils/generalUtils.js";
-import {signalBadgeRegistry} from "./signalBadgeRegistry.jsx";
+import signalBadgeRegistry from "./signalBadgeRegistry.jsx";
+
+const noDataProvidedText = "---"
 
 /**
  * Shared Badge interface
  * @param {Object} props
  * @param {Object} [props.signals]
  * @param {Function} [props.onSignalClick]
- * @param {BadgeContextEnum} [props.badgeContext]
+ * @param {BadgeContexts} [props.badgeContext]
  */
 export default function EnwikiBadge({
                                         signals = {},
-                                        badgeContext = BadgeContextEnum.INLINE,
+                                        badgeContextKey = BadgeContexts.inline.value,
                                         onAction,
                                     }
 ) {
 
     const badgeDef = signalBadgeRegistry.enwiki
-
-    if (!signals) {
-        return <div className={"signal-badge-error"}><img src={badgeDef.logo} alt="Enwiki ERROR"/> {'Error: No signal data available'}</div>;
-    }
+    const badgeContext = BadgeContexts[badgeContextKey] || BadgeContexts.default
 
     let badgeData = {}
     let badgeText = null
-    let badgeClass = "enwiki-badge"
+    let badgeClass = badgeDef.class_name
 
-    try {
-        const meta = signals?.meta || {}
-        // const wikiCount = trimifyNumber(meta["ws_wiki_cite_en"] ?? 0)
-        const count = getPrettyCount(meta["ws_wiki_cite_en"]);
-        badgeData = {"wikicount": count}
+    if (badgeContextKey !== BadgeContexts.sort.value && !signals) {
+        return <div className={"signal-badge-error"}><img
+            src={badgeDef.logo}
+            alt="Enwiki ERROR"/> {'Error: No signal data available'}
+        </div>;
+    }
 
-        if (count < 0) {  // -1 means not provided
-            badgeText = <div>Not provided.</div>
-            badgeClass += " missing-value"
-        } else {
-            badgeText = <div>Wiki Count: {count}</div>
+    if (badgeContext.hasText) {
+
+        try {
+            const meta = signals?.meta || {}
+            // const wikiCount = trimifyNumber(meta["ws_wiki_cite_en"] ?? 0)
+            const count = getPrettyCount(meta["ws_wiki_cite_en"]);
+            badgeData = {"wikicount": count}
+
+            if (count < 0) {  // -1 means not provided
+                badgeText = <div>{noDataProvidedText}</div>
+                badgeClass += " missing-value"
+            } else {
+                // badgeText = <div>{`Wiki Count: ${count}`}</div>
+                badgeText = <div>{`${count}`}</div>
+            }
+
+        } catch (e) {
+            badgeData = {"error": e.message}
+            badgeText = <div>Error Encountered: {e.message}</div>
+            badgeClass += " missing-value"  // format for error
         }
-
-    } catch (e) {
-        badgeData = {"error": e.message}
-        badgeText = <div>Error Encountered: {e.message}</div>
-        badgeClass += " missing-value"  // format for error
     }
 
     const badgeIcon = <img src={badgeDef.logo} alt={badgeDef.label} className={"logo-image"}/>
 
     return <Badge
-        badgeContext={badgeContext}
         badgeKey={badgeDef.key}
+        badgeContextKey={badgeContextKey}
         badgeClass={badgeClass}
         badgeIcon={badgeIcon}
         badgeText={badgeText}

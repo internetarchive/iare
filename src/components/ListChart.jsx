@@ -12,21 +12,21 @@ export default function ListChart ({data, options={}, colors=["#af22e8"], classN
             "label": {name: "label", dir: 1},  // dir: 1 is asc, -1 is desc, 0 is do not sort
             "count": {name: "count", dir: -1},
         },
-        sortOrder: ["count"]  // array indicating which sorts get applied and in what order. NB this is not implemented yet, but will be
+        sortBy: ["count"]  // array indicating which sorts get applied and in what order. NB this is not implemented yet, but will be
     })
 
     const sortFunction = (a,b) => {
         // TODO make this recursive to travers collection of sort definitions
-        //  as described in a "sort.sortOrder" array of sort method key names
-        //  e.g: sort.sortOrder = ["references", "archive_status", "name"]
-        if(sort.sortOrder[0] === "label") {
+        //  as described in a "sort.sortBy" array of sort method key names
+        //  e.g: sort.sortBy = ["references", "archive_status", "name"]
+        if(sort.sortBy[0] === "label") {
             // respect sortDir and protect null values
             if (a?.label < b?.label) return sort.sorts['label'].dir * -1;
             if (a?.label > b?.label) return sort.sorts['label'].dir;
             return 0;
         }
 
-        else if(sort.sortOrder[0] === "count") {
+        else if(sort.sortBy[0] === "count") {
             // remedy missing values, if any
             const aVal = a?.count ? a.count : 0;
             const bVal = b?.count ? b.count : 0;
@@ -51,8 +51,8 @@ export default function ListChart ({data, options={}, colors=["#af22e8"], classN
     const itemData = data
 
     // sort items if specified
-    if (sort.sortOrder?.length > 0) {
-        console.log(`sorting urls by: ${sort.sortOrder[0]}`)
+    if (sort.sortBy?.length > 0) {
+        console.log(`sorting urls by: ${sort.sortBy[0]}`)
         itemData.sort(sortFunction)
     }
 
@@ -89,7 +89,7 @@ export default function ListChart ({data, options={}, colors=["#af22e8"], classN
                         dir: -1 * prevState.sorts[which].dir
                     }
                 },
-                sortOrder: [which]  // set only one for now...
+                sortBy: [which]  // set only one for now...
             }
         })
     }

@@ -19,6 +19,7 @@ import {ACTIONS_IARE} from "../../../../../constants/actionsIare.jsx";
 import {isBookUrl, bookTemplates, noBookLink, bookDefs} from "../../../../../utils/iariUtils.js";
 import {getTestOverviewColumnData} from "../../../../../utils/testUtils.jsx";
 import {iareAlert} from "../../../../../utils/generalUtils.js";
+import {sign} from "chart.js/helpers";
 
 
 export default function UrlDisplay ({ pageData, options } ) {
@@ -157,7 +158,8 @@ export default function UrlDisplay ({ pageData, options } ) {
         else if (action ===
             ACTIONS_IARE.SHOW_REFERENCE_VIEWER_FOR_URL.key
         ) {
-            // value is url to show in RefView; more accurately, show the ref that "houses" the url
+            // value is url to show in RefView;
+            // more accurately, show the reference that "contains" the url
             const refIndex = pageData.urlDict[value]?.refs[0]?.ref_index
             const selectedRef = pageData.references.find(
                 r => {  // NB assumes ref_index and ref_index.toString() is valid
@@ -332,6 +334,15 @@ export default function UrlDisplay ({ pageData, options } ) {
             ACTIONS_IARE.FETCH_SIGNAL_DATA.key
         ) {
             iareAlert("Will fetch signal data for: \n\n" + value);
+        }
+
+
+        else if (action ===
+            ACTIONS_IARE.SORT_BY_SIGNAL.key
+        ) {
+            // value is object: {signalKey: <str>, dir: <int>}
+            const {signalKey, dir} = value;
+            iareAlert(`Will sort signal data for: ${signalKey}, ${dir}`);
         }
 
 
@@ -656,12 +667,14 @@ export default function UrlDisplay ({ pageData, options } ) {
 
     const tooltipForUrlDisplay = <MyTooltip
         id="tooltip-url-display"
-        float={true}
+        float={false}
+        // float={true}
         closeOnEsc={true}
         delayShow={420}
         variant={"info"}
         noArrow={true}
-        offset={5}
+        // offset={5}
+        offset={120}
         className={"tooltip-iare-display"}
         style={{ zIndex: 9999 }}
 
@@ -729,6 +742,7 @@ export default function UrlDisplay ({ pageData, options } ) {
     return <div className={"url-display-container"}>
 
         <div className={"url-display-header"}>
+            <div>url-display-header</div>
             {overviewColumn}
         </div>
 
@@ -750,8 +764,6 @@ export default function UrlDisplay ({ pageData, options } ) {
                         onAction={handleAction}/>
 
                     <div>ShowRefs: {isShowRefs ? "true" : "false"}</div>
-
-
 
                 </div>{/* iare-ux-header */}
 

@@ -11,7 +11,7 @@ import {Button} from "react-bootstrap";
 import Popup from "../../../Popup.jsx";
 import RefUrlProbe from "./RefUrlProbe.jsx";
 import SignalDisplay from "../../../SignalDisplay.jsx";
-import {BadgeContextEnum as badgeContext} from "../../../../constants/badgeDisplayTypes.jsx";
+import {BadgeContexts as badgeContext} from "../../../../constants/badgeContexts.jsx";
 import {ACTIONS_IARE} from "../../../../constants/actionsIare.jsx";
 
 
@@ -166,7 +166,7 @@ export default function RefUrls({ urls, pageData, onAction, tooltipId, showDebug
                 <SignalDisplay
                     urlObj={u}
                     onSignalClick={handleSignalClick}
-                    badgeContext={badgeContext.INLINE}
+                    badgeContext={badgeContext.inline.value}
                 />
             </div>
 
@@ -185,7 +185,15 @@ export default function RefUrls({ urls, pageData, onAction, tooltipId, showDebug
             {/*<div className={"url-row-label url-perennial"}>Reliability</div>*/}
             {/*<div className={"url-row-label url-probes"}>Probe Results</div>*/}
 
-            <div className={"url-row-label url-signals"}>WikiSignals</div>
+            <div className={"url-row-label url-signals"}>
+                <SignalDisplay
+                    urlObj={null}  // {u}
+                    onAction={onAction}
+                    badgeContext={badgeContext.refview.value}
+                    tooltipId={tooltipId}
+                />
+            </div>
+
 
         </div>
 

@@ -1,18 +1,20 @@
 import React from "react";
-import {BadgeContextEnum} from "../badgeDisplayTypes.jsx";
+import {BadgeContexts} from "../badgeContexts.jsx";
 import Badge from "../../components/Badge.jsx";
 import {getNormalizedCount, getNormalizedScore, getPrettyCount} from "../../utils/generalUtils.js";
-import {signalBadgeRegistry} from "./signalBadgeRegistry.jsx";
+import signalBadgeRegistry from "./signalBadgeRegistry.jsx";
+
+const noDataProvidedText = "---"
 
 /**
  * Shared Badge interface
  * @param {Object} props
  * @param {Object} [props.signals]
- * @param {Function} [props.onSignalClick]
- * @param {BadgeContextEnum} [props.badgeContext]*/
+ * @param {Function} [props.onAction]
+ * @param {String} [props.badgeContextKey]*/
 export default function TrancoBadge({
                                         signals = {},
-                                        badgeContext = BadgeContextEnum.INLINE,
+                                        badgeContextKey = BadgeContexts.inline.value,
                                         onAction,
                                     }
 ) {
@@ -23,32 +25,39 @@ export default function TrancoBadge({
     }
 
     const badgeDef = signalBadgeRegistry.tranco
+    const badgeContext = BadgeContexts[badgeContextKey] || BadgeContexts.default
+
     const badgeIcon = <img src={badgeDef.logo} alt={badgeDef.label} className={"logo-image"}/>
 
     let badgeData = {}
     let badgeText = null
-    let badgeClass = "tranco-badge"
+    let badgeClass = badgeDef.class_name
 
-    try {
-        const meta = signals?.meta || {};
-        // assume tranco rating is from signals.meta.ws_web_rank
-        const count = getNormalizedCount(meta["ws_web_rank"]);
+    if (badgeContext.hasText) {
+        // calc badgeText and badgeData
+        try {
+            const meta = signals?.meta || {};
+            // assume tranco rating is from signals.meta.ws_web_rank
+            const count = getNormalizedCount(meta["ws_web_rank"]);
+            const logCount = Math.log10(count)
 
-        badgeData = {"tranco": count}
-        badgeText = count < 0  // -1 means not provided
-            ? <div>Not provided.</div>
-            : <div>Tranco rating: {count}</div>
-        if (count < 0) badgeClass += " missing-value"
+            badgeData = {"tranco": count}
+            if (count < 0) {  // -1 means not provided
+                badgeText = <div>{noDataProvidedText}</div>
+                badgeClass += " missing-value"
+            } else {
+                badgeText = <div>{logCount.toFixed(1)}</div>
+            }
 
-
-    } catch (e) {
-        badgeData = {"error": e.message}
-        badgeText = <div>Tranco Error Encountered: {e.message}</div>
-        badgeClass += " missing-value"
+        } catch (e) {
+            badgeData = {"error": e.message}
+            badgeText = <div>Tranco Error Encountered: {e.message}</div>
+            badgeClass += " missing-value"
+        }
     }
 
     return <Badge
-        badgeContext={badgeContext}
+        badgeContextKey={badgeContextKey}
         badgeKey={badgeDef.key}
         badgeClass={badgeClass}
         badgeIcon={badgeIcon}

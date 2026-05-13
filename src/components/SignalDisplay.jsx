@@ -2,12 +2,12 @@ import React from "react";
 import SignalBadges from "./SignalBadges.jsx";
 import './css/signals.css';
 
-import {BadgeContextEnum} from "../constants/badgeDisplayTypes.jsx";
+import {BadgeContexts} from "../constants/badgeContexts.jsx";
 
 export default function SignalDisplay({
                                                     urlObj = {},
                                                     onAction,
-                                                    badgeContext = BadgeContextEnum.INLINE,
+                                                    badgeContext = BadgeContexts.inline.value,
                                                     tooltipId = null,
 
                                                 }) {
@@ -21,7 +21,7 @@ export default function SignalDisplay({
 
     const signals = urlObj?.signal_data?.signals ?? {}
 
-    // TODO make cache message different based on badgeContext
+    // TODO make cache message different based on badgeContextKey
 
     // const cacheMsg = urlObj?.signal_data?.retrieved_from_cache
     //     ? <div className={"signal-badges-extra-msg"} style={{ gridColumn: '1 / 2', gridRow: '1' }}>
@@ -32,7 +32,7 @@ export default function SignalDisplay({
         {/*{cacheMsg}*/}
         <SignalBadges signals={signals}
                       onAction={onAction}
-                      badgeContext={badgeContext}
+                      badgeContextKey={badgeContext}
                       tooltipId = {tooltipId}
                       fromCache = {urlObj?.signal_data?.retrieved_from_cache}
         />

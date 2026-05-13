@@ -7,7 +7,7 @@ export default function SortBox({
                                     context = null,
                                     direction = 0,
 
-                                        label = "",
+                                    label = "",
                                     caption = "",
                                     description = "",
                                     disabled = false,
@@ -31,11 +31,11 @@ export default function SortBox({
 
     return (
         <div className={sortBoxClassName}>
-            <div>
+            <div className="sort-indicator" aria-hidden="true">
                 <span className="triangle-up">▲</span>
                 <span className="triangle-down">▼</span>
             </div>
-            <div style={{fontSize:"8pt"}}>sort: {dir}</div>
+            <div style={{fontSize:"8pt"}}>sort: {dir}</div>  {/* temporary for devdebug */}
         </div>
     );
 }

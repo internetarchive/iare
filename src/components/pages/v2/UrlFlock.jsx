@@ -4,7 +4,7 @@ import "../../css/flock.css"
 
 import {convertToCSV, copyToClipboard, iareAlert} from "../../../utils/generalUtils.js";
 import {getArchiveStatusInfo, getProbePopupData} from "../../../utils/urlUtils.jsx";
-import {BadgeContextEnum as badgeContext, BadgeContextEnum} from "../../../constants/badgeDisplayTypes.jsx";
+import {BadgeContexts as badgeContext, BadgeContexts} from "../../../constants/badgeContexts.jsx";
 
 import {ACTIONS_IARE} from "../../../constants/actionsIare.jsx";
 import {ACTIONABLE_FILTER_MAP} from "../../../constants/actionableMap.jsx";
@@ -12,15 +12,18 @@ import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../../constants
 import {httpStatusCodes, iabotLiveStatusCodes} from "../../../constants/httpStatusCodes.jsx"
 import {reliabilityMap} from "../../../constants/perennialList.jsx";
 import {urlColumnDefs} from "../../../constants/urlColumnDefs.jsx";
+import signalBadgeRegistry, {signalBadgePrefix} from "../../../constants/badges/signalBadgeRegistry.jsx";
 
 import Popup from "../../Popup.jsx";
 
 import SignalDisplay from "../../SignalDisplay.jsx";
-import SignalDataDetails from "../../SignalDataDetails.jsx";
 import SignalsDocs from "../../SignalsDocs.jsx";
 import SignalsSort from "../../SignalsSort.jsx";
 
-import SignalDataDetailsTitle from "../../SignalDataDetailsTitle.jsx";
+// import SignalDataDetails from "../../SignalDataDetails.jsx";
+// import SignalDataDetailsTitle from "../../SignalDataDetailsTitle.jsx";
+import SignalBadges from "../../SignalBadges.jsx";
+import SortBox from "../../SortBox.jsx";
 
 
 
@@ -79,10 +82,10 @@ const urlFlock = React.memo(function UrlFlock({
     // TODO there is a bug where sort re-renders list every time tooltip text/html property is updated
     // TODO maybe fix using React.useRef somehow???
 
-    const [sort, setSort] = useState({
+    const [columnSort, setColumnSort] = useState({
         sorts: {  // holds sort value for all different sort types
             "status": {name: "status", dir: 1},  // dir: 1 is asc, -1 is desc, 0 is do not sort
-            "signals_score": {name: "signals_score", dir: -1},
+            "signal_score": {name: "signal_score", dir: -1},
             "archive_status": {name: "archive_status", dir: -1},
             "references": {name: "references", dir: -1},
             "templates": {name: "templates", dir: -1},
@@ -90,7 +93,11 @@ const urlFlock = React.memo(function UrlFlock({
             "sections": {name: "sections", dir: -1},
             "perennial": {name: "perennial", dir: -1},
         },
-        sortOrder: ["status"]  // array indicating which sorts get applied and in what order. NB this is not implemented yet, but will be
+
+        // array indicating which and in what order "sorts" get applied
+        // NB for now, sort just respects first item in list
+        // TODO fix this by implementing chained sorts
+        sortBy: []  // sortBy: none for default
     })
 
     const updateFlockSort = (sortKey) => {
@@ -98,9 +105,11 @@ const urlFlock = React.memo(function UrlFlock({
         // - toggle sort direction of specified sort
         // - set new sort state with setSort
 
+        console.log(`updateFlockSort: sortKey = ${sortKey}`)
+
         // selectively change the specified sort type
         // https://stackoverflow.com/questions/43638938/updating-an-object-with-setstate-in-react
-        setSort(prevState => {
+        setColumnSort(prevState => {
             // guarantee new sort has entry in sorts object
             if (!(prevState.sorts[sortKey])) {
                 prevState.sorts[sortKey] = {name: sortKey, dir: 1}
@@ -114,46 +123,74 @@ const urlFlock = React.memo(function UrlFlock({
                         dir: -1 * prevState.sorts[sortKey].dir
                     }
                 },
-                sortOrder: [sortKey]  // set only one for now...
-                // TODO implement so that sortOrder contains an array of a list of sortKey's, not just one
+                sortBy: [sortKey]  // set only one for now...
+                // TODO implement so that sortBy contains an array of a list of sortKey's, not just one
             }
         })
     }
 
 
-    const onSignalHeaderClick = (e) => {
+                // const onSignalHeaderClick = (e) => {
+                //     e.stopPropagation()
+                //     console.log(`onSignalHeaderClick: e.target.className = ${e.target.className}`)
+                //
+                //     const docsEl = e.target.closest(".wiki-signals-docs");
+                //     const sortEl = e.target.closest(".wiki-signals-sort");
+                //
+                //     if (docsEl) {
+                //         setIsSignalsDocsPopupOpen(true);
+                //     } else if (sortEl) {
+                //         // setIsSignalsSortPopupOpen(true);
+                //
+                //         // TODO
+                //         // fetch signal badge (signal type) from which badge was clicked
+                //         // determine/calculate/extract from signalDef the "sort key"
+                //         // send that key to updateFlockSort
+                //         updateFlockSort("signals_score")
+                //     }
+                // }
+
+    const handleSignalBadgesClick = (e) => {
         e.stopPropagation()
-        console.log(`onSignalHeaderClick: e.target.className = ${e.target.className}`)
 
-        const docsEl = e.target.closest(".wiki-signals-docs");
-        const sortEl = e.target.closest(".wiki-signals-sort");
+        console.log(`handleSignalBadgesClick: e.target.className = ${e.target.className}`)
 
-        if (docsEl) {
-            setIsSignalsDocsPopupOpen(true);
-        } else if (sortEl) {
-            // setIsSignalsSortPopupOpen(true);
-            updateFlockSort("signals_score")
+        let rowEl = e.target.closest('.url-row-header')
+        if (rowEl) {
+            const el = e.target.closest('.signal-badge')
+            const badgeKey = el.dataset.badgekey
+
+            console.log(`Click on signal badge in header for ${badgeKey}`)
+            iareAlert(`Click on signal badge in header for ${badgeKey}`)
+            return
+
+            // fetch sort key from data
+            // updateFlockSort("signals_score")
         }
+
+        // what else to do if clicked in non-header?
     }
 
 
     const sortByName = (a, b) => {
+        // sort by url name in url column
         const nameA = a.url
         const nameB = b.url
 
         // respect sortDir
-        if (nameA < nameB) return sort.sorts['name'].dir * -1;
-        if (nameA > nameB) return sort.sorts['name'].dir;
+        if (nameA < nameB) return columnSort.sorts['name'].dir * -1;
+        if (nameA > nameB) return columnSort.sorts['name'].dir;
         return 0;
     }
 
     const sortByStatus = (a, b) => {
+        // sort by status column values
         const statusA = a && a.status_code !== undefined ? a.status_code : -1;
         const statusB = b && b.status_code !== undefined ? b.status_code : -1;
 
         // respect sort dir
-        if (statusA < statusB) return sort.sorts['status'].dir * -1;
-        if (statusA > statusB) return sort.sorts['status'].dir;
+        if (statusA < statusB) return columnSort.sorts['status'].dir * -1;
+        if (statusA > statusB) return columnSort.sorts['status'].dir;
         return 0;
     }
 
@@ -165,19 +202,19 @@ const urlFlock = React.memo(function UrlFlock({
 
         // sort by book status first, respect sortDir
         // NB: ignoring book type (e.g. google or archive.org) for now
-        if (bookA) return sort.sorts['archive_status'].dir * -1
-        if (bookB) return sort.sorts['archive_status'].dir
+        if (bookA) return columnSort.sorts['archive_status'].dir * -1
+        if (bookB) return columnSort.sorts['archive_status'].dir
 
         // if neither a or b is a book, sort by archive status, respect sortDir
-        if (archiveA > archiveB) return sort.sorts['archive_status'].dir * -1;
-        if (archiveA < archiveB) return sort.sorts['archive_status'].dir;
+        if (archiveA > archiveB) return columnSort.sorts['archive_status'].dir * -1;
+        if (archiveA < archiveB) return columnSort.sorts['archive_status'].dir;
         return 0;
     }
 
     const sortByReference = (a, b) => {
         const statusA = a.reference_info?.statuses?.length ? a.reference_info.statuses[0] : ''
         const statusB = b.reference_info?.statuses?.length ? b.reference_info.statuses[0] : ''
-        return sort.sorts['references'].dir * ((statusA > statusB) ? 1 : (statusA < statusB ? -1 : 0));  // dir is multiplied by 1, -1 or 0
+        return columnSort.sorts['references'].dir * ((statusA > statusB) ? 1 : (statusA < statusB ? -1 : 0));  // dir is multiplied by 1, -1 or 0
     }
 
     const sortByTemplate = (a, b) => {
@@ -186,8 +223,8 @@ const urlFlock = React.memo(function UrlFlock({
         const nameB = b.reference_info?.templates?.length ? b.reference_info.templates[0] : ''
 
         // respect sortDir
-        if (nameA < nameB) return sort.sorts['templates'].dir * -1;
-        if (nameA > nameB) return sort.sorts['templates'].dir;
+        if (nameA < nameB) return columnSort.sorts['templates'].dir * -1;
+        if (nameA > nameB) return columnSort.sorts['templates'].dir;
         return 0;
     }
 
@@ -197,8 +234,8 @@ const urlFlock = React.memo(function UrlFlock({
         const actionB = b.actionable?.length ? b.actionable[0] : ''
 
         // respect sortDir
-        if (actionA < actionB) return sort.sorts['actionable'].dir * -1;
-        if (actionA > actionB) return sort.sorts['actionable'].dir;
+        if (actionA < actionB) return columnSort.sorts['actionable'].dir * -1;
+        if (actionA > actionB) return columnSort.sorts['actionable'].dir;
         return 0;
     }
 
@@ -208,8 +245,8 @@ const urlFlock = React.memo(function UrlFlock({
         const nameB = b.rsp?.length ? b.rsp[0] : ''
 
         // respect sortDir
-        if (nameA < nameB) return sort.sorts['perennial'].dir * -1;
-        if (nameA > nameB) return sort.sorts['perennial'].dir;
+        if (nameA < nameB) return columnSort.sorts['perennial'].dir * -1;
+        if (nameA > nameB) return columnSort.sorts['perennial'].dir;
         return 0;
     }
 
@@ -219,8 +256,8 @@ const urlFlock = React.memo(function UrlFlock({
         const sectionB = b.reference_info?.sections?.length ? b.reference_info.sections[0] : ''
 
         // respect sortDir
-        if (sectionA < sectionB) return sort.sorts['sections'].dir * -1;
-        if (sectionA > sectionB) return sort.sorts['sections'].dir;
+        if (sectionA < sectionB) return columnSort.sorts['sections'].dir * -1;
+        if (sectionA > sectionB) return columnSort.sorts['sections'].dir;
         return 0;
     }
 
@@ -240,23 +277,27 @@ const urlFlock = React.memo(function UrlFlock({
                 // }
 
 
-    const sortByWikiSignalsScore = (a, b) => {
-        // const signalA = a?.signal_data?.signals?.meta?.ws_score ?? 0;
-        // const signalB = b?.signal_data?.signals?.meta?.ws_score ?? 0;
-        const signalA = a?.signal_data?.signals?.meta
-            ? a?.signal_data?.signals?.meta?.ws_score ?? 0
-            : -1
-        const signalB = b?.signal_data?.signals?.meta
-            ? b?.signal_data?.signals?.meta?.ws_score ?? 0
-            : -1
-
-        if (signalA > signalB) return sort.sorts['signals_score'].dir * -1;
-        if (signalA < signalB) return sort.sorts['signals_score'].dir;
-        return 0;
-    }
+                // const sortByWikiSignalsScore = (a, b) => {
+                //     // const signalA = a?.signal_data?.signals?.meta?.ws_score ?? 0;
+                //     // const signalB = b?.signal_data?.signals?.meta?.ws_score ?? 0;
+                //     const signalA = a?.signal_data?.signals?.meta
+                //         ? a?.signal_data?.signals?.meta?.ws_score ?? 0
+                //         : -1
+                //     const signalB = b?.signal_data?.signals?.meta
+                //         ? b?.signal_data?.signals?.meta?.ws_score ?? 0
+                //         : -1
+                //
+                //     if (signalA > signalB) return columnSort.sorts['signal_score'].dir * -1;
+                //     if (signalA < signalB) return columnSort.sorts['signal_score'].dir;
+                //     return 0;
+                // }
     
     
     const sortFunctions = {
+        // TODO what we really want to do is use the
+        //  sorting function defined in the column definition
+        //  associated with the column specified by column key
+
         name: sortByName,
         status: sortByStatus,
         references: sortByReference,
@@ -264,7 +305,7 @@ const urlFlock = React.memo(function UrlFlock({
         archive_status: sortByArchiveStatus,
 
                     // signals: sortBySignals,
-        signals_score: sortByWikiSignalsScore,
+        // signal_score: sortByWikiSignalsScore,
 
         // not really used
         templates: sortByTemplate,
@@ -276,104 +317,74 @@ const urlFlock = React.memo(function UrlFlock({
 
     }
 
-    const sortFunction = (a, b) => {
-        // TODO make sorting respect a list sort definitions as described in a
-        //  "sort.sortOrder" array of key names for sort methods.
-        //  "e.g: sort.sortOrder = ["references", "archive_status", "name"]
-
-        const sort_column = sort.sortOrder[0];
-        const sortFn = sortFunctions[sort_column];
-        return sortFn ? sortFn(a, b) : 0;
-
+    const sortAssociation ={
+        "url-name": "name",
+        "url-live_status": "status",
+        "url-archive_status": "archive_status",
+        "url-actionable": "actionable",
     }
 
+    const getSortFunction = () => {
+        // return sort function based on current value of state variable columnSort
 
-    const onClickFlockRow = (e) => {
-        e.stopPropagation()
+        // first see if sortFn defined "directly" for sortKey
+        const sortKey = columnSort.sortBy[0] ?? ""  // NB sortKey from global state columnSort.sortBy array
 
-        // get the url associated with the row of the clicked element
-        const el = e.target.closest('.url-row')
-        const url = el?.dataset.url
+        // TODO?? what to do if sortKey is not valid?
 
-        // send action back up component tree to co-filter references list
-        onAction({
-            "action": ACTIONS_IARE.SHOW_REFERENCE_VIEWER_FOR_URL.key,
-            "value": url,
-        })
-    }
+        const sortFn = sortFunctions[sortKey]
 
-    const onClickHeaderRow = (e) => {
-    }
-
-
-    const onClickSignalData = (e) => {
-        // triggered when Signal column in url row is clicked.
-
-        console.log("Signal column clicked")
-
-        e.stopPropagation()  // stops row click from engaging
-
-        const targetElement = e.target
-
-        const urlElement = targetElement.closest('.url-row')
-        const urlLink = urlElement.dataset.url
-        const urlObj = urlDict[urlLink]
-
-        // const rawSignalData = <pre>{JSON.stringify(urlObj.signal_data, null, 2)}</pre>
-        const rawSignalData = urlObj.signal_data
-
-        setSignalDetailsPopupTitle(<SignalDataDetailsTitle urlLink={urlLink}/>)
-
-        setSignalDetailsPopupContents(<SignalDataDetails
-            urlLink={urlLink}
-            rawSignalData={rawSignalData}
-            tooltipId={tooltipId}
-        />)
-
-        setIsSignalDetailsPopupOpen(true)
-
-    }
-
-    const onClickSignalDetail = (e) => {
-        // triggered when a single Signal is clicked.
-
-        console.log("Signal clicked")
-
-        e.stopPropagation()  // stops row click from engaging
-
-        alert("Will implement this later - will show details for one Signal value here.")
-    }
-
-
-    const onClickDetailsPopupHeader = (e) => {
-
-        const targetElement = e.target
-        const targetClass = targetElement.className
-
-        if (targetClass === "info-click") {
-            console.log("Info for Details Popup Header Clicked")
-            setIsSignalsDocsPopupOpen(true)
+        if (sortFn) {
+            return sortFn  // sortFn found in sortFunctions dict, so return it
         }
 
+        // else continue to special case
+
+        // if sortKey is of type "signal_", use sortFn from badgeDef
+        if (sortKey.startsWith(signalBadgePrefix)) {
+            // extract badge key from sortKey
+            const badgeKey = sortKey.split(signalBadgePrefix)[1]; // Extract substring after "signal_"
+            const badgeDef = signalBadgeRegistry[badgeKey]
+
+            return (badgeDef.sort)
+                ? (a, b) => badgeDef.sort(a, b, columnSort)  // must pass columnSort
+                : undefined  // "null" sort function
+        }
+
+        // nothing found - return "null" function
+        return undefined
     }
 
-    const onHoverUrlFlock = (e) => {
-        // clears tooltip html...only if no other sub-elements got there first
-        setUrlTooltipHtml('')
+
+    const getColumnTooltip = (columnClass) => {
+        // if (!columnClass) return null
+
+        if (columnClass === "url-signal") {
+            // TODO get specific badge label
+            return "url-signal class"
+        }
+
+        return urlColumnDefs.columns[columnClass]?.ttCaption;
+        // unless it is signal column, in which case defer
+        // "signal" type column hover processing
+        //
+        // for now, hover processing is done within SignalBadges
     }
 
     const onHoverFlockRow = e => {
         // handle hover for header, data row, or other
 
-        e.stopPropagation()  // prevents onHover from engaging and erasing tooltip
+        e.stopPropagation()  // prevents onHover from propagating engaging and erasing tooltip
 
-        // for header row...
+        // if header row show tooltip for that column...
         let rowEl = e.target.closest('.url-row-header')
         if (rowEl) {
             const el = e.target.closest('.flock-col')
-            const firstClassName = el?.classList[0];  // handles potential null and extract the first class name
-            const html = urlColumnDefs.columns[firstClassName]?.ttCaption;
-            console.log(`UrlFlock onHoverAllRows: in url-row-header firstClassName: ${firstClassName}`)
+            const columnClass = el?.classList[0];  // handles potential null and extract the first class name
+
+            const html = getColumnTooltip(columnClass)
+
+            console.log(`UrlFlock onHoverFlockRow: in .url-row-header columnClass: ${columnClass}`)
             setUrlTooltipHtml(html)
             return
         }
@@ -392,7 +403,7 @@ const urlFlock = React.memo(function UrlFlock({
             const columnClass = e.target.closest('.url-row > *').classList[0]  // get first class in list to get column type
             const row = e.target.closest('.url-row')
             const html = getTooltipForColumn(row, columnClass)
-            console.log(`UrlFlock onHoverAllRows: in url-row; class = ${columnClass}`)
+            console.log(`UrlFlock::onHoverFlockRow: in url-row; class = ${columnClass}`)
             setUrlTooltipHtml(html)
             return
         }
@@ -400,6 +411,131 @@ const urlFlock = React.memo(function UrlFlock({
         setUrlTooltipHtml(null);
 
     }
+
+
+    const onClickFlockRow = (e) => {
+        e.stopPropagation()
+
+        console.log("onClickFlockRow")
+
+        let rowEl = null
+
+        // for header row...
+        rowEl = e.target.closest('.url-row-header')
+        if (rowEl) {
+            onClickFlockHeaderRow(e)
+        }
+
+        // for data row...
+        rowEl = e.target.closest('.url-row')
+        if (rowEl) {
+            // get the url associated with the row of the clicked element
+            const url = rowEl?.dataset.url
+
+            // send action up component tree to co-filter references list
+            onAction({
+                "action": ACTIONS_IARE.SHOW_REFERENCE_VIEWER_FOR_URL.key,
+                "value": url,
+            })
+        }
+
+    }
+
+
+    const onClickFlockHeaderRow = (e) => {
+        let colEl = null
+
+        colEl = e.target.closest('.signal-badge')
+        if (colEl) {
+            // we have a signal badge column - calc sortKey
+            const badgeKey = colEl.dataset.badgekey
+            const sortKey = `${signalBadgePrefix}${badgeKey}`
+
+            console.log(`Clicked on flock header row; signal badge: ${badgeKey}`)
+            // iareAlert(`Click on header: signal badge ${badgeKey}`)
+
+            updateFlockSort(sortKey)
+            return
+        }
+
+        // we have a normal flock column - extract sortKey from column class
+        colEl = e.target.closest('.flock-col')
+        if (colEl) {
+
+            const columnClass = colEl?.classList[0];  // handles potential null and extract the first class name
+            // TODO could get column identifying data from dataset?
+            const sortKey = sortAssociation[columnClass]
+
+            console.log(`Clicked on header column for ${sortKey}`)
+            // iareAlert(`Click on column in header for ${columnClass}`)
+
+            updateFlockSort(sortKey)
+        }
+
+    }
+
+
+
+
+    // const onClickHeaderRow = (e) => {
+                // }
+
+
+                // const onClickSignalData = (e) => {
+                //     // triggered when Signal column in url row is clicked.
+                //
+                //     console.log("Signal column clicked")
+                //
+                //     e.stopPropagation()  // stops row click from engaging
+                //
+                //     const targetElement = e.target
+                //
+                //     const urlElement = targetElement.closest('.url-row')
+                //     const urlLink = urlElement.dataset.url
+                //     const urlObj = urlDict[urlLink]
+                //
+                //     // const rawSignalData = <pre>{JSON.stringify(urlObj.signal_data, null, 2)}</pre>
+                //     const rawSignalData = urlObj.signal_data
+                //
+                //     setSignalDetailsPopupTitle(<SignalDataDetailsTitle urlLink={urlLink}/>)
+                //
+                //     setSignalDetailsPopupContents(<SignalDataDetails
+                //         urlLink={urlLink}
+                //         rawSignalData={rawSignalData}
+                //         tooltipId={tooltipId}
+                //     />)
+                //
+                //     setIsSignalDetailsPopupOpen(true)
+                //
+                // }
+
+                // const onClickSignalDetail = (e) => {
+                //     // triggered when a single Signal is clicked.
+                //
+                //     console.log("Signal clicked")
+                //
+                //     e.stopPropagation()  // stops row click from engaging
+                //
+                //     alert("Will implement this later - will show details for one Signal value here.")
+                // }
+
+
+    const onClickDetailsPopupHeader = (e) => {
+
+        const targetElement = e.target
+        const targetClass = targetElement.className
+
+        if (targetClass === "info-click") {
+            console.log("Info for Details Popup Header Clicked")
+            setIsSignalsDocsPopupOpen(true)
+        }
+
+    }
+
+                // const onHoverUrlFlock = (e) => {
+                //     // clears tooltip html...only if no other sub-elements got there first
+                //     setUrlTooltipHtml('')
+                // }
 
 
     const getTooltipForColumn = (rowEl, columnClass) => {
@@ -500,9 +636,10 @@ const urlFlock = React.memo(function UrlFlock({
         })
 
         // sort filteredUrls if specified
-        if (sort.sortOrder?.length > 0) {
-            console.log(`sorting urls by: ${sort.sortOrder[0]}`)
-            filteredUrls.sort(sortFunction)  // sorts by "sort" object state
+        if (columnSort.sortBy?.length > 0) {
+            const sortFn = getSortFunction()
+            console.log(`sorting urls by: ${columnSort.sortBy[0]}`)  //
+            filteredUrls.sort(sortFn)
         }
 
         const getActionableInfo = (u => {
@@ -597,13 +734,11 @@ const urlFlock = React.memo(function UrlFlock({
                 <div className={"url-archive_status"}>{getArchiveStatusInfo(u)}</div>
                 <div className={"url-actionable"}>{getActionableInfo(u)}</div>
 
-                <div className={"url-signals"}
-                     // onClick={onClickSignalData}
-                    >
-                    <SignalDisplay
+                <div className={"url-signals"}>
+                    <SignalDisplay  // TODO replace this with SignalBadges directly
                         urlObj={u}
                         onAction={onAction}
-                        badgeContext={badgeContext.INLINE}
+                        badgeContext={badgeContext.inline.value}
                         tooltipId={tooltipId}
                     />
                 </div>
@@ -662,46 +797,52 @@ const urlFlock = React.memo(function UrlFlock({
     const getHeaderRow = () => {
         return <div className={"url-row-header flock-row-header"}>
 
-            <div className={"url-name flock-col"} onClick={() => {
-                updateFlockSort("name")
-            }}
-            ><br/>URL Link
+
+            <div className={"url-name flock-col"}><br/>URL Link
             </div>
 
-            <div className={"url-live_status flock-col"} onClick={() => {
-                updateFlockSort("status")
-            }}
+            <div className={"url-live_status flock-col"}
             >Live<br/>Status
+                <SortBox/>
             </div>
 
-            <div className={"url-archive_status flock-col"} onClick={() => {
-                updateFlockSort("archive_status");
-            }}
-            >{archiveFilterDefs['iabot']._.name}</div>
+            <div className={"url-archive_status flock-col"}
+            >{archiveFilterDefs['iabot']._.name}
+                <SortBox/>
+            </div>
 
-            <div className={"url-actionable flock-col"} onClick={() => {
-                updateFlockSort("actionable");
-            }}
+            <div className={"url-actionable flock-col"}
             >Action<br/>Items
+                <SortBox/>
             </div>
 
-            <div className={"url-signals flock-col"} onClick={(e) => {
-                // don't use default sort click, as Signal-type clicks do something special
-                onSignalHeaderClick(e)
-            }}
-            >
-                <div className={"wiki-signals-docs flock-col"}>WikiSignals ℹ️
-                    <span className={"info-icon descriptor-text"}> (Click to show information) </span>
+            {/* signals column is special... */}
+            <div className={"url-signals flock-col"}>
+                {/*<div className={"wiki-signals-docs flock-col"}>WikiSignals ℹ️ </div>*/}
+                {/*<div className={"wiki-signals-sort flock-col"}>WikiSignal Sort <span className={"descriptor-text"}>(Click to sort)</span></div>*/}
+                <div>
+                    <SignalBadges badgeContextKey={BadgeContexts.sort.value}
+                                  tooltipId={tooltipId}
+                        // onBadgeHover={onBadgeHover}
+                                  onAction={onAction}
+                                  onClick={handleSignalBadgesClick}  // TODO need this???
+
+                    />
                 </div>
-                <div className={"wiki-signals-sort flock-col"}>WikiSignal Sort <span className={"descriptor-text"}>(Click to sort)</span>
-                </div>
+
             </div>
 
         </div>
 
     }
 
-    // fades in feedback text and then fades it out
+
+    // fades feedback text in and out
+    //
+    // //  NB T H I S   E F F E C T   I S   N O T   R E A D Y   Y E T
+    //
+    //
+
     React.useEffect(() => {
         // this is an attempt to show feedback text for a short time before disappearing
         if (feedbackText) {
@@ -733,8 +874,8 @@ const urlFlock = React.memo(function UrlFlock({
     const [flockDataRows, flockArray] = getDataRows(urlArray, urlFilters);
     const flockHeaderRow = getHeaderRow()
     const flockAllRows = [flockHeaderRow, ...flockDataRows]
-    const flock = <div
-        className={"flock-rows url-rows"}
+
+    const flock = <div className={"flock-rows url-rows"}
         onClick={onClickFlockRow}
         onMouseOver={onHoverFlockRow}
     >{flockAllRows}</div>

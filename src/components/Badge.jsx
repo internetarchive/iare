@@ -1,31 +1,62 @@
 import React from "react";
-import {BadgeContextEnum} from "../constants/badgeDisplayTypes.jsx";
-import waybackLogo from "../constants/badges/images/badge.logo.wayback.small.png";
+import {BadgeContexts} from "../constants/badgeContexts.jsx";
+import SortBox from "./SortBox.jsx";
+import HeaderCell from "./HeaderCell.jsx";
 
 export default function Badge({
-                                  badgeContext = BadgeContextEnum.INLINE,
-                                  badgeClass = "",
                                   badgeKey = "",
-                                  signals = {},
-                                  onBadgeClick,
-                                  onBadgeHover,
+                                  badgeClass = "",
+                                  badgeContextKey = BadgeContexts.inline.value,
+
                                   badgeIcon = null,
                                   badgeText = null,
                                   badgeData = {},
+
+                                  onBadgeHover,
+                                  onBadgeClick,
+
+                                  signals = {},
+
                               }
 ) {
 
-    return <div className={`signal-badge ${badgeClass}`}
+    const badgeContext = BadgeContexts[badgeContextKey] || BadgeContexts.default
+
+    const headerContent = (
+        <>
+            {badgeContext.hasIcon && (
+                <div className={"signal-badge-element badge-icon"}>
+                    {badgeIcon}
+                </div>
+            )}
+            {badgeContext.hasText && (
+                <div className={"signal-badge-element badge-text"}>
+                    {badgeText}
+                </div>
+            )}
+        </>
+    );
+
+
+    const headerSort = badgeContext.value === "sort"
+        ? <SortBox className={"signal-badge-element"}/>
+        : null
+
+    const headerCellClass = [
+        // "signal-badge",
+        badgeClass
+    ]
+        .filter(Boolean).join(" ")
+
+    return <div className={"signal-badge"}
                 data-badgedata={JSON.stringify(badgeData)}
                 data-badgekey={badgeKey}
+                onMouseMove={onBadgeHover}
     >
-        <div className={"signal-badge-element badge-icon"}
-             onMouseOver={onBadgeHover}
-        >{badgeIcon}</div>
-
-        {badgeContext !== BadgeContextEnum.INLINE
-            ? <div className={"signal-badge-element badge-text"}>{badgeText}</div>
-            : null}
-
+        <HeaderCell
+            content={headerContent}
+            sort={headerSort}
+            headerClass={headerCellClass}
+        />
     </div>
 }
