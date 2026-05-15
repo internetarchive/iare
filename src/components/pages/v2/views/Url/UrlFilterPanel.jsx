@@ -29,21 +29,21 @@ const UrlFilterPanel = React.memo(({
             tooltipId=null
 }) => {
 
-    const [autoExpand, setAutoExpand] = useState(true )
+    const [accordionMode, setAccordionMode] = useState(true )
 
     // todo create a structure called "filters" or "myFilters", defining a key
     // for each filter we want to have here.
 
     const [expand, setExpand] = useState({
-        "actionable" : true,
-        "reference_stats" : true,
-        "domains" : true,
-        "link_status" : true,
-        "papers" : true,
-        "reliability" : true,
-        "tld" : true,
-        "books" : true,
-        "templates" : true,
+        "actionable" : false,
+        "reference_stats" : false,
+        "domains" : false,
+        "link_status" : false,
+        "papers" : false,
+        "reliability" : false,
+        "tld" : false,
+        "books" : false,
+        "templates" : false,
     })
     const iareColors = {
         blue: "#35a2eb",
@@ -64,20 +64,20 @@ const UrlFilterPanel = React.memo(({
     myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
 
     const onToggleShow = (name) => {
-        setExpand( prevState => {
+        setExpand(prevState => {
             const newState = {}
             // init newState with all false if autoExpand
             Object.keys(prevState).forEach( state => {
-                newState[state] = autoExpand ? false : prevState[state]
+                newState[state] = accordionMode ? false : prevState[state]
             })
             // regardless set state specified by name to true
-            newState[name] = 0 && autoExpand ? true : !prevState[name]
+            newState[name] = 0 && accordionMode ? true : !prevState[name]
             return newState
         })
     }
 
-    const accordionCheckbox = <Checkbox className={"auto-expand"} label={"Accordion Mode"} value={autoExpand}
-        onChange={() => setAutoExpand(prevState => !prevState)}
+    const accordionCheckbox = <Checkbox className={"auto-expand"} label={"Accordion Mode"} value={accordionMode}
+        onChange={() => setAccordionMode(prevState => !prevState)}
         tooltipId={tooltipId}
         tooltipContent={"In Accordion Mode, one filter is visible at a time.<br/>Clicking a filter will hide all others."}
     />
