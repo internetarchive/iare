@@ -16,6 +16,8 @@
 
     --width-hot-meter: .6rem;
 
+    --padding-signal-cell: .25rem;
+
     --signal-grid-columns-inline:
             var(--width-signal-score)
             var(--width-signal-wayback)
@@ -50,6 +52,10 @@
 
 }
 
+
+* {
+    /*border:1px solid #dd44b2;*/
+}
 /* * * * * * * * * * * * * * * * * *
  *  S I G N A L S   G E N E R I C  *
  * * * * * * * * * * * * * * * * * */
@@ -95,7 +101,7 @@ button.fetch-signal-button:hover {
     display: flex;
     align-items: center;
     height: 100%;
-    padding:0 .12rem;
+    /*padding:0 .12rem;*/
     /*border: 1px solid var(--color-list-line);*/
 }
 
@@ -114,7 +120,7 @@ button.fetch-signal-button:hover {
     font-style: italic;
     color: var(--color-text-muted);
     padding:0;
-    margin-top: -.25rem;
+    /*margin-top: -.25rem;*/
 }
 
 .signal-badge .logo-image {
@@ -162,6 +168,14 @@ button.fetch-signal-button:hover {
     width: 80%;
     margin:auto;
 }
+.signal-badge .mbfc-badge .logo-image {
+    width: 80%;
+    margin:auto;
+}
+.signal-badge .tranco-badge .logo-image {
+    width: 80%;
+    margin:auto;
+}
 
 
 /* * * * * * * * * * * * * * * * * * * * * * *
@@ -200,6 +214,17 @@ button.fetch-signal-button:hover {
     display:flex;
     flex-direction: column;
 }
+
+.signal-badges-sort .header-cell-content {
+    padding-top: var(--padding-signal-cell);
+    padding-bottom: var(--padding-signal-cell);
+}
+
+.signal-badges-sort .signal-badge .header-cell-content {
+    /*padding:0 .12rem;*/
+
+}
+
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * *

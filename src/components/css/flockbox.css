@@ -1,4 +1,7 @@
 /* flock boxes - surrounds flock style components  */
+:root {
+    --padding-flock-row-header: .25rem 0;
+}
 
 .flock-filter-panel {
     flex: 0 0 auto;
@@ -84,43 +87,14 @@
     border: 1px solid black;
     border-top-left-radius: var(--border-box-radius);
     border-top-right-radius: var(--border-box-radius);
-    padding: .35rem 0;
+
+    padding: var(--padding-flock-row-header);
 }
 
 .flock-row-header > div {
     text-align: center;
 }
 
-                /*.flock-row-header .flock-col {*/
-                /*    cursor: pointer;*/
-                /*}*/
-
-
-                /* make these use the flock-*/
-
-
-                /*.flock-box-contents {*/
-                /*    display:flex;*/
-                /*    flex-direction: column;*/
-                /*    height:100%;*/
-
-                /*    padding: 0;*/
-                /*    padding-top:var(--margin-box-space);*/
-
-                /*    border: none;*/
-                /*    background-color: inherit;*/
-                /*}*/
-
-                /*.flock-box-contents button{*/
-                /*    margin-bottom: var(--margin-button-list);*/
-                /*}*/
-
-                /*.flock-box label.chk-checkbox {*/
-                /*    font-weight: normal;*/
-                /*}*/
-                /*.flock-box label.chk-checkbox input[type=checkbox] {*/
-                /*    margin-right: .25rem;*/
-                /*}*/
 
 .debug-extra-column {
     flex: 0 0 auto;

@@ -108,12 +108,14 @@ const signalBadgeRegistry = {
     },
 
     mbfc: {
+        component: MbfcBadge,
+
         key: "mbfc",
         label: "MBFC",
         caption: "Media Bias Fact Check",
         class_name: "mbfc-badge",
         description: "Media Bias Fact Check (website)",
-        component: MbfcBadge,
+
         priority: 200,
         group: "",
         logo: imgMbfcLogo,
@@ -126,11 +128,14 @@ const signalBadgeRegistry = {
     },
 
     enwiki: {
+        component: EnwikiBadge,
+
         key: "enwiki",
         label: "Enwiki",
         caption: "English Wiki Link Count",
         class_name: "enwiki-badge",
-        component: EnwikiBadge,
+        description: "English Wikipedia Link Count",
+
         priority: 300,
         group: "",
         logo: imgEnwikiLogo,
@@ -161,11 +166,14 @@ const signalBadgeRegistry = {
     },
 
     wayback: {
+        component: WaybackBadge,
+
         key: "wayback",
         label: "Wayback",
         caption: "Wayback Machine Statistics (Longevity)",
+        description: "Wayback Machine History",
         class_name: "wayback-badge",
-        component: WaybackBadge,
+
         priority: 400,
         group: "",
         logo: imgWaybackLogo,

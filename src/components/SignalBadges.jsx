@@ -11,7 +11,7 @@ export default function SignalBadges({
                                          onAction,  // what to do if signal clicked
 
                                          // onClick,
-                                         onBadgeHover,
+                                         onBadgesHover,
 
                                          tooltipId,
 
@@ -113,7 +113,7 @@ export default function SignalBadges({
             // data-tooltip-id={tooltipId}
             // data-tooltip-content={tooltipContent}
 
-            // onMouseOver={onBadgeHover}
+            onMouseOver={onBadgesHover}
             // onClick={onClick}
         >
         {badges}

@@ -37,6 +37,7 @@ export default function UrlDisplay ({ pageData, options } ) {
 
     const [isRefViewModalOpen, setIsRefViewModalOpen] = useState(false)  // shows or hides RefView popup
     const [isShowRefs, setIsShowRefs] = useState(true)  // shows Refs list or not
+    const [isShowFilters, setIsShowFilters] = useState(true)  // shows Filters list or not
 
 
     const filters = {
@@ -327,6 +328,13 @@ export default function UrlDisplay ({ pageData, options } ) {
             ACTIONS_IARE.TOGGLE_SHOW_REFS.key
         ) {
             setIsShowRefs((prevIsShowRefs) => !prevIsShowRefs);
+        }
+
+
+        else if (action ===
+            ACTIONS_IARE.TOGGLE_SHOW_FILTERS.key
+        ) {
+            setIsShowFilters((prevIsShowFilters) => !prevIsShowFilters);
         }
 
 
@@ -667,14 +675,14 @@ export default function UrlDisplay ({ pageData, options } ) {
 
     const tooltipForUrlDisplay = <MyTooltip
         id="tooltip-url-display"
-        float={false}
-        // float={true}
+        // float={false}
+        float={true}
         closeOnEsc={true}
         delayShow={420}
         variant={"info"}
         noArrow={true}
         // offset={5}
-        offset={120}
+        offset={34}
         className={"tooltip-iare-display"}
         style={{ zIndex: 9999 }}
 
@@ -700,7 +708,11 @@ export default function UrlDisplay ({ pageData, options } ) {
                 //
                 // </div>
 
-    const overviewColumn = myConfig.isShowUrlOverview && true
+    const overviewColumn = myConfig.isShowTestFilters && true
+
+        ? <>{getTestOverviewColumnData()}</>
+
+        : isShowFilters
         ? <div className={"url-overview-column"}>
                 <UrlFilterPanel pageData={pageData}
                                 options={{}}
@@ -708,8 +720,7 @@ export default function UrlDisplay ({ pageData, options } ) {
                                 currentState={currentState}
                                 tooltipId={"tooltip-url-display"}/>
             </div>
-
-        : {getTestOverviewColumnData}
+    : null
 
     const urlDisplayBody = <>
         <div className={"url-display-body"} style={{display: "flex", height:'100%'}}>

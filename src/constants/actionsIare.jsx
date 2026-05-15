@@ -101,6 +101,10 @@ export const ACTIONS_IARE = {
         key: "TOGGLE_SHOW_REFS"
     },
 
+    TOGGLE_SHOW_FILTERS: {
+        key: "TOGGLE_SHOW_FILTERS"
+    },
+
     SORT_BY_SIGNAL: {
         key: "SORT_BY_SIGNAL"
     },

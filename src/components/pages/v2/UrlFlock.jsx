@@ -16,7 +16,7 @@ import signalBadgeRegistry, {signalBadgePrefix} from "../../../constants/badges/
 
 import Popup from "../../Popup.jsx";
 
-import SignalDisplay from "../../SignalDisplay.jsx";
+// import SignalDisplay from "../../SignalDisplay.jsx";
 import SignalsDocs from "../../SignalsDocs.jsx";
 import SignalsSort from "../../SignalsSort.jsx";
 
@@ -308,33 +308,51 @@ const urlFlock = React.memo(function UrlFlock({
     const getColumnTooltip = (columnClass) => {
         // if (!columnClass) return null
 
-        if (columnClass === "url-signal") {
-            // TODO get specific badge label
-            return "url-signal class"
+        if (columnClass?.startsWith('signal-') ) {
+            const badgeKey = columnClass.split('signal-')[1] // Extract badgeKey from columnClass
+            const badgeDef = signalBadgeRegistry[badgeKey]
+            return `<div>${badgeDef?.description || "tooltip for ${columnClass}"}</div>`
         }
 
         return urlColumnDefs.columns[columnClass]?.ttCaption;
-        // unless it is signal column, in which case defer
-        // "signal" type column hover processing
-        //
-        // for now, hover processing is done within SignalBadges
+
     }
 
     const onHoverFlockRow = e => {
         // handle hover for header, data row, or other
 
         e.stopPropagation()  // prevents onHover from propagating engaging and erasing tooltip
+        let el = null
+        let isSignalColumn = false
 
         // if header row show tooltip for that column...
         let rowEl = e.target.closest('.url-row-header')
         if (rowEl) {
-            const el = e.target.closest('.flock-col')
-            const columnClass = el?.classList[0];  // handles potential null and extract the first class name
+            let columnClass = ""
 
-            const html = getColumnTooltip(columnClass)
+            el = e.target.closest('.signal-badge')
+            if (el) {
+                isSignalColumn = true
+                columnClass = 'signal-' + el.dataset.badgekey
+            } else {
+                el = e.target.closest('.flock-col')
+                if (el) {
+                    // if normal column, get from dataset columnKey
+                    columnClass = el.dataset.columnKey;
+                }
+            }
 
+            // else get from signal hierarchy
+            let html = getColumnTooltip(columnClass)
             console.log(`UrlFlock onHoverFlockRow: in .url-row-header columnClass: ${columnClass}`)
+
+            const elSorto = e.target.closest('.header-cell-sort')
+            if (elSorto) {
+                // html = `<div>${html}<br/>Sort by: ${elSorto.dataset.sortkey}</div>`
+                html = `<div>${html}Click to Sort</div>`
+            }
             setUrlTooltipHtml(html)
+
             return
         }
 
@@ -638,12 +656,23 @@ const urlFlock = React.memo(function UrlFlock({
                 <div className={"url-actionable"}>{getActionableInfo(u)}</div>
 
                 <div className={"url-signals"}>
-                    <SignalDisplay  // TODO replace this with SignalBadges directly
-                        urlObj={u}
-                        onAction={onAction}
-                        badgeContext={badgeContext.inline.value}
-                        tooltipId={tooltipId}
+
+                    {/*<SignalDisplay  // TODO replace this with SignalBadges directly*/}
+                    {/*    urlObj={u}*/}
+                    {/*    onAction={onAction}*/}
+                    {/*    badgeContext={badgeContext.inline.value}*/}
+                    {/*    tooltipId={tooltipId}*/}
+                    {/*/>*/}
+
+                    <SignalBadges signals={u?.signal_data?.signals ?? {}}
+                                  onAction={onAction}
+                                  badgeContextKey={badgeContext.inline.value}
+                                  tooltipId = {tooltipId}
+                                  fromCache = {u?.signal_data?.retrieved_from_cache}
                     />
+
+
+
                 </div>
 
             </div>
@@ -730,7 +759,7 @@ const urlFlock = React.memo(function UrlFlock({
                     <div>
                         <SignalBadges badgeContextKey={BadgeContexts.sort.value}
                                       tooltipId={tooltipId}
-                            // onBadgeHover={onBadgeHover}
+                                      // onBadgesHover={onBadgeHover}
                                       onAction={onAction}
                                       onClick={handleSignalBadgesClick}  // TODO need this???
 
@@ -862,9 +891,16 @@ const urlFlock = React.memo(function UrlFlock({
             <span>{options.showRefs ? "Hide Refs" : "Show Refs"}</span>
         </button>
 
+    const buttonShowHideFilters =
+        <button onClick={() => onAction({action: ACTIONS_IARE.TOGGLE_SHOW_FILTERS.key})}
+                className={'btn text-button'}
+        >
+            <span>{options.showRefs ? "Hide Filters" : "Show Filters"}</span>
+        </button>
+
     const flockCaption =
         <>
-            <div className={"main-caption"}>URL Links {buttonShowHideRefs}</div>
+            <div className={"main-caption"}>URL Links <span>{buttonShowHideFilters}{buttonShowHideRefs}</span></div>
             <div className={"sub-caption"}>
                 <div>{flockInfo}</div>
                 <div>{spanFeedback} {buttonCopyList} {buttonCopyDetails}</div>

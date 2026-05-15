@@ -45,7 +45,7 @@ export default function App(
     });
 
     // these are config values to show/hide certain UI features, available from debug info box
-    const [isShowUrlOverview, setIsShowUrlOverview] = useState(true);
+    const [isShowTestFilters, setIsShowTestFilters] = useState(false);
     const [isShowShortcuts, setIsShowShortcuts] = useState(true);
     // TODO set this based on local storage or cookie value
     const [isShowUseLocalCache, setIsShowUseLocalCache] = useState(
@@ -518,9 +518,9 @@ export default function App(
     const debugButtonFilters = <button // this is the 'show urls list' button
         className={"utility-button debug-button"}
         onClick={() => {
-            setIsShowUrlOverview(prevState => !prevState)
+            setIsShowTestFilters(prevState => !prevState)
         }
-        }>{isShowUrlOverview ? "Hide" : "Show"} Filters</button>
+        }>{isShowTestFilters ? "Hide" : "Show"} Test Filters</button>
 
 
     const debugButtonShortcuts = <button // this is the 'show shortcuts' button
@@ -612,7 +612,7 @@ export default function App(
         urlStatusMethod: checkMethod,
         articleVersion: myParseMethod,
         isDebug: !!isDebug,
-        isShowUrlOverview: isShowUrlOverview,
+        isShowTestFilters: isShowTestFilters,
         isShowShortcuts: isShowShortcuts,
         isShowDebugInfo: isShowDebugInfo,
         isShowDebugComponents: isShowDebugComponents,
