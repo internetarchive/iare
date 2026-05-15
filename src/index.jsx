@@ -32,7 +32,7 @@ const getIariSource = (qParams, targetEnvironment) => {
     // hard-set to iari_prod for production
     if (targetEnvironment === 'env-production') return IariSources.iari_prod.key
 
-    const defaultIariSourceKey = IariSources.iari_stage_r6.key
+    const defaultIariSourceKey = IariSources.iari_stage.key
 
     // fall back to default if not specified as url parameter
     const sourceKey = queryParameters.has("iari-source")

@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.3.1.36",
-  "version_name": "0.3.1.36 Working sort columns and tooltips",
+  "version": "0.3.1.37",
+  "version_name": "0.3.1.37 iare-stage set as default source",
   "private": true,
   "type": "module",
   "dependencies": {
