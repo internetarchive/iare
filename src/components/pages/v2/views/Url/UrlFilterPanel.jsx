@@ -29,7 +29,7 @@ const UrlFilterPanel = React.memo(({
             tooltipId=null
 }) => {
 
-    const [accordionMode, setAccordionMode] = useState(true )
+    const [accordionMode, setAccordionMode] = useState(false )
 
     // todo create a structure called "filters" or "myFilters", defining a key
     // for each filter we want to have here.
@@ -82,8 +82,7 @@ const UrlFilterPanel = React.memo(({
         tooltipContent={"In Accordion Mode, one filter is visible at a time.<br/>Clicking a filter will hide all others."}
     />
 
-    const filterButtonRow = <div className={"button-row"}>
-        <button
+    const buttonExpandAll = <button
             type="button"
             className={`btn small-button utility-button`}
             onClick={() => {
@@ -100,7 +99,8 @@ const UrlFilterPanel = React.memo(({
             // data-tooltip-html={props.tooltip}
         >Expand All
         </button>
-        <button
+
+    const buttonCollapseAll = <button
             type="button"
             className={`btn small-button utility-button`}
             onClick={() => {
@@ -115,10 +115,8 @@ const UrlFilterPanel = React.memo(({
             // // tooltip attributes
             // data-tooltip-id={props.tooltipId}
             // data-tooltip-html={props.tooltip}
-        >Shrink All
+        >Collapse All
         </button>
-        {accordionCheckbox}
-    </div>
 
     const debugFilters = myConfig.isShowDebugComponents && <>
         <FilterBox name={"reference_stats"} caption={"Reference Stats"} showContents={expand.reference_stats}
@@ -151,12 +149,14 @@ const UrlFilterPanel = React.memo(({
         </FilterBox>
     </>
 
+    const subCaption = <span className={"sub-caption"}>{buttonCollapseAll}</span>
+
     return <div className={"url-overview iare-ux-container"}>
 
         <div className={"iare-ux-header"}>
             <ControlBox>
-                <h3 className={"control-box-caption"}>Filters <span className={"sub-caption"}>Use filters to set Conditions</span></h3>
-                {filterButtonRow}
+                <h3 className={"control-box-caption"}>Filters {subCaption}</h3>
+                {/*<div className={"button-row"}>{buttonExpandAll} {accordionCheckbox}</div>*/}
             </ControlBox>
         </div>
 

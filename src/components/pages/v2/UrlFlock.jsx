@@ -895,7 +895,7 @@ const urlFlock = React.memo(function UrlFlock({
         <button onClick={() => onAction({action: ACTIONS_IARE.TOGGLE_SHOW_FILTERS.key})}
                 className={'btn text-button'}
         >
-            <span>{options.showRefs ? "Hide Filters" : "Show Filters"}</span>
+            <span>{options.showFilters ? "Hide Filters" : "Show Filters"}</span>
         </button>
 
     const flockCaption =

@@ -682,7 +682,7 @@ export default function UrlDisplay ({ pageData, options } ) {
         variant={"info"}
         noArrow={true}
         // offset={5}
-        offset={34}
+        offset={30}
         className={"tooltip-iare-display"}
         style={{ zIndex: 9999 }}
 
@@ -729,7 +729,7 @@ export default function UrlDisplay ({ pageData, options } ) {
                       urlArray={pageData.urlArray}
                       urlFilters={urlFilters}
                       onAction={handleAction}
-                      options={{showRefs: isShowRefs }}
+                      options={{showRefs: isShowRefs, showFilters: isShowFilters }}
                       selectedUrl={selectedUrl}
                       fetchMethod={myConfig.urlStatusMethod}
                       tooltipId={"tooltip-url-display"} />
@@ -775,6 +775,7 @@ export default function UrlDisplay ({ pageData, options } ) {
                         onAction={handleAction}/>
 
                     {/*<div>ShowRefs: {isShowRefs ? "true" : "false"}</div>*/}
+                    {/*<div className={"test-tooltip-display"}>ShowRefs: {isShowRefs ? "true" : "false"}</div>*/}
 
                 </div>{/* iare-ux-header */}
 

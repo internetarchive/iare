@@ -38,6 +38,9 @@
     --color-button-dark-bg: #2199e8;
     --color-button-dark: #fefefe;
 
+    --color-sort-text: #0098d9;
+    --color-sort-glow: #00c4ff;
+
     --width-category-column: 7.5rem;
 
     --width-list-entry-count: 2.5rem;
@@ -63,7 +66,7 @@
 }
 
 .control-box-caption {
-    padding: 0.0rem 0.0rem 0.3rem !important;
+    /*padding: 0.0rem 0.0rem 0.3rem !important;*/
     color: var(--color-condition) !important;
     font-size: 0.85rem;
     font-weight: bold;
@@ -76,7 +79,7 @@
     font-style: italic;
     font-size:88%;
     font-weight: bold !important;
-    opacity:0.3;
+    /*opacity:0.3;*/
     /*text-align: right;*/
     /*position: absolute;*/
     /*right: 0.25rem;*/
@@ -87,6 +90,9 @@
     /*flex-direction: row;*/
     /*justify-content: space-between;*/
 }
+.control-box-caption .sub-caption button.utility-button.small-button  {
+    margin-left: .25rem;
+}
 
 .control-box-contents .category-row {
     line-height:1.8;
@@ -96,7 +102,8 @@
     flex-direction: row;
     margin-top: 0.23rem;
 }
-.control-box .button-row .utility-button {
+/*.control-box .button-row .utility-button {*/
+.control-box .utility-button {
     background-color: var(--color-button-dark-bg) !important;
     color: var(--color-button-dark) !important;
     padding-left:.5rem;
@@ -476,5 +483,7 @@
 }
 
 .sort-indicator:hover {
-    color: #00c4ff;
+    color: var(--color-sort-text);
+    /*text-shadow: 0 0 4px var(--color-sort-glow), 0 0 6px var(--color-sort-glow), 0 0 8px var(--color-sort-glow);*/
+    text-shadow: 0 0 4px var(--color-sort-glow), 0 0 6px var(--color-sort-glow);
 }

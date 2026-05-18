@@ -45,6 +45,11 @@
     --color-button-bg-hover: white;
     --color-button-border: #2199e8;
 
+    --color-tooltip-border: #8d9ab3;
+    --color-tooltip-border: #596272;
+    --color-tooltip-bg: #f0f0f0;
+    --color-tooltip-fg: #000000;
+
     --color-debug-lite: #a8a8a8;
 
     /* status codes colors */
@@ -505,25 +510,62 @@ font-style:italic;
 font-weight:normal;
 }
 
+
+@font-face {
+    font-family: 'Source Sans 3';
+    src: url('assets/fonts/SourceSans3-VariableFont_wght.ttf')
+        format('truetype-variations');
+
+    /*font-weight: 100 900;*/
+    font-weight: 200 900;
+    font-style: normal;
+}
+
 .tooltip-container {
     display: contents;
 }
 
 #tooltip-url-display {
-    font-size:1.0rem;
+    font-size:0.8rem;
+    font-weight:normal;
+
+    /*background-color: #a4d0fe !important;*/
+    /*color: black;*/
+
+    font-family: "Source Sans 3", sans-serif;
+    background-color: var(--color-tooltip-bg) !important;
+    color: var(--color-tooltip-fg);
+    padding:.25rem .5rem .2rem .5rem !important;
+    line-height:1.0rem;
+    border:1.0pt solid;
+    border-color: var(--color-tooltip-border) !important;  /* must use !important otherwise tooltip uses "color" property value */
+
+    opacity: .95;
+
+    /*border-color: #7eb0ce;*/
+    border-radius: .3rem;
+    max-width: 40rem;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+.test-tooltip-display {
+    font-family: "Source Sans", sans-serif;
+    font-size:0.77rem;
     font-weight:normal;
     line-height:1.5rem;
-    border:1.5pt solid black;
-    border-radius: .38rem;
+    color: black;
+
+    /*background-color: #a4d0fe !important;*/
+    background-color: #dfe8f1 !important;
     /*opacity: .9;*/
     opacity: .95;
+
+    border:1.5pt solid;
+    border-color: #7eb0ce;
+    border-radius: .38rem;
     padding:.3rem .5rem;
     max-width: 40rem;
 }
-.tooltip-iare-display {
-    background-color: #6a99c7 !important;
-    border-color: #326692 !important;
-}
+
 .tooltip-active {
     cursor: pointer;
 }

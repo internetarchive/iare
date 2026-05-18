@@ -421,34 +421,4 @@ svg.score-badge-text .text-shadow {
     color: #ddd;
     font-weight: bold;
 }
-            /*.signals-badge:hover {*/
-            /*    background-color: #d1d2d4;*/
-            /*}*/
-            /*.signals-badge.signals-nodata {*/
-            /*    color: var(--color-badge-nodata-fg);*/
-            /*    background-color: var(--color-badge-nodata-bg);*/
-            /*    border-color: var(--color-badge-nodata-fg);*/
-            /*}*/
-            /*.signals-badge.signals-error {*/
-            /*    color: var(--color-badge-error-fg);*/
-            /*    background-color: var(--color-badge-error-bg);*/
-            /*    border-color: var(--color-badge-error-border);*/
-            /*}*/
 
-            /*.signals-badge.signals-good {*/
-            /*    color: var(--color-badge-good-fg);*/
-            /*    background-color: var(--color-badge-good-bg);*/
-            /*}*/
-            /*.signals-badge.signals-bad {*/
-            /*    color: var(--color-badge-bad-fg);*/
-            /*    background-color: var(--color-badge-bad-bg);*/
-            /*}*/
-            /*.signals-badge.signals-zero {*/
-            /*    color: var(--color-badge-zero-fg);*/
-            /*    background-color: var(--color-badge-zero-bg);*/
-            /*}*/
-            /*!* this may go away *!*/
-            /*.signals-badge.signals-null {*/
-            /*    color: lightgrey;*/
-            /*    border-color: lightgrey;*/
-            /*}*/
