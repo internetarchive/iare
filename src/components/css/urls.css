@@ -79,24 +79,22 @@
 
 }
 
-/* prevents the tooltip wrapper for affecting layout of contents it is containing */
+/* special debug */
+.url-row-header div:last-child,
+.url-row div:last-child {
+    /*background-color: deeppink;*/
+}
+
+
+/* prevents tooltip wrapper from affecting layout of contained contents */
 [data-tooltip-id] {
     display: contents;
 }
-
 
 .flock-box.url-flock {
     flex: 1 1 0%;
     min-width: 25%;
 }
-
-.url-chart-display {
-    width:327px;
-}
-.url-chart-display .chart-container {
-    height:300px;
-}
-
 
 .url-flock {
     /*width: var(--width-url-list);*/
@@ -125,6 +123,8 @@
     border-top:none;
 
     /*position:relative;*/
+    min-width: fit-content;
+    width: 100%;
 
     cursor: pointer;
 
@@ -173,6 +173,8 @@
     padding-top: var(--padding-row-header-top);
     padding-bottom: var(--padding-row-header-bottom);
     cursor: pointer;
+    min-width: max-content;
+    width: 100%;
 }
 
 /* url list column widths for different column types */
@@ -190,17 +192,20 @@
     padding-left: var(--padding-url-column) !important;
 }
 
-/*.url-row-header .url-name*/
-/*{*/
-/*    padding-left: var(--padding-url-column) !important;*/
-/*}*/
+            /*.url-row-header .url-name*/
+            /*{*/
+            /*    padding-left: var(--padding-url-column) !important;*/
+            /*}*/
+
+/*
+ * All the css rules for each column type
+ */
 
 .url-row-header .url-live_status,
 .url-row .url-live_status {
     width: var(--width-url-live_status);
     max-width: var(--width-url-live_status);
     min-width: var(--width-url-live_status);
-    /*border-right: var(--width-cell-border);*/
 }
 
 .url-row-header .url-archive_status,
@@ -286,13 +291,6 @@
     text-align: left;
 }
 
-x.url-row-header div:last-child,
-x.url-row div:last-child {
-    background-color: deeppink;
-    width: 100%;
-    max-width: 100%;
-}
-
 .url-row-header .url-sections,
 .url-row .url-sections
 {
@@ -311,8 +309,6 @@ x.url-row div:last-child {
     max-width: var(--width-url-perennial);
     min-width: var(--width-url-perennial);
 }
-
-
 
 
 /* row-wide treatments of url row */

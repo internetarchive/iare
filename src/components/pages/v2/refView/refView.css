@@ -7,6 +7,8 @@
     --color-sub-caption: #9b9a9a;
     --color-actionable-header: hsl(358 69% 65% / 1);
 
+    --color-url-row-label: #444444;
+
     --color-parts-bg: #81c8e7;
     --color-parts-label: #689cc5;
     --color-parts-bg-hover: white;
@@ -38,7 +40,6 @@
     --border-box-actionable-color: hsl(358 81% 67% / 1);
     --border-box-actionable: 2pt solid var(--border-box-actionable-color) !important;
 
-    --border-radius-ref-section:0.42rem;
     --border-solid-light: 1px solid #ebebeb;
     --border-solid-dark: 1px solid #343232;
 
@@ -260,7 +261,7 @@
     margin-top:.5rem;
 }
 
-.ref-view-body .header-all-parts {
+.ref-view-body .header-full-width {
     position:relative;
     display: flex;
     flex-direction: row;
@@ -278,11 +279,11 @@
     font-style: italic;
     margin-left:.66rem;
 }
-.ref-view-section:first-of-type .header-all-parts {
+.ref-view-section:first-of-type .header-full-width {
     margin-top:0;
 }
-.ref-view-wikitext .header-all-parts button.utility-button,
-.ref-view-wikitext-new .header-all-parts button.utility-button
+.ref-view-wikitext .header-full-width button.utility-button,
+.ref-view-wikitext-new .header-full-width button.utility-button
 {
     margin-bottom:0;
     height:1.1rem;
@@ -328,8 +329,8 @@ button.truth-probe-button  /* deprecate? */
     padding:.28rem .35rem;
     width:100%;
 
-    border: var(--border-box-light);
-    border-radius: var(--border-radius-ref-section);
+    border: var(--iare-section-border);
+    border-radius: var(--iare-section-border-radius);
 }
 .ref-view-wikitext .raw-wikitext.editable {
     background-color: var(--color-bg-editable) !important;
@@ -357,8 +358,10 @@ button.truth-probe-button  /* deprecate? */
 
 .ref-view-section .url-rows-display {
     height: inherit; /* override urls.css */
-    border: var(--border-box-light);
-    border-radius: var(--border-radius-ref-section);
+    border: var(--iare-section-border);
+    border-radius: var(--iare-section-border-radius);
+    /*background-color: chartreuse;*/
+    overflow-y: scroll;
 }
 .ref-view-section .url-rows .url-row {
     border: none; /* override urls.css */
@@ -424,10 +427,19 @@ button.truth-probe-button  /* deprecate? */
     /*border-radius: var(--border-radius-ref-section);*/
     position:relative;
     cursor: inherit;
+    align-items: center;
+
 }
 .ref-view-urls .url-row:hover {
     color:inherit !important;
     background-color: inherit !important;
+}
+
+.ref-view-urls .url-row-label {
+    font-size: .75rem;
+    padding-bottom:0 !important;
+    color: var(--color-url-row-label);
+    /*font-style:italic;*/
 }
 
 .ref-view-urls .url-row .url-name {
@@ -440,13 +452,6 @@ button.truth-probe-button  /* deprecate? */
     flex-shrink: 0;
 }
 
-
-.url-row-header .url-row-label {
-    font-size: .62rem;
-    padding-bottom:0 !important;
-    color:#a0a0a0;
-    font-style:italic;
-}
 .url-row.url-row-header > div {
     padding:var(--padding-url-column-small) 0 0;
     text-align:center;
@@ -477,7 +482,7 @@ button.truth-probe-button  /* deprecate? */
 .ref-view-actionables.no-action {
     /*color: #c8c8c8 !important;*/
     color: #a7a7a7 !important;
-    border: var(--border-box-light);
+    border: var(--iare-section-border);
     border-color: #c8c8c8;
 }
 .ref-view-actionables.no-action h3 {
@@ -523,8 +528,8 @@ button.truth-probe-button  /* deprecate? */
 .ref-view-parameters {
     margin-top:.2rem;
     padding:.25rem;
-    border: var(--border-box-light);
-    border-radius: var(--border-radius-ref-section);
+    border: var(--iare-section-border);
+    border-radius: var(--iare-section-border-radius);
 }
 
 .ref-view-article-info {
@@ -568,8 +573,8 @@ button.truth-probe-button  /* deprecate? */
 .ref-view-single-display .ref-button {
     margin-bottom:0;
     margin-bottom: .28rem;
-    border-radius: var(--border-radius-ref-section);
-    border: var(--border-box-light);
+    border-radius: var(--iare-section-border-radius);
+    border: var(--iare-section-border);
 }
 
 .ref-view-single-display .ref-meta {
@@ -589,8 +594,8 @@ button.truth-probe-button  /* deprecate? */
     margin-bottom:0;
     margin-top: .35rem;
     padding: .3rem .3rem .3rem .4rem;
-    border-radius: var(--border-radius-ref-section);
-    border: var(--border-box-light);
+    border-radius: var(--iare-section-border-radius);
+    border: var(--iare-section-border);
     background-color: var(--g-color-reference-display-bg);
 }
 
@@ -607,7 +612,7 @@ button.truth-probe-button  /* deprecate? */
     color: var(--color-raw-claim-fg);
     background-color: var(--color-raw-claim-bg);
     border:var(--color-raw-claim-border) solid 2px;
-    border-radius: var(--border-radius-ref-section);
+    border-radius: var(--iare-section-border-radius);
     overflow-wrap: break-word;
     overflow: scroll;
     margin-bottom:0;
@@ -756,7 +761,7 @@ button.truth-probe-button  /* deprecate? */
 }
 
 .ref-view-ref-list .flock-box-caption {
-    border-radius: var(--border-radius-ref-section);
+    border-radius: var(--iare-section-border-radius);
     /*height: var(--height-ref-view-list-caption);*/
     margin-left:3px;
     margin-right:3px;

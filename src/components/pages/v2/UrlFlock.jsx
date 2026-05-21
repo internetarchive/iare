@@ -3,7 +3,7 @@ import FlockBox from "../../FlockBox.jsx";
 import "../../css/flock.css"
 
 import {convertToCSV, copyToClipboard, iareAlert} from "../../../utils/generalUtils.js";
-import {getArchiveStatusInfo, getProbePopupData} from "../../../utils/urlUtils.jsx";
+import {getArchiveStatusInfo} from "../../../utils/urlUtils.jsx";
 import {BadgeContexts as badgeContext, BadgeContexts} from "../../../constants/badgeContexts.jsx";
 
 import {ACTIONS_IARE} from "../../../constants/actionsIare.jsx";
@@ -472,7 +472,7 @@ const urlFlock = React.memo(function UrlFlock({
             if (d.is_book === "true") {
                 return `<div>Book</div>`
             }
-            // TODO should
+
             return d.live_state
                 ? `<div>${d.archive_status === "true"
                     ? 'Archived'
@@ -501,7 +501,6 @@ const urlFlock = React.memo(function UrlFlock({
 
         if (columnClass === "url-signals") {
             return null
-            // return `<div>${urlColumnDefs.columns[columnClass]?.ttCaption}Click to see details</div>`
 
         }
 
@@ -898,23 +897,25 @@ const urlFlock = React.memo(function UrlFlock({
             <span>{options.showFilters ? "Hide Filters" : "Show Filters"}</span>
         </button>
 
-    const flockCaption =
-        <>
+    const getFlockCaption = () => {
+        return <>
             <div className={"main-caption"}>URL Links <span>{buttonShowHideFilters}{buttonShowHideRefs}</span></div>
             <div className={"sub-caption"}>
                 <div>{flockInfo}</div>
                 <div>{spanFeedback} {buttonCopyList} {buttonCopyDetails}</div>
             </div>
         </>
+    }
+
+    const flockCaption = getFlockCaption()
 
     // TODO implement tooltip id somehow
     return <>
 
-        <div data-tooltip-id={tooltipId}  // passed in tooltipId for this flock)
-             data-tooltip-html={urlTooltipHtml}
+        <div data-tooltip-id={tooltipId}         // passed in tooltipId for this flock
+             data-tooltip-html={urlTooltipHtml}  // how we set tooltip contents based on what's being hovered
         >
-            <FlockBox className={"url-flock"}
-                      caption={flockCaption}>{flock}</FlockBox>
+            <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>
         </div>
 
         <Popup isOpen={isSignalsDocsPopupOpen}

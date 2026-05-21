@@ -3,9 +3,6 @@ import MakeLink from "../../../MakeLink.jsx";
 import RefSectionHeader from "./RefSectionHeader.jsx";
 import {
     getArchiveStatusInfo,
-    getPerennialInfo,
-    // getProbeInfo,
-    getProbePopupData,
 } from "../../../../utils/urlUtils.jsx";
 import {Button} from "react-bootstrap";
 import Popup from "../../../Popup.jsx";
@@ -15,72 +12,14 @@ import {BadgeContexts as badgeContext} from "../../../../constants/badgeContexts
 import {ACTIONS_IARE} from "../../../../constants/actionsIare.jsx";
 
 
-/* include for probePopup, maybe
-
-const probePopup = null
-    // TODO: need to include popupID, which also mightdetermine z-index
-    //
-    // <Popup isOpen={isProbeOpen}
-    //       onClose={() => { setIsProbeOpen(false) }}
-    //       title={"Truth Popup"}>
-    // </Popup>
-
-
- */
-
-
 /*
 shows template urls and their status codes in a tabular form
  */
 export default function RefUrls({ urls, pageData, onAction, tooltipId, showDebug=false }) {
 
-    const [isProbePopupOpen, setIsProbePopupOpen] = useState(false)
-    const [probePopupTitle, setProbePopupTitle] = useState(<>Modal Title</>);
-    const [probePopupData, setProbePopupData] = useState(null);
-
-    const handleProbeClick = (e) => {
-        // displays popup describing probe details of url
-        // - url determined by row clicked
-        // - probe determined by probe badge (small icon) clicked
-
-        const targetElement = e.target
-
-        const urlElement = targetElement.closest('.url-row')
-        const urlLink = urlElement.dataset.url
-        const urlObj = pageData.urlDict[urlLink]
-
-        const urlLinkFromData = targetElement.dataset.url
-        console.log(`Url from ProbeBadge data is: ${urlLinkFromData}`)
-
-        const probeKey = targetElement.dataset.probeKey
-        const probeData = urlObj?.probe_results?.probes?.[probeKey] ?? null
-
-        console.log(`Clicked ${probeKey} probe details for url: ${urlLink}, probeData is: ${JSON.stringify(probeData, null, 2 )}`)
-
-        const rawProbeData = <pre>{JSON.stringify(probeData, null, 2)}</pre>
-        const score = probeData ? probeData.score : "?"
-
-        const [pTitle, pContents] = getProbePopupData(probeKey, urlLink, score, rawProbeData)
-
-        setProbePopupTitle(pTitle)
-        setProbePopupData(pContents)
-
-        //
-        //
-        // setProbePopupTitle(<>
-        //     <div>{probeKey} probe results for URL:</div>
-        //     <div style={{fontWeight: "normal"}}> {urlLink}</div>
-        // </>)
-        //
-        // setProbePopupData(<div>
-        //     <div className={"probe-score"}>Score: {score}</div>
-        //     <div>{rawProbeData}</div>
-        // </div>)
-
-        setIsProbePopupOpen(true)
-
-    }
-
+    // const [isProbePopupOpen, setIsProbePopupOpen] = useState(false)
+    // const [probePopupTitle, setProbePopupTitle] = useState(<>Modal Title</>);
+    // const [probePopupData, setProbePopupData] = useState(null);
 
     const handleSignalClick = (e) => {
         const targetElement = e.target
@@ -101,7 +40,7 @@ export default function RefUrls({ urls, pageData, onAction, tooltipId, showDebug
 
 
     // assumes u is an url object
-    const getUrlRow = (u, i) => {
+    const getDataRow = (u, i) => {
 
         if (!u) return <div className={"url-row"} key={i}>Undefined URL encountered. (index {i})</div>
 
@@ -148,19 +87,19 @@ export default function RefUrls({ urls, pageData, onAction, tooltipId, showDebug
                     data-status_code={u.status_code}
                     data-archive_status={u.archive_status?.hasArchive}
                     data-perennial={u.rsp ? u.rsp[0] : null}  // just return first perennial if found for now...dont deal with > 1
-
                     data-live_state={u.archive_status?.live_state}
+                    data-signals={JSON.stringify(u.signals)}
         >
             <div className={"url-name"}><MakeLink href={u.url} linkText={u.url}/></div>
 
             <div className={"url-live_status"}>{u.status_code}</div>
             <div className={"url-archive_status"}>{getArchiveStatusInfo(u)}</div>
 
-            {/*<div className={"url-citations"}>{getCitationInfo(u)}</div>*/}
-            {/*<div className={"url-perennial"}>{getPerennialInfo(u)}</div>*/}
-            {/*<div className={"url-probes"}>*/}
-            {/*    <RefUrlProbe urlObj={u} pageData={pageData} onProbeClick={handleProbeClick} />*/}
-            {/*</div>*/}
+                        {/*<div className={"url-citations"}>{getCitationInfo(u)}</div>*/}
+                        {/*<div className={"url-perennial"}>{getPerennialInfo(u)}</div>*/}
+                        {/*<div className={"url-probes"}>*/}
+                        {/*    <RefUrlProbe urlObj={u} pageData={pageData} onProbeClick={handleProbeClick} />*/}
+                        {/*</div>*/}
 
             <div className={"url-signals"} onClick={handleSignalClick}>
                 <SignalDisplay
@@ -174,16 +113,16 @@ export default function RefUrls({ urls, pageData, onAction, tooltipId, showDebug
 
     }
 
-    const getUrlRowHeader = () => {
+    const getHeaderRow = () => {
 
         return <div className={"url-row url-row-header"} key={0}>
             <div className={"url-row-label url-name"}>Url</div>
             <div className={"url-row-label url-live_status"}>Status</div>
             <div className={"url-row-label url-archive_status"}>Archive</div>
 
-            {/*/!*<div className={"url-citations"}>{getCitationInfo(u)}</div>*!/*/}
-            {/*<div className={"url-row-label url-perennial"}>Reliability</div>*/}
-            {/*<div className={"url-row-label url-probes"}>Probe Results</div>*/}
+                        {/*/!*<div className={"url-citations"}>{getCitationInfo(u)}</div>*!/*/}
+                        {/*<div className={"url-row-label url-perennial"}>Reliability</div>*/}
+                        {/*<div className={"url-row-label url-probes"}>Probe Results</div>*/}
 
             <div className={"url-row-label url-signals"}>
                 <SignalDisplay
@@ -199,21 +138,21 @@ export default function RefUrls({ urls, pageData, onAction, tooltipId, showDebug
 
     }
 
-    const getUrlRows = ()=> {
+    const getDataRows = ()=> {
         const urlRows = []
 
         urls.forEach( (url, i) => {
             const urlObj = pageData.urlDict[url]
             if (!urlObj) return
             // only show url if it is NOT an archive link
-            if (!urlObj.isArchive) urlRows.push(getUrlRow(urlObj, i))
+            if (!urlObj.isArchive) urlRows.push(getDataRow(urlObj, i))
         })
 
         if (urlRows.length === 0) {
             urlRows.push(<div className={"url-row"}><div>No URLs for this reference.</div></div>)
         }
 
-        const urlRowHeader = getUrlRowHeader()
+        const urlRowHeader = getHeaderRow()
 
         return <div className={"url-rows-display"}>
             {urlRowHeader}
@@ -221,29 +160,22 @@ export default function RefUrls({ urls, pageData, onAction, tooltipId, showDebug
         </div>
     }
 
-    const urlRows = getUrlRows(urls)
-
-    const probeButton = null && <Button
-        className={"btn truth-probe-button"}
-        // key={pKey}
-        onClick={() => alert("will probe for truth and display in URL info below.")}
-    ><span>Probe for Truth</span>
-    </Button>
+    const urlRows = getDataRows(urls)
 
     return <>
         <div className="ref-view-section ref-view-urls">
 
-            <RefSectionHeader leftPart={<h3>URLs {probeButton}</h3>} />
+            <RefSectionHeader leftPart={<h3>URLs</h3>} />
 
             {urlRows}
 
         </div>
 
-        <Popup isOpen={isProbePopupOpen}
-               onClose={() => { setIsProbePopupOpen(false) }}
-               title={probePopupTitle}>
-            {probePopupData}
-        </Popup>
+            {/*<Popup isOpen={isProbePopupOpen}*/}
+            {/*       onClose={() => { setIsProbePopupOpen(false) }}*/}
+            {/*       title={probePopupTitle}>*/}
+            {/*    {probePopupData}*/}
+            {/*</Popup>*/}
 
     </>
 }

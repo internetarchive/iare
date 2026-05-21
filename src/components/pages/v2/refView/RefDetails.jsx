@@ -145,26 +145,27 @@ function RefDetails({ refDetails,
 
     return <>
 
-        <div className={"header-all-parts"}>
+        <div className={"header-full-width"}>
             <div className={"header-left-part"}>
-                <h3>Citation</h3>
+                {/*<h3>Citation</h3>*/}
             </div>
         </div>
 
+        <RefCitationClaim reference={refDetails} />
+
         <RefCitationDisplayHtml reference={refDetails} onClick={handleCitationClick} onAction={onAction} />
 
-        <RefCitationDisplay _ref={refDetails}
-                            pageData={pageData}
-                            parseMethod={pageData.iariParseMethod}
-                            showDebug={showDebug}
-                            onClick={handleCitationClick}
-                            options = {{'hide_actionables':true }}
-                            onAction={onAction}
-        />
+        {/*<RefCitationDisplay _ref={refDetails}*/}
+        {/*                    pageData={pageData}*/}
+        {/*                    parseMethod={pageData.iariParseMethod}*/}
+        {/*                    showDebug={showDebug}*/}
+        {/*                    onClick={handleCitationClick}*/}
+        {/*                    options = {{'hide_actionables':true }}*/}
+        {/*                    onAction={onAction}*/}
+        {/*/>*/}
 
         {/*<RefProbes reference={refDetails} pageData={pageData} />*/}
         <RefActionables actionables={refDetails?.actionable} />
-        <RefCitationClaim reference={refDetails} />
 
         <RefUrls urls={refDetails?.urls} pageData={pageData} onAction={onAction} />
 

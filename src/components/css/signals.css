@@ -18,37 +18,48 @@
 
     --padding-signal-cell: .25rem;
 
-    --signal-grid-columns-inline:
+    --signal-inline-badge-height: 1.9rem;
+    --signal-inline-grid-columns:
             var(--width-signal-score)
             var(--width-signal-wayback)
             var(--width-signal-wiki)
-            var(--width-signal-tranco)
             var(--width-signal-mbfc)
-            minmax(10rem, 1fr);
-    --signal-badge-height-inline: 1.9rem;
+            var(--width-signal-tranco)
+            /*minmax(var(--width-signal-tranco), 1fr)*/
+            /*var(--width-signal-tranco)*/
+            /*minmax(10rem, 1fr);*/
+            ;
 
-    --signal-grid-columns-sort:
+
+    --signal-sort-badge-height: 3.0rem;
+    --signal-sort-grid-columns:
             var(--width-signal-score)
             var(--width-signal-wayback)
             var(--width-signal-wiki)
-            var(--width-signal-tranco)
             var(--width-signal-mbfc)
-            minmax(10rem, 1fr);
-    --signal-badge-height-sort: 3.0rem;
+            var(--width-signal-tranco)
+    /*minmax(var(--width-signal-tranco), 1fr)*/
+    ;
+            /*var(--width-signal-tranco)*/
+            /*minmax(10rem, 1fr);*/
 
-    --signal-grid-columns-refview:
+
+    --signal-refview-badge-height: 3.0rem;
+    --signal-refview-grid-columns:
             var(--width-signal-score)
             var(--width-signal-wayback)
             var(--width-signal-wiki)
-            var(--width-signal-tranco)
             var(--width-signal-mbfc)
-            minmax(10rem, 1fr);
-    --signal-badge-height-refview: 3.0rem;
+            var(--width-signal-tranco);
+            /*minmax(var(--width-signal-tranco), 1fr);*/
+            /*var(--width-signal-tranco)*/
+            /*minmax(10rem, 1fr);*/
 
-    --signal-grid-columns-details:
+
+    --signal-details-grid-columns:
             var(--width-signal-details-icon)
             minmax(var(--width-signal-details-info), 1fr);
-    --signal-badge-height-details: auto;
+    --signal-details-badge-height: auto;
 
 }
 
@@ -185,8 +196,8 @@ button.fetch-signal-button:hover {
 .signal-badges-inline {
     /*height: var(--signal-badge-height);*/
     display: grid;
-    grid-template-columns: var(--signal-grid-columns-inline);
-    grid-template-rows: var(--signal-badge-height-inline);
+    grid-template-columns: var(--signal-inline-grid-columns);
+    grid-template-rows: var(--signal-inline-badge-height);
     align-items: stretch;
 }
 
@@ -204,8 +215,8 @@ button.fetch-signal-button:hover {
 
 .signal-badges-sort {
     display: grid;
-    grid-template-columns: var(--signal-grid-columns-sort);
-    grid-template-rows: var(--signal-badge-height-sort);
+    grid-template-columns: var(--signal-sort-grid-columns);
+    grid-template-rows: var(--signal-sort-badge-height);
     align-items: stretch;
 }
 
@@ -233,8 +244,8 @@ button.fetch-signal-button:hover {
 
 .signal-badges-refview {
     display: grid;
-    grid-template-columns: var(--signal-grid-columns-refview);
-    grid-template-rows: var(--signal-badge-height-refview);
+    grid-template-columns: var(--signal-refview-grid-columns);
+    grid-template-rows: var(--signal-refview-badge-height);
     align-items: stretch;
 }
 
@@ -251,8 +262,8 @@ button.fetch-signal-button:hover {
 
 .signal-badges-detail .signal-badge {
     display: grid;
-    grid-template-columns: var(--signal-grid-columns-details);
-    grid-template-rows: var(--signal-badge-height-details);
+    grid-template-columns: var(--signal-details-grid-columns);
+    grid-template-rows: var(--signal-details-badge-height);
     align-items: stretch;
 }
 

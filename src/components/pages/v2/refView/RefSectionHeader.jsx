@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function RefSectionHeader({ leftPart, rightPart, children }) {
-    return <div className={"header-all-parts"}>
+    return <div className={"header-full-width"}>
 
         {leftPart && <div className={"header-left-part"}>
             {leftPart}

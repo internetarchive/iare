@@ -1,9 +1,9 @@
 .page-info {
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
-    /*border: var(--border-box-bland);*/
-    /*border-radius: var(--border-box-radius);*/
+    display:none;  /* for now, to give more white space */
 }
+
 .page-info .page-stats-header {
     display:flex;
     flex-direction:row;

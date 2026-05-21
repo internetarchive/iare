@@ -27,7 +27,8 @@ export default function RefView({
 
 
     const modalDefaults = {
-        margin: 100,
+        // margin: 100,
+        margin: 0,
         minWidth: 500,
         minHeight: 400,
     }
@@ -254,8 +255,22 @@ export default function RefView({
         <h3>debug</h3>
     </div>
 
+    const handleTitleBarDoubleClick = () => {
+        const newSize = {
+            width: window.innerWidth - (modalDefaults.margin * 2),
+            height: window.innerHeight - (modalDefaults.margin * 2)
+        };
+        const newPosition = {
+            x: modalDefaults.margin,
+            y: modalDefaults.margin
+        };
+        setSize(newSize);
+        setPosition(newPosition);
+    };
+
     const refViewTitleBar = <div className="ref-view-title-bar"
                                  style={{position: "sticky", top: 0}}
+                                 onDoubleClick={handleTitleBarDoubleClick}
     >
         <h2>Reference Details</h2>
         <div className="modalRight">
@@ -398,7 +413,6 @@ export default function RefView({
 
                 <div className="ref-view-container">
 
-                    {/*<div className={"ref-view-ref-list"}>*/}
                     {/* show Ref Flock at left of ref view for navigation */}
                     <div className={"ref-view-header"}>
                         <RefFlock pageData={pageData}
@@ -423,7 +437,6 @@ export default function RefView({
                                   // tooltipId={"tooltip-url-display"}
                                   tooltipId={tooltipId}
                         />
-                    {/*</div>*/}
                     </div>
 
                     {/* show ref details in main part of modal window */}

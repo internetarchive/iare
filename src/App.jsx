@@ -26,8 +26,9 @@ export default function App(
     {
         env,
         myPath,
-        myUseLocalCache,
-        myRefresh,
+        myRefresh = true,
+        myShowShortcuts = false,
+        myUseLocalCache = false,
         myCheckMethod,
         myParseMethod,
         myIariSourceId,
@@ -46,7 +47,7 @@ export default function App(
 
     // these are config values to show/hide certain UI features, available from debug info box
     const [isShowTestFilters, setIsShowTestFilters] = useState(false);
-    const [isShowShortcuts, setIsShowShortcuts] = useState(true);
+    const [isShowShortcuts, setIsShowShortcuts] = useState(myShowShortcuts);
     // TODO set this based on local storage or cookie value
     const [isShowUseLocalCache, setIsShowUseLocalCache] = useState(
         env === "env-local"
@@ -692,8 +693,8 @@ export default function App(
 
                             <PathNameFetch pathInitial={targetPath?.length > 0 ? targetPath : defaultIfEmpty}
                                            className={"iare-path-fetch"}
-                                           checkboxInitialRefresh={refreshCheck}
-                                           checkboxInitialUseLocalCache={useLocalCache}
+                                           initialBooleanRefresh={refreshCheck}
+                                           initialBooleanUseLocalCache={useLocalCache}
                                            placeholder={"Enter a Wikipedia article or PDF url here"}
                                            shortcuts={shortcuts}
                                            handlePathResults={handlePathResults}

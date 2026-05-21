@@ -12,8 +12,8 @@ expected props
  */
 export default function PathNameFetch({
         pathInitial='',
-        checkboxInitialRefresh= false,
-        checkboxInitialUseLocalCache=false,
+        initialBooleanRefresh= false,
+        initialBooleanUseLocalCache=false,
         className= null,
         handlePathResults,
         shortcuts=[],
@@ -26,8 +26,8 @@ export default function PathNameFetch({
 }) {
 
     const [pathName, setPathName] = useState(pathInitial); // init with passed in name
-    const [checkboxRefresh, setCheckboxRefresh] = React.useState(checkboxInitialRefresh);
-    const [checkboxUseLocalCache, setCheckboxUseLocalCache] = React.useState(checkboxInitialUseLocalCache);
+    const [checkboxRefresh, setCheckboxRefresh] = React.useState(initialBooleanRefresh);
+    const [checkboxUseLocalCache, setCheckboxUseLocalCache] = React.useState(initialBooleanUseLocalCache);
     const [showShortcuts, setShowShortcuts] = React.useState(options.showShortcuts ?? false);
 
     const handleCheckChangeRefresh = () => {
@@ -77,7 +77,7 @@ export default function PathNameFetch({
                 return <ButtonFetch key={shortCutDef.value} buttonDef={shortCutDef} onClick={setPathName} className={"path-shortcut"}/>
             })
             }
-            {shortcutsButton}
+            {/*{shortcutsButton}*/}
         </div>
         : null
 
@@ -86,7 +86,7 @@ export default function PathNameFetch({
         : null
 
 
-    return <div className={`path-fetch iare-focus-box${className ? ` ${className}` : ''}`}>
+    return <div className={`path-fetch${className ? ` ${className}` : ''}`}>
 
         <div className={"path-fetch-wrap"}>
 
@@ -115,7 +115,7 @@ export default function PathNameFetch({
                 </button
                 ><Checkbox className={"chk-checkbox chk-force-refresh"} label={"Force Refresh"} value={checkboxRefresh} onChange={handleCheckChangeRefresh}/>
                 {UseLocalCacheDisplay}
-                {!showShortcuts && shortcutsButton}
+                {shortcutsButton}
             </div>
 
             {shortcutsDisplay}

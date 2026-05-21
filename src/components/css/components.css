@@ -3,8 +3,6 @@
     --border-box-bland: 1.5pt solid #676767 !important;
     --border-box-radius:0.33rem;
 
-    --border-box-light: 1.5pt solid #b4b4b7 !important;
-
     --border-row: 1pt solid #3c3c3c !important;
     --border-row-light: 1pt solid #aeaeae !important;
 
@@ -60,7 +58,7 @@
 .control-box {
     background-color: var(--color-condition-box);
     border-radius: var(--border-box-radius);
-    border: var(--border-box-light);
+    border: var(--iare-section-border);
     margin-bottom:var(--margin-box-bottom);
     padding:.35rem;
 }
@@ -130,7 +128,7 @@
 .conditions-box {
     background-color: var(--color-condition-box);
     border-radius: var(--border-box-radius);
-    border: var(--border-box-light);
+    border: var(--iare-section-border);
     margin-bottom:var(--margin-box-bottom);
     padding:.35rem;
 }
@@ -206,7 +204,7 @@
     /*margin-top:var(--margin-box-top);*/
     padding:.33rem;
     padding-bottom: .56rem;
-    border: var(--border-box-light);
+    border: var(--iare-section-border);
     border-radius: var(--border-box-radius);
     background-color: var(--color-filter-box-contents);
 }
@@ -382,6 +380,16 @@
 .list-chart.pay-level-domains-list-chart {
     height: 100% !important;
     overflow: hidden;
+}
+
+
+/* status chart */
+
+.url-chart-display {
+    width:327px;
+}
+.url-chart-display .chart-container {
+    height:300px;
 }
 
 

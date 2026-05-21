@@ -108,24 +108,36 @@ const getParseMethod = (qParams, targetEnvironment) => {
 
 // ========================================
 
+const getBooleanParameter = (paramName) => {
+    const paramValue = queryParameters.has(paramName) ? queryParameters.get(paramName).toLowerCase() : null
+    if (paramValue === null || paramValue === 'false') return false
+    if (paramValue === 'true' || paramValue === "1" ) return true
+    return null
+}
+
 // const root = ReactDOM.createRoot(document.getElementById("root"));
 const queryParameters = new URLSearchParams(window.location.search)
 const env = getEnvironment();
 const myDebug = queryParameters.has("debug") ? queryParameters.get("debug").toLowerCase() === 'true' : false;
 
 const myPath = queryParameters.has("url") ? queryParameters.get("url") : '';
-const myUseLocalCache = queryParameters.has("use_local_cache") ? queryParameters.get("use_local_cache") : '';
-const myRefresh = queryParameters.has("refresh") ? queryParameters.get("refresh").toLowerCase() === 'true' : false;
-const myIariSourceId = getIariSource(queryParameters, env);
-const myCheckMethod = getCheckMethod(queryParameters, env);
-const myParseMethod = getParseMethod(queryParameters, env);
+const myIariSourceId = getIariSource(queryParameters, env)
+const myCheckMethod = getCheckMethod(queryParameters, env)
+const myParseMethod = getParseMethod(queryParameters, env)
+
+const myRefresh = getBooleanParameter("refresh")
+const myShowShortcuts = getBooleanParameter("show_shortcuts")
+const myUseLocalCache = getBooleanParameter("use_local_cache")
+// const myShowShortcuts = queryParameters.has("show_shortcuts") ? queryParameters.get("show_shortcuts").toLowerCase() === 'true' : '';
+// const myUseLocalCache = queryParameters.has("use_local_cache") ? queryParameters.get("use_local_cache") : '';
 
 ReactDOM.createRoot(document.getElementById("root")).render(
     // <React.StrictMode>
         <App env={env}
              myPath={myPath}
-             myUseLocalCache={myUseLocalCache}
              myRefresh={myRefresh}
+             myShowShortcuts={myShowShortcuts}
+             myUseLocalCache={myUseLocalCache}
              myCheckMethod={myCheckMethod}
              myParseMethod={myParseMethod}
              myIariSourceId={myIariSourceId}

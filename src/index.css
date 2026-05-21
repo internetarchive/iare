@@ -5,7 +5,10 @@
     --iare-test-color: inherit;
     --iare-ux-body-overflow-y: auto;
 
-    --iare-focus-box-bg: #d8eeff;
+    --iare-section-border: 1.5pt solid #b4b4b7 !important;
+    --iare-section-border-radius:0.42rem;
+
+    --iare-focus-box-bg: #ffffff;
     --iare-focus-box-border: 2.0pt solid hsl(207.92deg 75.94% 73.92%);
 
     --iare-spacing-tiny: .25rem;
@@ -247,11 +250,14 @@ body.env-other .iare-header-aux1-display span.non-production {
 }
 
 
-.iare-focus-box {
-    border: var(--iare-focus-box-border);
-    border-radius: var(--iare-radius-medium);
-    background-color: var(--iare-focus-box-bg);
+.path-fetch.iare-path-fetch {
+    border: var(--iare-section-border);
+    border-radius: var(--iare-section-border-radius);
+}
 
+.path-fetch.iare-input {
+    border-radius: var(--iare-radius-tiny);
+    border: 1pt solid var(--iare-focus-box-border);
 }
 
 
@@ -265,14 +271,9 @@ body.env-other .iare-header-aux1-display span.non-production {
     color: grey;
 
     /*width: 41%;*/
-    display: flex
-;
+    display: flex;
 }
 
-.iare-input {
-    border-radius: var(--iare-radius-tiny);
-    border: 1pt solid var(--iare-focus-box-border);
-}
 
 
 
