@@ -2,7 +2,9 @@
 .path-fetch {
     padding: .7rem .65rem;
     border:2pt solid #d6d6d6;
-    border-radius: var(--iare-radius-medium);
+    /*border-radius: var(--iare-radius-medium);*/
+    border-radius: var(--iare-section-border-radius);
+
 }
 
 .path-fetch-wrap {

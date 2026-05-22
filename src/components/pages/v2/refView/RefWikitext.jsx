@@ -94,17 +94,17 @@ export default function RefWikitext({ wikitext, onAction }) {  // NB TODO make o
         // TODO this is where we want to set up a disappearing tooltip
     }
 
-    const buttonEditSave = <button className={`utility-button`} style={{width:"6rem"}}
+    const buttonEditSave = <button className={`utility-button small-button`} style={{width:"6rem"}}
                                    onClick={handleEditMode}><span>{editable ? "Done Editing" : "Edit Citation Text"}</span></button>
 
     const buttonCancel = editable
-        ? <button className={`utility-button`} onClick={handleEditRevert}><span>Revert to Original</span></button>
+        ? <button className={`utility-button small-button`} onClick={handleEditRevert}><span>Revert to Original</span></button>
         : null
 
     const buttonCopy = <button
         onClick={() => {copyToClipboard(localWikitext, 'Wikitext', handleOnComplete)} }
-        className={`utility-button`}>
-        <span>Copy to Clipboard</span>
+        className={`utility-button small-button`}>
+        <span>Copy Citation Text to Clipboard</span>
     </button>
 
 
@@ -114,8 +114,10 @@ export default function RefWikitext({ wikitext, onAction }) {  // NB TODO make o
 
     return <div className="ref-view-section ref-view-wikitext">
         <RefSectionHeader
-            leftPart={<><h3>Wikitext</h3><span
-                style={{marginTop: ".23rem"}}>{buttonEditSave}{buttonCancel}{buttonCopy}</span></>}
+            leftPart={<h3>Wikitext</h3>}
+            rightPart={<div style={{marginTop: ".2rem"}}
+                >{buttonEditSave} {buttonCancel} {buttonCopy}<
+            /div>}
         />
 
         <textarea className={`raw-wikitext ${editable ? "editable" : "non-editable"}`}

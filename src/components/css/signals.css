@@ -259,6 +259,14 @@ button.fetch-signal-button:hover {
     flex-direction: column;
 }
 
+.signal-badges-refview .header-cell {
+    height: auto !important;
+    grid-template-rows: 2.4rem;
+}
+
+.ref-view-urls .url-row-header .url-signals {
+    padding-top: 0;
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * *
  *  S I G N A L   B A D G E S   D E T A I L  *

@@ -22,6 +22,14 @@ export default function HeaderCell({
             value
         ])
     )
+
+    const sortDisplay = sort
+        ? <div className={"header-cell-sort"}>
+            {sort}
+        </div>
+
+        : null
+
     return (
         <div className={headerCellClassName}
              {...datasetProps}
@@ -30,9 +38,7 @@ export default function HeaderCell({
                 {content}
                 {/*{children}*/}
             </div>
-            <div className={"header-cell-sort"}>
-                {sort}
-            </div>
+            {sortDisplay}
         </div>
     )
 }

@@ -162,12 +162,14 @@ function RefDetails({ refDetails,
 
         <div className={"ref-analysis"}>
             {/*<RefProbes reference={refDetails} pageData={pageData} />*/}
-            <RefActionables actionables={refDetails?.actionable}/>
 
             <RefUrls urls={refDetails?.urls} pageData={pageData} onAction={onAction}/>
 
+            <RefActionables actionables={refDetails?.actionable}/>
+
             {showWikitext &&
                 <RefWikitext wikitext={refDetails?.wikitext} ref_details={refDetails} onAction={handleRefViewAction}/>}
+
             <RefTemplates templates={refDetails?.templates} pageData={pageData} tooltipId={tooltipId}/>
             {/*<RefWikitextNew wikitext="" onAction={handleRefViewAction} />*/}
         </div>
