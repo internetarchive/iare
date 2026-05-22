@@ -58,7 +58,7 @@ export default function RefParameters({ parameters, onAction }) {
 
     const params = getParameters(parameters)
 
-    return <div className="ref-view-parameters">
+    return <div className="ref-view-parameters ref-view-section-contents">
         {params}
     </div>
 }

@@ -5,8 +5,12 @@
     --iare-test-color: inherit;
     --iare-ux-body-overflow-y: auto;
 
+    --iare-color-text-blue:  hsl(215.75deg 98.36% 52.16%);
+    --iare-color-blue: hsl(215.75deg 98.36% 52.16%);
+
     --iare-section-border: 1.5pt solid #b4b4b7 !important;
     --iare-section-border-radius:0.42rem;
+    --iare-section-border-light: .75pt solid #b4b4b7 !important;
 
     --iare-focus-box-bg: #ffffff;
     --iare-focus-box-border: 2.0pt solid hsl(207.92deg 75.94% 73.92%);
@@ -31,7 +35,8 @@
     --color-text-muted: #adb4c0; /* grey */
 
     --color-list-fg-selected: #054630; /*#1c654f;*/
-    --color-list-bg-selected: #ceefd9; /*#c4e4c8;*/
+    /*--color-list-bg-selected: #ceefd9; !*#c4e4c8;*!*/
+    --color-list-bg-selected: #e3f2e4; /*#c4e4c8;*/
     --color-list-fg-hover: #fffde5; /*blue;*/
 
     --color-list-bg-hover: #f0f0f0;

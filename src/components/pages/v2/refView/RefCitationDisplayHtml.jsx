@@ -1,5 +1,6 @@
 import React from "react";
 import DOMPurify from 'dompurify';
+import RefSectionHeader from "./RefSectionHeader.jsx";
 
 function RefCitationDisplayHtml({ reference = null,
                                  onClick,
@@ -17,10 +18,22 @@ function RefCitationDisplayHtml({ reference = null,
 
     const cleanHTML = DOMPurify.sanitize(citeHTML);
 
-    return <div className={"ref-button ref-citation-button-wrapper"} onClick={onClick}>
-        { /* NB Note use of DANGEROUS property... */}
-        <div dangerouslySetInnerHTML={{__html: cleanHTML}} />
-        { /* NB Note use of DANGEROUS property... */}
+
+    return <div className="ref-view-citation ref-view-section">
+        <RefSectionHeader leftPart={<h3>Citation</h3>}/>
+
+        {/*<div className={"ref-button ref-citation-button-wrapper"} onClick={onClick}>*/}
+        {/*    { /* NB Note use of DANGEROUS property... *!/*/}
+        {/*    <div dangerouslySetInnerHTML={{__html: cleanHTML}}/>*/}
+        {/*    { /* NB Note use of DANGEROUS property... *!/*/}
+        {/*</div>*/}
+
+        <div className={"ref-view-section-contents raw-ref-citation"} onClick={onClick}>
+            { /* NB Note use of DANGEROUS property... */}
+            <div dangerouslySetInnerHTML={{__html: cleanHTML}}/>
+            { /* NB Note use of DANGEROUS property... */}
+        </div>
+
     </div>
 
 }

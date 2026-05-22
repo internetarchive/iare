@@ -175,6 +175,9 @@
     cursor: pointer;
     min-width: max-content;
     width: 100%;
+    background-color: #41c4ff;
+    background-color: #dadcde;
+    background-color: #e8e8eb;
 }
 
 /* url list column widths for different column types */

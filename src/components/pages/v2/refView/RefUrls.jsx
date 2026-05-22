@@ -22,20 +22,21 @@ export default function RefUrls({ urls, pageData, onAction, tooltipId, showDebug
     // const [probePopupData, setProbePopupData] = useState(null);
 
     const handleSignalClick = (e) => {
-        const targetElement = e.target
-
-        const urlElement = targetElement.closest('.url-row')
-        const urlLink = urlElement.dataset.url
-        const urlObj = pageData.urlDict[urlLink]
-
-        const urlLinkFromData = targetElement.dataset.url
-        console.log(`Url from Signal Badge data is: ${urlLinkFromData}`)
-
-        onAction(
-            {
-                action: ACTIONS_IARE.POPUP_SIGNALS_DETAILS.key, value: urlLink
-            }
-        )
+        return
+        // const targetElement = e.target
+        //
+        // const urlElement = targetElement.closest('.url-row')
+        // const urlLink = urlElement.dataset.url
+        // const urlObj = pageData.urlDict[urlLink]
+        //
+        // const urlLinkFromData = targetElement.dataset.url
+        // console.log(`Url from Signal Badge data is: ${urlLinkFromData}`)
+        //
+        // onAction(
+        //     {
+        //         action: ACTIONS_IARE.POPUP_SIGNALS_DETAILS.key, value: urlLink
+        //     }
+        // )
     }
 
 
@@ -138,45 +139,34 @@ export default function RefUrls({ urls, pageData, onAction, tooltipId, showDebug
 
     }
 
-    const getDataRows = ()=> {
-        const urlRows = []
+    const getUrlRows = ()=> {
+        const dataRows = []
 
         urls.forEach( (url, i) => {
             const urlObj = pageData.urlDict[url]
             if (!urlObj) return
             // only show url if it is NOT an archive link
-            if (!urlObj.isArchive) urlRows.push(getDataRow(urlObj, i))
+            if (!urlObj.isArchive) dataRows.push(getDataRow(urlObj, i))
         })
 
-        if (urlRows.length === 0) {
-            urlRows.push(<div className={"url-row"}><div>No URLs for this reference.</div></div>)
+        if (dataRows.length === 0) {
+            dataRows.push(<div className={"url-row"}><div>No URLs for this reference.</div></div>)
         }
 
-        const urlRowHeader = getHeaderRow()
+        const dataHeader = getHeaderRow()
 
         return <div className={"url-rows-display"}>
-            {urlRowHeader}
-            {urlRows}
+            {dataHeader}
+            {dataRows}
         </div>
     }
 
-    const urlRows = getDataRows(urls)
+    const urlRows = getUrlRows(urls)
 
-    return <>
-        <div className="ref-view-section ref-view-urls">
+    return <div className="ref-view-section ref-view-urls">
+        <RefSectionHeader leftPart={<h3>URLs</h3>}/>
+        {urlRows}
+    </div>
 
-            <RefSectionHeader leftPart={<h3>URLs</h3>} />
-
-            {urlRows}
-
-        </div>
-
-            {/*<Popup isOpen={isProbePopupOpen}*/}
-            {/*       onClose={() => { setIsProbePopupOpen(false) }}*/}
-            {/*       title={probePopupTitle}>*/}
-            {/*    {probePopupData}*/}
-            {/*</Popup>*/}
-
-    </>
 }
 

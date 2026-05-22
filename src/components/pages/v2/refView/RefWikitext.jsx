@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {copyToClipboard} from "../../../../utils/generalUtils.js";
+import {copyToClipboard, iareAlert} from "../../../../utils/generalUtils.js";
 // import { RichTextarea } from "rich-textarea.jsx";
 import RefSectionHeader from "./RefSectionHeader.jsx";
 import {ConfigContext} from "../../../../contexts/ConfigContext.jsx";
@@ -90,8 +90,7 @@ export default function RefWikitext({ wikitext, onAction }) {  // NB TODO make o
 
 
     const handleOnComplete = (message) => {
-        alert(message)
-
+        iareAlert(message)
         // TODO this is where we want to set up a disappearing tooltip
     }
 
@@ -108,28 +107,22 @@ export default function RefWikitext({ wikitext, onAction }) {  // NB TODO make o
         <span>Copy to Clipboard</span>
     </button>
 
-    const header = <RefSectionHeader
-        leftPart={<><h3>Wikitext</h3><span style={{marginTop: ".23rem"}}>{buttonEditSave}{buttonCancel}{buttonCopy}</span></>}
-        // rightPart={buttonCopy}
-        >
-        {/* nothing to see here */}
-    </RefSectionHeader>
-
-
 
     // show the textarea text using this method: https://dev.to/joshuajee/how-to-fix-defaultvalue-error-while-working-with-textarea-in-react-1a55
     // const editable = false && true
     // console.log(`localWikitext: ${localWikitext}`)
 
     return <div className="ref-view-section ref-view-wikitext">
-        <div className="col-12">
-            {header}
-            <textarea className={`raw-wikitext ${editable ? "editable" : "non-editable"}`}
-                      readOnly={!editable}
-                      value={localWikitext}
-                      onChange={(e) => setLocalWikitext(e.target.value)}
-            />
-        </div>
+        <RefSectionHeader
+            leftPart={<><h3>Wikitext</h3><span
+                style={{marginTop: ".23rem"}}>{buttonEditSave}{buttonCancel}{buttonCopy}</span></>}
+        />
+
+        <textarea className={`raw-wikitext ${editable ? "editable" : "non-editable"}`}
+                  readOnly={!editable}
+                  value={localWikitext}
+                  onChange={(e) => setLocalWikitext(e.target.value)}
+        />
     </div>
 
                 // RichTextarea allows colored sections, delineated by <span>s, to be displayed

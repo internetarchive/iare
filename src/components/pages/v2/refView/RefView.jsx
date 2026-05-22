@@ -216,10 +216,6 @@ export default function RefView({
     // close modal if not in open state
     if (!isOpen) return null;
 
-    const debugAtTop = false && <>
-        <div>Debug:</div>
-        <div>Current ref index: {selectedRefIndex}</div>
-        </>
 
                 // const handleSetPosition = (x, y) => {
                 //     const container = refContainer.current
@@ -249,8 +245,12 @@ export default function RefView({
                 //     }
                 // }
 
-    const debugDisplay = false &&
-        <div className="ref-view-debug"
+    const debugAtTop = <div style={{backgroundColor: "green", color: "white", padding:"4pt 8pt", borderRadius: "4pt"}}>
+        <div>Debug:</div>
+        <div>Current ref index: {selectedRefIndex}</div>
+    </div>
+
+    const debugDisplay = <div className="ref-view-debug"
              style={{backgroundColor:"green", color: "white !important", padding:"10px"}}>
         <h3>debug</h3>
     </div>
@@ -276,10 +276,11 @@ export default function RefView({
         <div className="modalRight">
             <p onClick={onClose} className="closeBtn">X Close</p>
         </div>
-        {debugDisplay}
+        {false && debugDisplay}
     </div>
 
-    const stopAndShow = (e, eventName) =>{
+    const stopAndShow = (e, eventName) => {
+        // debug utility
         e.stopPropagation()
         console.log(`RefView:Rnd: ${eventName} (stopped propagation)`)
     }
@@ -342,10 +343,9 @@ export default function RefView({
 >
         <Rnd
             ref={refRnd}
-            // ref={refContainer}
 
             className={"rnd-modal-ref-view"}
-            //// className="bg-white shadow-lg rounded-lg"
+
             style={{
                 overflow: "auto",
                 position: "relative",
@@ -400,10 +400,13 @@ export default function RefView({
                 ref={refContainer}
 
                 // turn off event responses on main content, as they will cause unexpected behavior
-                onClick={(e) => {stopAndShow(e, "contents:onProbeClick")}}
+                onClick = {
+                    (e) => {
+                        stopAndShow(e, "contents:onProbeClick")
+                    }
+                }
 
-                 // onMouseMove={(e) => {stopAndShow(e, "contents::onMouseMove")}}
-
+                // onMouseMove={(e) => {stopAndShow(e, "contents::onMouseMove")}}
                 // onMouseDown={(e) => {stopAndShow(e, "onMouseDown")}}
                 onScroll={(e) => {stopAndShow(e, "contents:onScroll")}}
                 onScrollCapture={(e) => {stopAndShow(e, "contents:onScrollCapture")}}
@@ -413,19 +416,11 @@ export default function RefView({
 
                 <div className="ref-view-container">
 
-                    {/* show Ref Flock at left of ref view for navigation */}
+                    {/* show Ref Flock as left sidebar for navigation */}
                     <div className={"ref-view-header"}>
                         <RefFlock pageData={pageData}
                                   refArray={pageData.references}
                                   refFilter={refFilter}
-    
-                                  className={"ref-view-ref-list"}
-    
-                                  onAction={handleRefListClick}  // what happens when flock list clicked
-                                  // onKeyDown={handleFlockKeyDown}  // what happens when key down flock list
-    
-                                  selectedRefIndex={selectedRefIndex}
-    
                                   options={{
                                       show_header: false,
                                       show_extra: false,
@@ -433,15 +428,19 @@ export default function RefView({
                                       show_filter_description: true,
                                       context: "RefView",
                                       caption: "References List",
-                                    }}
-                                  // tooltipId={"tooltip-url-display"}
+                                  }}
                                   tooltipId={tooltipId}
+
+                                  className={"ref-view-ref-list"}
+                                  onAction={handleRefListClick}  // what happens when flock list clicked
+                                  // onKeyDown={handleFlockKeyDown}  // what happens when key down flock list
+                                  selectedRefIndex={selectedRefIndex}
                         />
                     </div>
 
                     {/* show ref details in main part of modal window */}
                     <div className="ref-view-body">
-                        {debugAtTop}
+                        {false && debugAtTop}
                         <RefDetails
                             refDetails={refDetails}
                             pageData={pageData}

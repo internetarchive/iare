@@ -11,7 +11,7 @@ export default function FilterConditionBox({filter = null}) {
 
     return <>
         <div className={`filter-condition-box`}>
-            <div className={"condition-label"}>Condition:</div>
+            <div className={"condition-label"}>Filters Applied:</div>
             <div className={"condition-caption"}>{!filter
                 ? "Showing All Items"
                 : filter.caption

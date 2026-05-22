@@ -824,7 +824,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
                     <div>Retrieving URL info.</div>
                     <div>Status code checking with {UrlStatusCheckMethods[myStatusCheckMethod].caption} method</div>
                     {/*<div>Probe status checks: {defaultProbesString}</div>*/}
-                    <div>Wiki Signals status checks</div>
+                    <div>WikiSignals status checks</div>
                 </>)
                 setIsDataReady(false);
                 setIsLoadingUrls(true);

@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.3.1.38",
-  "version_name": "0.3.1.38 xxx",
+  "version": "0.3.1.39",
+  "version_name": "0.3.1.39 cleaner RefView",
   "private": true,
   "type": "module",
   "dependencies": {

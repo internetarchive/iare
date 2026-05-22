@@ -17,10 +17,8 @@ function RefCitationClaim({ reference = null, onAction}) {
     </RefSectionHeader>
 
     return <div className="ref-view-section ref-view-claim">
-        <div className="col-12">
-            {header}
-            <div className={'raw-claim' }>{claim_text}</div>
-        </div>
+        {header}
+        <div className={"ref-view-section-contents raw-claim"}>{claim_text}</div>
     </div>
 
 }

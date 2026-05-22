@@ -143,36 +143,35 @@ function RefDetails({ refDetails,
 
     const showWikitext = true  // allows on and off display of wikitext...under experimentation
 
-    return <>
+    return <div className={"ref-view-details"}>
 
-        <div className={"header-full-width"}>
-            <div className={"header-left-part"}>
-                {/*<h3>Citation</h3>*/}
-            </div>
+        <div className={"ref-citation-claim"}>
+            <RefCitationClaim reference={refDetails}/>
+
+            <RefCitationDisplayHtml reference={refDetails} onClick={handleCitationClick} onAction={onAction}/>
+
+            {/*<RefCitationDisplay _ref={refDetails}*/}
+            {/*                    pageData={pageData}*/}
+            {/*                    parseMethod={pageData.iariParseMethod}*/}
+            {/*                    showDebug={showDebug}*/}
+            {/*                    onClick={handleCitationClick}*/}
+            {/*                    options = {{'hide_actionables':true }}*/}
+            {/*                    onAction={onAction}*/}
+            {/*/>*/}
         </div>
 
-        <RefCitationClaim reference={refDetails} />
+        <div className={"ref-analysis"}>
+            {/*<RefProbes reference={refDetails} pageData={pageData} />*/}
+            <RefActionables actionables={refDetails?.actionable}/>
 
-        <RefCitationDisplayHtml reference={refDetails} onClick={handleCitationClick} onAction={onAction} />
+            <RefUrls urls={refDetails?.urls} pageData={pageData} onAction={onAction}/>
 
-        {/*<RefCitationDisplay _ref={refDetails}*/}
-        {/*                    pageData={pageData}*/}
-        {/*                    parseMethod={pageData.iariParseMethod}*/}
-        {/*                    showDebug={showDebug}*/}
-        {/*                    onClick={handleCitationClick}*/}
-        {/*                    options = {{'hide_actionables':true }}*/}
-        {/*                    onAction={onAction}*/}
-        {/*/>*/}
-
-        {/*<RefProbes reference={refDetails} pageData={pageData} />*/}
-        <RefActionables actionables={refDetails?.actionable} />
-
-        <RefUrls urls={refDetails?.urls} pageData={pageData} onAction={onAction} />
-
-        {showWikitext && <RefWikitext wikitext={refDetails?.wikitext} ref_details={refDetails} onAction={handleRefViewAction} />}
-        <RefTemplates templates={refDetails?.templates} pageData={pageData} tooltipId={tooltipId} />
-        {/*<RefWikitextNew wikitext="" onAction={handleRefViewAction} />*/}
-    </>
+            {showWikitext &&
+                <RefWikitext wikitext={refDetails?.wikitext} ref_details={refDetails} onAction={handleRefViewAction}/>}
+            <RefTemplates templates={refDetails?.templates} pageData={pageData} tooltipId={tooltipId}/>
+            {/*<RefWikitextNew wikitext="" onAction={handleRefViewAction} />*/}
+        </div>
+    </div>
 
 }
 

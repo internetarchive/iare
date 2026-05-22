@@ -33,8 +33,8 @@ export default function RefTemplates({ templates, pageData, tooltipId }) {
     return <div className="ref-view-section ref-view-templates">
 
         {/*<h3 className={"template-header"}>Templates</h3>*/}
-        {templates ?
-            templates.map((t,i) => {
+        {templates
+            ? templates.map((t,i) => {
                 return <RefTemplate template={t} pageData={pageData} tooltipId={tooltipId} key={i}/>
             })
             : <>
