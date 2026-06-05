@@ -61,6 +61,8 @@
     border: var(--iare-section-border);
     margin-bottom:var(--margin-box-bottom);
     padding:.35rem;
+    height: 1.88rem;
+    max-height: 1.88rem;
 }
 
 .control-box-caption {
@@ -102,8 +104,8 @@
 }
 /*.control-box .button-row .utility-button {*/
 .control-box .utility-button {
-    background-color: var(--color-button-dark-bg) !important;
-    color: var(--color-button-dark) !important;
+    /*background-color: var(--color-button-dark-bg) !important;*/
+    /*color: var(--color-button-dark) !important;*/
     padding-left:.5rem;
     padding-right:.5rem;
     margin-right:.25rem;

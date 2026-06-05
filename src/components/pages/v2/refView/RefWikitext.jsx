@@ -114,11 +114,15 @@ export default function RefWikitext({ wikitext, onAction }) {  // NB TODO make o
 
     return <div className="ref-view-section ref-view-wikitext">
         <RefSectionHeader
-            leftPart={<h3>Wikitext</h3>}
-            rightPart={<div style={{marginTop: ".2rem"}}
-                >{buttonEditSave} {buttonCancel} {buttonCopy}<
-            /div>}
+            leftPart={<h3>Wikitext<span style={{marginTop: ".2rem", marginLeft: ".5rem"}}
+            >{buttonEditSave} {buttonCancel} {buttonCopy}</span></h3>}
         />
+        {/*<RefSectionHeader*/}
+        {/*    leftPart={<h3>Wikitext</h3>}*/}
+        {/*    rightPart={<div style={{marginTop: ".2rem"}}*/}
+        {/*    >{buttonEditSave} {buttonCancel} {buttonCopy}<*/}
+        {/*    /div>}*/}
+        {/*/>*/}
 
         <textarea className={`raw-wikitext ${editable ? "editable" : "non-editable"}`}
                   readOnly={!editable}

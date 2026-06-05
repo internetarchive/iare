@@ -58,6 +58,8 @@ export default function App(
     // const [isShowDebugControls, setIsShowDebugControls] = useState(false);
 
     const [isShowViewOptions, setIsShowViewOptions] = useState(false);
+    const [isShowHamburger, setIsShowHamburger] = useState(false);
+    // const [isShowViewOptions, setIsShowViewOptions] = useState(true);
 
     // params settable from from address url
     const [targetPath, setTargetPath] = useState(myPath);
@@ -469,37 +471,47 @@ export default function App(
         // setIariSourceId(sourceId);
     };
 
+
     const siteInfo = (env !== 'env-production')  // TODO implement IareEnvironments
-        ? (env !== 'env-staging'
-            ? ` LOCAL `
-            : ` STAGING `)
+        ? `Server: ${env !== 'env-staging' ? ' LOCAL ' : ' STAGING '}`
         : ''  // do not show env in production environment
 
-    const iariSourceInfo = IariSources[myIariSourceId]?.caption
 
-    // scroll Fix - for small screens, turning on "scrollfix" allows more elements of
-    // of the screen to be scrolled. otherwise, screen elements that are fixed take up
-    // too much of screen real estate and not much room is left for scrolling data!
+    const iariSourceInfo = `IARI: ${IariSources[myIariSourceId]?.caption}`
+
+    const svgLockIconOpen = <svg className={"svg-icon-box"} xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                 viewBox="0 0 16 16"
+                                 fill="currentColor"
+                                 >
+        <path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2z"/>
+    </svg>
+    // const svgLockIconOpen = "open"
+    const svgLockIconClosed = <svg className={"svg-icon-box"} xmlns="http://www.w3.org/2000/svg"
+                                   width="16" height="16"
+                                   viewBox="0 0 16 16"
+                                   fill="currentColor"
+                                   >
+        <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+    </svg>
+    // const svgLockIconClosed = "closed"
+
+
     const buttonScrollFix = <div>
+        {/*// For small screens, turning on "scrollfix" allows more elements to be scrolled. */}
+        {/*// Otherwise, navigation elements on a fixed screen take up so much room there is */}
+        {/*// not much left for scrolling data!                                              */}
+
+        {/*// NB this is an experimental feature so far... */}
+
         <div>Scroll: <span className={"lock-icon"}
                            onClick={toggleScrollFix}
                            data-tooltip-id="app-tooltip-id"
                            data-tooltip-content={isScrollFix
-                               ? "Currently released - Click to peg scroll to sections"
-                               : "Currently pegged - Click to release scroll to screen"}>
+                               ? "Currently in \"fixed\" mode - Click to return to default"
+                               : "Currently in default mode - Click to enter \"fixed\" mode."}>
             {isScrollFix
-                ?
-                <svg className={"svg-icon-box"} xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                     fill="currentColor" viewBox="0 0 16 16">
-                    <path
-                        d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2z"/>
-                </svg>
-                :
-                <svg className={"svg-icon-box"} xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                     fill="currentColor" viewBox="0 0 16 16">
-                    <path
-                        d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
-                </svg>
+                ? svgLockIconOpen
+                : svgLockIconClosed
             }
             </span></div>
     </div>
@@ -582,7 +594,7 @@ export default function App(
 
     const versionInfo = `IARE version ${package_json.version}`
 
-    const debug = <div className={"debug-section " + (isDebug ? "debug-on" : "debug-off")}>
+    const debugDisplay = <div className={"debug-section " + (isDebug ? "debug-on" : "debug-off")}>
         {/*<div style={{marginBottom:".5rem"}}*/}
         {/*>{iariChoiceSelect} {methodChoiceSelect} {articleVersionChoiceSelect}</div>*/}
         <div>{iariChoiceSelect} {methodChoiceSelect} {articleVersionChoiceSelect}</div>
@@ -657,6 +669,23 @@ export default function App(
 
     console.log(`appError: ${appError}`)
 
+    const hamburgerMenu = <div className="iare-hamburger-wrapper">
+        <button onClick={() => setIsShowHamburger(prevState => !prevState)}>
+            Menu
+        </button>
+
+        {isShowHamburger && (
+            <div className={"iare-hamburger-menu"}>
+                <div>{buttonScrollFix}</div>
+                <div>{versionInfo}</div>
+                <div>{siteInfo}</div>
+                <div>{iariSourceInfo}</div>
+                <div>{buttonShowDebug}</div>
+            </div>
+        )}
+    </div>
+
+    
     return <>
 
         {debugStaticDisplay}
@@ -670,18 +699,17 @@ export default function App(
                 <div className={"iare-ux-header main-header"}>
 
                     <div className={"main-header-contents"}>
+
                         <div className="header-title-section">
                             <img src={"logo192.png"} alt="App Logo" className="app-logo"/>
                             <h1 className={"app-title"}>{appTitle}</h1>
                         </div>
-                        <div className={"iare-header-aux1"}>
-                            {buttonScrollFix}&nbsp;
-                            <div>{versionInfo}{siteInfo} ({iariSourceInfo})&nbsp;</div>
-                            {buttonShowDebug}
-                        </div>
+
+                        {hamburgerMenu}
+                        
                     </div>
 
-                    {debug}
+                    {debugDisplay}
 
                 </div>
 

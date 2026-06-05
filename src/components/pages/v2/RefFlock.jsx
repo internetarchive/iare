@@ -276,7 +276,7 @@ function RefFlock({ pageData= {},
     wont work here, as they will be relative to the top if IARE.
 
     Also, if the link is not an external reference, i imagine we want to carry thru
-    the default action of exposing the reference detaiuls in the referee sectoin
+    the default action of exposing the reference details in the reference sectoin
 
     this is accomplished by propagating up the "message event" to display
     the details for the reference clicked.

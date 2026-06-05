@@ -44,7 +44,7 @@ export const testPageData = () => {
         border: '2pt solid blue',
     }
 
-    const conditionsBox = <div className="conditions-box"><h3 className="conditions-box-caption">Conditions</h3>
+    const conditionsBox = <div className="control-box conditions-box"><h3 className="conditions-box-caption">Conditions</h3>
         <div className="condition-box-contents">
             <div className="condition-box">
                 <div className="category-row">

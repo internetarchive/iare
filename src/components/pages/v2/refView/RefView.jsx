@@ -9,6 +9,7 @@ import {createInstance} from "i18next";
 import Popup from "../../../Popup.jsx";
 import SignalDataDetailsTitle from "../../../SignalDataDetailsTitle.jsx";
 import SignalDataDetails from "../../../SignalDataDetails.jsx";
+import {useTranslation} from "react-i18next";
 
 const STORAGE_KEY = "modalPositionSize";
 
@@ -25,6 +26,7 @@ export default function RefView({
                                     tooltipId
                                 }) {
 
+    const { t, i18n } = useTranslation();
 
     const modalDefaults = {
         // margin: 100,
@@ -268,11 +270,18 @@ export default function RefView({
         setPosition(newPosition);
     };
 
+    const buttonShowHideRefs = <button className="small-button utility-button " onClick={() => {}}>
+        <span>Show Refs</span>
+    </button>
+
     const refViewTitleBar = <div className="ref-view-title-bar"
                                  style={{position: "sticky", top: 0}}
                                  onDoubleClick={handleTitleBarDoubleClick}
     >
-        <h2>Reference Details</h2>
+        <div className="modalLeft">
+            <h2>{t("reference_details", "Reference Details")}<span
+            >{buttonShowHideRefs}</span></h2>
+        </div>
         <div className="modalRight">
             <p onClick={onClose} className="closeBtn">X Close</p>
         </div>

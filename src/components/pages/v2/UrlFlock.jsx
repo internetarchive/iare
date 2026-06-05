@@ -727,47 +727,48 @@ const urlFlock = React.memo(function UrlFlock({
 
     const getHeaderRow = () => {
         return <ColumnSortContext.Provider value={columnSort}>
-            <div className={"url-row-header flock-row-header"}>
 
-                <ColumnBox
-                    content={<><br/>URL Link</>}
-                    columnClass={"url-name flock-col"}
-                    columnKey={"url-name"}
-                />
+            {/*<div className="sticky-header-wrapper">*/}
+                <div className={"url-row-header flock-row-header"}>
 
-                <ColumnBox
-                    content={<>Live<br/>Status</>}
-                    columnClass={"url-live_status flock-col"}
-                    columnKey={"url-live_status"}
-                />
-                <ColumnBox
-                    content={archiveFilterDefs['iabot']._.name}
-                    columnClass={"url-archive_status flock-col"}
-                    columnKey={"url-archive_status"}
-                />
-                <ColumnBox
-                    content={<>Action<br/>Items</>}
-                    columnClass={"url-actionable flock-col"}
-                    columnKey={"url-actionable"}
-                />
+                    <ColumnBox
+                        content={<><br/>URL Link</>}
+                        columnClass={"url-name flock-col"}
+                        columnKey={"url-name"}
+                    />
 
-                {/* signals column is special... */}
-                <div className={"url-signals flock-col"}>
-                    {/*<div className={"wiki-signals-docs flock-col"}>WikiSignals ℹ️ </div>*/}
-                    {/*<div className={"wiki-signals-sort flock-col"}>WikiSignal Sort <span className={"descriptor-text"}>(Click to sort)</span></div>*/}
-                    <div>
-                        <SignalBadges badgeContextKey={BadgeContexts.sort.value}
-                                      tooltipId={tooltipId}
-                                      // onBadgesHover={onBadgeHover}
-                                      onAction={onAction}
-                                      onClick={handleSignalBadgesClick}  // TODO need this???
+                    <ColumnBox
+                        content={<>Live<br/>Status</>}
+                        columnClass={"url-live_status flock-col"}
+                        columnKey={"url-live_status"}
+                    />
+                    <ColumnBox
+                        content={archiveFilterDefs['iabot']._.name}
+                        columnClass={"url-archive_status flock-col"}
+                        columnKey={"url-archive_status"}
+                    />
+                    <ColumnBox
+                        content={<>Action<br/>Items</>}
+                        columnClass={"url-actionable flock-col"}
+                        columnKey={"url-actionable"}
+                    />
 
-                        />
+                    {/* signals column is special... */}
+                    <div className={"url-signals flock-col"}>
+                        {/*<div className={"wiki-signals-docs flock-col"}>WikiSignals ℹ️ </div>*/}
+                        {/*<div className={"wiki-signals-sort flock-col"}>WikiSignal Sort <span className={"descriptor-text"}>(Click to sort)</span></div>*/}
+                        <div>
+                            <SignalBadges badgeContextKey={BadgeContexts.sort.value}
+                                          tooltipId={tooltipId}
+                                // onBadgesHover={onBadgeHover}
+                                          onAction={onAction}
+                                          onClick={handleSignalBadgesClick}  // TODO need this???
+                            />
+                        </div>
                     </div>
 
                 </div>
-
-            </div>
+            {/*</div>*/}
 
         </ColumnSortContext.Provider>
 

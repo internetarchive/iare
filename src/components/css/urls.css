@@ -18,6 +18,8 @@
     /*--color-cell-border: grey;*/
     --color-cell-border: inherit;
 
+    --color-row-header-bg: #eeeeee;
+
     --width-archive-icon-list: 1.5rem;     /* size of check / x icons in list */
     --height-archive-icon-list: 1.5rem;
     --width-archive-book-list: 1.3rem;     /* size of check / x icons in list */
@@ -96,9 +98,9 @@
     min-width: 25%;
 }
 
-.url-flock {
-    /*width: var(--width-url-list);*/
-    /*max-width: var(--width-url-list);*/
+.url-flock .flock-box-contents {
+    /*background-color: limegreen;*/
+    border-radius: var(--iare-radius-medium);
 }
 
 /* table scrolling stuff
@@ -112,7 +114,8 @@
     display: contents;
     overflow-y: auto;
     flex: 1;
-    background-color: var(--iare-test-color)
+    background-color: var(--iare-test-color);
+    /*border-left: var(--border-default) !important;*/
 }
 
 .url-rows .url-row
@@ -121,6 +124,7 @@
     flex-direction: row;
     border:1px solid black;
     border-top:none;
+    /*border-left:none;*/
 
     /*position:relative;*/
     min-width: fit-content;
@@ -176,12 +180,14 @@
     cursor: pointer;
     min-width: max-content;
     width: 100%;
-    background-color: #41c4ff;
-    background-color: #dadcde;
-    background-color: #e8e8eb;
+    background-color: var(--color-row-header-bg);
 }
 
-/* url list column widths for different column types */
+
+
+/*
+ * All the css rules, including column widths, for each column type
+ */
 
 .url-row-header .url-name,
 .url-row .url-name
@@ -192,18 +198,13 @@
     /*border-right: var(--width-cell-border);*/
     /*border-right-color: var(--color-cell-border);*/
     text-align:left !important;
-    padding-left: var(--padding-url-column);
+    /*padding-left: var(--padding-url-column);*/
     padding-left: var(--padding-url-column) !important;
+
+    white-space: nowrap;
+    overflow: hidden;
 }
 
-            /*.url-row-header .url-name*/
-            /*{*/
-            /*    padding-left: var(--padding-url-column) !important;*/
-            /*}*/
-
-/*
- * All the css rules for each column type
- */
 
 .url-row-header .url-live_status,
 .url-row .url-live_status {

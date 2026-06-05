@@ -86,6 +86,13 @@ export default function PathNameFetch({
         : null
 
 
+    const buttonLoadReferences = <button
+        className={"utility-button"}
+        style={{margin: "0 0 0.2rem 10px"}}
+        onClick={myHandlePath.handleSubmit}>
+        <span>{"Load References"}</span>
+    </button>
+
     return <div className={`path-fetch${className ? ` ${className}` : ''}`}>
 
         <div className={"path-fetch-wrap"}>
@@ -110,10 +117,8 @@ export default function PathNameFetch({
             </div>
 
             <div style={{display: "block"}}>
-                <button className={"utility-button"} style={{margin: "0 0 0.2rem 10px"}} onClick={myHandlePath.handleSubmit} >
-                    <span>{"Load References"}</span>
-                </button
-                ><Checkbox className={"chk-checkbox chk-force-refresh"} label={"Force Refresh"} value={checkboxRefresh} onChange={handleCheckChangeRefresh}/>
+                {buttonLoadReferences}
+                <Checkbox className={"chk-checkbox chk-force-refresh"} label={"Force Refresh"} value={checkboxRefresh} onChange={handleCheckChangeRefresh}/>
                 {UseLocalCacheDisplay}
                 {shortcutsButton}
             </div>

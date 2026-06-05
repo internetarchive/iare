@@ -32,11 +32,11 @@ export const IariSources = {
         proxy: 'http://localhost:5001/v2',
     },
 
-    iari_stage_r6: {  // iari_researcher6
-        key: 'iari_stage_r6',
-        caption: 'IARI researcher6 Stage',
-        proxy: 'http://researcher6.fnf.archive.org:5088/v2/',
-    },
+    // iari_stage_r6: {  // iari_researcher6
+    //     key: 'iari_stage_r6',
+    //     caption: 'IARI researcher6 Stage',
+    //     proxy: 'http://researcher6.fnf.archive.org:5088/v2/',
+    // },
 
 }
 

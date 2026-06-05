@@ -18,7 +18,7 @@ export default function ConditionsBox({conditions = null, onAction, caption="Con
         ><span>Remove Conditions</span></button>
         : null
 
-    return <div className={`conditions-box`}>
+    return <div className={`control-box conditions-box`}>
         <h3 className={"conditions-box-caption"}>Conditions{buttonRemove}</h3>
         <div className={"condition-box-contents"}>
             {myConditions?.length

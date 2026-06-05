@@ -76,7 +76,9 @@
 .flock-row-header {
     position: sticky;
     top: 0;
-    z-index: 10; /* keep it above rows */
+    z-index: 9999; /* keep it above rows */
+    overflow: hidden;
+    width:100%;
 
     display: flex;
     flex-direction: row;
@@ -84,11 +86,36 @@
     color:var(--g-color-list-header-fg);
     background: var(--g-color-list-header-bg);
 
-    border: 1px solid black;
+    border: var(--iare-border-normal);
     border-top-left-radius: var(--border-box-radius);
     border-top-right-radius: var(--border-box-radius);
 
     padding: var(--padding-flock-row-header);
+}
+
+/*.flock-row-header::before {*/
+/*    content: "";*/
+/*    position: absolute;*/
+/*    inset: 0;*/
+/*    background: var(--g-color-list-header-bg);*/
+
+/*    border-top-left-radius: var(--border-box-radius);*/
+/*    border-top-right-radius: var(--border-box-radius);*/
+
+/*    z-index: -1;*/
+/*}*/
+.sticky-header-wrapper {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+width: 100%;
+
+    background: var(--g-color-list-header-bg);
+
+    border-top-left-radius: var(--border-box-radius);
+    border-top-right-radius: var(--border-box-radius);
+
+    overflow: hidden;
 }
 
 .flock-row-header > div {

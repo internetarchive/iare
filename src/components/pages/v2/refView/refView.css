@@ -117,6 +117,10 @@
     /* ...and transform other elements for responsive */
 }
 
+.modalLeft {
+    width:100%;
+}
+
 .modalRight {
     width:100%;
 }
@@ -141,6 +145,15 @@
     font-size: var(--titlebar-font-size);
     padding: .5rem 0 .3rem .85rem;
 }
+
+.ref-view-title-bar .utility-button.small-button {
+    margin-bottom:0;
+    height:1.1rem;
+    font-size: .6rem;
+    line-height: .7;
+}
+
+
 .ref-view-title-bar .closeBtn {
     position:absolute;
     top:.65rem;
@@ -345,25 +358,13 @@
     font-size: .6rem;
     line-height: .7;
 }
-
-button.truth-probe-button  /* deprecate? */
-{
-    margin-bottom:0;
-    height:1.8rem;
-    font-size: .75rem;
-    /*padding: .1rem .3rem .1rem .3rem;*/
-    padding: .1rem .5rem;
-    line-height: .7;
-    margin-right:.55rem;
-    /*background-color: var(--color-button-truth-probe);*/
-    background-color: #b7e0ff;
-    /*outline: var(--color-button-bg);*/
-    /*border: var(--color-button-bg);*/
-    border: 2pt solid #2199e8;
-    color: black;
-
-}
-
+/*.ref-view button.utility-button*/
+/*{*/
+/*    margin-bottom:0;*/
+/*    height:1.1rem;*/
+/*    font-size: .6rem;*/
+/*    line-height: .7;*/
+/*}*/
 
 .ref-view-wikitext .header-left-part,
 .ref-view-wikitext-new .header-left-part
