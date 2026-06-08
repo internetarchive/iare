@@ -517,12 +517,20 @@ export default function App(
     </div>
 
 
+    // const buttonShowDebugOn = "+"
+    // const buttonShowDebugOff = <>&#8212;</>
+    const buttonShowDebugOn = "Show Debug"
+    const buttonShowDebugOff = "Hide Debug"
+
     const buttonShowDebug = (env !== 'env-production') &&
         <button className={"utility-button debug-button small-button"}
+                style={{marginLeft:"0rem", marginTop: ".25rem", marginBottom: ".25rem"}}
                 onClick={toggleDebug}>{
             isDebug
-                ? <>&#8212;</>
-                : "+"  // dash (&#8212;) and plus sign
+                // ? <>&#8212;</>
+                // : "+"  // dash (&#8212;) and plus sign
+                ? buttonShowDebugOff
+                : buttonShowDebugOn
             // up triangle: <>&#9650;</>
             // dn triangle: <>&#9660;</>
         }</button>
@@ -592,7 +600,7 @@ export default function App(
                   defaultChoice={myIariSourceId}/>
     </div>
 
-    const versionInfo = `IARE version ${package_json.version}`
+    const versionInfo = package_json.version
 
     const debugDisplay = <div className={"debug-section " + (isDebug ? "debug-on" : "debug-off")}>
         {/*<div style={{marginBottom:".5rem"}}*/}
@@ -676,11 +684,16 @@ export default function App(
 
         {isShowHamburger && (
             <div className={"iare-hamburger-menu"}>
-                <div>{buttonScrollFix}</div>
-                <div>{versionInfo}</div>
-                <div>{siteInfo}</div>
-                <div>{iariSourceInfo}</div>
-                <div>{buttonShowDebug}</div>
+                <div className={"menu-header"}>
+                    <div>IARE version {versionInfo}</div>
+                </div>
+
+                <div>
+                    <div>{buttonScrollFix}</div>
+                    <div>{siteInfo}</div>
+                    <div>{iariSourceInfo}</div>
+                    <div>{buttonShowDebug}</div>
+                </div>
             </div>
         )}
     </div>
@@ -705,7 +718,7 @@ export default function App(
                             <h1 className={"app-title"}>{appTitle}</h1>
                         </div>
 
-                        {hamburgerMenu}
+                        <div><span style={{marginRight: ".75rem"}}>v {versionInfo}</span>{hamburgerMenu}</div>
                         
                     </div>
 
