@@ -53,6 +53,7 @@ export default function RefView({
     const [signalDetailsPopupTitle, setSignalDetailsPopupTitle] = useState(<>Modal Title</>);
     const [signalDetailsPopupContents, setSignalDetailsPopupContents] = useState(null);
 
+    const [isShowRefs, setIsShowRefs] = useState(true);
 
     const handleDragStart = (e, data) => {
         console.log('RefView:handleDragStart', data);
@@ -270,9 +271,13 @@ export default function RefView({
         setPosition(newPosition);
     };
 
-    const buttonShowHideRefs = <button className="small-button utility-button " onClick={() => {}}>
-        <span>Show Refs</span>
+
+    const buttonShowHideRefs = <button className="small-button utility-button " onClick={() => {
+        setIsShowRefs((prev) => !prev)
+    }}>
+    <span>{isShowRefs ? 'Hide References List' : 'Show References List'}</span>
     </button>
+
 
     const refViewTitleBar = <div className="ref-view-title-bar"
                                  style={{position: "sticky", top: 0}}
@@ -290,6 +295,7 @@ export default function RefView({
 
     const stopAndShow = (e, eventName) => {
         // debug utility
+        // Stops propagation of element event, and logs event name
         e.stopPropagation()
         console.log(`RefView:Rnd: ${eventName} (stopped propagation)`)
     }
@@ -426,7 +432,7 @@ export default function RefView({
                 <div className="ref-view-container">
 
                     {/* show Ref Flock as left sidebar for navigation */}
-                    <div className={"ref-view-header"}>
+                    {isShowRefs && <div className={"ref-view-header"}>
                         <RefFlock pageData={pageData}
                                   refArray={pageData.references}
                                   refFilter={refFilter}
@@ -445,7 +451,7 @@ export default function RefView({
                                   // onKeyDown={handleFlockKeyDown}  // what happens when key down flock list
                                   selectedRefIndex={selectedRefIndex}
                         />
-                    </div>
+                    </div>}
 
                     {/* show ref details in main part of modal window */}
                     <div className="ref-view-body">
@@ -465,6 +471,7 @@ export default function RefView({
         </Rnd>
 
         {/* popup title, data and open status set in handleSignalClick function */}
+        {/* this may be deprecated */}
         <Popup isOpen={isSignalDetailsPopupOpen}
                onClose={() => {
                    setIsSignalDetailsPopupOpen(false)

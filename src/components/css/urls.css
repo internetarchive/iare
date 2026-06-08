@@ -103,6 +103,9 @@
     border-radius: var(--iare-radius-medium);
 }
 
+.url-flock .iare-ux-body {
+
+}
 /* table scrolling stuff
  NB this is for url tables - should be more generic for generic flock display, not just urls
 */
@@ -188,6 +191,11 @@
 /*
  * All the css rules, including column widths, for each column type
  */
+
+.url-row .url-info
+{
+    padding-left: var(--padding-url-column) !important;
+}
 
 .url-row-header .url-name,
 .url-row .url-name

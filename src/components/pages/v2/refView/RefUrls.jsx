@@ -150,7 +150,7 @@ export default function RefUrls({ urls, pageData, onAction, tooltipId, showDebug
         })
 
         if (dataRows.length === 0) {
-            dataRows.push(<div className={"url-row"}><div>No URLs for this reference.</div></div>)
+            dataRows.push(<div className={"url-row"}><div className={"url-info"}>No URLs for this reference.</div></div>)
         }
 
         const dataHeader = getHeaderRow()

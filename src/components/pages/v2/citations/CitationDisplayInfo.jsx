@@ -1,13 +1,18 @@
 import React, {useCallback, useContext} from "react";
 import {ConfigContext} from "../../../../contexts/ConfigContext.jsx";
 import {ACTIONS_IARE} from "../../../../constants/actionsIare.jsx";
+import {useTranslation} from "react-i18next";
 
 function CitationDisplayInfo({ reference = null,
                                  pageData = {},
                                  options = {},
                                  onAction}) {
 
+    if (!reference) return null
+
     const myConfig = useContext(ConfigContext);
+
+    const { t} = useTranslation();
 
     const handleClick = useCallback((e) => {
         e.stopPropagation()
@@ -19,6 +24,7 @@ function CitationDisplayInfo({ reference = null,
         })
     }, [onAction]);
 
+
     const handleClickSection = useCallback((e) => {
         e.stopPropagation()
         const refElement = e.target.closest('a')
@@ -29,7 +35,13 @@ function CitationDisplayInfo({ reference = null,
         })
     }, [onAction]);
 
-    if (!reference) return null
+
+    const section_label = t('Section') + ": "
+    const section_anchor = reference.section === 'root' ? '' : reference.section.replace(/ /g, "_")
+    const section_link = <a href={pageData.pathName + '#' + section_anchor} target={"_blank"} rel={"noreferrer"} onClick={handleClickSection}>
+        {reference.section === 'root' ? 'Lead' : reference.section}
+    </a>
+
 
     const pageRefLinks = reference.citeRef?.page_refs
     const pageRefLinkDisplay = pageRefLinks
@@ -43,20 +55,20 @@ function CitationDisplayInfo({ reference = null,
         : null  // <div>No Citation Refs!</div>
     const citationLabel = pageRefLinks
         ? pageRefLinks.length > 1
-            ? `${pageRefLinks.length} Locations in Article: `
-            : "Location in Article: "
-        : <i>Trouble Extracting Citation Link</i>
+            ? `Locations (${pageRefLinks.length}): `
+            : "Location: "
+        :  <>Location: <i>Trouble extracting link</i></>
 
-    const section_label = 'Section of Origin: '
-    const section_anchor = reference.section === 'root' ? '' : reference.section.replace(/ /g, "_")
-    const section_link = <a href={pageData.pathName + '#' + section_anchor} target={"_blank"} rel={"noreferrer"} onClick={handleClickSection}>
-        {reference.section === 'root' ? 'Lead' : reference.section}
-    </a>
 
-    return <div className={"parts-wrapper"}>
-        <div className={"parts-title"}>Origin</div>
-        <div className={"cite-ref-links"}><span className={"ref-citation-links"}>{citationLabel}</span>{pageRefLinkDisplay}</div>
+    // return <div className={"parts-wrapper"}>
+    //     <div className={"parts-title"}>Origin</div>
+    //     <div className={"cite-ref-links"}><span className={"ref-citation-links"}>{citationLabel}</span>{pageRefLinkDisplay}</div>
+    //     <div className={"ref-meta article-info"}>{section_label}{section_link}</div>
+    // </div>
+
+    return <div className={"ref-citation-info"}>
         <div className={"ref-meta article-info"}>{section_label}{section_link}</div>
+        <div className={"cite-ref-links"}><span className={"ref-citation-links"}>{citationLabel}</span>{pageRefLinkDisplay}</div>
     </div>
 
 }

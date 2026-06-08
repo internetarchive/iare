@@ -1,7 +1,9 @@
 :root {
 
     /* candidates for global definition (for AI generated colors) */
-    --color-ref-view-text: #727272;
+    /*--color-ref-view-text: #727272;*/
+    --color-ref-view-text: var(--iare-text-dark);
+    --color-ref-view-header: var(--iare-text-header);
     --color-ref-view-inline-heading: #c2c2c2;
     --color-ref-view-inline-heading-alert: #ff3838;
     --color-sub-caption: #9b9a9a;
@@ -18,7 +20,7 @@
     --ref-view-titlebar-height: 2.5rem;
     --titlebar-font-size: 1rem;
 
-    --height-ref-view-wikitext: 7.5rem;
+    --height-ref-view-wikitext-min: 2.5rem;
 
     --width-col-url: 27.5rem;
     --width-col-status: 4.5rem;
@@ -30,9 +32,6 @@
     /*--color-bg-non-editable: #e5ecf2;*/
     --color-bg-non-editable: hsl(208 11% 95% / 1);
 
-    --color-raw-claim-fg: #5f5f5f;
-    /*--color-raw-claim-bg: hsl(51deg 89.36% 85.81%);*/
-    /*--color-raw-claim-border: #d9bc31;*/
     --color-raw-claim-bg: hsl(0, 0%, 100%);
     --color-raw-claim-border: #5ed931;
 
@@ -148,6 +147,8 @@
 
 .ref-view-title-bar .utility-button.small-button {
     margin-bottom:0;
+    margin-left: .5rem;
+    margin-top: -0.1rem;
     height:1.1rem;
     font-size: .6rem;
     line-height: .7;
@@ -187,11 +188,10 @@
 }
 
 
-
 .ref-view-container h3,
 .ref-view-body h3 {
     font-weight:bold !important;
-    color: var(--color-ref-view-text) !important;
+    color: var(--color-ref-view-header) !important;
     margin-bottom: 0 !important;
     font-size:1.15rem !important;
 }
@@ -250,16 +250,16 @@
     margin-top: inherit;
 }
 
-.ref-view-template h3 .utility-button.small-button {
-    font-size:62%;
-    position: relative;
-    top: 1pt;
-    background-color: #e0e0e0;
-}
-.ref-view-template h3 .utility-button.small-button:hover {
-    background-color: #c7c5c5;
-    /*color: #808080;*/
-}
+                /*.ref-view-template h3 .utility-button.small-button {*/
+                /*    font-size:62%;*/
+                /*    position: relative;*/
+                /*    top: 1pt;*/
+                /*    background-color: #e0e0e0;*/
+                /*}*/
+                /*.ref-view-template h3 .utility-button.small-button:hover {*/
+                /*    background-color: #c7c5c5;*/
+                /*    !*color: #808080;*!*/
+                /*}*/
 .ref-view-templates .template-header {
     display: inline-block;
 }
@@ -348,23 +348,18 @@
 .ref-view-section:first-of-type .header-full-width {
     margin-top:0;
 }
-
-
-.ref-view-wikitext .header-full-width button.utility-button,
-.ref-view-wikitext-new .header-full-width button.utility-button
+.ref-view-section .header-full-width button.utility-button
 {
     margin-bottom:0;
     height:1.1rem;
     font-size: .6rem;
     line-height: .7;
 }
-/*.ref-view button.utility-button*/
-/*{*/
-/*    margin-bottom:0;*/
-/*    height:1.1rem;*/
-/*    font-size: .6rem;*/
-/*    line-height: .7;*/
-/*}*/
+.ref-view-section .header-full-width button.utility-button:hover
+{
+    color:black;
+}
+
 
 .ref-view-wikitext .header-left-part,
 .ref-view-wikitext-new .header-left-part
@@ -376,11 +371,13 @@
 
 .raw-wikitext {
     font-size: .85rem;
-    color: #808080;
+    color: var(--iare-text-dark);
     background-color: var(--color-bg-non-editable);
     overflow-wrap: break-word;
     overflow: scroll;
-    height: var(--height-ref-view-wikitext);
+    /*height: var(--height-ref-view-wikitext-min);*/
+    field-sizing: content;
+
     margin-bottom:0;
     padding:.28rem .35rem;
     width:100%;
@@ -609,7 +606,7 @@
 .raw-claim {
     font-family: "Source Sans 3", sans-serif;
     font-size: .85rem;
-    color: var(--color-raw-claim-fg);
+    color: var(--iare-text-dark);
     background-color: var(--color-raw-claim-bg);
     border:var(--color-raw-claim-border) solid 2px;
     border-radius: var(--iare-section-border-radius);
@@ -630,6 +627,16 @@
 }
 
 /* uncategorized */
+
+.ref-citation-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 1rem;
+    align-items: center;
+    padding-top: .25rem;
+    padding-left: var(--padding-url-column);
+}
 
 .cite-display-info {
     font-weight: bold;

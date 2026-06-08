@@ -2,7 +2,7 @@
   "name": "iare",
   "version": "0.3.1.40",
   "version_name": "0.3.1.40 Hamburger Menu",
-  "private": true,`
+  "private": true,
   "type": "module",
   "dependencies": {
     "bootstrap": "^5.3.3",

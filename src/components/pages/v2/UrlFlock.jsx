@@ -515,23 +515,23 @@ const urlFlock = React.memo(function UrlFlock({
     //     setUrlTooltipHtml(text)
     // }
 
-    const getDataRows = (flockArray, flockFilters) => {
+    const getUrlRows = (urlArray, flockFilters) => {
         // TODO implement columnsToShow (ignoring for now)
 
         // returns [flockRow markup, array of filtered urls]
-        if (!flockArray || flockArray.length === 0) {
+        if (!urlArray || urlArray.length === 0) {
             return [<h4>No URLs to show</h4>, []]
         }
 
         if (!flockFilters) flockFilters = {}  // prevent null errors
         // TODO what to do if flockFilters is not an object of keyed FlockFilter's?
-        //  Can we make flockFilters a custom type, such as FlockFilters?
+        //  Can we make flockFilters a custom "FlockFilters" type?
 
 
         // filter the urls according to the set of filters provided
         // NB Currently only 1 filter is supported; in the future we may support more
 
-        let filteredUrls = flockArray  // initialize url array as the full provided array
+        let filteredUrls = urlArray  // initialize url array as the full provided array
 
         Object.keys(flockFilters).forEach(filterName => {
             const f = flockFilters[filterName]
@@ -558,7 +558,7 @@ const urlFlock = React.memo(function UrlFlock({
         // sort filteredUrls if specified
         if (columnSort.sortBy?.length > 0) {
             const sortFn = getSortFunction()
-            console.log(`sorting urls by: ${columnSort.sortBy[0]}`)  //
+            console.log(`sorting rows by: ${columnSort.sortBy[0]}`)  //
             filteredUrls.sort(sortFn)
         }
 
@@ -656,13 +656,6 @@ const urlFlock = React.memo(function UrlFlock({
 
                 <div className={"url-signals"}>
 
-                    {/*<SignalDisplay  // TODO replace this with SignalBadges directly*/}
-                    {/*    urlObj={u}*/}
-                    {/*    onAction={onAction}*/}
-                    {/*    badgeContext={badgeContext.inline.value}*/}
-                    {/*    tooltipId={tooltipId}*/}
-                    {/*/>*/}
-
                     <SignalBadges signals={u?.signal_data?.signals ?? {}}
                                   onAction={onAction}
                                   badgeContextKey={badgeContext.inline.value}
@@ -696,7 +689,7 @@ const urlFlock = React.memo(function UrlFlock({
 
 
         // iterate over array of url objects to create rendered output
-        const flockRows = filteredUrls.map((u, i) => {
+        const urlRows = filteredUrls.map((u, i) => {
 
             // TODO: we should sanitize earlier on in the process to save time here...
 
@@ -720,7 +713,7 @@ const urlFlock = React.memo(function UrlFlock({
 
         })
 
-        return [flockRows, filteredUrls]  // flockRows is markup, filteredUrls
+        return [urlRows, filteredUrls]  // urlRows is markup for filteredUrls
 
     }  // end getFlockRows
 
@@ -809,14 +802,20 @@ const urlFlock = React.memo(function UrlFlock({
 
 
     // flockDataRows is markup for all rows and flockArray is array of url's used for that markup
-    const [flockDataRows, flockArray] = getDataRows(urlArray, urlFilters);
+    const [flockDataRows, flockArray] = getUrlRows(urlArray, urlFilters);
     const flockHeaderRow = getHeaderRow()
-    const flockAllRows = [flockHeaderRow, ...flockDataRows]
+    // const flockAllRows = [flockHeaderRow, ...flockDataRows]
 
-    const flock = <div className={"flock-rows url-rows"}
-                       onClick={onClickFlockRow}
-                       onMouseOver={onHoverFlockRow}
-    >{flockAllRows}</div>
+    const flock = <>
+        <div className={"flock-header-row"}>
+            {flockHeaderRow}
+        </div>
+
+        <div className={"flock-rows url-rows"}
+             onClick={onClickFlockRow}
+             onMouseOver={onHoverFlockRow}
+        >{flockDataRows}</div>
+    </>
 
 
     // NB TODO retool to be in an IARE tools module: copyUrlDetails( urlArray )
@@ -881,8 +880,8 @@ const urlFlock = React.memo(function UrlFlock({
             {feedbackText && <span>{feedbackText}</span>}
         </div>
 
-    const flockInfo = `${flockAllRows.length} ` +
-        `${flockAllRows.length === 1 ? 'URL' : 'URLs'}`
+    const flockInfo = `${flockDataRows.length} ` +
+        `${flockDataRows.length === 1 ? 'URL' : 'URLs'}`
 
     const buttonShowHideRefs =
         <button onClick={() => onAction({action: ACTIONS_IARE.TOGGLE_SHOW_REFS.key})}

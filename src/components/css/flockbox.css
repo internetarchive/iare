@@ -73,10 +73,20 @@
     /*display: contents;  !* makes flock-box-contents "disappear" from layout logic - good for "sticky" header row *!*/
 }
 
-.flock-row-header {
+.flock-header-row {
     position: sticky;
     top: 0;
     z-index: 9999; /* keep it above rows */
+}
+
+.flock-rows {
+
+}
+
+.flock-row-header {
+    /*position: sticky;*/
+    /*top: 0;*/
+    /*z-index: 9999; !* keep it above rows *!*/
     overflow: hidden;
     width:100%;
 
@@ -93,22 +103,11 @@
     padding: var(--padding-flock-row-header);
 }
 
-/*.flock-row-header::before {*/
-/*    content: "";*/
-/*    position: absolute;*/
-/*    inset: 0;*/
-/*    background: var(--g-color-list-header-bg);*/
-
-/*    border-top-left-radius: var(--border-box-radius);*/
-/*    border-top-right-radius: var(--border-box-radius);*/
-
-/*    z-index: -1;*/
-/*}*/
 .sticky-header-wrapper {
     position: sticky;
     top: 0;
     z-index: 1000;
-width: 100%;
+    width: 100%;
 
     background: var(--g-color-list-header-bg);
 

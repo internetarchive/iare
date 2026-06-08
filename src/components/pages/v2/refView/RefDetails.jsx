@@ -146,7 +146,7 @@ function RefDetails({ refDetails,
     return <div className={"ref-view-details"}>
 
         <div className={"ref-citation-claim"}>
-            <RefCitationClaim reference={refDetails}/>
+            <RefCitationClaim reference={refDetails} pageData={pageData} />
 
             <RefCitationDisplayHtml reference={refDetails} onClick={handleCitationClick} onAction={onAction}/>
 
@@ -163,7 +163,8 @@ function RefDetails({ refDetails,
         <div className={"ref-analysis"}>
             {/*<RefProbes reference={refDetails} pageData={pageData} />*/}
 
-            <RefUrls urls={refDetails?.urls} pageData={pageData} onAction={onAction}/>
+            {true &&
+                <RefUrls urls={refDetails?.urls} pageData={pageData} onAction={onAction}/>}
 
             <RefActionables actionables={refDetails?.actionable}/>
 
