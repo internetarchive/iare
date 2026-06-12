@@ -5,7 +5,7 @@ import package_json from "../package.json";
 import {IariError} from "./errors/IariError";
 
 // import {debounce} from "./utils/generalUtils.js";
-import {getPagePathEndpoint} from "./utils/iariUtils.js";
+import {getPagePathEndpoint, noBookLink} from "./utils/iariUtils.js";
 
 import MakeLink from "./components/MakeLink.jsx";
 import Dropdown from "./components/Dropdown.jsx";
@@ -20,6 +20,13 @@ import {ParseMethods} from "./constants/parseMethods.jsx";
 import {ConfigContext} from "./contexts/ConfigContext"
 import {ShortcutDefs, envShortcutLists} from "./constants/shortcutDefs.jsx";
 import {KNOWN_MEDIA_TYPES} from "./constants/knownMediaTypes.jsx";
+import {ACTIONS_IARE} from "./constants/actionsIare.jsx";
+import {iareAlert} from "./utils/generalUtils.js";
+import {REFERENCE_STATS_MAP} from "./constants/referenceStatsMap.jsx";
+import {ACTIONABLE_FILTER_MAP} from "./constants/actionableMap.jsx";
+import {REF_FILTER_DEFS} from "./constants/refFilterMaps.jsx";
+import {reliabilityMap} from "./constants/perennialList.jsx";
+import {LINK_STATUS_MAP} from "./constants/linkStatusMap.jsx";
 
 
 export default function App(
@@ -412,6 +419,30 @@ export default function App(
     }
 
 
+    // eslint-disable-next-line no-unused-vars
+    const handleAction = useCallback( result => {
+        const {action, value} = result;
+        console.log (`App: handleAction: action=${action}, value=${value}`);
+
+        if (0) {
+            // allows for easy addition of "else if"
+        }
+
+        else if (action ===
+            ACTIONS_IARE.TOGGLE_SHOW_VIEW_OPTIONS.key
+        ) {
+            iareAlert("will toggle view options")
+        }
+
+        else {
+            console.log(`Action "${action}" not supported.`)
+            alert(`Action "${action}" not supported.`)
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+
     // fetch initial article specified on address bar with url param
     useEffect(() => {
 
@@ -619,9 +650,10 @@ export default function App(
         <p><span className={'label'}>Target URL from query param:</span> {myPath}</p>
         <p><span className={'label'}>Force Refresh:</span> {refreshCheck ? "TRUE" : "false"}</p>
         <p><span className={'label'}>Use Local Cache:</span> {useLocalCache ? "TRUE" : "false"}</p>
-        <div>{debugButtons}</div>
+        <p><span className={'label'}>Show View Options:</span> {isShowViewOptions ? "TRUE" : "false"}</p>
         <p><span className={'label'}>pathName:</span> <MakeLink href={targetPath}/></p>
         <p><span className={'label'}>endpointPath:</span> <MakeLink href={endpointPath}/></p>
+        <div>{debugButtons}</div>
     </div>
 
     // set config for config context
@@ -766,7 +798,7 @@ export default function App(
                                 : <>
                                     { /* component is re-rendered when pageData changes, which is
                              only once per URL invocation, really */}
-                                    <PageDisplay pageData={pageData}/>
+                                    <PageDisplay pageData={pageData} onAction = {handleAction} />
                                     { /* TODO: pass in an error callback here? */}
                                 </>
                             }

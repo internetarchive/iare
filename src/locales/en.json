@@ -3,6 +3,7 @@
   "welcome": "Welcome",
   "goodbye": "Goodbye",
   "actionable_items": "Actionable Items",
-  "reference_detailss": "Reference Details boop",
-  "things that can be fixed for this citation": "Things that can be fixed for this citation"
+  "reference_details": "Reference Details",
+  "things that can be fixed for this citation": "Things that can be fixed for this citation",
+  "ratings": "xRatings"
 }

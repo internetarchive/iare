@@ -1,15 +1,11 @@
 import React, {useState} from "react";
 import MakeLink from "../../../MakeLink.jsx";
 import RefSectionHeader from "./RefSectionHeader.jsx";
-import {
-    getArchiveStatusInfo,
-} from "../../../../utils/urlUtils.jsx";
-import {Button} from "react-bootstrap";
-import Popup from "../../../Popup.jsx";
-import RefUrlProbe from "./RefUrlProbe.jsx";
+import {getArchiveStatusInfo} from "../../../../utils/urlUtils.jsx";
 import SignalDisplay from "../../../SignalDisplay.jsx";
 import {BadgeContexts as badgeContext} from "../../../../constants/badgeContexts.jsx";
 import {ACTIONS_IARE} from "../../../../constants/actionsIare.jsx";
+import { useTranslation } from 'react-i18next';
 
 
 /*
@@ -17,9 +13,7 @@ shows template urls and their status codes in a tabular form
  */
 export default function RefUrls({ urls, pageData, onAction, tooltipId, showDebug=false }) {
 
-    // const [isProbePopupOpen, setIsProbePopupOpen] = useState(false)
-    // const [probePopupTitle, setProbePopupTitle] = useState(<>Modal Title</>);
-    // const [probePopupData, setProbePopupData] = useState(null);
+    const { t, i18n } = useTranslation();
 
     const handleSignalClick = (e) => {
         return
@@ -164,7 +158,7 @@ export default function RefUrls({ urls, pageData, onAction, tooltipId, showDebug
     const urlRows = getUrlRows(urls)
 
     return <div className="ref-view-section ref-view-urls">
-        <RefSectionHeader leftPart={<h3>URLs</h3>}/>
+        <RefSectionHeader leftPart={<h3>{t('Ratings')}</h3>}/>
         {urlRows}
     </div>
 

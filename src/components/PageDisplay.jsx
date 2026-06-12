@@ -21,7 +21,10 @@ import PageDisplayGrok from "./pages/vGrok/PageDisplayGrok.jsx";
 // export default MyComponent;
 
 
-const PageDisplay = React.memo( ({ pageData }) => {
+const PageDisplay = React.memo( ({
+            pageData,
+            onAction
+}) => {
 
     console.log(`PageDisplay (${pageData ? pageData.version + ' ' + pageData.mediaType : 'null'})`)
     let messageNoData;
@@ -34,7 +37,7 @@ const PageDisplay = React.memo( ({ pageData }) => {
 
         if (pageData.mediaType === KNOWN_MEDIA_TYPES.WIKI.key)
             // WIKI gets "normal" V2 display; enwiki assumed.
-            return <PageDisplayV2 pageData={pageData} />;
+            return <PageDisplayV2 pageData={pageData} onAction={onAction} />;
 
         if (pageData.mediaType === KNOWN_MEDIA_TYPES.PDF.key)
             // PDF gets V2PDFtreatment...needs work!

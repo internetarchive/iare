@@ -24,7 +24,7 @@ import {REF_FILTER_DEFS} from "../../../constants/refFilterMaps.jsx";
 
 import {UrlStatusCheckMethods} from "../../../constants/checkMethods.jsx";
 import {categorizedDomains, reliabilityMap} from "../../../constants/perennialList.jsx";
-import {testPageData} from "../../../utils/testUtils.jsx";
+// import {testPageData} from "../../../utils/testUtils.jsx";
 
 /*
 When this component is rendered, it must "process" the pageData. This involves:
@@ -36,7 +36,7 @@ When this component is rendered, it must "process" the pageData. This involves:
 */
 
 
-export default function PageData({rawPageData = {}, showViewOptions = false, viewType = "archives"}) {
+export default function PageData({rawPageData = {}, viewType = "archives"}) {
     /*
     pageData is the raw data from IARI fetch call, with some decoration properties added for convenience.
 
@@ -56,8 +56,6 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
 
     */
 
-    // const defaultProbesString = "verifyi|trust_project|iffy"
-    const defaultProbesString = "verifyi|iffy"
     const [selectedViewType, setSelectedViewType] = useState(viewType)
 
     const [isLoadingUrls, setIsLoadingUrls] = useState(false)
@@ -71,10 +69,6 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
 
     const myIariBase = myConfig.iariSource  // TODO: grab from pageData.iariSource
     const myStatusCheckMethod = myConfig.urlStatusMethod  // TODO grab from pageData.checkStatusMethod
-
-    // // const isShowViewOptions = myConfig.isShowViewOptions
-    // const [showViewOptions, setShowViewOptions] = useState(myConfig.isShowViewOptions)
-
 
     // Google Chrome dev tools does not handle module level imports
     // well, but assigning to a local var seems to make things work
@@ -977,6 +971,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
     }
 
     const errorDisplay = getErrorDisplay(pageErrors)
+    const myShowViewOptions = myConfig.isShowViewOptions ?? false
 
     console.log(`PageData: rendering...${new Date().toISOString().slice(11, 23)}`)
 
@@ -992,7 +987,7 @@ export default function PageData({rawPageData = {}, showViewOptions = false, vie
                     : <div className={"page-data iare-ux-container"}>
 
                         <div className={`iare-ux-header`}>
-                            {showViewOptions && viewOptionsDisplay}
+                            {myShowViewOptions && viewOptionsDisplay}
                         </div>
 
                         <div className={`iare-ux-body`}>

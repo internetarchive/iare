@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import PureJson from "../../PureJson.jsx";
 import {convertToCSV, copyToClipboard} from "../../../utils/generalUtils.js";
 import {ConfigContext} from "../../../contexts/ConfigContext.jsx";
+import {ACTIONS_IARE} from "../../../constants/actionsIare.jsx";
 
 function ClickButton( {buttonCaption=null, buttonText='', onClick}) {
     const buttonMarkup = buttonCaption ? buttonCaption : <span>{buttonText}</span>
@@ -11,7 +12,7 @@ function ClickButton( {buttonCaption=null, buttonText='', onClick}) {
 }
 
 /* displays basic info from the original returned json for the page fetch */
-export default function PageInfo({ pageData, showViewOptions = false, handleViewOptionsClick }) {
+export default function PageInfo({ pageData, onAction }) {
 
     const [showDetail, setShowDetail] = useState(false);
 
@@ -153,19 +154,17 @@ export default function PageInfo({ pageData, showViewOptions = false, handleView
         </div>
         : <p>Nothing to display - pageData is missing.</p>
 
+    const myShowViewOptions = myConfig.isShowViewOptions ?? false
 
     const viewOptionsButton = <button
         className={"utility-button page-utility-button"}
-        onClick={handleViewOptionsClick} >
-        <span>{showViewOptions ? "Hide View Options" : "Show View Options"}</span>
+        onClick={() => onAction({ action: ACTIONS_IARE.TOGGLE_SHOW_VIEW_OPTIONS })} >
+        <span>{myShowViewOptions ? "Hide View Options" : "Show View Options"}</span>
     </button>
-
-
 
     return <div className="page-info">
         <h6 className={"page-stats-header"}>
             <div>Wiki Page Analyzed: {linkPageSource}{true && oresResults}
-                {/*{!showViewOptions ? viewOptionsButton : null}*/}
                 {viewOptionsButton}
             </div>
             <div>{buttonMoreDetails}</div>

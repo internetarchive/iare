@@ -109,4 +109,8 @@ export const ACTIONS_IARE = {
         key: "SORT_BY_SIGNAL"
     },
 
+    TOGGLE_SHOW_VIEW_OPTIONS: {
+        key: "TOGGLE_SHOW_VIEW_OPTIONS"
+    },
+
 }
