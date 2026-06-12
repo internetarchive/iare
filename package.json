@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.3.1.40",
-  "version_name": "0.3.1.40 Hamburger Menu",
+  "version": "0.3.1.41",
+  "version_name": "0.3.1.40 better sort and actionable green",
   "private": true,
   "type": "module",
   "dependencies": {
