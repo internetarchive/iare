@@ -4,18 +4,20 @@
 :root {
     --iare-color-basic-blue: #2299e8;
     --iare-color-basic-blue-dark: #0478e0;
+    /*--iare-color-text-blue:  hsl(215.75deg 98.36% 52.16%);*/
+    --iare-color-blue: hsl(215.75deg 98.36% 52.16%);
+
     --iare-test-color: inherit;
+    --iare-color-green: rgb(34, 197, 94);
+    /*--iare-color-text-green: hsl(141.25deg 100% 27.84%);*/
+    /*--iare-color-green: hsl(141.25deg 100% 27.84%);*/
 
     /*--iare-color-hamburger-bg: #b5ce21;*/
     --iare-color-hamburger-bg: #ffffff;
     --iare-color-text-dark: #0d0d0d;
     --iare-color-header: var(--iare-color-basic-blue-dark);
 
-    --iare-color-text-blue:  hsl(215.75deg 98.36% 52.16%);
-    --iare-color-blue: hsl(215.75deg 98.36% 52.16%);
 
-    --iare-color-text-green: hsl(141.25deg 100% 27.84%);
-    --iare-color-green: hsl(141.25deg 100% 27.84%);
     --iare-section-border: 1.5pt solid #b4b4b7 !important;
     --iare-section-border-radius:0.42rem;
     --iare-section-border-light: .75pt solid #b4b4b7 !important;
