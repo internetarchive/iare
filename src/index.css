@@ -2,14 +2,14 @@
 @import url("__custom__/iare_custom_overrides.css");
 
 :root {
+    --iare-color-basic-blue: #2299e8;
+    --iare-color-basic-blue-dark: #0478e0;
     --iare-test-color: inherit;
-    --iare-ux-body-overflow-y: auto;
-    --iare-border-normal: 1px solid black;
 
     /*--iare-color-hamburger-bg: #b5ce21;*/
     --iare-color-hamburger-bg: #ffffff;
-    --iare-text-dark: #0d0d0d;
-    --iare-text-header: #0255ca;
+    --iare-color-text-dark: #0d0d0d;
+    --iare-color-header: var(--iare-color-basic-blue-dark);
 
     --iare-color-text-blue:  hsl(215.75deg 98.36% 52.16%);
     --iare-color-blue: hsl(215.75deg 98.36% 52.16%);
@@ -43,7 +43,6 @@
     --color-text-muted: #adb4c0; /* grey */
 
     --color-list-fg-selected: #054630; /*#1c654f;*/
-    /*--color-list-bg-selected: #ceefd9; !*#c4e4c8;*!*/
     --color-list-bg-selected: #e3f2e4; /*#c4e4c8;*/
     --color-list-fg-hover: #fffde5; /*blue;*/
 
@@ -61,7 +60,7 @@
     --color-button-bg-hover: white;
     --color-button-border: #2199e8;
 
-    --color-tooltip-border: #8d9ab3;
+    /*--color-tooltip-border: #8d9ab3;*/
     --color-tooltip-border: #596272;
     --color-tooltip-bg: #f0f0f0;
     --color-tooltip-fg: #000000;
@@ -91,6 +90,11 @@
     --border-list:1px solid black;
 
     --radio-button-magnify:1.35;
+
+    --iare-ux-body-overflow-y: auto;
+    --iare-border-normal: 1px solid black;
+
+
 
 }
 

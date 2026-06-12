@@ -1,6 +1,8 @@
 /* flock boxes - surrounds flock style components  */
 :root {
     --padding-flock-row-header: .25rem 0;
+    --color-flock-box-caption-fg: var(--g-color-flock-box-caption-fg); /* point to global for adjustments */
+    --color-flock-box-caption-bg: var(--g-color-flock-box-caption-bg); /* point to global for adjustments */
 }
 
 .flock-filter-panel {
@@ -26,8 +28,8 @@
     /*border-bottom-left-radius: 0;*/
     /*border-bottom-right-radius: 0;*/
     padding: 0.2rem 0.35rem 0.3rem !important;
-    color: var(--g-color-flock-box-caption-fg) !important;
-    background-color: var(--g-color-flock-box-caption-bg);
+    color: var(--color-flock-box-caption-fg) !important;
+    background-color: var(--color-flock-box-caption-bg) !important;
     font-size: 0.85rem;
     font-weight: bold;
     line-height:1.2;

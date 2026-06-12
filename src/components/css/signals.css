@@ -206,10 +206,8 @@ button.fetch-signal-button:hover {
 
 .signal-badges-inline .signal-badges-extra-msg {
     grid-column: 1 / -1;
+    padding: .4rem 1rem;
 }
-/*.signal-badges .lolite {*/
-/*    color: var(--color-text-muted);*/
-/*}*/
 
 
 /* * * * * * * * * * * * * * * * * * * * *

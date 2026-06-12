@@ -750,6 +750,7 @@ export default function UrlDisplay ({ pageData, options } ) {
         </div>
     </>
 
+
     return <div className={"url-display-container"}>
 
         <div className={"url-display-header"}>
@@ -757,7 +758,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             {overviewColumn}
         </div>
 
-        {/* we add style: pointerEvents to avoid conflict with RefView popup */}
+        {/* we add "style: pointerEvents" to avoid conflict with RefView popup */}
         <div className={"url-display-contents"}
             style={{
                 pointerEvents: isRefViewModalOpen ? "none" : "auto",
@@ -770,7 +771,7 @@ export default function UrlDisplay ({ pageData, options } ) {
                 <div className={"iare-ux-header"}>
 
                     <ConditionsBox
-                        caption={"Conditions"}
+                        caption={"Results"}
                         conditions={currentConditions}
                         onAction={handleAction}/>
 
@@ -787,7 +788,13 @@ export default function UrlDisplay ({ pageData, options } ) {
 
         </div>
 
-        {/* this is the Reference Viewer popup component */}
+
+
+
+        {/*
+        this is the Reference Viewer POPUP component
+        */}
+
         <RefView isOpen={isRefViewModalOpen}
                  onClose={() => {
                      setIsRefViewModalOpen(false)
@@ -802,10 +809,15 @@ export default function UrlDisplay ({ pageData, options } ) {
 
                  tooltipId={"tooltip-url-display"}/>
 
-        {/* TODO tooltip should be passed in to this UrlDisplay component.
-              It should be universal and not created here... */}
+
+        {/*
+        this is the tooltip resource component
+        */}
 
         {tooltipForUrlDisplay}
+        {/* TODO tooltipId should be passed in to this UrlDisplay component.
+                      It should be universal and not created here...
+                       more so, a local tooltip should be created if passed in tooltipId is invalid*/}
 
     </div>
 }

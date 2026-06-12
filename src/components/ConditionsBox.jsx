@@ -4,7 +4,7 @@ import './css/components.css';
 import {ACTIONS_IARE} from "../constants/actionsIare.jsx";
 
 /* display description of conditions (filters and actions), if any */
-export default function ConditionsBox({conditions = null, onAction, caption="Conditions"}) {
+export default function ConditionsBox({conditions = null, onAction, caption="Conditions", buttonCaption="Remove Filters"}) {
 
     // ensure conditions is an array
     const myConditions = conditions
@@ -15,11 +15,11 @@ export default function ConditionsBox({conditions = null, onAction, caption="Con
     const buttonRemove = myConditions?.length
         ? <button onClick={() => onAction({action: ACTIONS_IARE.REMOVE_ALL_FILTERS.key})}
                   className={'utility-button small-button inline-conditions'}
-        ><span>Remove Conditions</span></button>
+        ><span>{buttonCaption}</span></button>
         : null
 
     return <div className={`control-box conditions-box`}>
-        <h3 className={"conditions-box-caption"}>Conditions{buttonRemove}</h3>
+        <h3 className={"conditions-box-caption"}>{caption}{buttonRemove}</h3>
         <div className={"condition-box-contents"}>
             {myConditions?.length
                 ? myConditions.map( (f, i) => {

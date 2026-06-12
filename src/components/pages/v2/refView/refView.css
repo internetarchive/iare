@@ -2,8 +2,8 @@
 
     /* candidates for global definition (for AI generated colors) */
     /*--color-ref-view-text: #727272;*/
-    --color-ref-view-text: var(--iare-text-dark);
-    --color-ref-view-header: var(--iare-text-header);
+    --color-ref-view-text: var(--iare-color-text-dark);
+    --color-ref-view-header-text: var(--iare-color-header);
     --color-ref-view-inline-heading: #c2c2c2;
     --color-ref-view-inline-heading-alert: #ff3838;
     --color-sub-caption: #9b9a9a;
@@ -191,7 +191,7 @@
 .ref-view-container h3,
 .ref-view-body h3 {
     font-weight:bold !important;
-    color: var(--color-ref-view-header) !important;
+    color: var(--color-ref-view-header-text) !important;
     margin-bottom: 0 !important;
     font-size:1.15rem !important;
 }
@@ -371,7 +371,7 @@
 
 .raw-wikitext {
     font-size: .85rem;
-    color: var(--iare-text-dark);
+    color: var(--iare-color-text-dark);
     background-color: var(--color-bg-non-editable);
     overflow-wrap: break-word;
     overflow: scroll;
@@ -606,7 +606,7 @@
 .raw-claim {
     font-family: "Source Sans 3", sans-serif;
     font-size: .85rem;
-    color: var(--iare-text-dark);
+    color: var(--iare-color-text-dark);
     background-color: var(--color-raw-claim-bg);
     border:var(--color-raw-claim-border) solid 2px;
     border-radius: var(--iare-section-border-radius);

@@ -807,7 +807,9 @@ const urlFlock = React.memo(function UrlFlock({
     // const flockAllRows = [flockHeaderRow, ...flockDataRows]
 
     const flock = <>
-        <div className={"flock-header-row"}>
+        <div className={"flock-header-row"}
+             onMouseOver={onHoverFlockRow}
+        >
             {flockHeaderRow}
         </div>
 
