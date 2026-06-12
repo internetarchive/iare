@@ -95,6 +95,7 @@ export default function PageData({rawPageData = {}, viewType = "archives"}) {
         // create urlDict from urlResults
 
         const urlDict = {}
+        let newIndex = 0
 
         if (urlResults) {
             urlResults.forEach(d => {
@@ -113,6 +114,8 @@ export default function PageData({rawPageData = {}, viewType = "archives"}) {
                 if (!urlDict[myUrl]) {
                     urlDict[myUrl] = d.data  // initialize with result data
                     urlDict[myUrl].urlCount = 0
+                    urlDict[myUrl].index = newIndex
+                    newIndex++
                 }
 
                 // use iariPostProcessUrl to add data to the url entry

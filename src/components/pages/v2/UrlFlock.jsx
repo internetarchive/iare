@@ -107,20 +107,28 @@ const urlFlock = React.memo(function UrlFlock({
         // selectively change the specified sort type
         // https://stackoverflow.com/questions/43638938/updating-an-object-with-setstate-in-react
         setColumnSort(prevState => {
+
             // guarantee new sort has entry in sorts object
             if (!(prevState.sorts[sortKey])) {
                 prevState.sorts[sortKey] = {name: sortKey, dir: 1}
             }
-            // change just the element associated with the specified sortKey
+
+            const prevDir = prevState.sorts[sortKey].dir
+            const sortDir = ({ 1: -1, '-1': 0 }[prevDir] ?? 1);
+
+            // change just the sortKey specified
             return {
                 sorts: {
                     ...prevState.sorts,
-                    [sortKey]: {  // TODO NB: must check if sortName is there already and append to array if not
+                    [sortKey]: {
                         ...prevState.sorts[sortKey],
-                        dir: -1 * prevState.sorts[sortKey].dir
+                        // dir: -1 * prevState.sorts[sortKey].dir
+                        dir: sortDir
                     }
                 },
-                sortBy: [sortKey]  // set only one for now...
+
+                sortBy: sortDir === 0 ? [] : [sortKey]  // sort by at most one column for now...
+                // if sortDir is 0, remove all sorting
                 // TODO implement so that sortBy contains an array of a list of sortKey's, not just one
             }
         })
@@ -147,6 +155,20 @@ const urlFlock = React.memo(function UrlFlock({
         // what else to do if clicked in non-header?
     }
 
+
+    const sortByNative = (a, b) => {
+        // sort by original index as it was received
+        const indexA = a.index
+        const indexB = b.index
+        //
+        // // do not respect sortDir
+        // if (indexA < indexB) return -1
+        // if (indexA > indexB) return 1;
+        // return 0;
+        //
+        // or
+        return indexA - indexB  // neg, 0, or pos
+    }
 
     const sortByName = (a, b) => {
         // sort by url name in url column
@@ -247,6 +269,8 @@ const urlFlock = React.memo(function UrlFlock({
         //  sorting function defined in the column definition
         //  associated with the column specified by column key
 
+        native: sortByNative,
+
         name: sortByName,
         status: sortByStatus,
         references: sortByReference,
@@ -277,7 +301,9 @@ const urlFlock = React.memo(function UrlFlock({
         // return sort function based on current value of state variable columnSort
 
         // first see if sortFn defined "directly" for sortKey
-        const sortKey = columnSort.sortBy[0] ?? ""  // NB sortKey from global state columnSort.sortBy array
+        const sortKey = columnSort.sortBy[0] ?? "native"  // NB sortKey from global state columnSort.sortBy array
+
+        console.log(`***** getSortFunction: sortKey is ${sortKey}`)
 
         // TODO?? what to do if sortKey is not valid?
 
@@ -367,9 +393,9 @@ const urlFlock = React.memo(function UrlFlock({
         // for data row...
         rowEl = e.target.closest('.url-row')
         if (rowEl) {
-            const columnClass = e.target.closest('.url-row > *').classList[0]  // get first class in list to get column type
-            const row = e.target.closest('.url-row')
-            const html = getTooltipForColumn(row, columnClass)
+            const columnClass = e.target.closest('.url-row > *')?.classList[0]  // get first class in list to get column type
+            // const row = e.target.closest('.url-row')
+            const html = getTooltipForColumn(rowEl, columnClass)
             console.log(`UrlFlock::onHoverFlockRow: in url-row; class = ${columnClass}`)
             setUrlTooltipHtml(html)
             return
@@ -401,7 +427,7 @@ const urlFlock = React.memo(function UrlFlock({
 
             // send action up component tree to co-filter references list
             onAction({
-                "action": ACTIONS_IARE.SHOW_REFERENCE_VIEWER_FOR_URL.key,
+                "action": ACTIONS_IARE.SHOW_REFERENCE_VIEW_FOR_URL.key,
                 "value": url,
             })
         }
@@ -416,7 +442,7 @@ const urlFlock = React.memo(function UrlFlock({
         if (colEl) {
             // we have a signal badge column - calc sortKey
             const badgeKey = colEl.dataset.badgekey
-            const sortKey = `${signalBadgePrefix}${badgeKey}`
+            const sortKey = `${signalBadgePrefix}${badgeKey}`  // e.g. "signal_wayback"
 
             console.log(`Clicked on flock header row; signal badge: ${badgeKey}`)
             // iareAlert(`Click on header: signal badge ${badgeKey}`)
@@ -465,7 +491,7 @@ const urlFlock = React.memo(function UrlFlock({
 
         if (columnClass === "url-live_status") {
             const statusDescription = httpStatusCodes[d.status_code]
-            return `<div>Live Status:<br/>${d.status_code} :${statusDescription}</div>`
+            return `<div>Live Status:<br/>${d.status_code}: ${statusDescription}</div>`
         }
 
         if (columnClass === "url-archive_status") {
@@ -560,6 +586,9 @@ const urlFlock = React.memo(function UrlFlock({
             const sortFn = getSortFunction()
             console.log(`sorting rows by: ${columnSort.sortBy[0]}`)  //
             filteredUrls.sort(sortFn)
+        } else {
+            // do nothing??? could sort by native...
+            filteredUrls.sort(sortByNative)
         }
 
         const getActionableInfo = (u => {
@@ -808,6 +837,7 @@ const urlFlock = React.memo(function UrlFlock({
 
     const flock = <>
         <div className={"flock-header-row"}
+             onClick={onClickFlockRow}
              onMouseOver={onHoverFlockRow}
         >
             {flockHeaderRow}

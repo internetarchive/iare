@@ -140,7 +140,7 @@ export default function UrlDisplay ({ pageData, options } ) {
         }
 
         else if (action ===
-            ACTIONS_IARE.SHOW_REFERENCE_VIEWER.key
+            ACTIONS_IARE.SHOW_REFERENCE_VIEW.key
         ) {
             showRefView(value)  // value is reference index
         }
@@ -157,7 +157,7 @@ export default function UrlDisplay ({ pageData, options } ) {
         }
 
         else if (action ===
-            ACTIONS_IARE.SHOW_REFERENCE_VIEWER_FOR_URL.key
+            ACTIONS_IARE.SHOW_REFERENCE_VIEW_FOR_URL.key
         ) {
             // value is url to show in RefView;
             // more accurately, show the reference that "contains" the url
@@ -660,7 +660,7 @@ export default function UrlDisplay ({ pageData, options } ) {
             const refIndex = result.value
             // alert(`Reference clicked - will show RefView with current filter and selected refid of: ${refId}`)
             // pass up to local handler
-                    // handleAction({"action":ACTIONS_IARE.SHOW_REFERENCE_VIEWER.key, value:refIndex})
+                    // handleAction({"action":ACTIONS_IARE.SHOW_REFERENCE_VIEW.key, value:refIndex})
             handleAction({"action":ACTIONS_IARE.CHANGE_REF_VIEW_SELECTION.key, value:refIndex})
             // NB I know this is redundant, but leaving ot this way in case we want to
             //  massage any of the data before passing it to RefView
