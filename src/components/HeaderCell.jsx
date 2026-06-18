@@ -12,9 +12,7 @@ export default function HeaderCell({
     const headerCellClassName = [
         "header-cell",
         headerClass,
-    ]
-        .filter(Boolean)
-        .join(" ");
+    ].filter(Boolean).join(" ")  // skips headerClass if not defined
 
     const datasetProps = Object.fromEntries(
         Object.entries(cellData).map(([key, value]) => [

@@ -7,7 +7,7 @@
     /*--iare-color-text-blue:  hsl(215.75deg 98.36% 52.16%);*/
     --iare-color-blue: hsl(215.75deg 98.36% 52.16%);
 
-    --iare-test-color: inherit;
+    --iare-test-color: rgb(197, 143, 34);;
     --iare-color-green: rgb(34, 197, 94);
     /*--iare-color-text-green: hsl(141.25deg 100% 27.84%);*/
     /*--iare-color-green: hsl(141.25deg 100% 27.84%);*/
@@ -100,19 +100,21 @@
 
 }
 
+html,
+body,
+#root {
+    height: 100%;
+}
+
 html {
     font-size:20px; /* this defines the "rem" size */
 }
 
 body {
     font: 14px "Century Gothic", Futura, sans-serif;
-    margin: 15px 20px 20px;
     background-color: var(--g-color-body-bg);
 }
-html, body {
-    height: 100%;
-    margin: 0;
-}
+
 
 
 /* environment specific */
@@ -185,6 +187,7 @@ body.env-other .iare-hamburger-menu span.non-production {
     overflow-y: var(--iare-ux-body-overflow-y);
     height: 100%;
     width:100%;
+    min-height: 0;  /* added 2026.06.16 */
 }
 .iare-ux-body.main-body {
     overflow-y: auto;  /* always for top iare-ux-body */

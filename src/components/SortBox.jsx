@@ -32,11 +32,9 @@ export default function SortBox({
     return (
         <div className={sortBoxClassName}>
             <div className="sort-indicator" aria-hidden="true">
-                <span className="triangle-up">▲</span>
                 <span className="triangle-down">▼</span>
+                <span className="triangle-up">▲</span>
             </div>
-            {/*{label && <div className="sort-label">{label}</div>}*/}
-            {/*<div style={{fontSize:"8pt"}}>sort: {dir}</div>  /!* temporary for devdebug *!/*/}
         </div>
     );
 }

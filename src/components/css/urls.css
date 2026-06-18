@@ -1,9 +1,9 @@
 :root {
-    /*--width-url-list: 40rem;*/
+    /*--url-list-width: 40rem;*/
 
-    --width-url-name: 20rem;
-    --width-url-live_status: 3.0rem;
-    --width-url-archive-status: 3.5rem;
+    /*--width-url-name: 20rem;*/
+    /*--width-url-live_status: 3.0rem;*/
+    /*--width-url-archive-status: 3.5rem;*/
     --width-url-citations: 3.5rem;
     --width-url-templates: 4.0rem;
     --width-url-actionable: 3.0rem;
@@ -11,6 +11,25 @@
     --width-url-perennial: 5.0rem;
     --width-url-probes: 6.0rem;
     --width-url-signals: 25.5rem;
+
+    --url-list-width-url: 20rem;
+    --url-list-width-status: 3.5rem;
+    --url-list-width-archive-status: 3.5rem;
+    --url-list-width-actionable: 3.5rem;
+
+    --url-list-grid-height: 1.9rem /* 2.5rem */;
+    --url-list-grid-columns:
+            var(--url-list-width-url)
+            var(--url-list-width-status)
+            var(--url-list-width-archive-status)
+            var(--url-list-width-actionable)
+            minmax(0, 1fr);
+            /* 1fr */
+
+
+    --url-list-padding-url: .5rem;
+    --url-list-padding-url-small: .25rem;
+
 
     --width-col-url-overview: 327px;
     /*--width-cell-border: 1pt solid black;*/
@@ -50,11 +69,11 @@
     --color-badge-zero-fg: var(--color-badge-fg);
     --color-badge-zero-bg: #fff82e;
 
-/* archive status filter */ /* deprecated? */
+    /* archive status filter */ /* deprecated? */
     --width-filter-icon: 1.5rem;     /* size of check / x icons in list */
-    --height-filter-icon: 1.5rem;
     --width-filter-caption: 4rem;
     --width-filter-choice: 2rem;
+    --height-filter-icon: 1.5rem;
 
     /* deprecated? */
     --width-url-iabotdb_status: 15.5rem;
@@ -69,9 +88,6 @@
 
     --width-filter-panel-column: 335px;
 
-    --padding-url-column: .5rem;
-    --padding-url-column-small: .25rem;
-
     /*--height-filter-box-rows: 26.5rem;*/
     --height-filter-box-rows: calc(100vh - 15rem);
     --margin-url-column: .2rem;
@@ -82,9 +98,13 @@
 }
 
 /* special debug */
-.url-row-header div:last-child,
+.flock-header div:last-child,
 .url-row div:last-child {
     /*background-color: deeppink;*/
+}
+
+xxx.* {
+    outline: 1px solid rgba(255, 0, 0, 0.2);
 }
 
 
@@ -93,65 +113,70 @@
     display: contents;
 }
 
-.flock-box.url-flock {
-    flex: 1 1 0%;
-    min-width: 25%;
-}
 
-.url-flock .flock-box-contents {
-    /*background-color: limegreen;*/
-    border-radius: var(--iare-radius-medium);
-}
-
-.url-flock .iare-ux-body {
-
-}
-/* table scrolling stuff
- NB this is for url tables - should be more generic for generic flock display, not just urls
-*/
-.url-table-scroll {
-    overflow-x: auto;
-}
-
-.url-rows {
-    display: contents;
-    overflow-y: auto;
-    flex: 1;
-    background-color: var(--iare-test-color);
-    /*border-left: var(--border-default) !important;*/
-}
-
-:root {
-    --width-url-list-url: 20rem;
-    --width-url-list-status: 3.5rem;
-    --width-url-list-archive-status: 3.5rem;
-    --width-url-list-actionable: 3.5rem;
-
-    --signal-url-list-grid-height: 2.5rem;
-    --signal-url-list-grid-columns:
-        var(--width-url-list-url)
-        var(--width-url-list-status)
-        var(--width-url-list-archive-status)
-        var(--width-url-list-actionable)
-        1fr;
-
-}
-
-.url-rows .url-row
+.flock-header,
+.url-row
 {
-    /*display: flex;*/
-    /*flex-direction: row;*/
+    width: max-content;
+    min-width: 100%;
+    column-gap: var(--margin-url-column);
+}
+
+
+.flock-container {
+    height: 100%;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    overflow:hidden;
+}
+
+
+.flock-header {
+    /*background: coral;*/
+    background-color: var(--color-row-header-bg);
+    z-index: 9999;
+
     display: grid;
     align-items: center;
-    /*align-items: stretch;*/
-    grid-template-columns: var(--signal-url-list-grid-columns);
-    grid-template-rows: var(--signal-url-list-grid-height);
+    grid-template-columns: var(--url-list-grid-columns);
 
-    border:1px solid black;
-    border-top:none;
-    /*border-left:none;*/
+    border-bottom: var(--iare-border-normal);
 
-    /*position:relative;*/
+    padding-top: var(--padding-row-header-top);
+    padding-bottom: var(--padding-row-header-bottom);
+    cursor: pointer;
+
+    /*min-width: max-content;*/
+    /*width: 100%;*/
+}
+
+.flock-header .header-cell {
+    /*margin-right:1rem;*/
+    /*opacity: .85;*/
+    /*background-color: #07759d;*/
+    height: 100%;
+}
+
+
+.flock-rows {
+    /*display: contents;  !* necessary to scroll with header row *! */
+
+    min-height: 0;      /* critical flex fix */
+    overflow: auto;     /* 👈 THIS is the scroll boundary */
+
+    /*background-color: var(--iare-test-color) !important;*/
+}
+
+.flock-rows .url-row
+{
+    display: grid;
+    align-items: center;
+    grid-template-columns: var(--url-list-grid-columns);
+    grid-auto-rows: minmax(var(--url-list-grid-height), auto);
+
+    border-bottom:var(--iare-border-normal);
+
     min-width: fit-content;
     width: 100%;
 
@@ -159,8 +184,41 @@
 
 }
 
+.flock-rows .url-row:hover {
+    /*color:var(--color-list-fg-hover);*/
+    background-color: var(--color-list-bg-hover-fancy);
+}
 
-.url-rows .url-row.url-row-error {
+.flock-rows .url-selected {
+    color:var(--color-list-fg-selected);
+    background-color: var(--color-list-bg-selected);
+}
+
+.url-row > div,
+.flock-header > div{
+    margin-right: var(--margin-url-column);
+}
+
+.url-row > div {
+    text-align: center;
+    padding:var(--url-list-padding-url) 0;
+}
+
+
+
+/*
+ * custom url-row formatting for each url-list column type
+   - includes column widths
+     TODO: are widths still necessary when using display:grid for row? i think not.
+ */
+
+.url-row a,
+.url-row .url-name {
+    overflow-wrap: break-word;
+}
+
+
+.url-row.url-row-error {
     background-color: darkred;
     color:white;
 
@@ -168,95 +226,30 @@
 
 }
 
-.url-rows .url-row:hover {
-    /*color:var(--color-list-fg-hover);*/
-    background-color: var(--color-list-bg-hover-fancy);
-}
-
-.url-rows .url-selected {
-    color:var(--color-list-fg-selected);
-    background-color: var(--color-list-bg-selected);
-}
-
-.url-row a,
-.url-row .url-name {
-    overflow-wrap: break-word;
-}
-
-.url-row > div {
-    text-align: center;
-    padding:var(--padding-url-column) 0;
-}
-
-.url-row > div,
-.url-row-header > div{
-    margin-right: var(--margin-url-column);
-}
-
-
-.url-row-header .header-cell {
-    /*margin-right:1rem;*/
-    /*opacity: .85;*/
-    /*background-color: #07759d;*/
-    height: 100%;
-}
-
-.url-row-header {
-    padding-top: var(--padding-row-header-top);
-    padding-bottom: var(--padding-row-header-bottom);
-    cursor: pointer;
-    min-width: max-content;
-    width: 100%;
-    background-color: var(--color-row-header-bg);
-
-    display: grid;
-    align-items: center;
-    /*align-items: stretch;*/
-    grid-template-columns: var(--signal-url-list-grid-columns);
-    /*grid-template-rows: var(--signal-url-list-grid-height);*/
-
-}
-
-
-
-/*
- * All the css rules, including column widths, for each column type
- */
-
 .url-row .url-info
 {
-    padding-left: var(--padding-url-column) !important;
+    padding-left: var(--url-list-padding-url) !important;
 }
 
-.url-row-header .url-name,
+.flock-header .url-name,
 .url-row .url-name
 {
-    width: var(--width-url-name);
-    min-width: var(--width-url-name);
-    max-width: var(--width-url-name);
-    /*border-right: var(--width-cell-border);*/
-    /*border-right-color: var(--color-cell-border);*/
     text-align:left !important;
-    /*padding-left: var(--padding-url-column);*/
-    padding-left: var(--padding-url-column) !important;
+    padding-left: var(--url-list-padding-url) !important;
 
     white-space: nowrap;
+    text-overflow: ellipsis;
     overflow: hidden;
 }
 
 
-.url-row-header .url-live_status,
+.flock-header .url-live_status,
 .url-row .url-live_status {
-    width: var(--width-url-live_status);
-    max-width: var(--width-url-live_status);
-    min-width: var(--width-url-live_status);
 }
 
-.url-row-header .url-archive_status,
+.flock-header .url-archive_status,
 .url-row .url-archive_status
 {
-    min-width: var(--width-url-archive-status);
-    max-width: var(--width-url-archive-status);
     border-right: var(--width-cell-border);
     border-right-color: var(--color-cell-border);
 }
@@ -266,6 +259,7 @@
 .url-row .url-archive_status:has(> .archive-book) {
     padding-top: .4rem;
 }
+
 .url-row .archive-yes {
     width:var(--width-archive-icon-list);
     height:var(--height-archive-icon-list);
@@ -283,7 +277,7 @@
 }
 
 
-.url-row-header .url-citations,
+.flock-header .url-citations,
 .url-row .url-citations
 {
     text-align: left;
@@ -293,7 +287,7 @@
     min-width: var(--width-url-citations);
 }
 
-.url-row-header .url-templates,
+.flock-header .url-templates,
 .url-row .url-templates
 {
     text-align: left;
@@ -302,12 +296,9 @@
     max-width: var(--width-url-templates);
 }
 
-.url-row-header .url-actionable,
+.flock-header .url-actionable,
 .url-row .url-actionable
 {
-    width: var(--width-url-actionable);
-    max-width: var(--width-url-actionable);
-    min-width: var(--width-url-actionable);
 }
 
 .url-row .yes-actionable {
@@ -326,16 +317,13 @@
     background-repeat: no-repeat;
 }
 
-.url-row-header .url-signals,
+.flock-header .url-signals,
 .url-row .url-signals
 {
-    width: var(--width-url-signals);
-    max-width: var(--width-url-signals);
-    min-width: var(--width-url-signals);
     text-align: left;
 }
 
-.url-row-header .url-sections,
+.flock-header .url-sections,
 .url-row .url-sections
 {
     width: var(--width-url-sections);
@@ -346,7 +334,7 @@
     text-align: left !important;
 }
 
-.url-row-header .url-perennial,
+.flock-header .url-perennial,
 .url-row .url-perennial
 {
     width: var(--width-url-perennial);
@@ -450,7 +438,7 @@ button.utility-button.disabled {
 /*.url-rating-unreliable {background-color: var(--color-rating-unreliable);}*/
 /*.url-rating-reliableMarginally {background-color: var(--color-rating-reliableMarginally);}*/
 /*.url-rating-reliable {background-color: var(--color-rating-reliable);}*/
-/*.url-rating-deprecated {background-color: var(--color-rating-deprecated);}*/
+/*.url-rating-deprecated {background-color: var(--color-rating-deprecated;}*/
 /*.url-rating-multi {background-color: var(--color-rating-multi);}*/
 
 /*.url-rating-__unassigned {background-color: #a64ce2;}*/
@@ -479,18 +467,6 @@ boneyard
  ***
  **
  */
-
-
-            /*.filter-box-rows {*/
-            /*    height:var(--height-filter-box-rows);*/
-            /*    min-height:var(--height-filter-box-rows);*/
-            /*    max-height:var(--height-filter-box-rows);*/
-            /*    overflow: scroll;*/
-            /*}*/
-
-
-
-
 
 /*@keyframes fademove {*/
 /*    0%   {transform: translatey(0px);}*/
@@ -537,3 +513,7 @@ boneyard
 /*.feedback-div.fade-out {*/
 /*    opacity: 0;*/
 /*}*/
+
+.some-parent {
+  min-height: 0;
+}

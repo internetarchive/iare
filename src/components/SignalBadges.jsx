@@ -78,6 +78,7 @@ export default function SignalBadges({
         const monitoredSignals = Object.keys(signalBadgeRegistry)
             // TODO add .filter capability here
             //  - use some algorithm to determine inclusion
+            
             .sort((a, b) => signalBadgeRegistry[b].priority - signalBadgeRegistry[a].priority)
 
 
@@ -88,7 +89,10 @@ export default function SignalBadges({
                     //  shouldn't happen as BadgeRegistry is what gave us monitoredSignals
                     //  (but we dont know that here...) so, good practice is to check that
                     //  BadgeComponent resolves to a valid Badge Handler/Renderer function
-            return <BadgeComponent
+            
+            if (!BadgeComponent) return null
+
+            return <BadgeComponent  // BadgeComponent is actually specific badge component, eventually resolving to Badge.jsx
                         key={signalKey}
 
                         // tooltipId = {tooltipId}

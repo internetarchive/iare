@@ -71,58 +71,28 @@
     justify-content: space-between;
 }
 
+/* flock box contents contains header row and rows */
+
 .flock-box-contents {
     /*display: contents;  !* makes flock-box-contents "disappear" from layout logic - good for "sticky" header row *!*/
-}
-
-.flock-header-row {
-    position: sticky;
-    top: 0;
-    z-index: 9999; /* keep it above rows */
-}
-
-.flock-rows {
-
-}
-
-.flock-row-header {
-    /*position: sticky;*/
-    /*top: 0;*/
-    /*z-index: 9999; !* keep it above rows *!*/
-    overflow: hidden;
-    width:100%;
-
-    display: flex;
-    flex-direction: row;
-
-    color:var(--g-color-list-header-fg);
-    background: var(--g-color-list-header-bg);
-
     border: var(--iare-border-normal);
     border-top-left-radius: var(--border-box-radius);
     border-top-right-radius: var(--border-box-radius);
+    overflow-x: scroll;
+    height:100%;
 
-    padding: var(--padding-flock-row-header);
-}
+    /* for debug */
+    /*background-color: #62f162;*/
 
-.sticky-header-wrapper {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    width: 100%;
-
-    background: var(--g-color-list-header-bg);
-
-    border-top-left-radius: var(--border-box-radius);
-    border-top-right-radius: var(--border-box-radius);
-
-    overflow: hidden;
 }
 
 .flock-row-header > div {
     text-align: center;
 }
 
+.flock-rows {
+
+}
 
 .debug-extra-column {
     flex: 0 0 auto;

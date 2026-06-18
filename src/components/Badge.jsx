@@ -11,7 +11,7 @@ export default function Badge({
 
                                   badgeIcon = null,
                                   badgeText = null,
-                                  badgeData = {},
+                                  badgeData = {},  // what gets put in data element of element
 
                                   onBadgeHover,
                                   onBadgeClick,
@@ -25,18 +25,19 @@ export default function Badge({
     const columnSort = useContext(ColumnSortContext)
     const mainSortKey = columnSort?.sortBy[0]
     const mySortKey = `signal_${badgeKey}`
+
     let myDir = 0
     if (mySortKey === mainSortKey) {
         const mySortDef = columnSort.sorts[mySortKey]
         myDir = (mySortDef?.dir ?? 0) * -1
     }
 
-    const debugContent = <div style={{display: "block", fontSize:"50%"}}>
-        <div>BK: {badgeKey}</div>
-        <div>MSK: {mainSortKey}</div>
-    </div>
+    // const debugContent = <div style={{display: "block", fontSize:"50%"}}>
+    //     <div>BK: {badgeKey}</div>
+    //     <div>MSK: {mainSortKey}</div>
+    // </div>
 
-    const headerContent = (
+    const badgeContent = (
         <>
             {badgeContext.hasIcon && (
                 <div className={"signal-badge-element badge-icon"}>
@@ -61,28 +62,29 @@ export default function Badge({
         />
         : null
 
-    const headerCellClass = [
-        // "signal-badge",
-        "flock-col",
+    const cellClass = [
+        "signal-badge",
         badgeClass
-    ]
-        .filter(Boolean).join(" ")
+    ].filter(Boolean).join(" ")
 
-    return <div className={"signal-badge"}
-                data-badgedata={JSON.stringify(badgeData)}
+
+    return <div className={cellClass}
                 data-badgekey={badgeKey}
+                data-badgedata={JSON.stringify(badgeData)}
                 onMouseMove={onBadgeHover}
     >
 
+        {/* if IS header cell */}
         {badgeContext.headerCell &&
         <HeaderCell
-            content={headerContent}
+            content={badgeContent}
             sort={headerSort}
-            headerClass={headerCellClass}
+            headerClass={"flock-col"}
         />}
 
+        {/* if NOT header cell */}
         {!badgeContext.headerCell && <>
-        {headerContent}
+        {badgeContent}
         </>}
 
     </div>

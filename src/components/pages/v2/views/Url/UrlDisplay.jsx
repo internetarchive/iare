@@ -349,7 +349,8 @@ export default function UrlDisplay ({ pageData, options } ) {
             ACTIONS_IARE.SORT_BY_SIGNAL.key
         ) {
             // value is object: {signalKey: <str>, dir: <int>}
-            const {signalKey, dir} = value;
+            const {signalKey, dir} = value
+            // not yet supported...may deprecate...
             iareAlert(`Will sort signal data for: ${signalKey}, ${dir}`);
         }
 

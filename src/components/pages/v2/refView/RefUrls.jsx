@@ -110,7 +110,7 @@ export default function RefUrls({ urls, pageData, onAction, tooltipId, showDebug
 
     const getHeaderRow = () => {
 
-        return <div className={"url-row url-row-header"} key={0}>
+        return <div className={"flock-header"} key={0}>
             <div className={"url-row-label url-name"}>Url</div>
             <div className={"url-row-label url-live_status"}>Status</div>
             <div className={"url-row-label url-archive_status"}>Archive</div>

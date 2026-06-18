@@ -2,13 +2,14 @@ import React from "react";
 import {BadgeContexts} from "../badgeContexts.jsx";
 import Badge from "../../components/Badge.jsx";
 import signalBadgeRegistry from "./signalBadgeRegistry.jsx";
+import {isEmpty} from "../../utils/generalUtils.js";
 
 /**
  * Shared Badge interface
  * @param {Object} props
  * @param {Object} [props.signals]
- * @param {Function} [props.onSignalClick]
- * @param {BadgeContexts} [props.badgeContext]*/
+ * @param {Function} [props.onAction]
+ * @param {String} [props.badgeContextKey]*/
 export default function MbfcBadge({
                                       signals = {},
                                       badgeContextKey = BadgeContexts.inline.value,
@@ -28,49 +29,61 @@ export default function MbfcBadge({
     let badgeData = {}
     let badgeText = null
     let badgeClass = badgeDef.class_name
+    let mbfcBadgeData = null
 
     if (badgeContext.hasText) {
         try {
-            // let wsMeta = null  // WikiSignalMeta
-            // if (signals?.meta?.ws_mbfc_cats) {
-            //     const mbfcData = JSON.parse(signals.meta.ws_mbfc_cats.replace(/'/g, '"'))
-            //     wsMeta = `MBFC: ${mbfcData.bias}, ${mbfcData.credibility}, reporting: ${mbfcData.reporting}`
-            // }
-            //
-            // let wsLists = null
-            // if (signals.ratings) {
-            //     const subSigs = []
-            //
-            //     if (signals.ratings["mbfc-bias"]) subSigs.push(<div
-            //         key="bias">MBFC Bias: {signals.ratings["mbfc-bias"]}</div>)
-            //
-            //     if (signals.ratings["mbfc-cred"]) subSigs.push(<div
-            //         key="cred">MBFC Cred: {signals.ratings["mbfc-cred"]}</div>)
-            //
-            //     if (signals.ratings["mbfc-Fact"]) subSigs.push(<div
-            //         key="fact">MBFC Fact: {signals.ratings["mbfc-Fact"]}</div>)
-            //
-            //     wsLists = subSigs.length > 0 ? <div>{subSigs}</div> : null
-            // }
-            //
 
-            const wsMeta = <div>--</div>
-            const wsLists = <div>--</div>
+            let mbfcRatings = null
+
+            if (signals.ratings) {
+                const subSigs = []
+
+                if (!isEmpty(signals.ratings["mbfc-bias"]))
+                    subSigs.push(
+                        <div key="bias">Bias: {signals.ratings["mbfc-bias"]}</div>
+                    );
+
+                if (!isEmpty(signals.ratings["mbfc-cred"]))
+                    subSigs.push(
+                        <div key="cred">Cred: {signals.ratings["mbfc-cred"]}</div>
+                    );
+
+                if (!isEmpty(signals.ratings["mbfc-fact"]))
+                    subSigs.push(
+                        <div key="fact">Fact: {signals.ratings["mbfc-fact"]}</div>
+                    )
+                
+                mbfcRatings = subSigs.length > 0 
+                    ? <div>{subSigs}</div> 
+                    : null
+
+                mbfcBadgeData = [
+                    signals.ratings["mbfc-bias"],
+                    signals.ratings["mbfc-cred"],
+                    signals.ratings["mbfc-fact"],
+                ]
+
+            } else {
+
+                mbfcRatings = null
+                mbfcBadgeData = [ "No signal.ratings found."]
+
+            }
+
+            const mbfcScore = signals.meta?.ws_mbfc_score
+                ? <div>Score: {signals.meta.ws_mbfc_score === "1" ? "1.0" : signals.meta.ws_mbfc_score}</div>
+                : (mbfcRatings ? <div>Score: --</div> : <div>--</div>)
+
             badgeText = <div>
-                {wsMeta}
-                {wsLists}
+                {mbfcScore}
+                {mbfcRatings}
             </div>
-
-            badgeData = {"mbfcMeta": "MBFC data (to come)"}
-            // for now, since we need to refine MBFC
-            //badgeText = "---"
-            badgeClass += " missing-value"
 
         } catch (e) {
             console.error(`Error Encountered: ${e.message}`)
-            // badgeText = <div>Error Encountered: {e.message}</div>
             badgeText = <div>Error Encountered</div>
-            badgeData = {"error": e.message}
+            mbfcBadgeData = {"error": e.message}
             badgeClass += " missing-value"
         }
     }
@@ -83,6 +96,6 @@ export default function MbfcBadge({
         badgeClass={badgeClass}
         badgeIcon={badgeIcon}
         badgeText={badgeText}
-        badgeData={badgeData}
+        badgeData={mbfcBadgeData}
     />
 }

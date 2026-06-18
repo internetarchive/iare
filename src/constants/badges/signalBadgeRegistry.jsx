@@ -48,7 +48,7 @@ const signalBadgeRegistry = {
             description: "Provides overall score determined by WikiSignals",
             source_fields: [
                 {
-                    name: "Wikisignals score",
+                    name: "WikiSignals score",
                     label: "meta|ws_score|label",
                     desc: "meta|ws_score|description"
                 },
@@ -122,6 +122,92 @@ const signalBadgeRegistry = {
         info_spec: {
             description: "Media Bias Fact Check",
             source_fields: [
+                {
+                    name: "ranking",
+                    label: "meta|ws_mbfc_score|label",
+                    desc: "meta|ws_mbfc_score|description"
+                },
+                {
+                    name: "rating-bias",
+                    label: "ratings|mbfc-bias|label",
+                    desc: "ratings|mbfc-bias|description"
+                },
+                {
+                    name: "rating-cred",
+                    label: "ratings|mbfc-cred|label",
+                    desc: "ratings|mbfc-cred|description"
+                },
+                {
+                    name: "rating-fact",
+                    label: "ratings|mbfc-fact|label",
+                    desc: "ratings|mbfc-fact|description"
+                },
+
+            ],
+        }
+    },
+
+    mbfc_score: {
+        // component: MbfcScoreBadge,
+        component: null,  // component = null signals non inclusion
+
+        key: "mbfc_score",
+        label: "MBFC score",
+        caption: "WikiSignals Media Bias Fact Check score",
+        class_name: "mbfc-badge-score",
+        description: "WikiSignals determines MBFC score based on inclusion in lists:",
+
+        priority: 0,
+        group: "",
+
+        // logo: imgMbfcScoreLogo,
+        logo: null,
+
+        info_spec: {
+            description: "Media Bias Fact Check score as per WikiSignals",
+            source_fields: [
+                {
+                    name: "ranking",
+                    label: "meta|ws_mbfc_score|label",
+                    desc: "meta|ws_mbfc_score|description"
+                },
+            ],
+        }
+    },
+
+
+    mbfc_rating: {
+        // component: MbfcRatingBadge,
+        component: null,
+
+        key: "mbfc_rating",
+        label: "MBFC rating",
+        caption: "WikiSignals Media Bias Fact Check score",
+        class_name: "mbfc-badge-score",
+        description: "WikiSignals determines MBFC score based on inclusion in lists:",
+
+        priority: 0,
+        group: "",
+        // logo: imgMbfcRatingLogo,
+        logo: null,
+        info_spec: {
+            description: "Media Bias Fact Check score as per WikiSignals",
+            source_fields: [
+                {
+                    name: "rating-bias",
+                    label: "ratings|mbfc-bias|label",
+                    desc: "ratings|mbfc-bias|description"
+                },
+                {
+                    name: "rating-cred",
+                    label: "ratings|mbfc-cred|label",
+                    desc: "ratings|mbfc-cred|description"
+                },
+                {
+                    name: "rating-fact",
+                    label: "ratings|mbfc-fact|label",
+                    desc: "ratings|mbfc-fact|description"
+                },
 
             ],
         }
