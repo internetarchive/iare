@@ -586,8 +586,8 @@ font-weight:normal;
 
     /*border-color: #7eb0ce;*/
     border-radius: .3rem;
-    max-width: 40rem;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    max-width: 23rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 .test-tooltip-display {
     font-family: "Source Sans", sans-serif;

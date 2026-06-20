@@ -1,5 +1,5 @@
 /* definitions of url list column headers */
-export const urlColumnDefs = {
+export const urlColumnRegistry = {
 
     // defines tooltip specs for URL list columns
 
@@ -7,26 +7,35 @@ export const urlColumnDefs = {
 
         "url-name": {
             ttCaption: `<div>URL link text</div>`,
+            ttMarkup: `##### Citation URL Link
+
+URL of Citation Source.`,
             ttData: `<div>Link Text of URL</div>`,
-            tooltip: {
-                header: `<div>URL link text</div>`,
-                rows: `<div>Link text of URL</div>`,
-            },
             sortable: true,
         },
 
+        // TODO need to pick one of these or the other...!!!
+
+        // NB this looks like it is used in RefView - remove it from there and delete from here
         "url-status": {
             ttCaption: `<div>HTTP Status Code of Primary URL</div>`,
             ttData: `<div>{status_code} : {statusDescription}</div>`
         },
-        "url-live_status": {
+
+        "url-live_status": {  // NB leaning towards using this one for now...
             ttCaption: `<div>HTTP Status Code of URL</div>`,
+            ttMarkup: `##### HTTP Status Code of URL
+
+Most recent status when querying.
+Uses LiveWebCheck from Wayback machine.`,
             ttData: `<div>{status_code} : {statusDescription}</div>`,
             sortable: true,
         },
 
         "url-archive_status": {
             ttCaption: `<div>Archive exists in IABot database</div>`,
+            ttMarkup: `##### Archive Status
+Archive exists in IABot database`,
             ttData: ``,
             sortable: true,
         },
@@ -43,6 +52,8 @@ export const urlColumnDefs = {
 
         "url-actionable": {
             ttCaption: `<div>Actions that can be taken to improve citation</div>`,
+            ttMarkup: `##### Actionable
+Action can be taken to improve citation`,
             ttData: `<div>Actions that can be taken to improve citation</div>`,
             sortable: true,
         },
@@ -66,11 +77,6 @@ export const urlColumnDefs = {
         "wiki-signals-sort": {
             ttCaption: `<div>Show popup window to sort by signal values</div>`,
         },
-
-        // "url-iabot_status": {
-        //     ttCaption: `<div>URL Status reported by IABot</div>`,
-        //     ttData: `placeholder`,
-        // },
 
     }
 }

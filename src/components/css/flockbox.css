@@ -74,10 +74,6 @@
 /* flock box contents contains header row and rows */
 
 .flock-box-contents {
-    /*display: contents;  !* makes flock-box-contents "disappear" from layout logic - good for "sticky" header row *!*/
-    border: var(--iare-border-normal);
-    border-top-left-radius: var(--border-box-radius);
-    border-top-right-radius: var(--border-box-radius);
     overflow-x: scroll;
     height:100%;
 

@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import {BadgeContexts} from "../constants/badgeContexts.jsx";
 import SortBox from "./SortBox.jsx";
 import HeaderCell from "./HeaderCell.jsx";
-import {urlColumnDefs} from "../constants/urlColumnDefs.jsx";
+import {urlColumnRegistry} from "../constants/urlColumnRegistry.jsx";
 import { ColumnSortContext } from "../contexts/ColumnSortContext"
 
 const convertColumnToSort = {
@@ -21,7 +21,7 @@ export default function ColumnBox({
 ) {
 
 
-    const columnDef = urlColumnDefs.columns[columnKey] ?? {}
+    const columnDef = urlColumnRegistry.columns[columnKey] ?? {}
     const columnSort = useContext(ColumnSortContext)
     const mainSortKey = columnSort.sortBy[0]
 

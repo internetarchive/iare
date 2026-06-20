@@ -7,7 +7,7 @@ import {getArchiveStatusInfoGrok} from "../../../utils/urlUtils.jsx";
 import {ACTIONABLE_FILTER_MAP} from "../../../constants/actionableMap.jsx";
 import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../../constants/urlFilterMaps.jsx";
 import {httpStatusCodes, iabotLiveStatusCodes} from "../../../constants/httpStatusCodes.jsx"
-import {urlColumnDefs} from "../../../constants/urlColumnDefs.jsx";
+import {urlColumnRegistry} from "../../../constants/urlColumnRegistry.jsx";
 import Popup from "../../Popup.jsx";
 import SignalDisplay from "../../SignalDisplay.jsx";
 import SignalDataDetailsTitle from "../../SignalDataDetailsTitle.jsx";
@@ -305,7 +305,7 @@ const grokFlock = React.memo(function GrokFlock({
 
     const onHoverHeaderRow = useCallback((e) => {  // useCallback prevents re-render upon hover???
         e.stopPropagation()  // prevents default onHover of GrokFlock from engaging and erasing tooltip
-        // const html = urlColumnDefs.columns[e.target.className]?.ttCaption
+        // const html = urlColumnRegistry.columns[e.target.className]?.ttCaption
 
         const col = e.target.classList.contains('flock-col')
             ? e.target
@@ -376,7 +376,7 @@ const grokFlock = React.memo(function GrokFlock({
 
         } else {
             // if not a special case column, show tooltip from column definition
-            html = urlColumnDefs.columns[columnClass]?.ttData
+            html = urlColumnRegistry.columns[columnClass]?.ttData
         }
 
         setTooltipHtml(html)

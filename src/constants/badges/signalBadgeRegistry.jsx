@@ -36,9 +36,15 @@ const signalBadgeRegistry = {
         label: "Score",
         caption: "SCORE",
         class_name: "score-badge",
+        component: ScoreBadge,
 
         description: "Overall WikiSignals Score",
-        component: ScoreBadge,
+        tooltipMarkup: `##### WikiSignals Score
+        
+_Score is based on..._
+
+If no score can try and fetch it from WikiSignals.`,
+
         priority: 1000,
         logo: imgScoreLogo,
 
@@ -71,16 +77,21 @@ const signalBadgeRegistry = {
     },
 
     tranco: {
+        component: TrancoBadge,
+
         key: "tranco",
         label: "Tranco",
         caption: "TRANCO",
         class_name: "tranco-badge",
         description: "Tranco rating (website)",
-        component: TrancoBadge,
         priority: 100,
         logo: imgTrancoLogo,
 
         group: "",
+
+        tooltipMarkup: `##### Tranco Score
+        
+The Tranco estimate of the website's global traffic ranking (from 1 to 20,000,000).`,
 
         info_spec: {
             description: "Tranco rating",
@@ -115,6 +126,13 @@ const signalBadgeRegistry = {
         caption: "Media Bias Fact Check",
         class_name: "mbfc-badge",
         description: "Media Bias Fact Check (website)",
+
+        tooltipMarkup: `##### Media Bias/Fact Check
+        
+MBFC Score is calculated by WikiSignals, and indicates the bias and credibility of a website.
+
+There is also an MBFC rating for Bias, Credibility, and Factual-Reporting`,
+
 
         priority: 200,
         group: "",
@@ -222,6 +240,10 @@ const signalBadgeRegistry = {
         class_name: "enwiki-badge",
         description: "English Wikipedia Link Count",
 
+        tooltipMarkup: `##### Wikipedia        
+The number of times the domain appeared in links within Wikipedia (English) articles\
+         (including the Citations, References, Notes and External Links sections).`,
+
         priority: 300,
         group: "",
         logo: imgEnwikiLogo,
@@ -257,8 +279,10 @@ const signalBadgeRegistry = {
         key: "wayback",
         label: "Wayback",
         caption: "Wayback Machine Statistics (Longevity)",
-        description: "Wayback Machine History",
         class_name: "wayback-badge",
+
+        tooltipMarkup: `##### Wayback Machine History
+Number shows span between first capture and last capture`,
 
         priority: 400,
         group: "",

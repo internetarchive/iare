@@ -11,7 +11,7 @@ import './css/signals.css';
 import {iareAlert, isEmpty} from "../utils/generalUtils.js";
 import {extractRootDomain} from "../utils/urlUtils.jsx";
 import {getNormalizedScore} from "../utils/generalUtils.js";
-// import {urlColumnDefs} from "../constants/urlColumnDefs.jsx";
+// import {urlColumnRegistry} from "../constants/urlColumnRegistry.jsx";
 import signalBadgeRegistry, {extractInfoFromPath} from "../constants/badges/signalBadgeRegistry.jsx";
 import signalsDefs from "../constants/signals/signals_docs.json"
 

@@ -34,20 +34,6 @@ export default function SignalBadges({
         onAction({action: ACTIONS_IARE.FETCH_SIGNAL_DATA.key, value: url})
     }
 
-    // const onHoverBadge = (e) => {
-    //     e.stopPropagation()
-    //
-    //     const elBadge = e.target.closest('.signal-badge')
-    //     const badgeKey = elBadge.dataset.badgekey
-    //     const badgeDef = signalBadgeRegistry[badgeKey]
-    //
-    //     const msg = badgeDef.description
-    //
-    //     console.log(`Clicked on ${badgeKey}`)
-    //
-    //     // sends tooltip message back upo so ancestral tooltip can render
-    //     onBadgeHover(msg)
-    // }
     const badgeContext = BadgeContexts[badgeContextKey] || BadgeContexts.default
 
     const getBadges = () => {
@@ -57,18 +43,25 @@ export default function SignalBadges({
 
         if (badgeContext.hasText) {
 
-            // if signals has no data then show "error" condition
+            // handle empty and error signals; has no data then show "error" condition
             if (isEmpty(signals)) {
                 return <>
-                    <div className={"signal-badges-extra-msg"}>Signal data is empty.
+                    <div className={"signal-badges-extra-msg"}>
+                        Signal data is empty.
                         <button className={"fetch-signal-button utility-button small-button"}
                                 onClick={onClickFetch}
+
+                                // TODO
+                                // in parent badgesHover, check if inside this button or its label,
+                                // and, if so, put an appropriate tooltip up
+
                                 // data-tooltip-id={tooltipId}
                                 // data-tooltip-content="Fetch New Signal data for URL"
                                 // onMouseMove={onBadgeHover}
                         >Fetch Signal Data</button>
                     </div>
                 </>
+
             } else if (signals.error) {
                 return <div className={"lolite"}>{signals.error}</div>
             }

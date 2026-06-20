@@ -113,6 +113,11 @@ xxx.* {
     display: contents;
 }
 
+.url-flock .flock-box-contents {
+    border: var(--iare-border-normal);
+    border-top-left-radius: var(--border-box-radius);
+    border-top-right-radius: var(--border-box-radius);
+}
 
 .flock-header,
 .url-row
