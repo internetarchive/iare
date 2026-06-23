@@ -52,8 +52,6 @@
             var(--width-signal-mbfc)
             var(--width-signal-tranco);
             /*minmax(var(--width-signal-tranco), 1fr);*/
-            /*var(--width-signal-tranco)*/
-            /*minmax(10rem, 1fr);*/
 
 
     --signal-details-grid-columns:
@@ -136,13 +134,6 @@ button.fetch-signal-button:hover {
     /*background-color: #d1d2d4;*/
 }
 
-.signal-badges-extra-msg {
-    font-style: italic;
-    color: var(--color-text-muted);
-    padding:0;
-    /*margin-top: -.25rem;*/
-}
-
 .signal-badge .logo-image {
     /*width: 100%;*/
     /*padding:0 .25rem;*/
@@ -178,7 +169,6 @@ button.fetch-signal-button:hover {
 }
 
 
-
 /* * * * * * * * * * * * * * * * * * * * * * * * *
  *  S I G N A L   B A D G E S   S P E C I F I C  *
  * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -188,7 +178,9 @@ button.fetch-signal-button:hover {
     width: 80%;
     margin:auto;
 }
-.signal-badge.mbfc-badge {
+
+/* special case mbfc text display */
+.signal-badge.mbfc-badge .badge-text {
     /*background-color: var(--iare-color-basic-blue);*/
     text-align: left;
     justify-content: left;
@@ -205,257 +197,259 @@ button.fetch-signal-button:hover {
 .signal-badge.tranco-badge .logo-image {
             width: 80%;
             margin:auto;
-        }
+}
 
 
-        /* * * * * * * * * * * * * * * * * * * * * * *
-         *  S I G N A L   B A D G E S   I N L I N E  *
-         * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * *
+ *  S I G N A L   B A D G E S   I N L I N E  *
+ * * * * * * * * * * * * * * * * * * * * * * */
 
-        .signal-badges-inline {
-            /*height: var(--signal-badge-height);*/
-            display: grid;
-            grid-template-columns: var(--signal-inline-grid-columns);
-            /*grid-template-rows: var(--signal-inline-badge-height);*/
-            align-items: stretch;
-        }
+.signal-badges-inline {
+    /*height: var(--signal-badge-height);*/
+    display: grid;
+    grid-template-columns: var(--signal-inline-grid-columns);
+    /*grid-template-rows: var(--signal-inline-badge-height);*/
+    align-items: stretch;
+}
 
-        .signal-badges-inline .signal-badges-extra-msg {
-            grid-column: 1 / -1;
-            padding: .4rem 1rem;
-        }
-
-
-        /* * * * * * * * * * * * * * * * * * * * *
-         *  S I G N A L   B A D G E S   S O R T  *
-         * * * * * * * * * * * * * * * * * * * * */
-
-        .signal-badges-sort {
-            display: grid;
-            grid-template-columns: var(--signal-sort-grid-columns);
-            /*grid-template-rows: var(--signal-sort-badge-height);*/
-            align-items: stretch;
-        }
-
-        .signal-badges-sort .signal-badge {
-            /*background-color: var(--color-debug);*/
-            display:flex;
-            flex-direction: column;
-        }
-
-        .signal-badges-sort .header-cell-content,
-        .signal-badges-refview .header-cell-content {
-            padding-top: var(--padding-signal-cell);
-            padding-bottom: var(--padding-signal-cell);
-        }
-
-        .signal-badges-sort .signal-badge .header-cell-content {
-            /*padding:0 .12rem;*/
-
-        }
+.signal-badges-inline .signal-badges-extra-msg {
+    grid-column: 1 / -1;
+    padding-left:1.5rem;
+    font-style: italic;
+    color: var(--color-text-muted);
+}
 
 
+/* * * * * * * * * * * * * * * * * * * * *
+ *  S I G N A L   B A D G E S   S O R T  *
+ * * * * * * * * * * * * * * * * * * * * */
 
-        /* * * * * * * * * * * * * * * * * * * * * * * *
-         *  S I G N A L   B A D G E S   R E F V I E W  *
-         * * * * * * * * * * * * * * * * * * * * * * * */
+.signal-badges-sort {
+    display: grid;
+    grid-template-columns: var(--signal-sort-grid-columns);
+    /*grid-template-rows: var(--signal-sort-badge-height);*/
+    align-items: stretch;
+}
 
-        .signal-badges-refview {
-            display: grid;
-            grid-template-columns: var(--signal-refview-grid-columns);
-            grid-template-rows: var(--signal-refview-badge-height);
-            align-items: stretch;
-        }
+.signal-badges-sort .signal-badge {
+    /*background-color: var(--color-debug);*/
+    display: flex;
+    flex-direction: column;
+}
 
-        .signal-badges-refview .signal-badge {
-            /*background-color: var(--color-debug);*/
-            display:flex;
-            flex-direction: column;
-        }
+.signal-badges-sort .header-cell-content,
+.signal-badges-refview .header-cell-content {
+    padding-top: var(--padding-signal-cell);
+    padding-bottom: var(--padding-signal-cell);
+}
 
-        .signal-badges-refview .header-cell {
-            height: auto !important;
-            grid-template-rows: 2.4rem;
-        }
+.signal-badges-sort .signal-badge .header-cell-content {
+    /*padding:0 .12rem;*/
 
-        .ref-view-urls .flock-header .url-signals {
-            padding-top: 0;
-        }
-
-        /* * * * * * * * * * * * * * * * * * * * * * *
-         *  S I G N A L   B A D G E S   D E T A I L  *
-         * * * * * * * * * * * * * * * * * * * * * * */
-
-        .signal-badges-detail .signal-badge {
-            display: grid;
-            grid-template-columns: var(--signal-details-grid-columns);
-            grid-template-rows: var(--signal-details-badge-height);
-            align-items: stretch;
-        }
-
-        .signal-data-details .lolite{
-            color:var(--color-lolite);
-            font-style: italic;
-        }
-
-        .signal-data-details hr {
-            margin-top: .5rem;
-            margin-bottom: .5rem;
-            border: none;
-            border-top: 5px solid;
-        }
-
-        .signal-badges-detail .signal-badge{
-            display: grid;
-            grid-template-columns: 6rem 1fr;
-            border-bottom: 1pt solid var(--color-list-line);
-            min-height: 4rem;
-            padding: .25rem 0;
-        }
-        .signal-badges-detail .badge-icon:hover{
-            cursor: pointer;
-            /*border:1px solid black;*/
-        }
-
-        .signal-badges-detail .signal-badge:last-child {
-            border-bottom: none;
-        }
-
-        .signal-badges-detail .badge-text{
-            padding-left:1rem;
-            flex: 1 0 auto;
-        }
+}
 
 
+/* * * * * * * * * * * * * * * * * * * * * * * *
+ *  S I G N A L   B A D G E S   R E F V I E W  *
+ * * * * * * * * * * * * * * * * * * * * * * * */
 
-        /* other? section? */
+.signal-badges-refview {
+    display: grid;
+    grid-template-columns: var(--signal-refview-grid-columns);
+    grid-template-rows: var(--signal-refview-badge-height);
+    align-items: stretch;
+}
 
-        .signal-details-raw-data {
-            display:flex;
-            flex-direction: column;
-            margin-top: .65rem;
-        }
-        .signal-details-raw-data .grid-level-1 {
-            margin-left: 1.8rem;
-        }
+.signal-badges-refview .signal-badge {
+    /*background-color: var(--color-debug);*/
+    display: flex;
+    flex-direction: column;
+}
 
+.signal-badges-refview .header-cell {
+    height: auto !important;
+    grid-template-rows: 2.4rem;
+}
 
-        .signal-details-raw-data th {
-            color: var(--grid-caption-color);
-            font-weight: var(--grid-caption-font-weight);
-        }
+.ref-view-urls .flock-header .url-signals {
+    padding-top: 0;
+    width: max-content;
+}
 
-        .wiki-signals-docs-popup .rnd-modal-popup-body {
-            font-family: Georgia, 'Times New Roman', Times, serif;
-            padding: .75rem;
-        }
+/* * * * * * * * * * * * * * * * * * * * * * *
+ *  S I G N A L   B A D G E S   D E T A I L  *
+ * * * * * * * * * * * * * * * * * * * * * * */
 
-        .signal-details-popup .rnd-modal-popup-body {
-            font-size:1.0rem;
-        }
+.signal-badges-detail .signal-badge {
+    display: grid;
+    grid-template-columns: var(--signal-details-grid-columns);
+    grid-template-rows: var(--signal-details-badge-height);
+    align-items: stretch;
+}
 
-        .signal-details-popup .info-click {
-            cursor: pointer;
-        }
+.signal-data-details .lolite {
+    color: var(--color-lolite);
+    font-style: italic;
+}
 
-        /* * * * * * * * * * * * * *
-         *  S C O R E   B A D G E  *
-         * * * * * * * * * * * * * */
+.signal-data-details hr {
+    margin-top: .5rem;
+    margin-bottom: .5rem;
+    border: none;
+    border-top: 5px solid;
+}
 
-        .signal-badge.score-badge .badge-icon {
-            display: block;
-            padding-right: calc(var(--width-hot-meter) + 2px); /* makes space for the bar */
+.signal-badges-detail .signal-badge {
+    display: grid;
+    grid-template-columns: 6rem 1fr;
+    border-bottom: 1pt solid var(--color-list-line);
+    min-height: 4rem;
+    padding: .25rem 0;
+}
 
-        }
-        xxx.score-badge .badge-icon-wrapper::after {  /* this is thermometer visual indicator */
-            content: "";
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: var(--width-hot-meter);
-            height: 100%;
-            /* score-color var defined in surrounding div */
-            background: var(--score-color, deeppink); /* fallback included; --badge-color defined in badge-icon wrapper div */
-        }
+.signal-badges-detail .badge-icon:hover {
+    cursor: pointer;
+    /*border:1px solid black;*/
+}
 
-        /*.badge-icon-bar {*/
-        /*    display: block;*/
-        /*}*/
+.signal-badges-detail .signal-badge:last-child {
+    border-bottom: none;
+}
 
-        .score-badge .logo-image {
-            display: block;
-        }
-
-        .score-badge .badge-icon-bar {
-            width: 10px;
-            margin-left: 8px;
-            display: inline-block;
-        }
-
-
-        /* * * * * * * * * * * * * * * *
-         *  S I G N A L   O T H E R S  *
-         * * * * * * * * * * * * * * * */
-
-        .section-expander {
-            margin-bottom: .5rem;
-            margin-top:.5rem;
-            cursor: pointer;
-            display: inline-block;
-            color: #5cb0de;
-            font-weight: var(--grid-caption-font-weight);
-        }
-
-        :root {
-            --color-fore: #ffdb29;
-            --color-stroke: #555555;
-            --color-shadow: grey;
-            --color-neutral-bar: #e7e8e9;
-        }
-
-        .missing-value .badge-overlay {
-            display: none;
-        }
-
-        svg.score-badge-text {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-
-            dominant-baseline:middle;
-            text-anchor:middle;
-
-            font-size:1.5rem;
-            pointer-events: none;
-        }
-
-        svg.score-badge-text .text-fore {
-            fill: var(--color-fore);
-        }
-        svg.score-badge-text .text-stroke {
-            stroke: var(--color-stroke);
-            stroke-width: 5pt;
-        }
-        svg.score-badge-text .text-shadow {
-            text-shadow:
-                    0 0 2pt black,
-                    0 0 5pt black,
-                    0 0 8pt black;
-        }
+.signal-badges-detail .badge-text {
+    padding-left: 1rem;
+    flex: 1 0 auto;
+}
 
 
-        .tooltip-iare-display .info-spec {
-            margin-bottom: .5rem;
+/* other? section? */
 
-        }
-        .tooltip-iare-display .info-label {
-            display: block;
-            font-style: italic;
-            /*color: color-mix(in srgb, currentColor 80%, black);*/
-            color: #ddd;
-            font-weight: bold;
-        }
-    }
+.signal-details-raw-data {
+    display: flex;
+    flex-direction: column;
+    margin-top: .65rem;
+}
+
+.signal-details-raw-data .grid-level-1 {
+    margin-left: 1.8rem;
+}
+
+
+.signal-details-raw-data th {
+    color: var(--grid-caption-color);
+    font-weight: var(--grid-caption-font-weight);
+}
+
+.wiki-signals-docs-popup .rnd-modal-popup-body {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    padding: .75rem;
+}
+
+.signal-details-popup .rnd-modal-popup-body {
+    font-size: 1.0rem;
+}
+
+.signal-details-popup .info-click {
+    cursor: pointer;
+}
+
+/* * * * * * * * * * * * * *
+ *  S C O R E   B A D G E  *
+ * * * * * * * * * * * * * */
+
+.signal-badge.score-badge .badge-icon {
+    display: block;
+    padding-right: calc(var(--width-hot-meter) + 2px); /* makes space for the bar */
+
+}
+
+xxx.score-badge .badge-icon-wrapper::after { /* this is thermometer visual indicator */
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: var(--width-hot-meter);
+    height: 100%;
+    /* score-color var defined in surrounding div */
+    background: var(--score-color, deeppink); /* fallback included; --badge-color defined in badge-icon wrapper div */
+}
+
+.score-badge .logo-image {
+    display: block;
+}
+
+.score-badge .badge-icon-bar {
+    width: 10px;
+    margin-left: 8px;
+    display: inline-block;
+}
+
+
+/* * * * * * * * * * * * * * * *
+ *  S I G N A L   O T H E R S  *
+ * * * * * * * * * * * * * * * */
+
+.section-expander {
+    margin-bottom: .5rem;
+    margin-top: .5rem;
+    cursor: pointer;
+    display: inline-block;
+    color: #5cb0de;
+    font-weight: var(--grid-caption-font-weight);
+}
+
+:root {
+    --color-fore: #ffdb29;
+    --color-stroke: #555555;
+    --color-shadow: grey;
+    --color-neutral-bar: #e7e8e9;
+}
+
+.missing-value .badge-overlay {
+    display: none;
+}
+
+svg.score-badge-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    dominant-baseline: middle;
+    text-anchor: middle;
+
+    font-size: 1.5rem;
+    pointer-events: none;
+}
+
+svg.score-badge-text .text-fore {
+    fill: var(--color-fore);
+}
+
+svg.score-badge-text .text-stroke {
+    stroke: var(--color-stroke);
+    stroke-width: 5pt;
+}
+
+svg.score-badge-text .text-shadow {
+    text-shadow: 0 0 2pt black,
+    0 0 5pt black,
+    0 0 8pt black;
+}
+
+
+.tooltip-iare-display .info-spec {
+    margin-bottom: .5rem;
+
+}
+
+.tooltip-iare-display .info-label {
+    display: block;
+    font-style: italic;
+    /*color: color-mix(in srgb, currentColor 80%, black);*/
+    color: #ddd;
+    font-weight: bold;
+}
+
 

@@ -1,142 +1,103 @@
 import React, {useState} from "react";
+import {useTranslation} from 'react-i18next';
 import MakeLink from "../../../MakeLink.jsx";
 import RefSectionHeader from "./RefSectionHeader.jsx";
 import {getArchiveStatusInfo} from "../../../../utils/urlUtils.jsx";
-import SignalDisplay from "../../../SignalDisplay.jsx";
-import {BadgeContexts as badgeContext} from "../../../../constants/badgeContexts.jsx";
-import {ACTIONS_IARE} from "../../../../constants/actionsIare.jsx";
-import { useTranslation } from 'react-i18next';
+import {getColumnHeaderTooltip, getColumnTooltip, getUrlStatusClass} from "../../../../utils/flockUtils.jsx";
+import SignalBadges from "../../../SignalBadges.jsx";
+import ColumnBox from "../../../ColumnBox.jsx";
+import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../../../constants/urlFilterMaps.jsx";
+import {BadgeContexts} from "../../../../constants/badgeContexts.jsx";
+import signalBadgeRegistry from "../../../../constants/badges/signalBadgeRegistry.jsx";
 
 
-/*
-shows template urls and their status codes in a tabular form
- */
-export default function RefUrls({ urls, pageData, onAction, tooltipId, showDebug=false }) {
+export default function RefUrls({ urlArray, pageData, onAction, tooltipId, showDebug=false }) {
 
     const { t, i18n } = useTranslation();
+    const [urlTooltipHtml, setUrlTooltipHtml] = useState(null);
 
-    const handleSignalClick = (e) => {
-        return
-        // const targetElement = e.target
-        //
-        // const urlElement = targetElement.closest('.url-row')
-        // const urlLink = urlElement.dataset.url
-        // const urlObj = pageData.urlDict[urlLink]
-        //
-        // const urlLinkFromData = targetElement.dataset.url
-        // console.log(`Url from Signal Badge data is: ${urlLinkFromData}`)
-        //
-        // onAction(
-        //     {
-        //         action: ACTIONS_IARE.POPUP_SIGNALS_DETAILS.key, value: urlLink
-        //     }
-        // )
-    }
-
+    const monitoredSignals = [  // NB could get this from component property or context
+        signalBadgeRegistry.score.key,
+        signalBadgeRegistry.wayback.key,
+        signalBadgeRegistry.enwiki.key,
+        signalBadgeRegistry.mbfc.key,
+        signalBadgeRegistry.tranco.key,
+    ]
 
     // assumes u is an url object
     const getDataRow = (u, i) => {
 
         if (!u) return <div className={"url-row"} key={i}>Undefined URL encountered. (index {i})</div>
 
-                // idea:::
-                //
-                // const urlColumnNames = [
-                //     "name",
-                //     "status",
-                //     "archive_status",
-                //     "perennial"
-                // ]
-                // const urlStatusClassification= [
-                //     {
-                //         filter: (u) => {return u.status_code >= 200 && u.status_code < 300},
-                //         class_name: "url-is-success"
-                //     },
-                //     {
-                //         filter: (u) => {return u.status_code >= 300 && u.status_code < 400},
-                //         class_name: "url-is-redirect"
-                //     },
-                //     {
-                //         filter: (u) => {return u.status_code >= 400 && u.status_code < 500},
-                //         class_name: "url-is-notfound"
-                //     },
-                // ]
-                // loop thru Classifications in StatusClassification array
-                //     when one hits, use that entry's class_name' +
-                // '.
-        const urlRowTypeClass = (u.status_code === 0
-            ? ' url-is-unknown'
-            : u.status_code >= 200 && u.status_code < 300
-                ? ' url-is-success'
-                : u.status_code >= 300 && u.status_code < 400
-                    ? ' url-is-redirect'
-                    : u.status_code >= 400 && u.status_code < 500
-                        ? ' url-is-notfound'
-                        : u.status_code >= 500 && u.status_code < 600
-                            ? ' url-is-error'
-                            : '')
+        return <div className={"url-row " + getUrlStatusClass(u.status_code)}
+            key={i}
 
-        return <div className={"url-row " + urlRowTypeClass} key={i}
-
-                    data-url={u.url}
-                    data-status_code={u.status_code}
-                    data-archive_status={u.archive_status?.hasArchive}
-                    data-perennial={u.rsp ? u.rsp[0] : null}  // just return first perennial if found for now...dont deal with > 1
-                    data-live_state={u.archive_status?.live_state}
-                    data-signals={JSON.stringify(u.signals)}
+            data-url={u.url}
+            data-status_code={u.status_code}
+            data-archive_status={u.archive_status?.hasArchive}
+            data-live_state={u.archive_status?.live_state}
+            data-is_book={u.isBook}
         >
             <div className={"url-name"}><MakeLink href={u.url} linkText={u.url}/></div>
-
             <div className={"url-live_status"}>{u.status_code}</div>
             <div className={"url-archive_status"}>{getArchiveStatusInfo(u)}</div>
 
-                        {/*<div className={"url-citations"}>{getCitationInfo(u)}</div>*/}
-                        {/*<div className={"url-perennial"}>{getPerennialInfo(u)}</div>*/}
-                        {/*<div className={"url-probes"}>*/}
-                        {/*    <RefUrlProbe urlObj={u} pageData={pageData} onProbeClick={handleProbeClick} />*/}
-                        {/*</div>*/}
-
-            <div className={"url-signals"} onClick={handleSignalClick}>
-                <SignalDisplay
-                    urlObj={u}
-                    onSignalClick={handleSignalClick}
-                    badgeContext={badgeContext.inline.value}
+            <div className={"url-signals"}>
+                <SignalBadges badgeContextKey={BadgeContexts.inline.value}
+                              signalData={u?.signal_data?.signals ?? {}}
+                              monitoredSignals={monitoredSignals}
+                              onAction={onAction}
+                              tooltipId={tooltipId}
                 />
             </div>
 
         </div>
 
     }
+
 
     const getHeaderRow = () => {
 
         return <div className={"flock-header"} key={0}>
-            <div className={"url-row-label url-name"}>Url</div>
-            <div className={"url-row-label url-live_status"}>Status</div>
-            <div className={"url-row-label url-archive_status"}>Archive</div>
 
-                        {/*/!*<div className={"url-citations"}>{getCitationInfo(u)}</div>*!/*/}
-                        {/*<div className={"url-row-label url-perennial"}>Reliability</div>*/}
-                        {/*<div className={"url-row-label url-probes"}>Probe Results</div>*/}
+            <ColumnBox
+                content={<><br/>URL Link</>}
+                columnClass={"url-name flock-col"}
+                columnKey={"url-name"}
+            />
 
-            <div className={"url-row-label url-signals"}>
-                <SignalDisplay
-                    urlObj={null}  // {u}
-                    onAction={onAction}
-                    badgeContext={badgeContext.refview.value}
-                    tooltipId={tooltipId}
-                />
+            <ColumnBox
+                content={<>Live<br/>Status</>}
+                columnClass={"url-live_status flock-col"}
+                columnKey={"url-live_status"}
+            />
+            <ColumnBox
+                content={archiveFilterDefs['iabot']._.name}
+                columnClass={"url-archive_status flock-col"}
+                columnKey={"url-archive_status"}
+            />
+
+            {/* signals column is special... */}
+            <div className={"url-signals flock-col"}>
+                <div>
+                    <SignalBadges badgeContextKey={BadgeContexts.refview.value}
+                                  monitoredSignals={monitoredSignals}
+                                  onAction={onAction}
+                                  tooltipId={tooltipId}
+                    />
+                </div>
             </div>
-
 
         </div>
 
     }
 
-    const getUrlRows = ()=> {
+    const getDataRows = (urlArray) => {
         const dataRows = []
 
-        urls.forEach( (url, i) => {
+        // in refView, we assume ALL urls in array are displayed; i.e. no filtering or sorting
+
+        urlArray.forEach( (url, i) => {
             const urlObj = pageData.urlDict[url]
             if (!urlObj) return
             // only show url if it is NOT an archive link
@@ -147,20 +108,39 @@ export default function RefUrls({ urls, pageData, onAction, tooltipId, showDebug
             dataRows.push(<div className={"url-row"}><div className={"url-info"}>No URLs for this reference.</div></div>)
         }
 
-        const dataHeader = getHeaderRow()
-
-        return <div className={"url-rows-display"}>
-            {dataHeader}
-            {dataRows}
-        </div>
+        return dataRows
     }
 
-    const urlRows = getUrlRows(urls)
+    const onHoverFlockRow = e => {  // handle hover for header and data row
+        e.stopPropagation()  // prevents onHover from propagating engaging and erasing tooltip
+        const html = getColumnTooltip(e)
+        setUrlTooltipHtml(html)
+    }
 
-    return <div className="ref-view-section ref-view-urls">
-        <RefSectionHeader leftPart={<h3>{t('Ratings')}</h3>}/>
-        {urlRows}
+    const flockHeader = getHeaderRow()
+    const dataRows = getDataRows(urlArray)
+    const flockRows = <div className={"flock-rows ref-view-url-flock-rows"}>
+        {dataRows}
     </div>
+    
+    return <div
+        data-tooltip-id={tooltipId}         // passed in tooltipId for this flock
+        data-tooltip-html={urlTooltipHtml}  // set urlTooltipHtml to set tooltip contents
+    >
+        <div className="ref-view-section ref-view-urls">
+            <RefSectionHeader leftPart={<h3>{t('Ratings')}</h3>}/>
+
+            <div className={"ref-view-section-contents flock-container"}
+                // onClick={onClickFlockRow}
+                 onClick={null}
+                 onMouseOver={onHoverFlockRow}>
+                {flockHeader}
+                {flockRows}
+            </div>
+
+        </div>
+    </div>
+
 
 }
 

@@ -674,23 +674,6 @@ export default function UrlDisplay ({ pageData, options } ) {
     console.log(`UrlDisplay: render; refFilter.caption = ${refFilter?.caption}`);
 
 
-    const tooltipForUrlDisplay = <MyTooltip
-        id="tooltip-url-display"
-        // float={false}
-        float={true}
-        closeOnEsc={true}
-        delayShow={420}
-        variant={"info"}
-        noArrow={true}
-        // offset={5}
-        offset={30}
-        className={"tooltip-iare-display"}
-        style={{ zIndex: 9999 }}
-
-        place="top"
-        positionStrategy="fixed"
-    />
-
                 // const testUrlOverviewDisplay=<div className={"url-overview-column"} style={{backgroundColor: "chartreuse"}}>
                 //     <h2>test-contents</h2>
                 //     {Array.from({length: 3}, (_, i) => {
@@ -730,7 +713,7 @@ export default function UrlDisplay ({ pageData, options } ) {
                       urlArray={pageData.urlArray}
                       urlFilters={urlFilters}
                       onAction={handleAction}
-                      options={{showRefs: isShowRefs, showFilters: isShowFilters }}
+                      options={{showFilters: isShowFilters }}
                       selectedUrl={selectedUrl}
                       fetchMethod={myConfig.urlStatusMethod}
                       tooltipId={"tooltip-url-display"} />
@@ -815,7 +798,22 @@ export default function UrlDisplay ({ pageData, options } ) {
         this is the tooltip resource component
         */}
 
-        {tooltipForUrlDisplay}
+        <MyTooltip
+            id="tooltip-url-display"
+            className={"tooltip-iare-display"}
+            // float={false}
+            float={true}
+            closeOnEsc={true}
+            delayShow={420}
+            variant={"info"}
+            noArrow={true}
+            // offset={5}
+            offset={30}
+            style={{zIndex: 9999}}
+
+            place="top"
+            positionStrategy="fixed"
+        />
         {/* TODO tooltipId should be passed in to this UrlDisplay component.
                       It should be universal and not created here...
                        more so, a local tooltip should be created if passed in tooltipId is invalid*/}

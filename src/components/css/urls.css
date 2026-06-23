@@ -1,9 +1,4 @@
 :root {
-    /*--url-list-width: 40rem;*/
-
-    /*--width-url-name: 20rem;*/
-    /*--width-url-live_status: 3.0rem;*/
-    /*--width-url-archive-status: 3.5rem;*/
     --width-url-citations: 3.5rem;
     --width-url-templates: 4.0rem;
     --width-url-actionable: 3.0rem;
@@ -24,8 +19,6 @@
             var(--url-list-width-archive-status)
             var(--url-list-width-actionable)
             minmax(0, 1fr);
-            /* 1fr */
-
 
     --url-list-padding-url: .5rem;
     --url-list-padding-url-small: .25rem;
@@ -103,7 +96,7 @@
     /*background-color: deeppink;*/
 }
 
-xxx.* {
+*.xxx {  /* debug to outline all elements */
     outline: 1px solid rgba(255, 0, 0, 0.2);
 }
 
@@ -157,9 +150,6 @@ xxx.* {
 }
 
 .flock-header .header-cell {
-    /*margin-right:1rem;*/
-    /*opacity: .85;*/
-    /*background-color: #07759d;*/
     height: 100%;
 }
 
@@ -187,6 +177,10 @@ xxx.* {
 
     cursor: pointer;
 
+}
+
+.flock-rows .url-row:last-child {
+    border-bottom: none;
 }
 
 .flock-rows .url-row:hover {
@@ -437,32 +431,18 @@ button.utility-button.disabled {
     height:var(--height-piechart-display);
 }
 
-/* for shading of url rows according to rating status */
-
-/*.url-rating-blacklist {background-color: var(--color-rating-blacklist);}*/
-/*.url-rating-unreliable {background-color: var(--color-rating-unreliable);}*/
-/*.url-rating-reliableMarginally {background-color: var(--color-rating-reliableMarginally);}*/
-/*.url-rating-reliable {background-color: var(--color-rating-reliable);}*/
-/*.url-rating-deprecated {background-color: var(--color-rating-deprecated;}*/
-/*.url-rating-multi {background-color: var(--color-rating-multi);}*/
-
-/*.url-rating-__unassigned {background-color: #a64ce2;}*/
-/*.url-rating-__unassigned {background-color: rgb(206.6, 226, 254.6);}*/
-/*.url-rating-__unassigned {background-color: rgb(225.6, 227.4, 229);}*/
-/*.url-rating-__unassigned {*/
-/*    background-color: rgb(209, 231, 220.8);*/
-/*}*/
-
-
 .url-perennial .lolite {
     color: var(--color-lolite)
 }
 
-.header-cell.url-name .header-cell-content,
 .header-cell.url-name .header-cell-sort {
     align-items: flex-start !important;
     justify-content: flex-start !important;
     text-align: left;
+}
+
+.header-cell.url-name .header-cell-content {
+    align-items: flex-start !important;
 }
 
 /*
@@ -495,29 +475,6 @@ boneyard
     animation: fadetext 6s ease;
 
 }
-
-/*.feedback-fadeout {*/
-/*    transition: opacity 3s ease; !* Define transition *!*/
-/*    opacity: 0; !* Initially set opacity to 0 *!*/
-/*}*/
-
-/*.feedback-visible {*/
-/*    transition: opacity 1.0s ease; !* Define transition *!*/
-/*    opacity: 1; !* Set opacity to 1 when text is displayed *!*/
-/*}*/
-
-/*.feedback-div {*/
-/*    opacity: 0;*/
-/*    transition: opacity 2s;*/
-/*}*/
-
-/*.feedback-div.fade-in {*/
-/*    opacity: 1;*/
-/*}*/
-
-/*.feedback-div.fade-out {*/
-/*    opacity: 0;*/
-/*}*/
 
 .some-parent {
   min-height: 0;

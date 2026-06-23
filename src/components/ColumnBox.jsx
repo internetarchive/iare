@@ -6,6 +6,7 @@ import {urlColumnRegistry} from "../constants/urlColumnRegistry.jsx";
 import { ColumnSortContext } from "../contexts/ColumnSortContext"
 
 const convertColumnToSort = {
+    // columnKey: columSortKey
     "url-name": "name",
     "url-live_status": "status",
     "url-archive_status": "archive_status",
@@ -23,20 +24,24 @@ export default function ColumnBox({
 
     const columnDef = urlColumnRegistry.columns[columnKey] ?? {}
     const columnSort = useContext(ColumnSortContext)
-    const mainSortKey = columnSort.sortBy[0]
+    let headerSort = null
 
-    const mySortKey = convertColumnToSort[columnKey]
-    let myDir = 0
-    if (mySortKey === mainSortKey) {
-        const mySortDef = columnSort.sorts[mySortKey]
-        myDir = (mySortDef?.dir ?? 0)
+    if (columnSort) {
+        const mainSortKey = columnSort.sortBy[0]
+        const mySortKey = convertColumnToSort[columnKey]
+
+        let myDir = 0
+        if (mySortKey === mainSortKey) {
+            const mySortDef = columnSort.sorts[mySortKey]
+            myDir = (mySortDef?.dir ?? 0)
+        }
+
+        headerSort = columnDef.sortable
+            ? <SortBox className={"signal-badge-element"}
+                       label={mainSortKey}
+                       direction={myDir}/>
+            : null
     }
-
-    const headerSort = columnDef.sortable
-        ? <SortBox className={"signal-badge-element"}
-                   label={mainSortKey}
-                   direction={myDir}/>
-        : null
 
     const headerCellClass = [
         // "signal-badge",
@@ -44,14 +49,8 @@ export default function ColumnBox({
     ]
         .filter(Boolean).join(" ")
 
-    const debugContent = <div style={{display: "block", fontSize:"50%"}}>
-        <div>CK: {columnKey}</div>
-        <div>MSK: {mainSortKey}</div>
-    </div>
-
     return <HeaderCell
         content={<>
-            {/*{debugContent}*/}
             {content}
         </>}
         sort={headerSort}

@@ -115,7 +115,8 @@ body {
     background-color: var(--g-color-body-bg);
 }
 
-
+.header-title-section { display: flex;align-items: center;gap: .45rem }
+.app-logo { height: 1.65rem;width: auto;margin-left: 0.27rem }
 
 /* environment specific */
 

@@ -27,9 +27,10 @@ export default function FlockBox({
             onKeyDown={onKeyDown}
         >
 
-            <div className={`iare-ux-header`}>
+            {caption && <div className={`iare-ux-header`}>
                 <div className={"flock-box-caption"} key={"arf1"}>{caption}</div>
-            </div>
+            </div>}
+
             <div className={`iare-ux-body`}>
                 <div className={"flock-box-contents"} key={"arf2"}>{children}</div>
             </div>

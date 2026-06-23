@@ -5,9 +5,9 @@ import {BadgeContexts} from "../constants/badgeContexts.jsx";
 import {ACTIONS_IARE} from "../constants/actionsIare.jsx";
 
 
-export default function SignalBadges({
-                                         signals={},  // signal values from url object
-                                         badgeContextKey = BadgeContexts.default.value,
+export default function SignalBadges({ badgeContextKey = BadgeContexts.default.value,
+                                         signalData={},  // signal values from url object
+                                         monitoredSignals = [],
                                          onAction,  // what to do if signal clicked
 
                                          // onClick,
@@ -23,18 +23,8 @@ export default function SignalBadges({
     show badge for each signal type in signalBadgeRegistry that is being monitored
      */
 
-    const onClickFetch = (e) => {
-        // e.preventDefault()
-        e.stopPropagation()
-
-        const el = e.target.closest('.url-row')
-        const url = el?.dataset.url
-
-        // fetch domain from row data, and send that as value
-        onAction({action: ACTIONS_IARE.FETCH_SIGNAL_DATA.key, value: url})
-    }
-
     const badgeContext = BadgeContexts[badgeContextKey] || BadgeContexts.default
+
 
     const getBadges = () => {
         // for each signal in signalBadgeRegistry, render its badge with
@@ -43,8 +33,8 @@ export default function SignalBadges({
 
         if (badgeContext.hasText) {
 
-            // handle empty and error signals; has no data then show "error" condition
-            if (isEmpty(signals)) {
+            // handle empty and error signalData; has no data then show "error" condition
+            if (isEmpty(signalData)) {
                 return <>
                     <div className={"signal-badges-extra-msg"}>
                         Signal data is empty.
@@ -52,8 +42,8 @@ export default function SignalBadges({
                                 onClick={onClickFetch}
 
                                 // TODO
-                                // in parent badgesHover, check if inside this button or its label,
-                                // and, if so, put an appropriate tooltip up
+                                //  in parent badgesHover, check if inside this button or its label,
+                                //  and, if so, put an appropriate tooltip up
 
                                 // data-tooltip-id={tooltipId}
                                 // data-tooltip-content="Fetch New Signal data for URL"
@@ -62,18 +52,18 @@ export default function SignalBadges({
                     </div>
                 </>
 
-            } else if (signals.error) {
-                return <div className={"lolite"}>{signals.error}</div>
+            } else if (signalData.error) {
+                return <div className={"lolite"}>{signalData.error}</div>
             }
         }
 
         // render all the signals in registry, sorted by priority
-        const monitoredSignals = Object.keys(signalBadgeRegistry)
-            // TODO add .filter capability here
-            //  - use some algorithm to determine inclusion
-            
-            .sort((a, b) => signalBadgeRegistry[b].priority - signalBadgeRegistry[a].priority)
-
+        // const monitoredSignals = Object.keys(signalBadgeRegistry)
+        //     // TODO add .filter capability here
+        //     //  - use some algorithm to determine inclusion
+        //
+        //     .sort((a, b) => signalBadgeRegistry[b].priority - signalBadgeRegistry[a].priority)
+        //
 
         // return badge component for each monitored signal
         return monitoredSignals.map(signalKey => {
@@ -90,7 +80,7 @@ export default function SignalBadges({
 
                         // tooltipId = {tooltipId}
 
-                        signals={signals}
+                        signals={signalData}
                         badgeContextKey = {badgeContextKey}
 
                         // onBadgeHover={onHoverBadge}
@@ -101,6 +91,18 @@ export default function SignalBadges({
 
         })
     }
+
+    const onClickFetch = (e) => {
+        // e.preventDefault()
+        e.stopPropagation()
+
+        const el = e.target.closest('.url-row')
+        const url = el?.dataset.url
+
+        // fetch domain from row data, and send that as value
+        onAction({action: ACTIONS_IARE.FETCH_SIGNAL_DATA.key, value: url})
+    }
+
 
     const badges = getBadges()
 

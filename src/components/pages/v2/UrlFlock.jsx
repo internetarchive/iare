@@ -3,6 +3,12 @@ import FlockBox from "../../FlockBox.jsx";
 import "../../css/flock.css"
 
 import {convertToCSV, copyToClipboard, iareAlert} from "../../../utils/generalUtils.js";
+import {
+    getColumnHeaderTooltip,
+    getColumnDataTooltip,
+    getUrlStatusClass, getColumnTooltip
+}
+    from "../../../utils/flockUtils.jsx";
 import {getArchiveStatusInfo} from "../../../utils/urlUtils.jsx";
 import {BadgeContexts as badgeContext, BadgeContexts} from "../../../constants/badgeContexts.jsx";
 
@@ -23,8 +29,6 @@ import SignalsSort from "../../SignalsSort.jsx";
 import SignalBadges from "../../SignalBadges.jsx";
 import ColumnBox from "../../ColumnBox.jsx";
 import { ColumnSortContext } from "../../../contexts/ColumnSortContext.jsx"
-
-import { marked } from 'marked';
 
 /*
 assumes urlArray is an array of url objects:
@@ -81,23 +85,39 @@ const urlFlock = React.memo(function UrlFlock({
     // TODO there is a bug where sort re-renders list every time tooltip text/html property is updated
     // TODO maybe fix using React.useRef somehow???
 
+    /**
+     * State for column sorting configuration.
+     *
+     * - sorts: An object that keeps track of the sort status for each column type (e.g., status, signal_score).
+     *          Each key represents a column name, and its value is another object with the following properties:
+     *              - name: Name of the sort key.
+     *              - dir: Direction of sorting: 1 = ascending, -1 = descending, 0 = none.
+     *
+     *          Example:
+     *          {
+     *              "status": {name: "status", dir: 1},  // dir: 1 is ascending
+     *              "signal_score": {name: "signal_score", dir: -1},  // dir: -1 is descending
+     *          }
+     *
+     * - sortBy: An array indicating the order of sorts to be applied. For now, it supports only single-column sorting.
+     *
+     *          Example:
+     *          ["status"]  // Only the 'status' column is sorted.
+     */
     const [columnSort, setColumnSort] = useState({
-        sorts: {  // holds sort value for all different sort types
-            // "status": {name: "status", dir: 1},  // dir: 1 is asc, -1 is desc, 0 is do not sort
-            // "signal_score": {name: "signal_score", dir: -1},
-            // "archive_status": {name: "archive_status", dir: -1},
-            // "references": {name: "references", dir: -1},
-            // "templates": {name: "templates", dir: -1},
-            // "actionable": {name: "actionable", dir: -1},
-            // "sections": {name: "sections", dir: -1},
-            // "perennial": {name: "perennial", dir: -1},
-        },
-
-        // array indicating which and in what order "sorts" get applied
-        // NB for now, sort just respects first item in list
-        // TODO fix this by implementing chained sorts
-        sortBy: []  // sortBy: none for default
+        sorts: {},
+        sortBy: []
+            // NB for now, sort just respects first item in list
+            // TODO fix this by implementing chained sorts
     })
+
+    const monitoredSignals = [
+        signalBadgeRegistry.score.key,
+        signalBadgeRegistry.wayback.key,
+        signalBadgeRegistry.enwiki.key,
+        signalBadgeRegistry.mbfc.key,
+        signalBadgeRegistry.tranco.key,
+    ]
 
     const updateFlockSort = (sortKey) => {
         // set new sort State:
@@ -117,11 +137,14 @@ const urlFlock = React.memo(function UrlFlock({
 
             const prevDir = prevState.sorts[sortKey].dir
             const sortDir = ({ 1: -1, '-1': 0 }[prevDir] ?? 1); // 1=asc, -1=desc, 0=none
+            // if 1 (asc), then next is -1 (desc)
+            // if -1 (desc), then next is 0 (none)
+            // if 0 (none), then next is 1 (asc)
 
-            // change just the sortKey specified
             return {
                 sorts: {
                     ...prevState.sorts,
+                    // change just the sortKey specified
                     [sortKey]: {
                         ...prevState.sorts[sortKey],
                         // dir: -1 * prevState.sorts[sortKey].dir
@@ -325,160 +348,11 @@ const urlFlock = React.memo(function UrlFlock({
         return undefined
     }
 
-
-    const getSignalColumnTooltip = (columnClass) => {
-
-        if (!columnClass) return null
-
-        const badgeKey = columnClass.split('signal-')[1] // Extract badgeKey from columnClass
-        const badgeDef = signalBadgeRegistry[badgeKey]
-
-        if (badgeDef?.tooltipHtml) return badgeDef.tooltipHtml
-
-        if (badgeDef?.tooltipMarkup) {
-            // const markupTemp = marked(badgeDef.tooltipMarkup)
-            return marked(badgeDef.tooltipMarkup)
-        }
-
-        if (badgeDef?.description) return `<div>${badgeDef.description}</div>`
-
-        return `<div>tooltip for ${columnClass}</div>`
-    }
-
-
-    const getUrlColumnTooltip = (columnClass) => {
-
-        if (!columnClass) return null
-        const columnDef = urlColumnRegistry.columns[columnClass]
-        if (!columnDef) return null
-
-        if (columnDef.ttHtml) return columnDef.ttHtml
-        if (columnDef.ttMarkup) return marked(columnDef.ttMarkup)
-        if (columnDef.ttCaption) return `<div>${columnDef.ttCaption}</div>`
-
-        return `<div>tooltip for ${columnClass}</div>`  // this shouldn't happen - there's an unhandkled column
-    }
-
-
-    const getColumnHeaderTooltip = (columnClass) => {
-        // if (!columnClass) return null
-
-        if (columnClass?.startsWith('signal-') ) return getSignalColumnTooltip(columnClass)
-        // else ...
-        return getUrlColumnTooltip(columnClass)
-
-    }
-
-
-    const getColumnDataTooltip = (rowEl, columnClass) => {
-
-        const d = rowEl.dataset
-
-        if (columnClass === "url-live_status") {
-            const statusDescription = httpStatusCodes[d.status_code]
-            return `<div>Live Status:<br/>${d.status_code}: ${statusDescription}</div>`
-        }
-
-        if (columnClass === "url-archive_status") {
-            if (d.is_book === "true") {
-                return `<div>Book</div>`
-            }
-
-            return d.live_state
-                ? `<div>${d.archive_status === "true"
-                    ? 'Archived'
-                    : 'Not Archived'}` +
-                `<br/>` +
-                `IABot live_state: ${d.live_state} - ${iabotLiveStatusCodes[d.live_state]}</div>`
-
-                : `Archive status = ${d.archive_status}<br/>IABot live_state is undefined`
-        }
-
-        if (columnClass === "url-citations") {
-            return d.citation_status && d.citation_status !== '--'
-                ? `<div>Link Status ${'"' + d.citation_status + '"'} as indicated in Citation</div>`
-                : `<div>No Link Status defined in Citation</div>`
-
-        }
-
-        if (columnClass === "url-actionable" || columnClass === "yes-actionable") {
-            const actionableKey = d.actionable
-            const desc = ACTIONABLE_FILTER_MAP[actionableKey]?.desc
-            return desc
-                ? `<div>Actionable Item:<br/>${desc}<br/>Click to fix.</div>`
-                : ""
-
-        }
-
-        if (columnClass === "url-signals") {
-            return null
-
-        }
-
-        // if not a special case column, show tooltip from column definition
-        return urlColumnRegistry.columns[columnClass]?.ttCaption
-    }
-
-
     const onHoverFlockRow = e => {
-        // handle hover for header, data row, or other
-
         e.stopPropagation()  // prevents onHover from propagating engaging and erasing tooltip
-        let el = null
-
-        // if header row show tooltip for that column...
-        let rowEl = e.target.closest('.flock-header')
-        if (rowEl) {
-            let columnClass = ""
-
-            el = e.target.closest('.signal-badge')
-            if (el) {
-                columnClass = 'signal-' + el.dataset.badgekey
-            } else {
-                el = e.target.closest('.flock-col')
-                if (el) {
-                    // if normal column, get from dataset columnKey
-                    columnClass = el.dataset.columnKey;
-                }
-            }
-
-            // else get from signal hierarchy
-            let html = getColumnHeaderTooltip(columnClass)
-            console.log(`UrlFlock onHoverFlockRow: in .flock-header columnClass: ${columnClass}`)
-
-            // if sub-element of sort hovered, add the sort message to tooltip text
-            const elSorted = e.target.closest('.header-cell-sort')
-            if (elSorted) {
-                html = `<div>${html}Click to Sort</div>`
-            }
-            setUrlTooltipHtml(html)
-
-            return
-        }
-
-        // for error row...
-        rowEl = e.target.closest('.url-row-error')
-        if (rowEl) {
-            const html = rowEl.currentTarget.getAttribute('data-err-text');
-            setUrlTooltipHtml(html)
-            return
-        }
-
-        // for data row...
-        rowEl = e.target.closest('.url-row')
-        if (rowEl) {
-            const columnClass = e.target.closest('.url-row > *')?.classList[0]  // get first class in list to get column type
-            // const row = e.target.closest('.url-row')
-            const html = getColumnDataTooltip(rowEl, columnClass)
-            console.log(`UrlFlock::onHoverFlockRow: in url-row; class = ${columnClass}`)
-            setUrlTooltipHtml(html)
-            return
-        }
-
-        setUrlTooltipHtml(null);
-
+        const html = getColumnTooltip(e)
+        setUrlTooltipHtml(html)
     }
-
 
     const onClickFlockRow = (e) => {
         e.stopPropagation()
@@ -553,20 +427,6 @@ const urlFlock = React.memo(function UrlFlock({
 
     }
 
-    // const onHoverUrlFlock = (e) => {
-    //     // clears tooltip html...only if no other sub-elements got there first
-    //     setUrlTooltipHtml('')
-    // }
-
-
-
-    // const onHoverErrorRow = e => {
-    //     // sets tooltip to error text of row
-    //     const text = e.currentTarget.getAttribute('data-err-text');
-    //     // console.log("handleRowHover", text)
-    //     setUrlTooltipHtml(text)
-    // }
-
     const getUrlRows = (urlArray, flockFilters) => {
         // TODO implement columnsToShow (ignoring for now)
 
@@ -627,64 +487,12 @@ const urlFlock = React.memo(function UrlFlock({
                 })
         })
 
-        // eslint-disable-next-line no-unused-vars
-        const getCitationInfo = (u => {
-            // NB This needs to be more clearly defined
-            // for now, returns array of statuses from url's associated references
-            return !u.reference_info?.statuses
-                ? null
-                : u.reference_info.statuses.map((s, i) => {
-                    const display = s === "--"  // this is what PageData set status to if not there - TODO do this better!
-                        ? ""
-                        : s.charAt(0).toUpperCase() + s.slice(1)
-                    return <div key={i}>{display}</div>
-                })
-        })
-
-        // eslint-disable-next-line no-unused-vars
-        const getTemplateInfo = (u => {
-            return !u.reference_info?.templates
-                ? null
-                : u.reference_info.templates.map((s, i) => {
-                    return <div key={i}>{s}</div>
-                })
-        })
-
-
-        // eslint-disable-next-line no-unused-vars
-        const getSectionInfo = (u => {
-            // display array of section names
-            return !u.reference_info?.sections
-                ? null
-                : u.reference_info.sections.map((s, i) => {
-                    s = (s === 'root' ? 'Lead' : s)  // transform "root" section to "Lead"
-                    // TODO: should transform s earlier...
-                    return <div key={i}>{s}</div>
-                })
-        })
-
-        // eslint-disable-next-line no-unused-vars
-        const getPerennialInfo = (u => {
-            return !u.rsp
-                ? null
-                // rsp contains keys into reliabilityMap
-                : u.rsp.map((s, i) => {
-                    return <div key={i} className={reliabilityMap[s]?.key === "__unassigned" ? "lolite" : ""}>{
-                        reliabilityMap[s]?.shortCaption ? reliabilityMap[s].shortCaption : ''
-                    }</div>
-                })
-        })
-
         const getDataRow = (u, i) => {
 
             const classes = 'url-row '
-                + (u.status_code === 0 ? ' url-is-unknown'
-                    : u.status_code >= 300 && u.status_code < 400 ? ' url-is-redirect'
-                        : u.status_code >= 400 && u.status_code < 500 ? ' url-is-notfound'
-                            : u.status_code >= 500 && u.status_code < 600 ? ' url-is-error'
-                                : '')
+                + getUrlStatusClass(u.status_code)
                 + (u.url === selectedUrl ? ' url-selected' : '')
-                + (u.rsp ? ` url-rating-${u.rsp[0]}` : '')  // TODO deprecated?
+                // + (u.rsp ? ` url-rating-${u.rsp[0]}` : '')  // TODO deprecated?
 
             const citationStatus = !u.reference_info?.statuses?.length
                 // TODO rethink this column - could have a JSON array version
@@ -694,11 +502,12 @@ const urlFlock = React.memo(function UrlFlock({
             return <div className={classes} key={i}
 
                         data-url={u.url}
-                        data-actionable={u.actionable ? u.actionable[0] : null}  // return first actionable only (for now)
-
                         data-status_code={u.status_code}
                         data-archive_status={u.archive_status?.hasArchive}
                         data-live_state={u.archive_status?.live_state}
+
+                        data-actionable={u.actionable ? u.actionable[0] : null}  // return first actionable only (for now)
+
 
                         data-is_book={u.isBook}
                         data-citation_status={citationStatus}
@@ -711,9 +520,10 @@ const urlFlock = React.memo(function UrlFlock({
 
                 <div className={"url-signals"}>
 
-                    <SignalBadges signals={u?.signal_data?.signals ?? {}}
+                    <SignalBadges badgeContextKey={badgeContext.inline.value}
+                                  signalData={u?.signal_data?.signals ?? {}}
+                                  monitoredSignals={monitoredSignals}
                                   onAction={onAction}
-                                  badgeContextKey={badgeContext.inline.value}
                                   tooltipId = {tooltipId}
                                   fromCache = {u?.signal_data?.retrieved_from_cache}
                     />
@@ -805,10 +615,9 @@ const urlFlock = React.memo(function UrlFlock({
                 <div className={"url-signals flock-col"}>
                     <div>
                         <SignalBadges badgeContextKey={BadgeContexts.sort.value}
+                                      monitoredSignals={monitoredSignals}
                                       tooltipId={tooltipId}
-                            // onBadgesHover={onBadgeHover}
                                       onAction={onAction}
-                                      onClick={handleSignalBadgesClick}  // TODO need this???
                         />
                     </div>
                 </div>
@@ -852,21 +661,17 @@ const urlFlock = React.memo(function UrlFlock({
         }
     }, [feedbackText]);
 
+    const handleFeedback = (feedback) => {
+        setFeedbackText(feedback)
+    }
 
-    // flockDataRows is array of markup for all rows; flockArray is array of url's used for that markup
-    const [flockDataRows, flockArray] = getUrlRows(urlArray, urlFilters);
-    const flockRows = <div className={"flock-rows"}>
-        {flockDataRows}
-    </div>
-    const flockHeader = getHeaderRow()
+    const spanFeedback =  // placeholder to show disappearing messages
+        <div className={`feedback-div ${feedbackText ? 'feedback-fade-text' : ''}`}>
+            {feedbackText && <span>{feedbackText}</span>}
+        </div>
 
-    const flock = <div className={"flock-container"}
-                         onClick={onClickFlockRow}
-                         onMouseOver={onHoverFlockRow} >
-        {flockHeader}
-        {flockRows}
-    </div>
 
+    /* Copy functions */
 
     // NB TODO retool to be in an IARE tools module: copyUrlDetails( urlArray )
     const handleCopyUrlDetails = () => {
@@ -902,10 +707,6 @@ const urlFlock = React.memo(function UrlFlock({
 
     }
 
-    const handleFeedback = (feedback) => {
-        setFeedbackText(feedback)
-    }
-
     const handleCopyUrlList = () => {
 
         const urlArrayData = [...flockArray].sort(   // NB used "..." so that copy of array is sorted, not original flock array
@@ -922,16 +723,10 @@ const urlFlock = React.memo(function UrlFlock({
     const buttonCopyList =
         <button onClick={handleCopyUrlList} className={'btn utility-button small-button'}><span>Copy URL List</span>
         </button>
+
     const buttonCopyDetails =
         <button onClick={handleCopyUrlDetails} className={'btn utility-button small-button'}>
             <span>Copy URL Details</span></button>
-    const spanFeedback =  // placeholder to show disappearing messages
-        <div className={`feedback-div ${feedbackText ? 'feedback-fade-text' : ''}`}>
-            {feedbackText && <span>{feedbackText}</span>}
-        </div>
-
-    const flockInfo = `${flockDataRows.length} ` +
-        `${flockDataRows.length === 1 ? 'URL' : 'URLs'}`
 
     const buttonShowHideRefs =
         <button onClick={() => onAction({action: ACTIONS_IARE.TOGGLE_SHOW_REFS.key})}
@@ -947,19 +742,35 @@ const urlFlock = React.memo(function UrlFlock({
             <span>{options.showFilters ? "Hide Filters" : "Show Filters"}</span>
         </button>
 
-    const getFlockCaption = () => {
-        return <>
-            <div className={"main-caption"}>URL Links <span>{buttonShowHideFilters}{buttonShowHideRefs}</span></div>
-            <div className={"sub-caption"}>
-                <div>{flockInfo}</div>
-                <div>{spanFeedback} {buttonCopyList} {buttonCopyDetails}</div>
-            </div>
-        </>
-    }
 
-    const flockCaption = getFlockCaption()
+    /* flock info */
 
-    // TODO implement tooltip id somehow
+    const [flockDataRows, flockArray] = getUrlRows(urlArray, urlFilters);
+        // flockDataRows is array of row markup; flockArray is array of url data that markup represents
+
+    const flockInfo = `${flockDataRows.length} ` +
+        `${flockDataRows.length === 1 ? 'URL' : 'URLs'}`
+
+    const flockCaption = <>
+        <div className={"main-caption"}>URL Links <span>{buttonShowHideFilters}{buttonShowHideRefs}</span></div>
+        <div className={"sub-caption"}>
+            <div>{flockInfo}</div>
+            <div>{spanFeedback} {buttonCopyList} {buttonCopyDetails}</div>
+        </div>
+    </>
+
+    const flockHeader = getHeaderRow()
+    const flockRows = <div className={"flock-rows"}>
+        {flockDataRows}
+    </div>
+
+    const flock = <div className={"flock-container"}
+                       onClick={onClickFlockRow}
+                       onMouseOver={onHoverFlockRow} >
+        {flockHeader}
+        {flockRows}
+    </div>
+
     return <>
 
         <div data-tooltip-id={tooltipId}         // passed in tooltipId for this flock

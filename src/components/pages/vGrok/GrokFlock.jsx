@@ -9,7 +9,6 @@ import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../../constants
 import {httpStatusCodes, iabotLiveStatusCodes} from "../../../constants/httpStatusCodes.jsx"
 import {urlColumnRegistry} from "../../../constants/urlColumnRegistry.jsx";
 import Popup from "../../Popup.jsx";
-import SignalDisplay from "../../SignalDisplay.jsx";
 import SignalDataDetailsTitle from "../../SignalDataDetailsTitle.jsx";
 import SignalDataDetails from "../../SignalDataDetails.jsx";
 
@@ -545,7 +544,8 @@ const grokFlock = React.memo(function GrokFlock({
                 {/* <UrlDataCol urlObj={u} column_name={"probes"} options={{onProbeClick: handleProbeClick}}/> */}
 
                 <div className={"flock-col url-signals"}>
-                    <SignalDisplay urlObj={u} onSignalClick={handleSignalClick} />
+                    {/*<SignalDisplay urlObj={u} onSignalClick={handleSignalClick} />*/}
+                    <SignalBadges urlObj={u} onSignalClick={handleSignalClick} />
                 </div>
 
             </div>

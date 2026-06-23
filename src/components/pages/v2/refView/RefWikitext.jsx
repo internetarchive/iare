@@ -46,7 +46,7 @@ export default function RefWikitext({ wikitext, onAction }) {  // NB TODO make o
 
                         // alert ("will (but not yet) save changes to wikitext for this reference")
                         //
-                        // onAction({action: "saveWikitext", value: localWikitext})
+                        // onAction({action: ACTIONS_IARE.SAVE_WIKITEXT.key, value: localWikitext})
 
             /*
             send onAction to save new ref contents with newText.
@@ -124,10 +124,10 @@ export default function RefWikitext({ wikitext, onAction }) {  // NB TODO make o
         {/*    /div>}*/}
         {/*/>*/}
 
-        <textarea className={`raw-wikitext ${editable ? "editable" : "non-editable"}`}
-                  readOnly={!editable}
-                  value={localWikitext}
-                  onChange={(e) => setLocalWikitext(e.target.value)}
+        <textarea className={`ref-view-section-contents raw-wikitext ${editable ? "editable" : "non-editable"}`}
+              readOnly={!editable}
+              value={localWikitext}
+              onChange={(e) => setLocalWikitext(e.target.value)}
         />
     </div>
 

@@ -28,7 +28,7 @@ function RefCitationDisplayHtml({ reference = null,
         {/*    { /* NB Note use of DANGEROUS property... *!/*/}
         {/*</div>*/}
 
-        <div className={"ref-view-section-contents raw-ref-citation"} onClick={onClick}>
+        <div className={"ref-view-section-contents raw-citation"} onClick={onClick}>
             { /* NB Note use of DANGEROUS property... */}
             <div dangerouslySetInnerHTML={{__html: cleanHTML}}/>
             { /* NB Note use of DANGEROUS property... */}

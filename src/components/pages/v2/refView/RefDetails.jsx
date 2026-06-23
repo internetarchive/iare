@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from "react";
-import RefCitationDisplay from "./RefCitationDisplay.jsx";
+// import RefCitationDisplay from "./RefCitationDisplay.jsx";
 import RefTemplates from "./RefTemplates.jsx";
 import RefActionables from "./RefActionables.jsx";
 import RefWikitext from "./RefWikitext.jsx";
@@ -106,7 +106,7 @@ function RefDetails({ refDetails,
 
         if (0) {}  // allows easy subsequent else if's
 
-        else if (action === "saveWikitext") {
+        else if (action === ACTIONS_IARE.SAVE_WIKITEXT.key) {
             // this is where we need to asynchronously save the reference/entire page, and reload, basically
             const newText = value
             saveWikitext(newText)
@@ -163,8 +163,12 @@ function RefDetails({ refDetails,
         <div className={"ref-analysis"}>
             {/*<RefProbes reference={refDetails} pageData={pageData} />*/}
 
-            {true &&
-                <RefUrls urls={refDetails?.urls} pageData={pageData} onAction={onAction}/>}
+            <RefUrls
+                urlArray={refDetails?.urls}
+                pageData={pageData}
+                onAction={onAction}
+                tooltipId={tooltipId}
+            />
 
             <RefActionables actionables={refDetails?.actionable}/>
 

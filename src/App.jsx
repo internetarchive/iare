@@ -22,11 +22,6 @@ import {ShortcutDefs, envShortcutLists} from "./constants/shortcutDefs.jsx";
 import {KNOWN_MEDIA_TYPES} from "./constants/knownMediaTypes.jsx";
 import {ACTIONS_IARE} from "./constants/actionsIare.jsx";
 import {iareAlert} from "./utils/generalUtils.js";
-import {REFERENCE_STATS_MAP} from "./constants/referenceStatsMap.jsx";
-import {ACTIONABLE_FILTER_MAP} from "./constants/actionableMap.jsx";
-import {REF_FILTER_DEFS} from "./constants/refFilterMaps.jsx";
-import {reliabilityMap} from "./constants/perennialList.jsx";
-import {LINK_STATUS_MAP} from "./constants/linkStatusMap.jsx";
 
 
 export default function App(
@@ -62,11 +57,9 @@ export default function App(
 
     const [isShowDebugInfo, setIsShowDebugInfo] = useState(false);
     const [isShowDebugComponents, setIsShowDebugComponents] = useState(false);
-    // const [isShowDebugControls, setIsShowDebugControls] = useState(false);
 
     const [isShowViewOptions, setIsShowViewOptions] = useState(false);
     const [isShowHamburger, setIsShowHamburger] = useState(false);
-    // const [isShowViewOptions, setIsShowViewOptions] = useState(true);
 
     // params settable from from address url
     const [targetPath, setTargetPath] = useState(myPath);
@@ -95,25 +88,26 @@ export default function App(
     const [lowerSectionTopY, setLowerSectionTopY] = useState(0);
     // const [lowerSectionHeight, setLowerSectionHeight] = useState(0);
 
-    // Define CSS styles for logo and add to document
-    const styles = {
-        '.header-title-section': {
-            display: 'flex',
-            alignItems: 'center',
-            gap: '.45rem'
-        },
-        '.app-logo': {
-            height: '1.65rem',
-            width: 'auto',
-            marginLeft: '0.27rem',
-        }
-    }
-    Object.entries(styles).forEach(([selector, rules]) => {
-        const styleEl = document.createElement('style')
-        styleEl.textContent = `${selector} { ${Object.entries(rules).map(([prop, value]) =>
-            `${prop.replace(/[A-Z]/g, m => '-' + m.toLowerCase())}: ${value}`).join(';')} }`
-        document.head.appendChild(styleEl)
-    })
+// DO NOT DELETE YET!// Define CSS styles for logo and add to document
+
+// const styles = {
+//     '.header-title-section': {
+//         display: 'flex',
+//         alignItems: 'center',
+//         gap: '.45rem'
+//     },
+//     '.app-logo': {
+//         height: '1.65rem',
+//         width: 'auto',
+//         marginLeft: '0.27rem',
+//     }
+// }
+// Object.entries(styles).forEach(([selector, rules]) => {
+//     const styleEl = document.createElement('style')
+//     styleEl.textContent = `${selector} { ${Object.entries(rules).map(([prop, value]) =>
+//         `${prop.replace(/[A-Z]/g, m => '-' + m.toLowerCase())}: ${value}`).join(';')} }`
+//     document.head.appendChild(styleEl)
+// })
 
 
     const toggleDebug = () => {
