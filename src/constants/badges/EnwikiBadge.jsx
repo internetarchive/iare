@@ -15,7 +15,7 @@ const noDataProvidedText = "---"
  */
 export default function EnwikiBadge({
                                         signals = {},
-                                        badgeContextKey = BadgeContexts.inline.value,
+                                        badgeContextKey = BadgeContexts.inline.key,
                                         onAction,
                                     }
 ) {

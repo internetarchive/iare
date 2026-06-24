@@ -14,7 +14,7 @@ const noDataProvidedText = "---"
  * @param {String} [props.badgeContextKey]*/
 export default function TrancoBadge({
                                         signals = {},
-                                        badgeContextKey = BadgeContexts.inline.value,
+                                        badgeContextKey = BadgeContexts.inline.key,
                                         onAction,
                                     }
 ) {

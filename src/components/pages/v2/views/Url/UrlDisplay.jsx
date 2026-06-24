@@ -713,7 +713,7 @@ export default function UrlDisplay ({ pageData, options } ) {
                       urlArray={pageData.urlArray}
                       urlFilters={urlFilters}
                       onAction={handleAction}
-                      options={{showFilters: isShowFilters }}
+                      options={{showFilters: isShowFilters, showRefs: isShowRefs}}
                       selectedUrl={selectedUrl}
                       fetchMethod={myConfig.urlStatusMethod}
                       tooltipId={"tooltip-url-display"} />

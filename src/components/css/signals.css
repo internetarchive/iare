@@ -70,8 +70,10 @@
  * * * * * * * * * * * * * * * * * */
 
 button.fetch-signal-button {
-    margin-top: 0 !important;
-    background-color: #dbeaf5 !important;
+    /*margin-top: 0 !important;*/
+    /*background-color: #dbeaf5 !important;*/
+    position: relative;
+    top: .15rem;
 }
 button.fetch-signal-button:hover {
     background-color: #cce6f9 !important;
@@ -215,8 +217,6 @@ button.fetch-signal-button:hover {
 .signal-badges-inline .signal-badges-extra-msg {
     grid-column: 1 / -1;
     padding-left:1.5rem;
-    font-style: italic;
-    color: var(--color-text-muted);
 }
 
 

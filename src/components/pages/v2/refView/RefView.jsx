@@ -1,15 +1,14 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Rnd} from 'react-rnd';
+import {useTranslation} from "react-i18next";
 import {ConfigContext} from "../../../../contexts/ConfigContext.jsx";
+import {ACTIONS_IARE} from "../../../../constants/actionsIare.jsx";
 import RefFlock from "../RefFlock.jsx";
 import RefDetails from "./RefDetails.jsx";
-import "./refView.css"
-import {ACTIONS_IARE} from "../../../../constants/actionsIare.jsx";
-import {createInstance} from "i18next";
 import Popup from "../../../Popup.jsx";
-import SignalDataDetailsTitle from "../../../SignalDataDetailsTitle.jsx";
-import SignalDataDetails from "../../../SignalDataDetails.jsx";
-import {useTranslation} from "react-i18next";
+import "./refView.css"
+// import SignalDataDetailsTitle from "../../../SignalDataDetailsTitle.jsx";
+// import SignalDataDetails from "../../../SignalDataDetails.jsx";
 
 const STORAGE_KEY = "modalPositionSize";
 
@@ -306,21 +305,21 @@ export default function RefView({
         const {action, value} = result;
         console.log (`RefView: handleRefViewAction: action=${action}, value=${value}`);
 
-        // handle Signal Details popup click - "value" is urlLink
-        if (action === ACTIONS_IARE.POPUP_SIGNALS_DETAILS.key) {
-            const urlLink = value
-            const urlObj = pageData.urlDict[urlLink]
-            const rawSignalData = urlObj.signal_data
-
-            setSignalDetailsPopupTitle(<SignalDataDetailsTitle urlLink={urlLink}/>)
-            setSignalDetailsPopupContents(<SignalDataDetails
-                urlLink={urlLink}
-                rawSignalData={rawSignalData}
-                tooltipId={tooltipId}
-            />)
-            setIsSignalDetailsPopupOpen(true)
-            return
-        }
+        // // handle Signal Details popup click - "value" is urlLink
+        // if (action === ACTIONS_IARE.POPUP_SIGNALS_DETAILS.key) {
+        //     const urlLink = value
+        //     const urlObj = pageData.urlDict[urlLink]
+        //     const rawSignalData = urlObj.signal_data
+        //
+        //     setSignalDetailsPopupTitle(<SignalDataDetailsTitle urlLink={urlLink}/>)
+        //     setSignalDetailsPopupContents(<SignalDataDetails
+        //         urlLink={urlLink}
+        //         rawSignalData={rawSignalData}
+        //         tooltipId={tooltipId}
+        //     />)
+        //     setIsSignalDetailsPopupOpen(true)
+        //     return
+        // }
 
         // else send back up action tree
         onAction(result)
@@ -340,7 +339,6 @@ export default function RefView({
     }
 
     
-    // return <div className='ref-modal-overlay' onProbeClick={onClose} >
     return <div
         className='ref-modal-overlay'
 
@@ -420,7 +418,6 @@ export default function RefView({
                         stopAndShow(e, "contents:onProbeClick")
                     }
                 }
-
                 // onMouseMove={(e) => {stopAndShow(e, "contents::onMouseMove")}}
                 // onMouseDown={(e) => {stopAndShow(e, "onMouseDown")}}
                 onScroll={(e) => {stopAndShow(e, "contents:onScroll")}}

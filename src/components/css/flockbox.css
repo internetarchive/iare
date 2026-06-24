@@ -35,9 +35,9 @@
     line-height:1.2;
 }
 
-.flock-box-caption button.utility-button.small-button {
-    line-height: .85rem;
-}
+/*.flock-box-caption button.utility-button.small-button {*/
+/*    line-height: .85rem;*/
+/*}*/
 
 .flock-box-caption .main-caption {
     display:flex;
@@ -45,22 +45,10 @@
     flex-direction: row;
     justify-content: space-between;
 }
-.flock-box-caption .main-caption button {
-    margin-top: 0;
-    padding-top: 0;
-    font-family: inherit;
-    font-size: inherit;
-    /*font-weight: inherit;*/
-    font-weight: normal;
-    margin-right: 0;
-    padding-right: 0;
-    /*color: limegreen;*/
-    color: inherit;
-    text-decoration: underline;
-}
-.flock-box-caption .main-caption button:hover {
+.flock-box-caption button:hover {
     color: var(--color-text-muted);
 }
+
 .flock-box-caption .sub-caption {
     font-size:88%;
     font-weight:normal;
@@ -70,6 +58,8 @@
     flex-direction: row;
     justify-content: space-between;
 }
+
+
 
 /* flock box contents contains header row and rows */
 

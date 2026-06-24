@@ -604,9 +604,7 @@
 
 .ref-view-ref-list .ref-button.selected {
     background-color: var(--g-color-reference-display-selected-bg);
-    /*width: 22rem;*/
-    /*border: 3px solid #0966a4;*/
-    outline: 3px solid #0966a4;
+    outline: 2px solid #c6ced3;
 }
 
 .custom-resize-handle {

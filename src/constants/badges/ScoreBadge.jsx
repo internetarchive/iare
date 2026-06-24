@@ -43,7 +43,7 @@ function getTemperatureColor2(value) {
  * @param {BadgeContexts} [props.badgeContext]*/
 export default function ScoreBadge({
                                        signals = {},
-                                       badgeContextKey = BadgeContexts.inline.value,
+                                       badgeContextKey = BadgeContexts.inline.key,
                                        onAction,
                                     }
 ) {

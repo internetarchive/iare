@@ -91,7 +91,9 @@ If no score can try and fetch it from WikiSignals.`,
 
         tooltipMarkup: `##### Tranco Score
         
-The Tranco estimate of the website's global traffic ranking (from 1 to 20,000,000).`,
+The Tranco estimate of the website's global traffic ranking (from 1 to 20,000,000).
+
+Value displayed is the log10 of the value.`,
 
         info_spec: {
             description: "Tranco rating",

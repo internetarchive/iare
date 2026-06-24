@@ -384,11 +384,11 @@ body.env-other .iare-hamburger-menu span.non-production {
 
 button.utility-button {
     display: inline-block;
-    text-align: center;
-    line-height: 1;
     cursor: pointer;
     -webkit-appearance: none;
 
+    background-color: #2199e8;
+    color: #fefefe;
     transition: background-color .25s ease-out, color .25s ease-out;
 
     border: 1px solid transparent;
@@ -396,14 +396,15 @@ button.utility-button {
     padding: .28rem .42rem;
     margin: 0 0 .5rem .5rem;
     vertical-align: middle;
-    font-size: .69rem;
 
-    background-color: #2199e8;
-    color: #fefefe
+    font-size: .69rem;
+    text-align: center;
+    line-height: 1.1;
 }
+
 button.utility-button.small-button {
     padding: 0.3em 0.55em 0.25em 0.4em;
-    font-size: 80%;
+    font-size: .56rem;
     margin: -0.4rem 0 0 0.2rem;
     background-color: #e9e9e9;
     color: #4d4d4d;
@@ -417,12 +418,10 @@ button.utility-button.small-button:hover {
     color: #909090;
 }
 
-
 .utility-button:focus, .utility-button:hover {
     background-color: #1583cc;
     color: #fefefe
 }
-
 
 .utility-button.debug-button {
     background-color: #2199e8;

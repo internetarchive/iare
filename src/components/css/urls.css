@@ -228,6 +228,7 @@
 .url-row .url-info
 {
     padding-left: var(--url-list-padding-url) !important;
+    text-align: left;
 }
 
 .flock-header .url-name,

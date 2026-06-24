@@ -3,31 +3,27 @@ import FlockBox from "../../FlockBox.jsx";
 import "../../css/flock.css"
 
 import {convertToCSV, copyToClipboard, iareAlert} from "../../../utils/generalUtils.js";
-import {
-    getColumnHeaderTooltip,
-    getColumnDataTooltip,
-    getUrlStatusClass, getColumnTooltip
-}
-    from "../../../utils/flockUtils.jsx";
+import {getUrlLiveStatusClass, getColumnTooltip} from "../../../utils/flockUtils.jsx";
 import {getArchiveStatusInfo} from "../../../utils/urlUtils.jsx";
 import {BadgeContexts as badgeContext, BadgeContexts} from "../../../constants/badgeContexts.jsx";
 
 import {ACTIONS_IARE} from "../../../constants/actionsIare.jsx";
-import {ACTIONABLE_FILTER_MAP} from "../../../constants/actionableMap.jsx";
 import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../../constants/urlFilterMaps.jsx";
-import {httpStatusCodes, iabotLiveStatusCodes} from "../../../constants/httpStatusCodes.jsx"
-import {reliabilityMap} from "../../../constants/perennialList.jsx";
-import {urlColumnRegistry} from "../../../constants/urlColumnRegistry.jsx";
+
+// import {urlColumnRegistry} from "../../../constants/urlColumnRegistry.jsx";
 import signalBadgeRegistry, {signalBadgePrefix} from "../../../constants/badges/signalBadgeRegistry.jsx";
 
 import Popup from "../../Popup.jsx";
 
+import ColumnBox from "../../ColumnBox.jsx";
+
 // import SignalDisplay from "../../SignalDisplay.jsx";
 import SignalsDocs from "../../SignalsDocs.jsx";
-import SignalsSort from "../../SignalsSort.jsx";
-
+import SignalsSort from "../../../../_notes/_archive/SignalsSort.jsx";
 import SignalBadges from "../../SignalBadges.jsx";
-import ColumnBox from "../../ColumnBox.jsx";
+
+// context to provide global flag for sorting value
+// TODO move this into main config context, i think??
 import { ColumnSortContext } from "../../../contexts/ColumnSortContext.jsx"
 
 /*
@@ -489,28 +485,19 @@ const urlFlock = React.memo(function UrlFlock({
 
         const getDataRow = (u, i) => {
 
-            const classes = 'url-row '
-                + getUrlStatusClass(u.status_code)
+            const classList = 'url-row '
+                + getUrlLiveStatusClass(u.status_code)
                 + (u.url === selectedUrl ? ' url-selected' : '')
                 // + (u.rsp ? ` url-rating-${u.rsp[0]}` : '')  // TODO deprecated?
 
-            const citationStatus = !u.reference_info?.statuses?.length
-                // TODO rethink this column - could have a JSON array version
-                ? null
-                : u.reference_info.statuses[0]  // just return first one
-
-            return <div className={classes} key={i}
+            return <div className={classList} key={i}
 
                         data-url={u.url}
                         data-status_code={u.status_code}
                         data-archive_status={u.archive_status?.hasArchive}
                         data-live_state={u.archive_status?.live_state}
-
                         data-actionable={u.actionable ? u.actionable[0] : null}  // return first actionable only (for now)
-
-
                         data-is_book={u.isBook}
-                        data-citation_status={citationStatus}
             >
 
                 <div className={"url-name"}>{u.url}</div>
@@ -520,11 +507,11 @@ const urlFlock = React.memo(function UrlFlock({
 
                 <div className={"url-signals"}>
 
-                    <SignalBadges badgeContextKey={badgeContext.inline.value}
+                    <SignalBadges urlObj={u}
+                                  badgeContextKey={badgeContext.inline.key}
                                   signalData={u?.signal_data?.signals ?? {}}
                                   monitoredSignals={monitoredSignals}
                                   onAction={onAction}
-                                  tooltipId = {tooltipId}
                                   fromCache = {u?.signal_data?.retrieved_from_cache}
                     />
 
@@ -614,9 +601,8 @@ const urlFlock = React.memo(function UrlFlock({
                 {/* signals column is special... */}
                 <div className={"url-signals flock-col"}>
                     <div>
-                        <SignalBadges badgeContextKey={BadgeContexts.sort.value}
+                        <SignalBadges badgeContextKey={BadgeContexts.sort.key}
                                       monitoredSignals={monitoredSignals}
-                                      tooltipId={tooltipId}
                                       onAction={onAction}
                         />
                     </div>
@@ -730,14 +716,14 @@ const urlFlock = React.memo(function UrlFlock({
 
     const buttonShowHideRefs =
         <button onClick={() => onAction({action: ACTIONS_IARE.TOGGLE_SHOW_REFS.key})}
-                className={'btn text-button'}
+                className={'btn utility-button small-button'}
         >
             <span>{options.showRefs ? "Hide Refs" : "Show Refs"}</span>
         </button>
 
     const buttonShowHideFilters =
         <button onClick={() => onAction({action: ACTIONS_IARE.TOGGLE_SHOW_FILTERS.key})}
-                className={'btn text-button'}
+                className={'btn utility-button small-button'}
         >
             <span>{options.showFilters ? "Hide Filters" : "Show Filters"}</span>
         </button>
@@ -752,10 +738,15 @@ const urlFlock = React.memo(function UrlFlock({
         `${flockDataRows.length === 1 ? 'URL' : 'URLs'}`
 
     const flockCaption = <>
-        <div className={"main-caption"}>URL Links <span>{buttonShowHideFilters}{buttonShowHideRefs}</span></div>
+        <div className={"main-caption"}>
+            <div>URL Links</div>
+            <div>
+                <div style={{position: "relative", top: ".2rem"}}>{buttonShowHideFilters}{buttonShowHideRefs}{buttonCopyList}{buttonCopyDetails}</div>
+            </div>
+        </div>
         <div className={"sub-caption"}>
             <div>{flockInfo}</div>
-            <div>{spanFeedback} {buttonCopyList} {buttonCopyDetails}</div>
+            <div>{spanFeedback} </div>
         </div>
     </>
 

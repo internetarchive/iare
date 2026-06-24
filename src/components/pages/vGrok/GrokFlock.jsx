@@ -9,13 +9,13 @@ import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../../constants
 import {httpStatusCodes, iabotLiveStatusCodes} from "../../../constants/httpStatusCodes.jsx"
 import {urlColumnRegistry} from "../../../constants/urlColumnRegistry.jsx";
 import Popup from "../../Popup.jsx";
-import SignalDataDetailsTitle from "../../SignalDataDetailsTitle.jsx";
-import SignalDataDetails from "../../SignalDataDetails.jsx";
+// import SignalDataDetailsTitle from "../../../../_notes/SignalDataDetailsTitle.jsx";
+// import SignalDataDetails from "../../../../_notes/SignalDataDetails.jsx";
 
 import '../../css/grok.css';
 import Checkbox from "../../Checkbox.jsx";
 import MakeLink from "../../MakeLink.jsx";
-import SignalsSort from "../../SignalsSort.jsx";
+import SignalsSort from "../../../../_notes/_archive/SignalsSort.jsx";
 import SignalsDocs from "../../SignalsDocs.jsx";
 
 
@@ -114,12 +114,12 @@ const grokFlock = React.memo(function GrokFlock({
         const rawSignalData = urlObj.signal_data
         const score = "TBD"
 
-        setSignalPopupTitle(<SignalDataDetailsTitle urlLink={urlLink} />)
-        setSignalPopupContents(<SignalDataDetails
-            urlLink={urlLink}
-            score={score}
-            rawSignalData={rawSignalData}
-        />)
+        // // setSignalPopupTitle(<SignalDataDetailsTitle urlLink={urlLink} />)
+        // setSignalPopupContents(<SignalDataDetails
+        //     urlLink={urlLink}
+        //     score={score}
+        //     rawSignalData={rawSignalData}
+        // />)
 
         setIsSignalPopupOpen(true)
 

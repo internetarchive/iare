@@ -127,8 +127,8 @@ export const getColumnDataTooltip = (rowEl, columnClass) => {
     }
 
     if (columnClass === "url-signals") {
-        // return null
-        return "signal data not yet implemented"
+        return null
+        // return "signal data not yet implemented"
     }
 
     // if not a special case column, show tooltip from column definition
@@ -145,7 +145,7 @@ export const getColumnHeaderTooltip = (columnClass) => {
 }
 
 
-export const getUrlStatusClass = (u = null) => {
+export const getUrlLiveStatusClass = (u = null) => {
     if (!u) return null
     return (u.status_code === 0 ? ' url-is-unknown'
             : u.status_code >= 300 && u.status_code < 400 ? ' url-is-redirect'

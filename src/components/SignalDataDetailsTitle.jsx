@@ -1,7 +1,0 @@
-export default function SignalDataDetailsTitle({ urlLink }) {
-    return <>
-        {/*<div>Signal results for URL:</div>*/}
-        {/*<div style={{ fontWeight: "normal" }}>{urlLink}</div>*/}
-        <div>WikiSignals Details <span className={"info-click"}>ℹ️</span></div>
-    </>
-}

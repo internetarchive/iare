@@ -7,7 +7,7 @@ import { ColumnSortContext } from "../contexts/ColumnSortContext"
 export default function Badge({
                                   badgeKey = "",
                                   badgeClass = "",
-                                  badgeContextKey = BadgeContexts.inline.value,
+                                  badgeContextKey = BadgeContexts.inline.key,
 
                                   badgeIcon = null,
                                   badgeText = null,
@@ -55,7 +55,7 @@ export default function Badge({
 
 
 
-    const headerSort = badgeContext.value === "sort"
+    const headerSort = badgeContext.key === "sort"
         ? <SortBox
             className={"signal-badge-element"}
             direction={myDir}

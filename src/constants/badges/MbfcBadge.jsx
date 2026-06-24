@@ -12,7 +12,7 @@ import {isEmpty} from "../../utils/generalUtils.js";
  * @param {String} [props.badgeContextKey]*/
 export default function MbfcBadge({
                                       signals = {},
-                                      badgeContextKey = BadgeContexts.inline.value,
+                                      badgeContextKey = BadgeContexts.inline.key,
                                       onAction,
                                   }
 ) {

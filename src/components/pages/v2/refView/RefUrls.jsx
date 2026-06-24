@@ -3,7 +3,10 @@ import {useTranslation} from 'react-i18next';
 import MakeLink from "../../../MakeLink.jsx";
 import RefSectionHeader from "./RefSectionHeader.jsx";
 import {getArchiveStatusInfo} from "../../../../utils/urlUtils.jsx";
-import {getColumnHeaderTooltip, getColumnTooltip, getUrlStatusClass} from "../../../../utils/flockUtils.jsx";
+import {
+    // getColumnHeaderTooltip,
+    getColumnTooltip,
+    getUrlLiveStatusClass} from "../../../../utils/flockUtils.jsx";
 import SignalBadges from "../../../SignalBadges.jsx";
 import ColumnBox from "../../../ColumnBox.jsx";
 import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../../../constants/urlFilterMaps.jsx";
@@ -11,7 +14,13 @@ import {BadgeContexts} from "../../../../constants/badgeContexts.jsx";
 import signalBadgeRegistry from "../../../../constants/badges/signalBadgeRegistry.jsx";
 
 
-export default function RefUrls({ urlArray, pageData, onAction, tooltipId, showDebug=false }) {
+export default function RefUrls({
+                            urlArray,
+                            pageData,
+                            onAction,
+                            tooltipId,
+                            showDebug=false
+}) {
 
     const { t, i18n } = useTranslation();
     const [urlTooltipHtml, setUrlTooltipHtml] = useState(null);
@@ -29,7 +38,7 @@ export default function RefUrls({ urlArray, pageData, onAction, tooltipId, showD
 
         if (!u) return <div className={"url-row"} key={i}>Undefined URL encountered. (index {i})</div>
 
-        return <div className={"url-row " + getUrlStatusClass(u.status_code)}
+        return <div className={"url-row " + getUrlLiveStatusClass(u.status_code)}
             key={i}
 
             data-url={u.url}
@@ -43,11 +52,11 @@ export default function RefUrls({ urlArray, pageData, onAction, tooltipId, showD
             <div className={"url-archive_status"}>{getArchiveStatusInfo(u)}</div>
 
             <div className={"url-signals"}>
-                <SignalBadges badgeContextKey={BadgeContexts.inline.value}
+                <SignalBadges urlObj = {u}
+                              badgeContextKey={BadgeContexts.inline.key}
                               signalData={u?.signal_data?.signals ?? {}}
                               monitoredSignals={monitoredSignals}
                               onAction={onAction}
-                              tooltipId={tooltipId}
                 />
             </div>
 
@@ -80,10 +89,9 @@ export default function RefUrls({ urlArray, pageData, onAction, tooltipId, showD
             {/* signals column is special... */}
             <div className={"url-signals flock-col"}>
                 <div>
-                    <SignalBadges badgeContextKey={BadgeContexts.refview.value}
+                    <SignalBadges badgeContextKey={BadgeContexts.refview.key}
                                   monitoredSignals={monitoredSignals}
                                   onAction={onAction}
-                                  tooltipId={tooltipId}
                     />
                 </div>
             </div>

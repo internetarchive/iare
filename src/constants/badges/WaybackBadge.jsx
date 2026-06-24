@@ -14,7 +14,7 @@ const noDataProvidedText = "---"
  * @param {BadgeContexts} [props.badgeContext]*/
 export default function WaybackBadge({
                                          signals = {},
-                                         badgeContextKey = BadgeContexts.inline.value,
+                                         badgeContextKey = BadgeContexts.inline.key,
                                          onAction,
                                      }
 ) {
