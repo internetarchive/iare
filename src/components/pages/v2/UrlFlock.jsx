@@ -19,7 +19,6 @@ import ColumnBox from "../../ColumnBox.jsx";
 
 // import SignalDisplay from "../../SignalDisplay.jsx";
 import SignalsDocs from "../../SignalsDocs.jsx";
-import SignalsSort from "../../../../_notes/_archive/SignalsSort.jsx";
 import SignalBadges from "../../SignalBadges.jsx";
 
 // context to provide global flag for sorting value
@@ -71,8 +70,6 @@ const urlFlock = React.memo(function UrlFlock({
 
     const [isSignalDetailsPopupOpen, setIsSignalDetailsPopupOpen] = useState(false)
     const [isSignalsDocsPopupOpen, setIsSignalsDocsPopupOpen] = useState(false)
-    const [isSignalsSortPopupOpen, setIsSignalsSortPopupOpen] = useState(false)
-
 
     const [feedbackText, setFeedbackText] = useState("")
 
@@ -798,17 +795,6 @@ const urlFlock = React.memo(function UrlFlock({
                onClickHeader={onClickDetailsPopupHeader}
         >
             {signalDetailsPopupContents}
-        </Popup>
-
-        <Popup isOpen={isSignalsSortPopupOpen}
-               onClose={() => {
-                   setIsSignalsSortPopupOpen(false)
-               }}
-               title={"WikiSignals Sort"}
-               initialSize={{width: 600, height: 300}}
-               initialPosition={{x: 600, y: 160}}
-        >
-            <SignalsSort onSort={updateFlockSort}/>
         </Popup>
 
     </>
