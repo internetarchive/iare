@@ -9,13 +9,10 @@ import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../../constants
 import {httpStatusCodes, iabotLiveStatusCodes} from "../../../constants/httpStatusCodes.jsx"
 import {urlColumnRegistry} from "../../../constants/urlColumnRegistry.jsx";
 import Popup from "../../Popup.jsx";
-// import SignalDataDetailsTitle from "../../../../_notes/SignalDataDetailsTitle.jsx";
-// import SignalDataDetails from "../../../../_notes/SignalDataDetails.jsx";
 
 import '../../css/grok.css';
 import Checkbox from "../../Checkbox.jsx";
 import MakeLink from "../../MakeLink.jsx";
-import SignalsSort from "../../../../_notes/_archive/SignalsSort.jsx";
 import SignalsDocs from "../../SignalsDocs.jsx";
 
 
@@ -64,7 +61,6 @@ const grokFlock = React.memo(function GrokFlock({
     const [signalPopupContents, setSignalPopupContents] = useState(null);
 
     const [isSignalsDocsPopupOpen, setIsSignalsDocsPopupOpen] = useState(false)
-    const [isSignalsSortPopupOpen, setIsSignalsSortPopupOpen] = useState(false)
 
     const [showHotLinksDisplay, setShowHotLinksDisplay] = useState(true)
     const [useHotLinks, setUseHotLinks] = useState(false)
@@ -750,17 +746,6 @@ const grokFlock = React.memo(function GrokFlock({
                initialPosition={{ x: 600, y: 160 }}
         >
             <SignalsDocs/>
-        </Popup>
-
-        <Popup isOpen={isSignalsSortPopupOpen}
-               onClose={() => {
-                   setIsSignalsSortPopupOpen(false)
-               }}
-               title={"WikiSignals Sort"}
-               initialSize={{ width: 600, height: 300 }}
-               initialPosition={{ x: 600, y: 160 }}
-        >
-            <SignalsSort onSort={updateFlockSort} />
         </Popup>
 
         <Popup isOpen={isSignalPopupOpen}
