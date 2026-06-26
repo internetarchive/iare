@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.3.1.46",
-  "version_name": "0.3.1.46 cleaned up refview popup elements",
+  "version": "0.3.1.47",
+  "version_name": "0.3.1.47 WikiSignals instructions better",
   "private": true,
   "type": "module",
   "dependencies": {

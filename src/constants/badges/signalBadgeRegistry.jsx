@@ -41,9 +41,11 @@ const signalBadgeRegistry = {
         description: "Overall WikiSignals Score",
         tooltipMarkup: `##### WikiSignals Score
         
-_Score is based on..._
+A website reliability estimate (0.0–1.0) based on evaluations by ratings agencies and other credibility indicators.
 
-If no score can try and fetch it from WikiSignals.`,
+See WikiSignals.org for more details.
+
+If "Signal Data is Empty", can try and fetch fresh data with "Fetch Signal Data".`,
 
         priority: 1000,
         logo: imgScoreLogo,
