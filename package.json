@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.3.1.45",
-  "version_name": "0.3.1.45 Special Books handling with Signals",
+  "version": "0.3.1.46",
+  "version_name": "0.3.1.46 cleaned up refview popup elements",
   "private": true,
   "type": "module",
   "dependencies": {

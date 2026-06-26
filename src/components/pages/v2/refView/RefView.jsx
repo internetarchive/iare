@@ -5,12 +5,7 @@ import {ConfigContext} from "../../../../contexts/ConfigContext.jsx";
 import {ACTIONS_IARE} from "../../../../constants/actionsIare.jsx";
 import RefFlock from "../RefFlock.jsx";
 import RefDetails from "./RefDetails.jsx";
-import Popup from "../../../Popup.jsx";
 import "./refView.css"
-// import SignalDataDetailsTitle from "../../../SignalDataDetailsTitle.jsx";
-// import SignalDataDetails from "../../../SignalDataDetails.jsx";
-
-const STORAGE_KEY = "modalPositionSize";
 
 export default function RefView({
                                     isOpen,
@@ -22,7 +17,9 @@ export default function RefView({
                                     refFilter=null,
                                     selectedRefIndex=0,
 
-                                    tooltipId
+                                    tooltipId,
+                                    showDebug = false,
+
                                 }) {
 
     const { t, i18n } = useTranslation();
@@ -48,11 +45,8 @@ export default function RefView({
         y: modalDefaults.margin,
     });
 
-    const [isSignalDetailsPopupOpen, setIsSignalDetailsPopupOpen] = useState(false)
-    const [signalDetailsPopupTitle, setSignalDetailsPopupTitle] = useState(<>Modal Title</>);
-    const [signalDetailsPopupContents, setSignalDetailsPopupContents] = useState(null);
 
-    const [isShowRefs, setIsShowRefs] = useState(true);
+    const [isShowSidebar, setIsShowSidebar] = useState(true);
 
     const handleDragStart = (e, data) => {
         console.log('RefView:handleDragStart', data);
@@ -106,54 +100,6 @@ export default function RefView({
         : 0
     console.log(`RefView: component entrance; pageData.urlDict.length: ${urlCount}`)
 
-    // const [modalState, setModalState] = useState({
-    //     x: (modalDefaults.margin) / 2,
-    //     y: (modalDefaults.margin) / 2,
-    //     width: window.innerWidth - modalDefaults.margin,
-    //     height: window.innerHeight - modalDefaults.margin,
-    // });
-
-                    // const onClickSignalData = (e) => {
-                    //     // triggered when Signal column in url row is clicked.
-                    //
-                    //     console.log("Signal column clicked")
-                    //
-                    //     e.stopPropagation()  // stops row click from engaging
-                    //
-                    //     const targetElement = e.target
-                    //
-                    //     const urlElement = targetElement.closest('.url-row')
-                    //     const urlLink = urlElement.dataset.url
-                    //     const urlObj = pageData.urlDict[urlLink]
-                    //
-                    //     // const rawSignalData = <pre>{JSON.stringify(urlObj.signal_data, null, 2)}</pre>
-                    //     const rawSignalData = urlObj.signal_data
-                    //
-                    //     setSignalDetailsPopupTitle(<SignalDataDetailsTitle urlLink={urlLink}/>)
-                    //
-                    //     setSignalDetailsPopupContents(<SignalDataDetails
-                    //         urlLink={urlLink}
-                    //         rawSignalData={rawSignalData}
-                    //         tooltipId={tooltipId}
-                    //     />)
-                    //
-                    //     setIsSignalDetailsPopupOpen(true)
-                    //
-                    // }
-
-
-    // const [modalState, setModalState] = useState(() => {
-    //     const savedState = localStorage.getItem(STORAGE_KEY);
-    //     return savedState
-    //         ? JSON.parse(savedState)
-    //         : { x: 100, y: 100, width: 400, height: 250 };
-    // });
-
-    // * check resize upon new createInstance
-    // * fetch savedSizeParams for modal
-    //     * if null, set defaults and save
-    // * upon resize or move, save position params
-    //     * show in console
 
     useEffect(() => {
         // adds "Escape Key closes modal" feature
@@ -210,51 +156,13 @@ export default function RefView({
         }
     }, [onAction])
 
-                // useEffect(() => {
-                //     // Save position & size when modalState changes
-                //     localStorage.setItem(STORAGE_KEY, JSON.stringify(modalState));
-                // }, [modalState]);
 
     // close modal if not in open state
     if (!isOpen) return null;
 
-
-                // const handleSetPosition = (x, y) => {
-                //     const container = refContainer.current
-                //
-                //     if (container) {
-                //
-                //         // const scrollLeft = container.scrollLeft;
-                //         const scrollTop = 0;  //container.scrollTop;
-                //
-                //         // // container.scrollLeft = 0;
-                //         // container.scrollTop = 0;
-                //
-                //         console.log(`handleSetPosition, setting position to ${x}, ${y}`)
-                //         setPosition({ x, y });
-                //
-                //         // container.scrollLeft = scrollLeft;
-                //         if (false && container.parentElement) {
-                //             setTimeout(() => {
-                //                 container.parentElement.scrollTop = scrollTop;
-                //             }, 0);
-                //             // container.parentElement.scrollTop = scrollTop;
-                //         }
-                //
-                //     } else {
-                //         console.log(`handleSetPosition, no container, setting position to ${x}, ${y}`)
-                //         setPosition({ x, y });
-                //     }
-                // }
-
-    const debugAtTop = <div style={{backgroundColor: "green", color: "white", padding:"4pt 8pt", borderRadius: "4pt"}}>
+    const debugForRefDetails = showDebug && <div style={{backgroundColor: "green", color: "white", padding:"4pt 8pt", borderRadius: "4pt"}}>
         <div>Debug:</div>
         <div>Current ref index: {selectedRefIndex}</div>
-    </div>
-
-    const debugDisplay = <div className="ref-view-debug"
-             style={{backgroundColor:"green", color: "white !important", padding:"10px"}}>
-        <h3>debug</h3>
     </div>
 
     const handleTitleBarDoubleClick = () => {
@@ -271,10 +179,10 @@ export default function RefView({
     };
 
 
-    const buttonShowHideRefs = <button className="small-button utility-button " onClick={() => {
-        setIsShowRefs((prev) => !prev)
+    const buttonShowHideSidebar = <button className="small-button utility-button " onClick={() => {
+        setIsShowSidebar((prev) => !prev)
     }}>
-    <span>{isShowRefs ? 'Hide References List' : 'Show References List'}</span>
+    <span>{isShowSidebar ? 'Hide Sidebar' : 'Show Sidebar'}</span>
     </button>
 
 
@@ -284,26 +192,39 @@ export default function RefView({
     >
         <div className="modalLeft">
             <h2>{t("reference_details", "Reference Details")}<span
-            >{buttonShowHideRefs}</span></h2>
+            >{buttonShowHideSidebar}</span></h2>
         </div>
         <div className="modalRight">
             <p onClick={onClose} className="closeBtn">X Close</p>
         </div>
-        {false && debugDisplay}
     </div>
 
+    /**
+     * Debug utility.
+     * Stops the propagation of the given event and logs the provided event name.
+     *
+     * @param {Object} e - The event object.
+     * @param {string} eventName - The name of the event to log.
+     */
     const stopAndShow = (e, eventName) => {
-        // debug utility
-        // Stops propagation of element event, and logs event name
         e.stopPropagation()
         console.log(`RefView:Rnd: ${eventName} (stopped propagation)`)
     }
 
-    const handleRefViewAction = (result) => {
-        // alert ("handleRefViewAction")
 
-        const {action, value} = result;
-        console.log (`RefView: handleRefViewAction: action=${action}, value=${value}`);
+    /**
+     * Handles action results within the context of RefView component
+     *
+     * If action is not handled here locally, escalate to onAction
+     *
+     * @param {Object} result - The result action object containing action and value attributes.
+     */
+    const handleRefViewAction = (result) => {
+
+        // for now, no local handling...pass on up always...
+
+        // const {action, value} = result;
+        // console.log (`RefView: handleRefViewAction: action=${action}, value=${value}`);
 
         // // handle Signal Details popup click - "value" is urlLink
         // if (action === ACTIONS_IARE.POPUP_SIGNALS_DETAILS.key) {
@@ -321,39 +242,11 @@ export default function RefView({
         //     return
         // }
 
-        // else send back up action tree
+        // else send up action tree
         onAction(result)
     }
-
-
-    const onClickPopupHeaderDetails = (e) => {
-
-        const targetElement = e.target
-        const targetClass = targetElement.className
-
-        if (targetClass === "info-click") {
-            console.log("Info for Details Popup Header Clicked")
-            setIsSignalsDocsPopupOpen(true)
-        }
-
-    }
-
     
-    return <div
-        className='ref-modal-overlay'
-
-        style={{
-            // overflow: "auto",
-            // position: "relative",
-            // pointerEvents: "none", // Ensures interaction with the modal
-        }}
-        // style={{pointerEvents: "auto"}}
-
-            // onProbeClick={(e) => {e.stopPropagation()}}
-            // onMouseMove={(e) => {e.stopPropagation()}}
-            // onScroll={(e) => {e.stopPropagation()}}
-            // onScrollCapture={(e) => {e.stopPropagation()}}
->
+    return <div className='ref-modal-overlay'>
         <Rnd
             ref={refRnd}
 
@@ -368,15 +261,15 @@ export default function RefView({
                 // style={{position: "relative"}}
             }}
 
-            // default size and position - use state
-            size={size}
+
+            size={size}  // default size and position - use state
             position={position}
             dragHandleClassName={"ref-view-title-bar"}
             minWidth={modalDefaults.minWidth}
             minHeight={modalDefaults.minHeight}
 
-            onDragStart={handleDragStart}
-            onDragStop={handleDragStop}
+            // onDragStart={handleDragStart}
+            // onDragStop={handleDragStop}
             onResizeStop={handleResizeStop}
             onMouseDown={handleMouseDown}
                         // onDrag={handleDrag}
@@ -429,7 +322,7 @@ export default function RefView({
                 <div className="ref-view-container">
 
                     {/* show Ref Flock as left sidebar for navigation */}
-                    {isShowRefs && <div className={"ref-view-header"}>
+                    {isShowSidebar && <div className={"ref-view-sidebar"}>
                         <RefFlock pageData={pageData}
                                   refArray={pageData.references}
                                   refFilter={refFilter}
@@ -452,7 +345,7 @@ export default function RefView({
 
                     {/* show ref details in main part of modal window */}
                     <div className="ref-view-body">
-                        {false && debugAtTop}
+                        {debugForRefDetails}
                         <RefDetails
                             refDetails={refDetails}
                             pageData={pageData}
@@ -467,21 +360,5 @@ export default function RefView({
             </div>
         </Rnd>
 
-        {/* popup title, data and open status set in handleSignalClick function */}
-        {/* this may be deprecated */}
-        <Popup isOpen={isSignalDetailsPopupOpen}
-               onClose={() => {
-                   setIsSignalDetailsPopupOpen(false)
-               }}
-               title={signalDetailsPopupTitle}
-               className={"signal-details-popup"}
-               initialSize={{width: 800, height: 780}}
-               initialPosition={{x: 160, y: 50}}
-               onClickHeader={onClickPopupHeaderDetails}
-        >
-            {signalDetailsPopupContents}
-        </Popup>
-
     </div>
-
 }

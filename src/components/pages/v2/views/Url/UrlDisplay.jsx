@@ -791,7 +791,10 @@ export default function UrlDisplay ({ pageData, options } ) {
                  selectedRefIndex={selectedRefIndex}
                  refFilter={refFilter}
 
-                 tooltipId={"tooltip-url-display"}/>
+                 tooltipId={"tooltip-url-display"}
+
+                 showDebug={false}
+        />
 
 
         {/*
