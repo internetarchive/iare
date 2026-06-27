@@ -48,32 +48,11 @@ export default function RefView({
 
     const [isShowSidebar, setIsShowSidebar] = useState(true);
 
-    const handleDragStart = (e, data) => {
-        console.log('RefView:handleDragStart', data);
-        e.stopPropagation()
-        setIsDragging(true)
-    };
-
-    const handleDragStop = (e, data) => {
-        // set new position to data[x,y]
-        if (!isDragging) return; // Ignore if no drag occurred
-        setIsDragging(false); // Reset dragging state
-        console.log(`Drag Stop, setting position to ${data.x}, ${data.y}`)
-        setPosition({ x: data.x, y: data.y })
-    };
-
     const handleMouseDown = () => {
         console.log("RefView:Rnd: onMouseDown")
         setIsDragging(false)
     }
 
-    const handleDrag = (e, data) => {
-        console.log('Dragging', data);
-    };
-
-    const handleResizeStart = (e, dir, ref) => {
-        console.log('Resize Start', dir, ref);
-    };
 
     const handleResize = (e, dir, ref, delta, position) => {
         console.log('RefView Resizing', dir, delta, position);
@@ -116,20 +95,28 @@ export default function RefView({
         };
         window.addEventListener('keydown', handleKeyDown);
 
-        // const handleWindowResize = () => {
-        //     // resizing containing window resets size to new window size minus border margins
-        //     console.log(`RV: window.handleWindowResize: width: ${window.innerWidth - modalDefaults.margin}, height: ${window.innerHeight - modalDefaults.margin}`)
-        //     setModalState({
-        //         width: window.innerWidth - modalDefaults.margin,
-        //         height: window.innerHeight - modalDefaults.margin,
-        //     });
-        // };
-        // window.addEventListener("resize", handleWindowResize);
+        const handleWindowResize = () => {
+            // setSize(prevSize => ({
+            //     ...prevSize,
+            //     width: window.innerWidth - (modalDefaults.margin * 2),
+            // }));
+            setSize({
+                width: window.innerWidth - (modalDefaults.margin * 2),
+                height: window.innerHeight - (modalDefaults.margin * 2),
+            });
+
+            setPosition(prevPosition => ({
+                ...prevPosition,
+                x: modalDefaults.margin,
+            }));
+        };
+
+        window.addEventListener("resize", handleWindowResize);
 
         // return value is function to call upon component close; we unload event listeners here
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
-            // window.removeEventListener("resize", handleWindowResize);
+            window.removeEventListener("resize", handleWindowResize);
         };
 
     },
