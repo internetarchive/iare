@@ -819,7 +819,7 @@ export default function UrlDisplay ({ pageData, options } ) {
         />
         {/* TODO tooltipId should be passed in to this UrlDisplay component.
                       It should be universal and not created here...
-                       more so, a local tooltip should be created if passed in tooltipId is invalid*/}
+                       however, a local tooltip should be created if passed in tooltipId is invalid*/}
 
     </div>
 }

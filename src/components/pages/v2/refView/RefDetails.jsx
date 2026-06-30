@@ -160,6 +160,8 @@ function RefDetails({ refDetails,
             {/*/>*/}
         </div>
 
+        <RefActionables actionables={refDetails?.actionable}/>
+
         <div className={"ref-analysis"}>
             {/*<RefProbes reference={refDetails} pageData={pageData} />*/}
 
@@ -169,8 +171,6 @@ function RefDetails({ refDetails,
                 onAction={onAction}
                 tooltipId={tooltipId}
             />
-
-            <RefActionables actionables={refDetails?.actionable}/>
 
             {showWikitext &&
                 <RefWikitext wikitext={refDetails?.wikitext} ref_details={refDetails} onAction={handleRefViewAction}/>}
