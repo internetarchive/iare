@@ -12,13 +12,13 @@
     --url-list-width-archive-status: 3.5rem;
     --url-list-width-actionable: 3.5rem;
 
-    --url-list-grid-height: 1.9rem /* 2.5rem */;
+    --url-list-grid-height: 1.9rem;
     --url-list-grid-columns:
             var(--url-list-width-url)
             var(--url-list-width-status)
             var(--url-list-width-archive-status)
             var(--url-list-width-actionable)
-            minmax(0, 1fr);
+            minmax(0, 1fr);  /* the last url column, the signal column */
 
     --url-list-padding-url: .5rem;
     --url-list-padding-url-small: .25rem;
@@ -79,8 +79,6 @@
 
     --border-default:1px solid black;
 
-    --width-filter-panel-column: 335px;
-
     /*--height-filter-box-rows: 26.5rem;*/
     --height-filter-box-rows: calc(100vh - 15rem);
     --margin-url-column: .2rem;
@@ -115,8 +113,7 @@
 .flock-header,
 .url-row
 {
-    width: max-content;
-    min-width: 100%;
+    /*min-width: 100%;*/
     column-gap: var(--margin-url-column);
 }
 
@@ -131,19 +128,20 @@
 
 
 .flock-header {
-    /*background: coral;*/
+    cursor: pointer;
+
     background-color: var(--color-row-header-bg);
-    z-index: 10;
+    z-index: 10;  /* places in front of rows */
 
     display: grid;
     align-items: center;
     grid-template-columns: var(--url-list-grid-columns);
 
-    border-bottom: var(--iare-border-normal);
-
     padding-top: var(--padding-row-header-top);
     padding-bottom: var(--padding-row-header-bottom);
-    cursor: pointer;
+    border-bottom: var(--iare-border-normal);
+
+    overflow-x: scroll;
 
     /*min-width: max-content;*/
     /*width: 100%;*/
@@ -155,28 +153,24 @@
 
 
 .flock-rows {
-    /*display: contents;  !* necessary to scroll with header row *! */
-
     min-height: 0;      /* critical flex fix */
     overflow: auto;     /* 👈 THIS is the scroll boundary */
-
     /*background-color: var(--iare-test-color) !important;*/
 }
 
 .flock-rows .url-row
 {
     display: grid;
+    cursor: pointer;
+
     align-items: center;
     grid-template-columns: var(--url-list-grid-columns);
     grid-auto-rows: minmax(var(--url-list-grid-height), auto);
 
     border-bottom:var(--iare-border-normal);
 
-    min-width: fit-content;
-    width: 100%;
-
-    cursor: pointer;
-
+    width: max-content;
+    /*min-width: fit-content;*/
 }
 
 .flock-rows .url-row:last-child {

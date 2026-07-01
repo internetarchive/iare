@@ -146,7 +146,7 @@ function RefDetails({ refDetails,
     return <div className={"ref-view-details"}>
 
         <div className={"ref-citation-claim"}>
-            <RefCitationClaim reference={refDetails} pageData={pageData} />
+            <RefCitationClaim reference={refDetails} pageData={pageData} onAction={onAction}/>
 
             <RefCitationDisplayHtml reference={refDetails} onClick={handleCitationClick} onAction={onAction}/>
 

@@ -100,6 +100,15 @@
 
 }
 
+
+/* debug */
+x* {
+    outline: 1px solid rgba(255, 0, 0, 0.2);
+}
+/* debug */
+
+
+
 html,
 body,
 #root {
@@ -632,10 +641,6 @@ font-weight:normal;
     margin-left: -.125rem;
 }
 
-/* debug */
-x* {
-    outline: 1px solid rgba(255, 0, 0, 0.2);
-}
 
 .muted-text {
     color: var(--color-text-muted);

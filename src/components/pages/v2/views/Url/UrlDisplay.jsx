@@ -707,29 +707,33 @@ export default function UrlDisplay ({ pageData, options } ) {
     : null
 
     const urlDisplayBody = <>
-        <div className={"url-display-body"} style={{display: "flex", height:'100%'}}>
+        <div className={"url-display-flocks"} xxstyle={{display: "flex", height:'100%'}}>
 
-            <UrlFlock urlDict={pageData.urlDict}
-                      urlArray={pageData.urlArray}
-                      urlFilters={urlFilters}
-                      onAction={handleAction}
-                      options={{showFilters: isShowFilters, showRefs: isShowRefs}}
-                      selectedUrl={selectedUrl}
-                      fetchMethod={myConfig.urlStatusMethod}
-                      tooltipId={"tooltip-url-display"} />
+            <div className="url-display-url-flock">
 
-            {isShowRefs && <RefFlock pageData={pageData}
-                                     refArray={refArray}
-                                     refFilter={refFilter}
-                                     onAction={handleRefClick}
-                                     options={{
-                                         show_header: false,
-                                         show_filter_description: false,
-                                         caption: "References List",
-                                     }}
-                                     tooltipId={"tooltip-url-display"}
-                                     context={"UrlDisplay"} />
-            }
+                <UrlFlock urlDict={pageData.urlDict}
+                          urlArray={pageData.urlArray}
+                          urlFilters={urlFilters}
+                          onAction={handleAction}
+                          options={{showFilters: isShowFilters, showRefs: isShowRefs}}
+                          selectedUrl={selectedUrl}
+                          fetchMethod={myConfig.urlStatusMethod}
+                          tooltipId={"tooltip-url-display"}/>
+            </div>
+
+            {isShowRefs && <div className="url-display-ref-flock">
+                <RefFlock pageData={pageData}
+                          refArray={refArray}
+                          refFilter={refFilter}
+                          onAction={handleRefClick}
+                          options={{
+                              show_header: false,
+                              show_filter_description: false,
+                              caption: "References List",
+                          }}
+                          tooltipId={"tooltip-url-display"}
+                          context={"UrlDisplay"}/>
+            </div>}
 
         </div>
     </>

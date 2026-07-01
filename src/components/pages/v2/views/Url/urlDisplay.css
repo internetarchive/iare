@@ -1,3 +1,9 @@
+:root {
+    --width-filter-panel-column: 335px;
+    --width-url-flock: 400px;
+    --width-ref-flock: 350px;
+}
+
 .url-overview-column {
     /*overflow: hidden;*/
     width: var(--width-filter-panel-column);
@@ -36,3 +42,29 @@
     height: 100%;
 }
 
+/* for url display of erl flock and ref flocks */
+.url-display-flocks {
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    height:100%;
+    gap: var(--iare-spacing-small);
+}
+
+.testcase {
+    background-color: chartreuse;
+    flex:1 1 auto;
+}
+
+.url-display-url-flock {
+    /*flex: 1 1 auto;*/
+    flex: 1 1 0;
+    min-width: var(--width-url-flock);
+    overflow-x: auto;
+}
+
+.url-display-ref-flock {
+    flex: 0 0 var(--width-ref-flock);
+    width: var(--width-ref-flock);
+}

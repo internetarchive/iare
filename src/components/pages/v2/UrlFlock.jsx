@@ -112,6 +112,11 @@ const urlFlock = React.memo(function UrlFlock({
         signalBadgeRegistry.tranco.key,
     ]
 
+    // refs used for header and rows of url flock
+
+    const headerRef = React.useRef(null);
+    const bodyRef = React.useRef(null);
+
     const updateFlockSort = (sortKey) => {
         // set new sort State:
         // - toggle sort direction of specified sort
@@ -420,6 +425,7 @@ const urlFlock = React.memo(function UrlFlock({
 
     }
 
+
     const getUrlRows = (urlArray, flockFilters) => {
         // TODO implement columnsToShow (ignoring for now)
 
@@ -566,12 +572,11 @@ const urlFlock = React.memo(function UrlFlock({
 
     }  // end getUrlRows
 
-
     const getHeaderRow = () => {
 
         return <ColumnSortContext.Provider value={columnSort}>
 
-            <div className={"flock-header"}>
+            <div className={"flock-header"} ref={headerRef}>
 
                 <ColumnBox
                     content={<><br/>URL Link</>}
@@ -596,6 +601,7 @@ const urlFlock = React.memo(function UrlFlock({
                 />
 
                 {/* signals column is special... */}
+
                 <div className={"url-signals flock-col"}>
                     <div>
                         <SignalBadges badgeContextKey={BadgeContexts.sort.key}
@@ -748,7 +754,7 @@ const urlFlock = React.memo(function UrlFlock({
     </>
 
     const flockHeader = getHeaderRow()
-    const flockRows = <div className={"flock-rows"}>
+    const flockRows = <div className={"flock-rows"} ref={bodyRef}>
         {flockDataRows}
     </div>
 
@@ -757,7 +763,41 @@ const urlFlock = React.memo(function UrlFlock({
                        onMouseOver={onHoverFlockRow} >
         {flockHeader}
         {flockRows}
+        {/*<div className={"testcase"}>One or two</div>*/}
     </div>
+
+    React.useEffect(() => {
+        const header = headerRef.current;
+        const body = bodyRef.current;
+
+        if (!header || !body) return;
+
+        let syncing = false;
+
+        const syncFromHeader = () => {
+            if (syncing) return;
+            syncing = true;
+            body.scrollLeft = header.scrollLeft;
+            requestAnimationFrame(() => syncing = false);
+        };
+
+        const syncFromBody = () => {
+            if (syncing) return;
+            syncing = true;
+            header.scrollLeft = body.scrollLeft;
+            requestAnimationFrame(() => syncing = false);
+        };
+
+        header.addEventListener('scroll', syncFromHeader);
+        body.addEventListener('scroll', syncFromBody);
+
+        return () => {
+            header.removeEventListener('scroll', syncFromHeader);
+            body.removeEventListener('scroll', syncFromBody);
+        };
+
+    }, []);
+
 
     return <>
 
