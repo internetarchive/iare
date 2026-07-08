@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.3.1.48",
-  "version_name": "0.3.1.48 RefView full window resize",
+  "version": "0.3.1.49",
+  "version_name": "0.3.1.49 boxslide",
   "private": true,
   "type": "module",
   "dependencies": {

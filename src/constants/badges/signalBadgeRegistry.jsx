@@ -41,11 +41,12 @@ const signalBadgeRegistry = {
         description: "Overall WikiSignals Score",
         tooltipMarkup: `##### WikiSignals Score
         
-A website reliability estimate (0.0–1.0) based on evaluations by ratings agencies and other credibility indicators.
 
-See WikiSignals.org for more details.
+A website reliability estimate (0.0 – 1.0) based on evaluations by ratings agencies and other credibility indicators.
 
-If "Signal Data is Empty", can try and fetch fresh data with "Fetch Signal Data".`,
+A higher score is better, with 1.0 being the highest possible score.
+
+See [WikiSignals.org](WikiSignals.org) for more details.`,
 
         priority: 1000,
         logo: imgScoreLogo,
@@ -95,7 +96,9 @@ If "Signal Data is Empty", can try and fetch fresh data with "Fetch Signal Data"
         
 The Tranco estimate of the website's global traffic ranking (from 1 to 20,000,000).
 
-Value displayed is the log10 of the value.`,
+Lower values are better.
+
+See the [Tranco website](https://tranco-list.eu/) for more details.)`,
 
         info_spec: {
             description: "Tranco rating",
@@ -135,8 +138,7 @@ Value displayed is the log10 of the value.`,
         
 MBFC Score is calculated by WikiSignals, and indicates the bias and credibility of a website.
 
-There is also an MBFC rating for Bias, Credibility, and Factual-Reporting`,
-
+Higher scores are better.`,
 
         priority: 200,
         group: "",
@@ -286,7 +288,10 @@ The number of times the domain appeared in links within Wikipedia (English) arti
         class_name: "wayback-badge",
 
         tooltipMarkup: `##### Wayback Machine History
-Number shows span between first capture and last capture`,
+
+Number shows time span between first capture and last capture.
+
+Longer times does not necessarily mean more reliable.`,
 
         priority: 400,
         group: "",

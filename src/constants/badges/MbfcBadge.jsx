@@ -26,7 +26,6 @@ export default function MbfcBadge({
     const badgeDef = signalBadgeRegistry.mbfc
     const badgeContext = BadgeContexts[badgeContextKey] || BadgeContexts.default
 
-    let badgeData = {}
     let badgeText = null
     let badgeClass = badgeDef.class_name
     let mbfcBadgeData = null
@@ -34,55 +33,27 @@ export default function MbfcBadge({
     if (badgeContext.hasText) {
         try {
 
-            let mbfcRatings = null
-
             if (signals.ratings) {
-                const subSigs = []
-
-                if (!isEmpty(signals.ratings["mbfc-bias"]))
-                    subSigs.push(
-                        <div key="bias">Bias: {signals.ratings["mbfc-bias"]}</div>
-                    );
-
-                if (!isEmpty(signals.ratings["mbfc-cred"]))
-                    subSigs.push(
-                        <div key="cred">Cred: {signals.ratings["mbfc-cred"]}</div>
-                    );
-
-                if (!isEmpty(signals.ratings["mbfc-fact"]))
-                    subSigs.push(
-                        <div key="fact">Fact: {signals.ratings["mbfc-fact"]}</div>
-                    )
-                
-                mbfcRatings = subSigs.length > 0 
-                    ? <div>{subSigs}</div> 
-                    : null
-
                 mbfcBadgeData = [
                     signals.ratings["mbfc-bias"],
                     signals.ratings["mbfc-cred"],
                     signals.ratings["mbfc-fact"],
                 ]
-
             } else {
-
-                mbfcRatings = null
-                mbfcBadgeData = [ "No signal.ratings found."]
-
+                mbfcBadgeData = [ "signal.ratings not found."]
             }
 
             const mbfcScore = signals.meta?.ws_mbfc_score
-                ? <div>Score: {signals.meta.ws_mbfc_score === "1" ? "1.0" : signals.meta.ws_mbfc_score}</div>
-                : (mbfcRatings ? <div>Score: --</div> : <div>--</div>)
+                ? <div>{signals.meta.ws_mbfc_score === "1" ? "1.0" : signals.meta.ws_mbfc_score}</div>
+                : <div>--</div>
 
             badgeText = <div>
                 {mbfcScore}
-                {mbfcRatings}
             </div>
 
         } catch (e) {
             console.error(`Error Encountered: ${e.message}`)
-            badgeText = <div>Error Encountered</div>
+            badgeText = <div>Error!</div>
             mbfcBadgeData = {"error": e.message}
             badgeClass += " missing-value"
         }

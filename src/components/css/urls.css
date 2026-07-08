@@ -7,7 +7,8 @@
     --width-url-probes: 6.0rem;
     --width-url-signals: 25.5rem;
 
-    --url-list-width-url: 20rem;
+    /*--url-list-width-url: 20rem;*/
+    --url-list-width-url: 14rem;
     --url-list-width-status: 3.5rem;
     --url-list-width-archive-status: 3.5rem;
     --url-list-width-actionable: 3.5rem;

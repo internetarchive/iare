@@ -6,7 +6,8 @@
     --width-signal-wayback: var(--width-signal-badge);
     --width-signal-wiki: var(--width-signal-badge);
     --width-signal-tranco: var(--width-signal-badge);
-    --width-signal-mbfc: calc(2 * var(--width-signal-badge));
+    /*--width-signal-mbfc: calc(2 * var(--width-signal-badge));*/
+    --width-signal-mbfc: var(--width-signal-badge);
 
     --width-signal-details-icon: 4rem;
     --width-signal-details-info: 10rem;
