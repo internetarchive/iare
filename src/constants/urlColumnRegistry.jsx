@@ -6,7 +6,7 @@ export const urlColumnRegistry = {
     columns : {  // keys match class names
 
         "url-name": {
-            ttCaption: `<div>URL link text</div>`,
+            ttCaption: `URL link text`,
             ttMarkup: `##### Citation URL Link
 
 URL of Citation Source.`,
@@ -18,12 +18,12 @@ URL of Citation Source.`,
 
         // NB this looks like it is used in RefView - remove it from there and delete from here
         "url-status": {
-            ttCaption: `<div>HTTP Status Code of Primary URL</div>`,
+            ttCaption: `HTTP Status Code of Primary URL`,
             ttData: `<div>{status_code} : {statusDescription}</div>`
         },
 
         "url-live_status": {  // NB leaning towards using this one for now...
-            ttCaption: `<div>HTTP Status Code of URL</div>`,
+            ttCaption: `HTTP Status Code of URL`,
             ttMarkup: `##### HTTP Status Code of URL
 
 Most recent status when querying.
@@ -33,7 +33,7 @@ Uses LiveWebCheck from Wayback machine.`,
         },
 
         "url-archive_status": {
-            ttCaption: `<div>Archive exists in IABot database</div>`,
+            ttCaption: `Archive exists in IABot database`,
             ttMarkup: `##### Archive Status
 Archive exists in IABot database`,
             ttData: ``,
@@ -41,17 +41,17 @@ Archive exists in IABot database`,
         },
 
         "url-citations": {
-            ttCaption: `<div>URL Status as indicated by Citation Template "url-status" Parameter</div>`,
+            ttCaption: `URL Status as indicated by Citation Template "url-status" Parameter`,
             ttData: '<div>Link Status as indicated in Citation</div>',
         },
 
         "url-templates": {
-            ttCaption: `<div>Names of Templates used by Citation</div>`,
+            ttCaption: `Names of Templates used by Citation`,
             ttData: `<div>Templates used by Citation</div>`,
         },
 
         "url-actionable": {
-            ttCaption: `<div>Actions that can be taken to improve citation</div>`,
+            ttCaption: `Actions that can be taken to improve citation`,
             ttMarkup: `##### Actionable
 Action can be taken to improve citation`,
             ttData: `<div>Actions that can be taken to improve citation</div>`,
@@ -59,23 +59,23 @@ Action can be taken to improve citation`,
         },
 
         "url-sections": {
-            ttCaption: `<div>Section in Wikipedia article where Citation is defined</div>`,
+            ttCaption: `Section in Wikipedia article where Citation is defined`,
             ttData: `Section in Wikipedia article where Reference originated`,
         },
 
         "url-perennial": {
-            ttCaption: `<div>Reliability Rating of URL, according to Wikipedia Reliable Sources</div>`,
+            ttCaption: `Reliability Rating of URL, according to Wikipedia Reliable Sources`,
             ttData: `Reliability Rating`,
         },
 
         "url-signals": {
-            ttCaption: `<div>Reliability and Credibility insight via WikiSignals</div>`,
+            ttCaption: `Reliability and Credibility insight via WikiSignals`,
         },
         "wiki-signals-docs": {
-            ttCaption: `<div>Show WikiSignals documentation</div>`,
+            ttCaption: `Show WikiSignals documentation`,
         },
         "wiki-signals-sort": {
-            ttCaption: `<div>Show popup window to sort by signal values</div>`,
+            ttCaption: `Show popup window to sort by signal values`,
         },
 
     }

@@ -1,5 +1,4 @@
 import React, {useCallback, useEffect, useState, useRef} from "react";
-import {Tooltip as AppTooltip} from "react-tooltip";
 import package_json from "../package.json";
 
 import {IariError} from "./errors/IariError";
@@ -22,6 +21,9 @@ import {ShortcutDefs, envShortcutLists} from "./constants/shortcutDefs.jsx";
 import {KNOWN_MEDIA_TYPES} from "./constants/knownMediaTypes.jsx";
 import {ACTIONS_IARE} from "./constants/actionsIare.jsx";
 import {iareAlert} from "./utils/generalUtils.js";
+import {TooltipProvider as MyTooltipProvider} from "./contexts/TooltipContext.jsx";
+import {Tooltip as AppTooltip} from "react-tooltip";  // tooltip for outra-app tooltip
+// NB this is temporary - shall be removed when we fix the ScrollFix element to the main App tooltip
 
 
 export default function App(
@@ -664,7 +666,6 @@ export default function App(
         isShowDebugInfo: isShowDebugInfo,
         isShowDebugComponents: isShowDebugComponents,
         isShowViewOptions: isShowViewOptions,
-        tooltipIdApp: "app-tooltip-id",
     }
 
     console.log(`APP: Rendering App component:`, JSON.stringify({
@@ -692,6 +693,7 @@ export default function App(
 
     const tooltipApp = <AppTooltip id="app-tooltip-id"
                                    float={true}
+                                   clickable
                                    closeOnEsc={true}
                                    delayShow={420}
                                    variant={"info"}
@@ -699,7 +701,21 @@ export default function App(
                                    offset={5}
                                    className={"app-tooltip"}
                                    style={{zIndex: 999, backgroundColor: "rgba(0,0,255,0.8)"}}
-    />
+    >
+        <div className={"app-tooltip-content"}>
+            <div className={"app-tooltip-title"}>
+                <div className={"app-tooltip-title-text"}>
+                    <span className={"app-tooltip-title-text-main"}>App Tooltip</span>
+                    <span className={"app-tooltip-title-text-sub"}>
+                        (click to close)
+                    </span>
+                </div>
+            </div>
+            <div className={"app-tooltip-body"}>
+
+            </div>
+        </div>
+    </AppTooltip>
 
     console.log(`appError: ${appError}`)
 
@@ -725,7 +741,7 @@ export default function App(
     </div>
 
     
-    return <>
+    return <MyTooltipProvider>
 
         {debugStaticDisplay}
 
@@ -804,11 +820,11 @@ export default function App(
 
             </div>
 
-            {/*</div>*/}
+            {/*</div> <!-- end iare-view -->*/}
 
-            {tooltipApp}
+            {tooltipApp /* shall be removed when scrollFix tooltip implements global tooltip */}
 
         </ConfigContext.Provider>
 
-    </>
+    </MyTooltipProvider>
 }

@@ -576,6 +576,7 @@ font-weight:normal;
     display: contents;
 }
 
+#master-tooltip,
 #tooltip-url-display {
     font-size:0.8rem;
     font-weight:normal;

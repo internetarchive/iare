@@ -7,6 +7,8 @@ import {getUrlLiveStatusClass, getColumnTooltip} from "../../../utils/flockUtils
 import {getArchiveStatusInfo} from "../../../utils/urlUtils.jsx";
 import {BadgeContexts as badgeContext, BadgeContexts} from "../../../constants/badgeContexts.jsx";
 
+import { useTooltip } from "../../../contexts/TooltipContext";
+
 import {ACTIONS_IARE} from "../../../constants/actionsIare.jsx";
 import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../../constants/urlFilterMaps.jsx";
 
@@ -24,6 +26,7 @@ import SignalBadges from "../../SignalBadges.jsx";
 // context to provide global flag for sorting value
 // TODO move this into main config context, i think??
 import { ColumnSortContext } from "../../../contexts/ColumnSortContext.jsx"
+import {show} from "react-modal/lib/helpers/ariaAppHider.js";
 
 /*
 assumes urlArray is an array of url objects:
@@ -73,8 +76,8 @@ const urlFlock = React.memo(function UrlFlock({
 
     const [feedbackText, setFeedbackText] = useState("")
 
-    const [urlTooltipHtml, setUrlTooltipHtml] = useState('<div>ToolTip' +
-        '<br>UrlFlock<br />second line');
+    // const [urlTooltipHtml, setUrlTooltipHtml] = useState('<div>ToolTip' +
+    //     '<br>UrlFlock<br />second line');
     // TODO there is a bug where sort re-renders list every time tooltip text/html property is updated
     // TODO maybe fix using React.useRef somehow???
 
@@ -116,6 +119,13 @@ const urlFlock = React.memo(function UrlFlock({
 
     const headerRef = React.useRef(null);
     const bodyRef = React.useRef(null);
+
+    // tooltip hook
+    const {
+        showTooltip,
+        pinTooltip,
+        closeTooltip,
+    } = useTooltip();
 
     const updateFlockSort = (sortKey) => {
         // set new sort State:
@@ -348,8 +358,10 @@ const urlFlock = React.memo(function UrlFlock({
 
     const onHoverFlockRow = e => {
         e.stopPropagation()  // prevents onHover from propagating engaging and erasing tooltip
-        const html = getColumnTooltip(e)
-        setUrlTooltipHtml(html)
+        const tooltip = getColumnTooltip(e)
+        showTooltip({content: tooltip})
+        // pin tooltip if click on column row
+        // onClick={pinTooltip}
     }
 
     const onClickFlockRow = (e) => {
@@ -382,33 +394,51 @@ const urlFlock = React.memo(function UrlFlock({
 
 
     const onClickFlockHeaderRow = (e) => {
-        let colEl = null
+        let elCol = null
 
-        colEl = e.target.closest('.signal-badge')
-        if (colEl) {
-            // we have a signal badge column - calc sortKey
-            const badgeKey = colEl.dataset.badgekey
-            const sortKey = `${signalBadgePrefix}${badgeKey}`  // e.g. "signal_wayback"
+        // if clicked in sort row...
+        const elSort = e.target.closest('.header-cell-sort')
+        if (elSort) { // we are in sort cell - get SortKey
 
-            console.log(`Clicked on flock header row; signal badge: ${badgeKey}`)
-            // iareAlert(`Click on header: signal badge ${badgeKey}`)
+            let sortKey = null
 
-            updateFlockSort(sortKey)
+            // ... if Signal Badge column...
+            elCol = e.target.closest('.signal-badge')
+            if (elCol) {
+
+                            // NB
+                            //  we should set pinTooltip if not on sort element
+                            // TODO Also, in popup tooltip, we should respond to Sort functions within that popup
+                            //  i imagine the popup showing current sort state with an option to click to change it
+                            //
+                            // NB FOR NOW:
+                            //  jsut show the tooltip - woprking on pin!
+
+                // we have a signal badge column - calc sortKey
+                const badgeKey = elCol.dataset.badgekey
+                sortKey = `${signalBadgePrefix}${badgeKey}`  // e.g. "signal_wayback"
+
+                console.log(`Clicked on flock header signal badge: ${badgeKey}`)
+
+            } else {
+                // if we have a normal flock column, extract sortKey from data.columnKey
+                elCol = e.target.closest('.flock-col')
+                if (elCol) {
+
+                    const columnKey = elCol.dataset.columnKey
+                    sortKey = columnKeyAssociation[columnKey]
+
+                    console.log(`Clicked on flock header column for ${sortKey}`)
+                }
+
+            }
+
+            updateFlockSort(sortKey)  // TODO what happens if null?
             return
         }
 
-        // we have a normal flock column - extract sortKey from column class
-        colEl = e.target.closest('.flock-col')
-        if (colEl) {
-
-            const columnKey = colEl.dataset.columnKey
-            const sortKey = columnKeyAssociation[columnKey]
-
-            console.log(`Clicked on header column for ${sortKey}`)
-            // iareAlert(`Click on column in header for ${columnClass}`)
-
-            updateFlockSort(sortKey)
-        }
+        // otherwise, set pinned for tooltip
+        // pinTooltip()
 
     }
 
@@ -531,7 +561,8 @@ const urlFlock = React.memo(function UrlFlock({
                         data-url={u.url}
                         data-err-text={errText}
                 // onMouseOver={onHoverErrorRow}
-                        onMouseLeave={() => setUrlTooltipHtml('')}
+                //         onMouseLeave={() => setUrlTooltipHtml('')}
+                        onMouseLeave={() => showTooltip({})}
             >
                 <div className={"url-name"}>{u.url ? u.url : `ERROR: No url for index ${i}`}</div>
                 <div className={"url-live_status"}>{-1}</div>
@@ -759,6 +790,7 @@ const urlFlock = React.memo(function UrlFlock({
     </div>
 
     const flock = <div className={"flock-container"}
+                       data-tooltip-id="master-tooltip"
                        onClick={onClickFlockRow}
                        onMouseOver={onHoverFlockRow} >
         {flockHeader}
@@ -801,12 +833,18 @@ const urlFlock = React.memo(function UrlFlock({
 
     return <>
 
-        <div data-tooltip-id={tooltipId}         // passed in tooltipId for this flock
-             data-tooltip-html={urlTooltipHtml}  // set urlTooltipHtml to set tooltip contents
+        {/*<div data-tooltip-id={tooltipId}         // passed in tooltipId for this flock*/}
+        {/*     data-tooltip-html={urlTooltipHtml}  // set urlTooltipHtml to set tooltip contents*/}
 
-            ><FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>
+        {/*    ><FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>*/}
 
-        </div>
+        {/*</div>*/}
+        <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>
+
+
+        {/* NB we nay not need these popups, as we are using pinned tooltips for info
+                but lets leave them here for now in case we want to popup more dense info later
+        */}
 
         <Popup isOpen={isSignalsDocsPopupOpen}
                onClose={() => {

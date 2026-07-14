@@ -14,7 +14,6 @@ expected props:
 export default function FlockBox({
           caption = null,
           className = null,
-          tooltip = '',
           onKeyDown=null,
           children
       }) {

@@ -3,6 +3,7 @@ import signalBadgeRegistry, {signalBadgePrefix} from "../constants/badges/signal
 import {marked} from "marked";
 import {httpStatusCodes, iabotLiveStatusCodes} from "../constants/httpStatusCodes.jsx";
 import {ACTIONABLE_FILTER_MAP} from "../constants/actionableMap.jsx";
+import Markdown from "react-markdown";
 
 
 const getSignalColumnTooltip = (columnClass) => {
@@ -12,16 +13,17 @@ const getSignalColumnTooltip = (columnClass) => {
     const badgeKey = columnClass.split('signal-')[1] // Extract badgeKey from columnClass
     const badgeDef = signalBadgeRegistry[badgeKey]
 
-    if (badgeDef?.tooltipHtml) return badgeDef.tooltipHtml
+                    // if (badgeDef?.tooltipHtml) return badgeDef.tooltipHtml
 
     if (badgeDef?.tooltipMarkup) {
-        // const markupTemp = marked(badgeDef.tooltipMarkup)
-        return marked(badgeDef.tooltipMarkup)
+        // return marked(badgeDef.tooltipMarkup) // marked converts MD (markdown) text to html
+        return <Markdown>{badgeDef.tooltipMarkup}</Markdown>
+
     }
 
-    if (badgeDef?.description) return `<div>${badgeDef.description}</div>`
+    if (badgeDef?.description) return <div>{badgeDef.description}</div>
 
-    return `<div>tooltip for ${columnClass}</div>`
+    return <div>tooltip for {columnClass}</div>
 }
 
 
@@ -31,19 +33,25 @@ const getUrlColumnTooltip = (columnClass) => {
     const columnDef = urlColumnRegistry.columns[columnClass]
     if (!columnDef) return null
 
-    if (columnDef.ttHtml) return columnDef.ttHtml
-    if (columnDef.ttMarkup) return marked(columnDef.ttMarkup)
-    if (columnDef.ttCaption) return `<div>${columnDef.ttCaption}</div>`
+    if (columnDef.ttMarkup) return <Markdown>{columnDef.ttMarkup}</Markdown>
+    if (columnDef.ttCaption) return <div>{columnDef.ttCaption}</div>
 
-    return `<div>tooltip for ${columnClass}</div>`  // this shouldn't happen - there's an unhandkled column
+    return <div>tooltip for {columnClass}</div>  // unhandled column shouldn't happen - we should not get here
 }
 
 
 export const getColumnTooltip = (e) => {
     let el = null
 
-    // if header row show tooltip for that column...
-    let rowEl = e.target.closest('.flock-header')
+    // if header sort row...
+    let rowEl = e.target.closest('.header-cell-sort')
+    if (rowEl) {
+        return <div>Click to Sort</div>
+        // TODO: place more specific text here for what is sorting and how and what high and low means
+    }
+
+    // if header row...
+    rowEl = e.target.closest('.flock-header')
     if (rowEl) {
         let columnClass = ""
 
@@ -58,19 +66,13 @@ export const getColumnTooltip = (e) => {
             }
         }
 
-        // else get from signal hierarchy
-        let html = getColumnHeaderTooltip(columnClass)
-        console.log(`UrlFlock onHoverFlockRow: in .flock-header columnClass: ${columnClass}`)
+        console.log(`flockUtils:: getColumnTooltipHtml: .flock-header columnClass is: ${columnClass}`)
 
-        // if sub-element of sort hovered, add the sort message to tooltip text
-        const elSorted = e.target.closest('.header-cell-sort')
-        if (elSorted) {
-            html = `<div>${html}Click to Sort</div>`
-        }
-        return html
+        // else get from signal hierarchy
+        return getColumnHeaderTooltip(columnClass)
     }
 
-    // for error row...
+    // if error row...
     rowEl = e.target.closest('.url-row-error')
     if (rowEl) {
         return rowEl.currentTarget.getAttribute('data-err-text');
@@ -92,28 +94,27 @@ export const getColumnDataTooltip = (rowEl, columnClass) => {
 
     if (columnClass === "url-live_status") {
         const statusDescription = httpStatusCodes[d.status_code]
-        return `<div>Live Status:<br/>${d.status_code}: ${statusDescription}</div>`
+        return <div>Live Status:<br/>{d.status_code}: {statusDescription}</div>
     }
 
     if (columnClass === "url-archive_status") {
         if (d.is_book === "true") {
-            return `<div>Book</div>`
+            return <div>Book</div>
         }
 
         return d.live_state
-            ? `<div>${d.archive_status === "true"
+            ? <div>{d.archive_status === "true"
                 ? 'Archived'
-                : 'Not Archived'}` +
-            `<br/>` +
-            `IABot live_state: ${d.live_state} - ${iabotLiveStatusCodes[d.live_state]}</div>`
+                : 'Not Archived'}
+            <br/>IABot live_state: {d.live_state} - {iabotLiveStatusCodes[d.live_state]}</div>
 
-            : `Archive status = ${d.archive_status}<br/>IABot live_state is undefined`
+            : <div>Archive status = {d.archive_status}<br/>IABot live_state is undefined</div>
     }
 
     if (columnClass === "url-citations") {
         return d.citation_status && d.citation_status !== '--'
-            ? `<div>Link Status ${'"' + d.citation_status + '"'} as indicated in Citation</div>`
-            : `<div>No Link Status defined in Citation</div>`
+            ? <div>Link Status {'"' + d.citation_status + '"'} as indicated in Citation</div>
+            : <div>No Link Status defined in Citation</div>
 
     }
 
@@ -121,8 +122,8 @@ export const getColumnDataTooltip = (rowEl, columnClass) => {
         const actionableKey = d.actionable
         const desc = ACTIONABLE_FILTER_MAP[actionableKey]?.desc
         return desc
-            ? `<div>Actionable Item:<br/>${desc}<br/>Click to fix.</div>`
-            : ""
+            ? <div>Actionable Item:<br/>{desc}<br/>Click to fix.</div>
+            : null
 
     }
 
@@ -132,7 +133,7 @@ export const getColumnDataTooltip = (rowEl, columnClass) => {
     }
 
     // if not a special case column, show tooltip from column definition
-    return urlColumnRegistry.columns[columnClass]?.ttCaption
+    return <div>{urlColumnRegistry.columns[columnClass]?.ttCaption}</div>
 }
 
 export const getColumnHeaderTooltip = (columnClass) => {
