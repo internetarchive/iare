@@ -1,19 +1,20 @@
 import React, {useCallback, useState} from 'react';
 import FlockBox from "../../FlockBox.jsx";
 import "../../css/flock.css"
-
-import {convertToCSV, copyToClipboard, iareAlert} from "../../../utils/generalUtils.js";
-import {getUrlLiveStatusClass, getColumnTooltip} from "../../../utils/flockUtils.jsx";
-import {getArchiveStatusInfo} from "../../../utils/urlUtils.jsx";
-import {BadgeContexts as badgeContext, BadgeContexts} from "../../../constants/badgeContexts.jsx";
-
+import "../../css/popover.css"
+import { BadgeContexts as badgeContext, BadgeContexts } from "../../../constants/badgeContexts.jsx";
 import { useTooltip } from "../../../contexts/TooltipContext";
+
+import { convertToCSV, copyToClipboard, iareAlert, iareDebug } from "../../../utils/generalUtils.js";
+import { getUrlLiveStatusClass, getColumnTooltip, getSortKeyForColumn} from "../../../utils/flockUtils.jsx";
+import { getArchiveStatusInfo } from "../../../utils/urlUtils.jsx";
 
 import {ACTIONS_IARE} from "../../../constants/actionsIare.jsx";
 import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../../constants/urlFilterMaps.jsx";
 
 // import {urlColumnRegistry} from "../../../constants/urlColumnRegistry.jsx";
 import signalBadgeRegistry, {signalBadgePrefix} from "../../../constants/badges/signalBadgeRegistry.jsx";
+import {urlColumnRegistry} from "../../../constants/urlColumnRegistry.jsx";
 
 import Popup from "../../Popup.jsx";
 
@@ -27,6 +28,7 @@ import SignalBadges from "../../SignalBadges.jsx";
 // TODO move this into main config context, i think??
 import { ColumnSortContext } from "../../../contexts/ColumnSortContext.jsx"
 import {show} from "react-modal/lib/helpers/ariaAppHider.js";
+import Markdown from "react-markdown";
 
 /*
 assumes urlArray is an array of url objects:
@@ -101,8 +103,8 @@ const urlFlock = React.memo(function UrlFlock({
      *          ["status"]  // Only the 'status' column is sorted.
      */
     const [columnSort, setColumnSort] = useState({
-        sorts: {},
-        sortBy: []
+        sorts: {},  // holds sort defs: {columnKey, dir}
+        sortBy: []  // holds ordered list of columns to sort (currently only one...will enhance later)
             // NB for now, sort just respects first item in list
             // TODO fix this by implementing chained sorts
     })
@@ -127,12 +129,21 @@ const urlFlock = React.memo(function UrlFlock({
         closeTooltip,
     } = useTooltip();
 
+    const canSupportPopovers = "popover" in HTMLElement.prototype
+    const popoverColDefRef = React.useRef(null);
+    const popoverColDefId = "popover-col-def"
+    ////const [popoverColDefAnchorName, setPopoverColDefAnchorName] = useState("--popover-col-def-anchor");
+    const previousColDefAnchorRef = React.useRef(null)
+    const [popoverColDefMarkup, setPopoverColDefMarkup] = useState("--popover-col-def-anchor");
+
     const updateFlockSort = (sortKey) => {
         // set new sort State:
         // - toggle sort direction of specified sort
         // - set new sort state with setSort
 
         console.log(`updateFlockSort: sortKey = ${sortKey}`)
+
+        // NB TODO what happens if null sortKey?
 
         // selectively change the specified sort type
         // https://stackoverflow.com/questions/43638938/updating-an-object-with-setstate-in-react
@@ -165,27 +176,6 @@ const urlFlock = React.memo(function UrlFlock({
                 // TODO implement so that sortBy contains an array of a list of sortKey's, not just one
             }
         })
-    }
-
-    const handleSignalBadgesClick = (e) => {
-        e.stopPropagation()
-
-        console.log(`handleSignalBadgesClick: e.target.className = ${e.target.className}`)
-
-        let rowEl = e.target.closest('.flock-header')
-        if (rowEl) {
-            const el = e.target.closest('.signal-badge')
-            const badgeKey = el.dataset.badgekey
-
-            console.log(`Click on signal badge in header for ${badgeKey}`)
-            iareAlert(`Click on signal badge in header for ${badgeKey}`)
-            return
-
-            // fetch sort key from data
-            // updateFlockSort("signals_score")
-        }
-
-        // what else to do if clicked in non-header?
     }
 
 
@@ -316,28 +306,34 @@ const urlFlock = React.memo(function UrlFlock({
 
     }
 
-    const columnKeyAssociation = {
-        "url-name": "name",
-        "url-live_status": "status",
-        "url-archive_status": "archive_status",
-        "url-actionable": "actionable",
-    }
-
     const getSortFunction = () => {
         // return sort function based on current value of state variable columnSort
 
         // first see if sortFn defined "directly" for sortKey
         const sortKey = columnSort.sortBy[0] ?? "native"  // NB sortKey from global state columnSort.sortBy array
 
+        // TODO COLFIX this is where we get sort function from columnDef
+        /*
+        ////const sortKey = columnSort.sortBy[0] ?? "native"  // NB sortKey from global state columnSort.sortBy array
+        const columnKey = columnSort.sortBy[0] ?? "native"
+        const columnDef = columnDefRegistry[columnKey]
+
+        const sortDir = columnSort.sorts[columnKey].dir
+        return (columnDef.sort)
+            ? (a, b) => columnDef.sort(a, b, sortDir)
+            : undefined  // "null" sort function
+
+         */
+
         console.log(`***** getSortFunction: sortKey is ${sortKey}`)
 
         // TODO?? what to do if sortKey is not valid?
 
         const sortFn = sortFunctions[sortKey]
-
         if (sortFn) {
             return sortFn  // sortFn found in sortFunctions dict, so return it
         }
+
 
         // else continue to special case
 
@@ -359,10 +355,89 @@ const urlFlock = React.memo(function UrlFlock({
     const onHoverFlockRow = e => {
         e.stopPropagation()  // prevents onHover from propagating engaging and erasing tooltip
         const tooltip = getColumnTooltip(e)
+        //// console.log(`onHoverFlockRow: tooltip = ${JSON.stringify(tooltip)}`)
         showTooltip({content: tooltip})
-        // pin tooltip if click on column row
-        // onClick={pinTooltip}
     }
+
+
+
+    const onClickFlockHeaderRow = (e) => {
+
+        // if clicked in sort element...
+        const elSort = e.target.closest('.header-cell-sort')
+        if (elSort) {
+            const sortKey = getSortKeyForColumn(e)
+            // sortkey could really just be columnKey, in which case we just
+            // get it from surrounding flock-col columnKey element data
+            console.log(`onClickFlockHeaderRow: sortKey = ${sortKey}`)
+            updateFlockSort(sortKey)
+            return
+        }
+
+        // if clicked element is in header, invoke popover
+        const el = e.target.closest('.flock-col')
+        if (el) {
+            const columnKey = el.dataset.columnKey;
+            // NB TODO:
+            //  columnDef = coloumnDefs.columnKey
+            //  make popover contents columnDef.popMarkup
+            const columnDef = urlColumnRegistry.columns[columnKey]
+            if (!columnDef) {
+                // ...do nothing - no column def to support this column...unlikely!
+            } else {
+                // render popMarkup of column in a static popover window
+                if (columnDef.popMarkup) {
+                    openPopover(<Markdown>{columnDef.popMarkup}</Markdown>, el)
+                }
+            }
+        }
+    }
+
+
+    const openPopover = (markup, anchorElement) => {
+        if (!anchorElement || !popoverColDefRef.current) {
+            return;
+        }
+
+        // Remove anchor from previous element
+        if (previousColDefAnchorRef.current) {
+            // previousColDefAnchorRef.current.style.anchorName = "";
+            // previousColDefAnchorRef.current.style.backgroundColor = "initial";
+            //
+            // new-ish properties need setProperty:
+            previousColDefAnchorRef.current.style.setProperty("anchor-name", "");
+            previousColDefAnchorRef.current.style.backgroundColor = "initial";
+
+        }
+
+        // Give the supplied element a CSS anchor name
+        // anchorElement.style.anchorName = "--active-popover-anchor";
+        anchorElement.style.setProperty("anchor-name", "--active-popover-anchor");
+        anchorElement.style.backgroundColor = "turquoise";
+
+                    // Tell the popover to use that anchor
+                    // popoverColDefRef.current.style.positionAnchor = "--active-popover-anchor";
+                    // popoverColDefRef.current.style.setProperty("position-anchor", "--active-popover-anchor");
+
+        previousColDefAnchorRef.current = anchorElement;
+
+                        // const popover = popoverColDefRef.current
+                        // if (!popover) {
+                        //     console.error("Popover ref is null");
+                        //     return;
+                        // }
+
+        setPopoverColDefMarkup(markup);
+
+        closeTooltip()
+
+        // requestAnimationFrame(() => {
+        //     popover.showPopover();
+        // });
+        popoverColDefRef.current.showPopover();
+
+    }
+
 
     const onClickFlockRow = (e) => {
         e.stopPropagation()
@@ -377,7 +452,7 @@ const urlFlock = React.memo(function UrlFlock({
             onClickFlockHeaderRow(e)
         }
 
-        // for data row...
+        // Clicking on data row opens up detail for that row's url
         rowEl = e.target.closest('.url-row')
         if (rowEl) {
             // get the url associated with the row of the clicked element
@@ -389,56 +464,6 @@ const urlFlock = React.memo(function UrlFlock({
                 "value": url,
             })
         }
-
-    }
-
-
-    const onClickFlockHeaderRow = (e) => {
-        let elCol = null
-
-        // if clicked in sort row...
-        const elSort = e.target.closest('.header-cell-sort')
-        if (elSort) { // we are in sort cell - get SortKey
-
-            let sortKey = null
-
-            // ... if Signal Badge column...
-            elCol = e.target.closest('.signal-badge')
-            if (elCol) {
-
-                            // NB
-                            //  we should set pinTooltip if not on sort element
-                            // TODO Also, in popup tooltip, we should respond to Sort functions within that popup
-                            //  i imagine the popup showing current sort state with an option to click to change it
-                            //
-                            // NB FOR NOW:
-                            //  jsut show the tooltip - woprking on pin!
-
-                // we have a signal badge column - calc sortKey
-                const badgeKey = elCol.dataset.badgekey
-                sortKey = `${signalBadgePrefix}${badgeKey}`  // e.g. "signal_wayback"
-
-                console.log(`Clicked on flock header signal badge: ${badgeKey}`)
-
-            } else {
-                // if we have a normal flock column, extract sortKey from data.columnKey
-                elCol = e.target.closest('.flock-col')
-                if (elCol) {
-
-                    const columnKey = elCol.dataset.columnKey
-                    sortKey = columnKeyAssociation[columnKey]
-
-                    console.log(`Clicked on flock header column for ${sortKey}`)
-                }
-
-            }
-
-            updateFlockSort(sortKey)  // TODO what happens if null?
-            return
-        }
-
-        // otherwise, set pinned for tooltip
-        // pinTooltip()
 
     }
 
@@ -633,7 +658,7 @@ const urlFlock = React.memo(function UrlFlock({
 
                 {/* signals column is special... */}
 
-                <div className={"url-signals flock-col"}>
+                <div className={"url-signals"}>
                     <div>
                         <SignalBadges badgeContextKey={BadgeContexts.sort.key}
                                       monitoredSignals={monitoredSignals}
@@ -772,12 +797,14 @@ const urlFlock = React.memo(function UrlFlock({
         `${flockDataRows.length === 1 ? 'URL' : 'URLs'}`
 
     const flockCaption = <>
+
         <div className={"main-caption"}>
             <div>URL Links</div>
             <div>
                 <div style={{position: "relative", top: ".2rem"}}>{buttonShowHideFilters}{buttonShowHideRefs}{buttonCopyList}{buttonCopyDetails}</div>
             </div>
         </div>
+
         <div className={"sub-caption"}>
             <div>{flockInfo}</div>
             <div>{spanFeedback} </div>
@@ -799,6 +826,8 @@ const urlFlock = React.memo(function UrlFlock({
     </div>
 
     React.useEffect(() => {
+        // syncs scroll left and right of header row and data rows
+
         const header = headerRef.current;
         const body = bodyRef.current;
 
@@ -830,6 +859,8 @@ const urlFlock = React.memo(function UrlFlock({
 
     }, []);
 
+
+    const popoverTitle = "Stanky Popover"
 
     return <>
 
@@ -874,6 +905,21 @@ const urlFlock = React.memo(function UrlFlock({
         >
             {signalDetailsPopupContents}
         </Popup>
+
+        {/* Popover for showing column definition details */}
+        <div ref={popoverColDefRef}
+             id={popoverColDefId}
+             popover={"auto"}
+             className="pop-col-def-container"
+        >
+            <div className="pop-col-def-content">
+                {/*<h2>{popoverTitle}</h2>*/}
+                {popoverColDefMarkup}
+                <button popoverTarget={popoverColDefId} popoverTargetAction="close" className="btn">
+                    Close
+                </button>
+            </div>
+        </div>
 
     </>
 })

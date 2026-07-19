@@ -235,3 +235,26 @@ export const iareAlert = (s, contextId) => {
     alert(s)
 }
 
+
+import DOMPurify from 'dompurify';
+
+export const iareDebug = (msg, contextId) => {
+    // if contextId specified, use that element to display message; 
+    // otherwise use default class 'debugBox'
+
+    const targetElement = contextId
+        ? document.querySelector(`#${contextId}`)
+        : document.querySelector(`.debugBox`);
+
+    if (targetElement) {
+        targetElement.innerText = msg;
+    } else {
+        console.warn("Debug target element not found.");
+    }
+    // if (targetElement) {
+    //     if (typeof msg === "string") {
+    //         targetElement.innerText = msg;
+    //     } else {
+    //         targetElement.innerHTML = DOMPurify.sanitize(msg);
+    //     }
+}

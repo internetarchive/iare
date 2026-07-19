@@ -13,8 +13,9 @@ export default function ConditionsBox({conditions = null, onAction, caption="Con
 
     // add the "Remove All" button
     const buttonRemove = myConditions?.length
-        ? <button onClick={() => onAction({action: ACTIONS_IARE.REMOVE_ALL_FILTERS.key})}
-                  className={'utility-button small-button inline-conditions'}
+        ? <button className={'utility-button small-button inline-conditions'}
+                  onClick={() => onAction({action: ACTIONS_IARE.REMOVE_ALL_FILTERS.key})}
+
         ><span>{buttonCaption}</span></button>
         : null
 

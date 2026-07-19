@@ -22,13 +22,15 @@ import {KNOWN_MEDIA_TYPES} from "./constants/knownMediaTypes.jsx";
 import {ACTIONS_IARE} from "./constants/actionsIare.jsx";
 import {iareAlert} from "./utils/generalUtils.js";
 import {TooltipProvider as MyTooltipProvider} from "./contexts/TooltipContext.jsx";
-import {Tooltip as AppTooltip} from "react-tooltip";  // tooltip for outra-app tooltip
+import {Tooltip as AppTooltip} from "react-tooltip";
+import DraggableDiv from "./components/DraggableDiv.jsx";
+import NativeDraggableDiv from "./components/NativeDraggableDiv.jsx";  // tooltip for outra-app tooltip
 // NB this is temporary - shall be removed when we fix the ScrollFix element to the main App tooltip
 
 
 export default function App(
     {
-        env,
+        myEnv,
         myPath,
         myRefresh = true,
         myShowShortcuts = false,
@@ -54,7 +56,7 @@ export default function App(
     const [isShowShortcuts, setIsShowShortcuts] = useState(myShowShortcuts);
     // TODO set this based on local storage or cookie value
     const [isShowUseLocalCache, setIsShowUseLocalCache] = useState(
-        env === "env-local"
+        myEnv === "env-local"
     );
 
     const [isShowDebugInfo, setIsShowDebugInfo] = useState(false);
@@ -151,12 +153,12 @@ export default function App(
 
 
     const myShortcutList = React.useMemo(() => {
-        return env === 'env-production'
+        return myEnv === 'env-production'
             ? envShortcutLists.prod
-            : env === 'env-staging'
+            : myEnv === 'env-staging'
                 ? envShortcutLists.stage
                 : envShortcutLists.other
-    }, [env, envShortcutLists])
+    }, [myEnv, envShortcutLists])
 
     const shortcuts = React.useMemo(() => {
         return myShortcutList
@@ -177,15 +179,15 @@ export default function App(
 
     // add environment tag to body element's class list to enable selective environment styling
     useEffect(() => {
-        console.log('APP: useEffect[env]: app name: ' + package_json.name, ', version: ' + package_json.version)
-        document.body.classList.add(env);
+        console.log('APP: useEffect[myEnv]: app name: ' + package_json.name, ', version: ' + package_json.version)
+        document.body.classList.add(myEnv);
 
         // // pull local storage settings
         // const savedScrollFix = localStorage.getItem('isScrollFix');
         // if (savedScrollFix !== null) {
         //     setIsScrollFix(JSON.parse(savedScrollFix));
         // }
-    }, [env])
+    }, [myEnv])
 
     // add event listener for scroll and resize events
     // useEffect(() => {
@@ -499,9 +501,9 @@ export default function App(
     };
 
 
-    const siteInfo = (env !== 'env-production')  // TODO implement IareEnvironments
-        ? `Server: ${env !== 'env-staging' ? ' LOCAL ' : ' STAGING '}`
-        : ''  // do not show env in production environment
+    const siteInfo = (myEnv !== 'env-production')  // TODO implement IareEnvironments
+        ? `Server: ${myEnv !== 'env-staging' ? ' LOCAL ' : ' STAGING '}`
+        : ''  // do not show myEnv in production environment
 
 
     const iariSourceInfo = `IARI: ${IariSources[myIariSourceId]?.caption}`
@@ -549,7 +551,7 @@ export default function App(
     const buttonShowDebugOn = "Show Debug"
     const buttonShowDebugOff = "Hide Debug"
 
-    const buttonShowDebug = (env !== 'env-production') &&
+    const buttonShowDebug = (myEnv !== 'env-production') &&
         <button className={"utility-button debug-button small-button"}
                 style={{marginLeft:"0rem", marginTop: ".25rem", marginBottom: ".25rem"}}
                 onClick={toggleDebug}>{
@@ -614,7 +616,7 @@ export default function App(
 
     const iariChoices = Object.keys(IariSources)
         .filter(key => {
-            return env === 'env-staging'
+            return myEnv === 'env-staging'
                 ? !(key === "iari_local" || key === "iari")  // filter out iari_local and iari on Staging
                 : true
         })
@@ -633,7 +635,7 @@ export default function App(
         {/*<div style={{marginBottom:".5rem"}}*/}
         {/*>{iariChoiceSelect} {methodChoiceSelect} {articleVersionChoiceSelect}</div>*/}
         <div>{iariChoiceSelect} {methodChoiceSelect} {articleVersionChoiceSelect}</div>
-        <p><span className={'label'}>Environment:</span> {env} <span
+        <p><span className={'label'}>Environment:</span> {myEnv} <span
             className={'lolite'}>(host: {window.location.host})</span></p>
         <p><span className={'label'}>IARE Version:</span> {versionInfo}</p>
         <p><span className={'label'}>IARI Source:</span> {myIariSourceId} <span
@@ -654,7 +656,7 @@ export default function App(
 
     // set config for config context
     const config = {
-        environment: env,
+        environment: myEnv,
         iariSource: IariSources[myIariSourceId]?.proxy,
         iariSourceId: myIariSourceId,
         wikiBaseUrl: "https://en.wikipedia.org/wiki/",
@@ -678,12 +680,6 @@ export default function App(
 
     const defaultIfEmpty = "https://en.wikipedia.org/wiki/"
     // TODO candidate for language strings
-
-    const debugStaticDisplay = <div className="debug-static-display">
-        Scroll Y: {scrollY}<br/>
-        Window H: {windowHeight}<br/>
-        LowerSection Top: {lowerSectionTopY}
-    </div>
 
 
     useEffect(() => {
@@ -725,7 +721,10 @@ export default function App(
         </button>
 
         {isShowHamburger && (
-            <div className={"iare-hamburger-menu"}>
+            <div className={"iare-hamburger-menu"}
+                popover={"auto"}
+                popover-id={""}
+            >
                 <div className={"menu-header"}>
                     <div>IARE version {versionInfo}</div>
                 </div>
@@ -738,12 +737,28 @@ export default function App(
                 </div>
             </div>
         )}
+
+        {/*<div ref={popoverHamburgerRef}*/}
+        {/*     id={popoverHamburgerId}*/}
+        {/*     popover={"auto"}*/}
+        {/*     className="pop-container">*/}
+        {/*    <div className="pop-content">*/}
+        {/*        <h2>{popoverTitle}</h2>*/}
+        {/*        {popoverHamburgerContents}*/}
+        {/*        <button popoverTarget={popoverHamburgerId} popoverTargetAction="close" className="btn">*/}
+        {/*            Close*/}
+        {/*        </button>*/}
+        {/*    </div>*/}
+        {/*</div>*/}
     </div>
 
     
     return <MyTooltipProvider>
 
-        {debugStaticDisplay}
+        {/* This is Debug Static Display, that lives at the top, right of the screen */}
+        {(myEnv === 'env-local') &&
+            <NativeDraggableDiv />}
+        {/*{debugStaticDisplay}*/}
 
         <ConfigContext.Provider value={config}>
 

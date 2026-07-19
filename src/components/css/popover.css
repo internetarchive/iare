@@ -1,0 +1,95 @@
+/**,*/
+/**::before,*/
+/**::after {*/
+/*    box-sizing: border-box;*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*}*/
+
+:root {
+    /*--clr-primary: oklch(26.373% 0.15701 264.114);*/
+    /*--clr-background: oklch(95% 0 0);*/
+    /*--clr-text: oklch(20% 0 0);*/
+}
+
+    /*body {*/
+    /*    font-family: system-ui, sans-serif;*/
+    /*    background-color: var(--clr-background);*/
+    /*    color: var(--clr-text);*/
+    /*    padding: 2rem;*/
+    /*    display: grid;*/
+    /*    min-height: 100svh;*/
+    /*    place-content: center;*/
+    /*}*/
+
+/* hmmm...styling here for specific pop button doesnt seem to be right...  */
+/*.btn.pop-button {*/
+/*    background-color: var(--clr-primary);*/
+/*    color: var(--clr-background);*/
+/*    font: inherit;*/
+/*    border: none;*/
+/*    padding: 0.4rem 1.5rem;*/
+/*    cursor: pointer;*/
+/*    border-radius: 4px;*/
+/*    max-width: fit-content;*/
+/*    &:focus {*/
+/*        outline-color: transparent;*/
+/*    }*/
+/*    &:focus-visible {*/
+/*        box-shadow:*/
+/*                0 0 0 3px var(--clr-background),*/
+/*                0 0 0 5px var(--clr-primary);*/
+/*    }*/
+/*}*/
+
+.pop-col-def-container {
+    position: fixed;
+    position-anchor: --active-popover-anchor;
+
+    position-area: top;
+
+    bottom: anchor(top);
+    left: anchor(center);
+
+    transform: translateX(-50%);
+
+                /*!*position-area: top span-right;*!*/
+                /*position-area: top;*/
+                /*margin-block-start: 1rem;*/
+                /*margin-block-end: 1rem;*/
+
+    margin-bottom: 8px;
+
+    padding: 1rem;
+    border-radius: 4px;
+    /*inline-size: min(80vw, 25rem);*/
+    /*inline-size: min(40vw, 25rem);*/
+    inline-size: 20rem;
+
+    transition:
+            display 200ms,
+            overlay 200ms,
+            translate 200ms,
+            opacity 200ms;
+    transition-behavior: allow-discrete;
+    opacity: 0;
+    translate: 0 10px;
+    &:popover-open {
+        translate: 0 0px;
+        opacity: 1;
+        @starting-style {
+            translate: 0 10px;
+            opacity: 0;
+        }
+    }
+}
+
+.pop-col-def-container::backdrop {
+    background: rgb(0 0 0 / 20%);
+}
+
+.pop-col-def-content {
+    display: grid;
+    gap: 0.5rem;
+    background-color: hotpink;
+}

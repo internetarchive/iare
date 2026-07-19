@@ -49,20 +49,29 @@ export function TooltipProvider({ children }) {
             <MyTooltip
                 id="master-tooltip"
                 className={"tooltip-iare-display"}
+                style={{zIndex: 9999}}
+                closeOnEsc={true}
+
                 // float={false}
                 float={true}
-                closeOnEsc={true}
+                events={['hover']}
+
+                // offset={0}
+                // offset={5}
+                // offset={10}
+                offset={30}
+                place="top"
+
+                positionStrategy="fixed"
+                // positionStrategy="absolute"
+
                 delayShow={420}
                 variant={"info"}
                 noArrow={true}
-                // offset={5}
-                offset={30}
-                style={{zIndex: 9999}}
-
-                place="top"
-                positionStrategy="fixed"
 
                 clickable
+
+                hidden={!tooltip?.content}
             >
                 <TooltipTemplate
                     content={tooltip?.content}

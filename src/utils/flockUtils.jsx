@@ -27,16 +27,16 @@ const getSignalColumnTooltip = (columnClass) => {
 }
 
 
-const getUrlColumnTooltip = (columnClass) => {
+const getUrlColumnTooltip = (columnKey) => {
 
-    if (!columnClass) return null
-    const columnDef = urlColumnRegistry.columns[columnClass]
+    if (!columnKey) return null
+    const columnDef = urlColumnRegistry.columns[columnKey]
     if (!columnDef) return null
 
     if (columnDef.ttMarkup) return <Markdown>{columnDef.ttMarkup}</Markdown>
     if (columnDef.ttCaption) return <div>{columnDef.ttCaption}</div>
 
-    return <div>tooltip for {columnClass}</div>  // unhandled column shouldn't happen - we should not get here
+    return <div>Tooltip for {columnKey}</div>  // unhandled column - we should not get here
 }
 
 
@@ -53,23 +53,23 @@ export const getColumnTooltip = (e) => {
     // if header row...
     rowEl = e.target.closest('.flock-header')
     if (rowEl) {
-        let columnClass = ""
+        let columnKey = ""
 
         el = e.target.closest('.signal-badge')
         if (el) {
-            columnClass = 'signal-' + el.dataset.badgekey
+            columnKey = 'signal-' + el.dataset.badgekey
         } else {
             el = e.target.closest('.flock-col')
             if (el) {
                 // if normal column, get from dataset columnKey
-                columnClass = el.dataset.columnKey;
+                columnKey = el.dataset.columnKey;
             }
         }
 
-        console.log(`flockUtils:: getColumnTooltipHtml: .flock-header columnClass is: ${columnClass}`)
+        console.log(`flockUtils:: getColumnTooltipHtml: .flock-header columnClass is: ${columnKey}`)
 
         // else get from signal hierarchy
-        return getColumnHeaderTooltip(columnClass)
+        return getColumnHeaderTooltip(columnKey)
     }
 
     // if error row...
@@ -78,7 +78,7 @@ export const getColumnTooltip = (e) => {
         return rowEl.currentTarget.getAttribute('data-err-text');
     }
 
-    // for data row...
+    // if data row...
     rowEl = e.target.closest('.url-row')
     if (rowEl) {
         const columnClass = e.target.closest('.url-row > *')?.classList[0]  // get first class in list to get column type
@@ -133,16 +133,51 @@ export const getColumnDataTooltip = (rowEl, columnClass) => {
     }
 
     // if not a special case column, show tooltip from column definition
-    return <div>{urlColumnRegistry.columns[columnClass]?.ttCaption}</div>
+    const ttCaption = urlColumnRegistry.columns[columnClass]?.ttCaption
+    if (ttCaption) return <div>{ttCaption}</div>
+
+    return null
 }
 
-export const getColumnHeaderTooltip = (columnClass) => {
+export const getColumnHeaderTooltip = (columnKey) => {
     // if (!columnClass) return null
 
-    if (columnClass?.startsWith('signal-') ) return getSignalColumnTooltip(columnClass)
+    if (columnKey?.startsWith('signal-') ) return getSignalColumnTooltip(columnKey)
     // else ...
-    return getUrlColumnTooltip(columnClass)
+    return getUrlColumnTooltip(columnKey)
 
+}
+
+// NB THIS IS TEMPORARY! until we match columnKey with sort keys
+const columnKeyAssociation = {
+    "url-name": "name",
+    "url-live_status": "status",
+    "url-archive_status": "archive_status",
+    "url-actionable": "actionable",
+}
+
+export const getSortKeyForColumn= (e) => {
+    let elCol = null
+    let sortKey = null
+
+    elCol = e.target.closest('.signal-badge')
+    if (elCol) {
+        // if Signal Badge column...return sortKey based on badgeKey
+        const badgeKey = elCol.dataset.badgekey
+        sortKey = `${signalBadgePrefix}${badgeKey}`  // e.g. "signal_wayback"
+
+    } else {
+        elCol = e.target.closest('.flock-col')
+        if (elCol) {
+            // return sortKey based on columnKey
+            const columnKey = elCol.dataset.columnKey
+            sortKey = columnKeyAssociation[columnKey]
+
+            console.log(`onClickFlockHeaderRow: column sort: ${sortKey}`)
+        }
+    }
+
+    return sortKey
 }
 
 

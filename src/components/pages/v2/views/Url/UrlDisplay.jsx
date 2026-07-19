@@ -718,7 +718,8 @@ export default function UrlDisplay ({ pageData, options } ) {
                           options={{showFilters: isShowFilters, showRefs: isShowRefs}}
                           selectedUrl={selectedUrl}
                           fetchMethod={myConfig.urlStatusMethod}
-                          tooltipId={"tooltip-url-display"}/>
+                          tooltipId={"tooltip-url-display"}
+                />
             </div>
 
             {isShowRefs && <div className="url-display-ref-flock">
@@ -742,17 +743,18 @@ export default function UrlDisplay ({ pageData, options } ) {
     return <div className={"url-display-container"}>
 
         <div className={"url-display-header"}>
-            {false && <div>url-display-header</div>}
+            {/*{false && <div>url-display-header</div>}*/}
+            {true && <div>url-display-header</div>}
             {overviewColumn}
         </div>
 
         {/* we add "style: pointerEvents" to avoid conflict with RefView popup */}
         <div className={"url-display-contents"}
-            style={{
-                pointerEvents: isRefViewModalOpen ? "none" : "auto",
-                // color:"red"
+             style={{
+                 pointerEvents: isRefViewModalOpen ? "none" : "auto",
+                 // color:"red"
 
-        }}>
+             }}>
 
             <div className={"iare-ux-container"}>
 
@@ -763,20 +765,20 @@ export default function UrlDisplay ({ pageData, options } ) {
                         conditions={currentConditions}
                         onAction={handleAction}/>
 
-                    {/*<div>ShowRefs: {isShowRefs ? "true" : "false"}</div>*/}
-                    {/*<div className={"test-tooltip-display"}>ShowRefs: {isShowRefs ? "true" : "false"}</div>*/}
+                    <div className={"test-tooltip-display"}>ShowRefs: {isShowRefs ? "true" : "false"}</div>
 
-                </div>{/* iare-ux-header */}
+                </div>
+                {/* iare-ux-header */}
 
                 <div className={"iare-ux-body"}>
                     {urlDisplayBody}
-                </div> {/* iare-ux-body */}
+                </div>
+                {/* iare-ux-body */}
 
-            </div> {/* iare-ux-container */}
+            </div>
+            {/* iare-ux-container */}
 
         </div>
-
-
 
 
         {/*

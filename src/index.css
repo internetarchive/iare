@@ -1,6 +1,14 @@
 @import url("iari_custom_defaults.css");
 @import url("__custom__/iare_custom_overrides.css");
 
+/**,*/
+/**::before,*/
+/**::after {*/
+/*    box-sizing: border-box;*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*}*/
+
 :root {
     --iare-color-basic-blue: #2299e8;
     --iare-color-basic-blue-dark: #0478e0;
@@ -375,7 +383,7 @@ body.env-other .iare-hamburger-menu span.non-production {
 }
 
 .debug-static-display {
-    display: none;
+    /*display: none;*/
     /*display: inherit;*/
 
     position: fixed;

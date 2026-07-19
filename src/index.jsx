@@ -117,13 +117,13 @@ const getBooleanParameter = (paramName) => {
 
 // const root = ReactDOM.createRoot(document.getElementById("root"));
 const queryParameters = new URLSearchParams(window.location.search)
-const env = getEnvironment();
+const myEnv = getEnvironment();
 const myDebug = queryParameters.has("debug") ? queryParameters.get("debug").toLowerCase() === 'true' : false;
 
 const myPath = queryParameters.has("url") ? queryParameters.get("url") : '';
-const myIariSourceId = getIariSource(queryParameters, env)
-const myCheckMethod = getCheckMethod(queryParameters, env)
-const myParseMethod = getParseMethod(queryParameters, env)
+const myIariSourceId = getIariSource(queryParameters, myEnv)
+const myCheckMethod = getCheckMethod(queryParameters, myEnv)
+const myParseMethod = getParseMethod(queryParameters, myEnv)
 
 const myRefresh = getBooleanParameter("refresh")
 const myShowShortcuts = getBooleanParameter("show_shortcuts")
@@ -133,7 +133,7 @@ const myUseLocalCache = getBooleanParameter("use_local_cache")
 
 ReactDOM.createRoot(document.getElementById("root")).render(
     // <React.StrictMode>
-        <App env={env}
+        <App myEnv={myEnv}
              myPath={myPath}
              myRefresh={myRefresh}
              myShowShortcuts={myShowShortcuts}

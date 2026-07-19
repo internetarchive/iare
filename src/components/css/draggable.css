@@ -1,0 +1,26 @@
+.drag-box {
+    width: 150px;
+    height: 150px;
+    background-color: #3498db;
+    color: white;
+    cursor: grab;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    /* Absolute positioning works best for arbitrary dragging */
+    position: absolute;
+}
+
+/* Change style when the user clicks and holds the div */
+.drag-box.dragging {
+    cursor: grabbing;
+    opacity: 0.8;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.debugBox {
+    text-align: left !important;
+    justify-content: left !important;
+    padding: 0.5rem;
+}

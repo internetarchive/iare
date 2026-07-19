@@ -5,6 +5,7 @@ export default function TooltipTemplate({
     onClose
 }) {
     let header = null
+
     if (pinned) {
         header = <div className="tooltip-header"><button onClick={onClose}>✕</button></div>
     } else if (canPin) {

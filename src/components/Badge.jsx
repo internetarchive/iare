@@ -80,6 +80,9 @@ export default function Badge({
             content={badgeContent}
             sort={headerSort}
             headerClass={"flock-col"}
+            cellData={{
+                "columnKey": `signal-${badgeKey}`,
+            }}
         />}
 
         {/* if NOT header cell */}

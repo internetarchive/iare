@@ -143,13 +143,14 @@
     line-height:1.2;
     margin-bottom: 0 !important;
 }
-.conditions-box button.inline-conditions {
-    position: relative !important;
-    top: 0.1rem !important;
-    margin-left: 2.5rem !important;
-    background-color: var(--color-button-dark-bg) !important;
-    color: var(--color-button-dark) !important;
-}
+
+/*.conditions-box button.inline-conditions {*/
+/*    position: relative !important;*/
+/*    top: 0.1rem !important;*/
+/*    margin-left: 2.5rem !important;*/
+/*    background-color: var(--color-button-dark-bg) !important;*/
+/*    color: var(--color-button-dark) !important;*/
+/*}*/
 
 
 .conditions-box-caption .sub-caption {
