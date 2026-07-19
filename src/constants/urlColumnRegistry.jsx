@@ -66,7 +66,7 @@ Action can be taken to improve citation`,
 
 When actionable, places have been identified that could use improvement.
   
-Click to open Ref Detail View to see details.`,
+Click row to open details for Citation Reference link.`,
             sortable: true,
         },
 

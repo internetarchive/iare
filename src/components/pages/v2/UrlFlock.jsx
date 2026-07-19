@@ -434,9 +434,27 @@ const urlFlock = React.memo(function UrlFlock({
         // requestAnimationFrame(() => {
         //     popover.showPopover();
         // });
-        popoverColDefRef.current.showPopover();
+        // popoverColDefRef.current.showPopover();
+        popoverColDefRef.current.showModal();
 
     }
+
+
+    const closePopover = () => {
+        if (previousColDefAnchorRef.current) {
+            previousColDefAnchorRef.current.style.anchorName = "";
+            previousColDefAnchorRef.current = null;
+        }
+        popoverColDefRef.current?.close();
+
+    }
+
+
+    const handleDialogClick = (event) => {
+        if (event.target === event.currentTarget) {
+            event.currentTarget.close();
+        }
+    };
 
 
     const onClickFlockRow = (e) => {
@@ -860,8 +878,6 @@ const urlFlock = React.memo(function UrlFlock({
     }, []);
 
 
-    const popoverTitle = "Stanky Popover"
-
     return <>
 
         {/*<div data-tooltip-id={tooltipId}         // passed in tooltipId for this flock*/}
@@ -907,20 +923,43 @@ const urlFlock = React.memo(function UrlFlock({
         </Popup>
 
         {/* Popover for showing column definition details */}
-        <div ref={popoverColDefRef}
+        {/*<div ref={popoverColDefRef}*/}
+        {/*     id={popoverColDefId}*/}
+        {/*     popover={"auto"}*/}
+        {/*     className="pop-col-def-container"*/}
+        {/*>*/}
+        {/*    <div className="pop-col-def-content">*/}
+        {/*        {popoverColDefMarkup}*/}
+        {/*        <button popoverTarget={popoverColDefId} */}
+        {/*                popoverTargetAction="close"*/}
+        {/*                className="btn close-button"*/}
+        {/*        >*/}
+        {/*        Close*/}
+        {/*        </button>*/}
+        {/*    </div>*/}
+        {/*</div>*/}
+
+        <dialog ref={popoverColDefRef}
              id={popoverColDefId}
-             popover={"auto"}
+             popover={"manual"}
              className="pop-col-def-container"
+             onClick={handleDialogClick}
         >
             <div className="pop-col-def-content">
-                {/*<h2>{popoverTitle}</h2>*/}
                 {popoverColDefMarkup}
-                <button popoverTarget={popoverColDefId} popoverTargetAction="close" className="btn">
-                    Close
+                {/*<button popoverTarget={popoverColDefId}*/}
+                {/*        popoverTargetAction="close"*/}
+                {/*        className="btn close-button"*/}
+                {/*>*/}
+                {/*    Close*/}
+                {/*</button>*/}
+                <button className="btn close-button"
+                        onClick={closePopover}
+                >
+                    ×
                 </button>
             </div>
-        </div>
-
+        </dialog>
     </>
 })
 
