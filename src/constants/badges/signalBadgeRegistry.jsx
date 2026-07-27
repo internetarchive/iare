@@ -9,12 +9,12 @@ import WaybackBadge from "./WaybackBadge.jsx";
 import EnwikiBadge from "./EnwikiBadge.jsx";
 import TrancoBadge from "./TrancoBadge";
 import MbfcBadge from "./MbfcBadge";
-
-import imgScoreLogo from "./images/wikisignals.logo.v1r4.png"
-import imgWaybackLogo from "./images/badge.logo.wayback.small.png"
-import imgTrancoLogo from './images/badge.logo.tranco.png'
-import imgMbfcLogo from "./images/badge.logo.mbfc.png";
-import imgEnwikiLogo from "./images/badge.logo.wiki.png";
+//
+// import imgScoreLogo from "./images/wikisignals.logo.v1r4.png"
+// import imgWaybackLogo from "./images/badge.logo.wayback.small.png"
+// import imgTrancoLogo from './images/badge.logo.tranco.png'
+// import imgMbfcLogo from "./images/badge.logo.mbfc.png";
+// import imgEnwikiLogo from "./images/badge.logo.wiki.png";
 
 
 export function extractInfoFromPath(data, path) {
@@ -49,7 +49,7 @@ A higher score is better, with 1.0 being the highest possible score.
 See [WikiSignals.org](WikiSignals.org) for more details.`,
 
         priority: 1000,
-        logo: imgScoreLogo,
+        logo: "/images/wikisignals.logo.v1r4.png",
 
         group: "",
 
@@ -88,7 +88,7 @@ See [WikiSignals.org](WikiSignals.org) for more details.`,
         class_name: "tranco-badge",
         description: "Tranco rating (website)",
         priority: 100,
-        logo: imgTrancoLogo,
+        logo: './images/badge.logo.tranco.png',
 
         group: "",
 
@@ -142,7 +142,7 @@ Higher scores are better.`,
 
         priority: 200,
         group: "",
-        logo: imgMbfcLogo,
+        logo: "/images/badge.logo.mbfc.png",
         info_spec: {
             description: "Media Bias Fact Check",
             source_fields: [
@@ -252,7 +252,7 @@ The number of times the domain appeared in links within Wikipedia (English) arti
 
         priority: 300,
         group: "",
-        logo: imgEnwikiLogo,
+        logo: "/images/badge.logo.wiki.png",
         info_spec: {
             description: "How many external links with this domain in English Wikipedia.",
             source_fields: [
@@ -295,7 +295,7 @@ Longer times does not necessarily mean more reliable.`,
 
         priority: 400,
         group: "",
-        logo: imgWaybackLogo,
+        logo: "/images/badge.logo.wayback.small.png",
         info_spec: {
             description: "Total snapshots in Wayback Machine, and first/last capture dates.",
             source_fields: [

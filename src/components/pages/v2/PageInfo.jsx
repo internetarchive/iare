@@ -158,7 +158,7 @@ export default function PageInfo({ pageData, onAction }) {
 
     const viewOptionsButton = <button
         className={"utility-button page-utility-button"}
-        onClick={() => onAction({ action: ACTIONS_IARE.TOGGLE_SHOW_VIEW_OPTIONS })} >
+        onClick={() => onAction({ action: ACTIONS_IARE.TOGGLE_SHOW_VIEW_OPTIONS.key })} >
         <span>{myShowViewOptions ? "Hide View Options" : "Show View Options"}</span>
     </button>
 

@@ -1,6 +1,6 @@
 import React from "react";
 import {BadgeContexts} from "../badgeContexts.jsx";
-import Badge from "../../components/Badge.jsx";
+import Badge from "../../../_notes/_archive/Badge.jsx";
 import signalBadgeRegistry from "./signalBadgeRegistry.jsx";
 import {getNormalizedScore} from "../../utils/generalUtils.js";
 
@@ -57,9 +57,9 @@ export default function ScoreBadge({
         </div>;
     }
 
-    let badgeData = {}  // what to send to dataset for badge element
+    let badgeData = {}  // what to include in dataset
     let badgeText = null  // what to show patron
-    let badgeClass = badgeDef.class_name
+    let badgeClass = badgeDef.class_name  // how to style
 
     let scoreColor = "#888888"
     let badgeSvg = null
@@ -69,26 +69,6 @@ export default function ScoreBadge({
 
         badgeIcon = <div className={"badge-icon-wrapper"} style={{"--score-color": scoreColor}}>
             <img src={badgeDef.logo} alt={"WikiSignal Score"}/>
-
-            {/*<div className={"badge-overlay"}>*/}
-            {/*    <svg*/}
-            {/*        viewBox="0 0 10 100"*/}
-            {/*        preserveAspectRatio="none"*/}
-            {/*        style={{height: "100%", width: ".75rem", border: "1px solid #888"}}>*/}
-            {/*        <rect x="0" y={100 - score100} width="10" height={score100} fill="var(--score-color)"></rect>*/}
-            {/*        <rect x="0" y="0" width="10" height={100 - score100} fill="var(--color-neutral-bar)"></rect>*/}
-            {/*    </svg>*/}
-
-            {/*    /!*    <svg className={"score-badge-text"}*!/*/}
-            {/*    /!*         viewBox="0 0 100 30"*!/*/}
-            {/*    /!*    >*!/*/}
-            {/*    /!*        <text x="50" y="50%" dy="20%" className={"text-shadow"}>{score100}</text>*!/*/}
-            {/*    /!*        <text x="50" y="50%" dy="20%" className={"text-stroke"}>{score100}</text>*!/*/}
-            {/*    /!*        <text x="50" y="50%" dy="20%" className={"text-fore"}>{score100}</text>*!/*/}
-            {/*    /!*    </svg>*!/*/}
-
-            {/*</div>*/}
-
         </div>
     }
 

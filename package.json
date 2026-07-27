@@ -24,6 +24,7 @@
     "react-rnd": "^10.5.2",
     "react-router-dom": "^7.3.0",
     "react-tooltip": "^5.28.0",
+    "rehype-raw": "^7.0.0",
     "rich-textarea": "^0.26.4",
     "sass": "^1.85.1",
     "tldts": "^7.0.26",

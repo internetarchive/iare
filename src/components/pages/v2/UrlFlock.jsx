@@ -1,34 +1,23 @@
 import React, {useCallback, useState} from 'react';
-import FlockBox from "../../FlockBox.jsx";
-import "../../css/flock.css"
-import "../../css/popover.css"
-import { BadgeContexts as badgeContext, BadgeContexts } from "../../../constants/badgeContexts.jsx";
 import { useTooltip } from "../../../contexts/TooltipContext";
-
 import { convertToCSV, copyToClipboard, iareAlert, iareDebug } from "../../../utils/generalUtils.js";
-import { getUrlLiveStatusClass, getColumnTooltip, getSortKeyForColumn} from "../../../utils/flockUtils.jsx";
-import { getArchiveStatusInfo } from "../../../utils/urlUtils.jsx";
+import { getColumnTooltip, getSortKeyForColumn, getDatasetProps } from "../../../utils/flockUtils.jsx";
 
 import {ACTIONS_IARE} from "../../../constants/actionsIare.jsx";
-import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../../constants/urlFilterMaps.jsx";
 
-// import {urlColumnRegistry} from "../../../constants/urlColumnRegistry.jsx";
-import signalBadgeRegistry, {signalBadgePrefix} from "../../../constants/badges/signalBadgeRegistry.jsx";
-import {urlColumnRegistry} from "../../../constants/urlColumnRegistry.jsx";
-
-import Popup from "../../Popup.jsx";
-
-import ColumnBox from "../../ColumnBox.jsx";
-
-// import SignalDisplay from "../../SignalDisplay.jsx";
-import SignalsDocs from "../../SignalsDocs.jsx";
-import SignalBadges from "../../SignalBadges.jsx";
+import FlockBox from "../../FlockBox.jsx";
+import FlockHeaderCell from "../../flock/FlockHeaderCell.tsx";
+import FlockDataCell from "../../flock/FlockDataCell.js";
+import "../../css/flock.css"
+import "../../css/popover.css"
 
 // context to provide global flag for sorting value
 // TODO move this into main config context, i think??
-import { ColumnSortContext } from "../../../contexts/ColumnSortContext.jsx"
-import {show} from "react-modal/lib/helpers/ariaAppHider.js";
+import { ColumnSortContext } from "../../../contexts/ColumnSortContext.tsx"
 import Markdown from "react-markdown";
+
+import { renderRoles } from "../../flock/renderRoles.js";
+import { urlColumnRegistry } from "../../../constants/urlColumnRegistry.tsx";
 
 /*
 assumes urlArray is an array of url objects:
@@ -70,13 +59,23 @@ const urlFlock = React.memo(function UrlFlock({
     // TODO maybe should not/don't have to use memo here??
     //  making it a memo seemed to reduce the re-renders of the flock when the tooltip text was updated
 
+    const monitoredColumns = [
+        urlColumnRegistry.columns.url_name,
+        urlColumnRegistry.columns.live_status,
+        urlColumnRegistry.columns.archive_status,
+        // urlColumnRegistry.columns.actionable,
+        urlColumnRegistry.columns.ws_score,
+        urlColumnRegistry.columns.wayback,
+        // urlColumnRegistry.columns.ws_score,
+    ]
+
     const [signalDetailsPopupTitle, setSignalDetailsPopupTitle] = useState(<>Modal Title</>);
     const [signalDetailsPopupContents, setSignalDetailsPopupContents] = useState(null);
 
     const [isSignalDetailsPopupOpen, setIsSignalDetailsPopupOpen] = useState(false)
     const [isSignalsDocsPopupOpen, setIsSignalsDocsPopupOpen] = useState(false)
 
-    const [feedbackText, setFeedbackText] = useState("")
+    // const [feedbackText, setFeedbackText] = useState("")
 
     // const [urlTooltipHtml, setUrlTooltipHtml] = useState('<div>ToolTip' +
     //     '<br>UrlFlock<br />second line');
@@ -109,13 +108,24 @@ const urlFlock = React.memo(function UrlFlock({
             // TODO fix this by implementing chained sorts
     })
 
-    const monitoredSignals = [
-        signalBadgeRegistry.score.key,
-        signalBadgeRegistry.wayback.key,
-        signalBadgeRegistry.enwiki.key,
-        signalBadgeRegistry.mbfc.key,
-        signalBadgeRegistry.tranco.key,
-    ]
+    // const monitoredSignals = [
+    //     signalBadgeRegistry.score.key,
+    //     signalBadgeRegistry.wayback.key,
+    //     signalBadgeRegistry.enwiki.key,
+    //     signalBadgeRegistry.mbfc.key,
+    //     signalBadgeRegistry.tranco.key,
+    // ]
+
+    // dynamic column width grid setting
+    const gridTemplateColumns = monitoredColumns
+        .map((colDef) => {
+            if (!colDef.width) {
+                // console.warn(`Undefined column width encountered, applying default width.`);
+                return urlColumnRegistry.specs.defaultColumnWidth;
+            }
+            return colDef.width;
+        })
+        .join(" ");
 
     // refs used for header and rows of url flock
 
@@ -129,10 +139,9 @@ const urlFlock = React.memo(function UrlFlock({
         closeTooltip,
     } = useTooltip();
 
-    const canSupportPopovers = "popover" in HTMLElement.prototype
+    // const canSupportPopovers = "popover" in HTMLElement.prototype
     const popoverColDefRef = React.useRef(null);
     const popoverColDefId = "popover-col-def"
-    ////const [popoverColDefAnchorName, setPopoverColDefAnchorName] = useState("--popover-col-def-anchor");
     const previousColDefAnchorRef = React.useRef(null)
     const [popoverColDefMarkup, setPopoverColDefMarkup] = useState("--popover-col-def-anchor");
 
@@ -153,6 +162,8 @@ const urlFlock = React.memo(function UrlFlock({
             if (!(prevState.sorts[sortKey])) {
                 prevState.sorts[sortKey] = {name: sortKey, dir: 0}
             }
+
+            // do a 3-state sort state round-robin style
 
             const prevDir = prevState.sorts[sortKey].dir
             const sortDir = ({ 1: -1, '-1': 0 }[prevDir] ?? 1); // 1=asc, -1=desc, 0=none
@@ -186,171 +197,6 @@ const urlFlock = React.memo(function UrlFlock({
         return indexA - indexB  // neg, 0, or pos
     }
 
-    const sortByName = (a, b) => {
-        // sort by url name in url column
-        const nameA = a.url
-        const nameB = b.url
-
-        // respect sortDir
-        if (nameA < nameB) return columnSort.sorts['name'].dir * -1;
-        if (nameA > nameB) return columnSort.sorts['name'].dir;
-        return 0;
-    }
-
-    const sortByStatus = (a, b) => {
-        // sort by status column values
-        const statusA = a && a.status_code !== undefined ? a.status_code : -1;
-        const statusB = b && b.status_code !== undefined ? b.status_code : -1;
-
-        // respect sort dir
-        if (statusA < statusB) return columnSort.sorts['status'].dir * -1;
-        if (statusA > statusB) return columnSort.sorts['status'].dir;
-        return 0;
-    }
-
-    const sortByArchiveStatus = (a, b) => {
-        const archiveA = a?.archive_status?.hasArchive ? 1 : 0;
-        const archiveB = b?.archive_status?.hasArchive ? 1 : 0;
-        const bookA = a?.isBook ? 1 : 0;
-        const bookB = b?.isBook ? 1 : 0;
-
-        // sort by book status first, respect sortDir
-        // NB: ignoring book type (e.g. google or archive.org) for now
-        if (bookA) return columnSort.sorts['archive_status'].dir * -1
-        if (bookB) return columnSort.sorts['archive_status'].dir
-
-        // if neither a or b is a book, sort by archive status, respect sortDir
-        if (archiveA > archiveB) return columnSort.sorts['archive_status'].dir * -1;
-        if (archiveA < archiveB) return columnSort.sorts['archive_status'].dir;
-        return 0;
-    }
-
-    const sortByReference = (a, b) => {
-        const statusA = a.reference_info?.statuses?.length ? a.reference_info.statuses[0] : ''
-        const statusB = b.reference_info?.statuses?.length ? b.reference_info.statuses[0] : ''
-        return columnSort.sorts['references'].dir * ((statusA > statusB) ? 1 : (statusA < statusB ? -1 : 0));  // dir is multiplied by 1, -1 or 0
-    }
-
-    const sortByTemplate = (a, b) => {
-
-        const nameA = a.reference_info?.templates?.length ? a.reference_info.templates[0] : ''
-        const nameB = b.reference_info?.templates?.length ? b.reference_info.templates[0] : ''
-
-        // respect sortDir
-        if (nameA < nameB) return columnSort.sorts['templates'].dir * -1;
-        if (nameA > nameB) return columnSort.sorts['templates'].dir;
-        return 0;
-    }
-
-    const sortByActionable = (a, b) => {
-
-        const actionA = a.actionable?.length ? a.actionable[0] : ''
-        const actionB = b.actionable?.length ? b.actionable[0] : ''
-
-        // respect sortDir
-        if (actionA < actionB) return columnSort.sorts['actionable'].dir * -1;
-        if (actionA > actionB) return columnSort.sorts['actionable'].dir;
-        return 0;
-    }
-
-    const sortByPerennial = (a, b) => {
-
-        const nameA = a.rsp?.length ? a.rsp[0] : ''
-        const nameB = b.rsp?.length ? b.rsp[0] : ''
-
-        // respect sortDir
-        if (nameA < nameB) return columnSort.sorts['perennial'].dir * -1;
-        if (nameA > nameB) return columnSort.sorts['perennial'].dir;
-        return 0;
-    }
-
-    const sortBySection = (a, b) => {
-
-        const sectionA = a.reference_info?.sections?.length ? a.reference_info.sections[0] : ''
-        const sectionB = b.reference_info?.sections?.length ? b.reference_info.sections[0] : ''
-
-        // respect sortDir
-        if (sectionA < sectionB) return columnSort.sorts['sections'].dir * -1;
-        if (sectionA > sectionB) return columnSort.sorts['sections'].dir;
-        return 0;
-    }
-
-
-    const sortByProbes = (a, b) => {
-        return 0  // for now...
-    }
-
-    const sortFunctions = {
-        // TODO what we really want to do is use the
-        //  sorting function defined in the column definition
-        //  associated with the column specified by column key
-
-        native: sortByNative,
-
-        name: sortByName,
-        status: sortByStatus,
-        references: sortByReference,
-        actionable: sortByActionable,
-        archive_status: sortByArchiveStatus,
-
-        // signals: sortBySignals,
-        // signal_score: sortByWikiSignalsScore,
-
-        // not really used
-        templates: sortByTemplate,
-        sections: sortBySection,
-
-        // deprecated
-        perennial: sortByPerennial,
-        probes: sortByProbes,
-
-    }
-
-    const getSortFunction = () => {
-        // return sort function based on current value of state variable columnSort
-
-        // first see if sortFn defined "directly" for sortKey
-        const sortKey = columnSort.sortBy[0] ?? "native"  // NB sortKey from global state columnSort.sortBy array
-
-        // TODO COLFIX this is where we get sort function from columnDef
-        /*
-        ////const sortKey = columnSort.sortBy[0] ?? "native"  // NB sortKey from global state columnSort.sortBy array
-        const columnKey = columnSort.sortBy[0] ?? "native"
-        const columnDef = columnDefRegistry[columnKey]
-
-        const sortDir = columnSort.sorts[columnKey].dir
-        return (columnDef.sort)
-            ? (a, b) => columnDef.sort(a, b, sortDir)
-            : undefined  // "null" sort function
-
-         */
-
-        console.log(`***** getSortFunction: sortKey is ${sortKey}`)
-
-        // TODO?? what to do if sortKey is not valid?
-
-        const sortFn = sortFunctions[sortKey]
-        if (sortFn) {
-            return sortFn  // sortFn found in sortFunctions dict, so return it
-        }
-
-
-        // else continue to special case
-
-        // if sortKey is of type "signal_", use sortFn from badgeDef
-        if (sortKey.startsWith(signalBadgePrefix)) {
-            // extract badge key from sortKey
-            const badgeKey = sortKey.split(signalBadgePrefix)[1]; // Extract substring after "signal_"
-            const badgeDef = signalBadgeRegistry[badgeKey]
-
-            return (badgeDef.sort)
-                ? (a, b) => badgeDef.sort(a, b, columnSort)  // must pass columnSort
-                : undefined  // "null" sort function
-        }
-
-        // nothing found - return "null" function
-        return undefined
-    }
 
     const onHoverFlockRow = e => {
         e.stopPropagation()  // prevents onHover from propagating engaging and erasing tooltip
@@ -361,33 +207,41 @@ const urlFlock = React.memo(function UrlFlock({
 
 
 
-    const onClickFlockHeaderRow = (e) => {
+    const onClickHeaderRow = (e) => {
 
-        // if clicked in sort element...
+        // if clicked in sort element, sort by that column
         const elSort = e.target.closest('.header-cell-sort')
         if (elSort) {
             const sortKey = getSortKeyForColumn(e)
-            // sortkey could really just be columnKey, in which case we just
-            // get it from surrounding flock-col columnKey element data
-            console.log(`onClickFlockHeaderRow: sortKey = ${sortKey}`)
+            console.debug(`onClickFlockHeaderRow: sortKey = ${sortKey}`)
             updateFlockSort(sortKey)
             return
         }
 
-        // if clicked element is in header, invoke popover
+        // if clicked in header icon or text, invoke popover
         const el = e.target.closest('.flock-col')
         if (el) {
             const columnKey = el.dataset.columnKey;
-            // NB TODO:
-            //  columnDef = coloumnDefs.columnKey
-            //  make popover contents columnDef.popMarkup
             const columnDef = urlColumnRegistry.columns[columnKey]
             if (!columnDef) {
                 // ...do nothing - no column def to support this column...unlikely!
             } else {
                 // render popMarkup of column in a static popover window
                 if (columnDef.popMarkup) {
-                    openPopover(<Markdown>{columnDef.popMarkup}</Markdown>, el)
+                    openPopover(<Markdown
+                        // rehypePlugins={[rehypeRaw]}
+                        components={{
+                            a: ({ node, ...props }) => (
+                                <a
+                                    {...props}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                />
+                            ),
+                        }}
+                    >
+                        {columnDef.popMarkup}
+                    </Markdown>, el)
                 }
             }
         }
@@ -401,32 +255,14 @@ const urlFlock = React.memo(function UrlFlock({
 
         // Remove anchor from previous element
         if (previousColDefAnchorRef.current) {
-            // previousColDefAnchorRef.current.style.anchorName = "";
-            // previousColDefAnchorRef.current.style.backgroundColor = "initial";
-            //
-            // new-ish properties need setProperty:
-            previousColDefAnchorRef.current.style.setProperty("anchor-name", "");
+            previousColDefAnchorRef.current.style.anchorName = "";
             previousColDefAnchorRef.current.style.backgroundColor = "initial";
-
         }
 
         // Give the supplied element a CSS anchor name
-        // anchorElement.style.anchorName = "--active-popover-anchor";
-        anchorElement.style.setProperty("anchor-name", "--active-popover-anchor");
-        anchorElement.style.backgroundColor = "turquoise";
-
-                    // Tell the popover to use that anchor
-                    // popoverColDefRef.current.style.positionAnchor = "--active-popover-anchor";
-                    // popoverColDefRef.current.style.setProperty("position-anchor", "--active-popover-anchor");
+        anchorElement.style.anchorName = "--active-popover-anchor";
 
         previousColDefAnchorRef.current = anchorElement;
-
-                        // const popover = popoverColDefRef.current
-                        // if (!popover) {
-                        //     console.error("Popover ref is null");
-                        //     return;
-                        // }
-
         setPopoverColDefMarkup(markup);
 
         closeTooltip()
@@ -467,11 +303,11 @@ const urlFlock = React.memo(function UrlFlock({
         // for header row...
         rowEl = e.target.closest('.flock-header')
         if (rowEl) {
-            onClickFlockHeaderRow(e)
+            onClickHeaderRow(e)
         }
 
-        // Clicking on data row opens up detail for that row's url
-        rowEl = e.target.closest('.url-row')
+        // for data row...opens up reference detail view for that row's url
+        rowEl = e.target.closest('.flock-row')
         if (rowEl) {
             // get the url associated with the row of the clicked element
             const url = rowEl?.dataset.url
@@ -485,38 +321,33 @@ const urlFlock = React.memo(function UrlFlock({
 
     }
 
+    /**
+     * Processes and renders rows of URL data for the flock component.
+     *
+     * @param {Array} urlArray - Array of URL objects, each containing details like URL, status, archive status, etc.
+     * @param {Object} flockFilters - Object containing filter definitions to apply to the URL data.
+     * @returns {[Array, Array]} - An array of rendered rows and the corresponding filtered URL objects.
+     */
+    const renderDataRows = (urlArray, flockFilters) => {
+        // return [<h4>Under Construction - No URLs to show</h4>, []]
 
-    const onClickDetailsPopupHeader = (e) => {
-
-        const targetElement = e.target
-        const targetClass = targetElement.className
-
-        if (targetClass === "info-click") {
-            console.log("Info for Details Popup Header Clicked")
-            setIsSignalsDocsPopupOpen(true)
-        }
-
-    }
-
-
-    const getUrlRows = (urlArray, flockFilters) => {
-        // TODO implement columnsToShow (ignoring for now)
-
-        // returns [flockRow markup, array of filtered urls]
+        // Return a default message if the input URL array is empty or undefined.
         if (!urlArray || urlArray.length === 0) {
             return [<h4>No URLs to show</h4>, []]
         }
 
-        if (!flockFilters) flockFilters = {}  // prevent null errors
-        // TODO what to do if flockFilters is not an object of keyed FlockFilter's?
-        //  Can we make flockFilters a custom "FlockFilters" type?
+        // Ensure filters object is initialized to prevent null errors.
+        if (!flockFilters) flockFilters = {}
+            // TODO what to do if flockFilters is not an object of keyed FlockFilter's?
+            //  Can we make flockFilters a custom "FlockFilters" type?
 
 
-        // filter the urls according to the set of filters provided
-        // NB Currently only 1 filter is supported; in the future we may support more
+        // Filter URLs based on filters designated in flockFilters
+        // NB: Currently, only supports one filter; future enhancement can handle multiple filters.
 
-        let filteredUrls = urlArray  // initialize url array as the full provided array
+        let filteredUrls = urlArray  // initialize with all urls
 
+        // Apply each filter from flockFilters to the filteredUrls array.
         Object.keys(flockFilters).forEach(filterName => {
             const f = flockFilters[filterName]
             if (f) {  // only process if filter is non-null
@@ -539,204 +370,146 @@ const urlFlock = React.memo(function UrlFlock({
             }
         })
 
-        // sort filteredUrls if specified
+        // Sort the filtered URLs if specified in the columnSort global state.
+
         if (columnSort.sortBy?.length > 0) {
-            const sortFn = getSortFunction()
-            console.log(`sorting rows by: ${columnSort.sortBy[0]}`)  //
-            filteredUrls.sort(sortFn)
+            const sortKey = columnSort.sortBy[0] ?? "native"
+            const sortDir = columnSort.sorts[sortKey]?.dir
+            const columnDef = urlColumnRegistry.columns[sortKey]
+            const sortFunction = columnDef.sortFunction ?? sortByNative
+            console.log(`sorting rows by: ${sortKey}, ${sortDir}`)
+            // filteredUrls.sort(sortFunction)
+            // filteredUrls.sort((a,b) => sortDir * sortFunction(a,b))
+            filteredUrls.sort((a,b) => sortFunction(a,b,sortDir))
         } else {
-            // do nothing??? could sort by native...
+            // do nothing???
             filteredUrls.sort(sortByNative)
         }
 
-        const getActionableInfo = (u => {
-            return !u.actionable
-                ? null
-                : u.actionable.map((key, i) => {
-                    return <div className={"yes-actionable"} key={i}>
-                        <span className={"icon-area"}></span>
-                    </div>
-                })
-        })
 
-        const getDataRow = (u, i) => {
+        const renderRole = renderRoles.cell
 
-            const classList = 'url-row '
-                + getUrlLiveStatusClass(u.status_code)
-                + (u.url === selectedUrl ? ' url-selected' : '')
-                // + (u.rsp ? ` url-rating-${u.rsp[0]}` : '')  // TODO deprecated?
+        const renderDataRow = (urlObj, i) => {
 
-            return <div className={classList} key={i}
+            const rowClass = [
+                "flock-row",
+                (urlObj.url === selectedUrl ? ' url-selected' : '')
+            ].filter(Boolean).join(" ")
 
-                        data-url={u.url}
-                        data-status_code={u.status_code}
-                        data-archive_status={u.archive_status?.hasArchive}
-                        data-live_state={u.archive_status?.live_state}
-                        data-actionable={u.actionable ? u.actionable[0] : null}  // return first actionable only (for now)
-                        data-is_book={u.isBook}
+
+            // dataset stuff...
+
+            const datasetProps = getDatasetProps(
+                {
+                    url: urlObj.url
+                }
+            )
+            // data-url={urlObj.url}
+            // data-status_code={urlObj.status_code}
+            // data-archive_status={urlObj.archive_status?.hasArchive}
+            // data-live_state={urlObj.archive_status?.live_state}
+            // data-actionable={urlObj.actionable ? urlObj.actionable[0] : null}  // return first actionable only (for now)
+            // data-is_book={urlObj.isBook}
+            //
+            return <div className={rowClass}
+                        key={i}
+                        {...datasetProps}
             >
 
-                <div className={"url-name"}>{u.url}</div>
-                <div className={"url-live_status"}>{u.status_code ? u.status_code : "?"}</div>
-                <div className={"url-archive_status"}>{getArchiveStatusInfo(u)}</div>
-                <div className={"url-actionable"}>{getActionableInfo(u)}</div>
+                {/* render each column */}
+                {Object.entries(monitoredColumns).map(([key, columnDef]) => {
 
-                <div className={"url-signals"}>
+                        if (!columnDef) return null
 
-                    <SignalBadges urlObj={u}
-                                  badgeContextKey={badgeContext.inline.key}
-                                  signalData={u?.signal_data?.signals ?? {}}
-                                  monitoredSignals={monitoredSignals}
-                                  onAction={onAction}
-                                  fromCache = {u?.signal_data?.retrieved_from_cache}
-                    />
+                        // could accumulate dataset values for each column here...
 
-
-
-                </div>
-
+                        return <FlockDataCell
+                            columnDef={columnDef}
+                            renderRole={renderRole}
+                            cellData={urlObj}
+                        />
+                    }
+                )
+                }
             </div>
-
         }
 
-        const getErrorRow = (u, i, errText) => {
+        // Render a row for displaying errors (e.g., missing or malformed URL objects).
+        const renderErrorRow = (u, i, errText) => {
             return <div className={`url-row url-row-error`} key={i}
                         data-url={u.url}
                         data-err-text={errText}
-                // onMouseOver={onHoverErrorRow}
-                //         onMouseLeave={() => setUrlTooltipHtml('')}
+                        // onMouseOver={onHoverErrorRow}
                         onMouseLeave={() => showTooltip({})}
             >
-                <div className={"url-name"}>{u.url ? u.url : `ERROR: No url for index ${i}`}</div>
-                <div className={"url-live_status"}>{-1}</div>
-                <div className={"url-archive_status"}>?</div>
-                <div className={"url-actionable"}>&nbsp;</div>
-                <div className={"url-signals"}>&nbsp;</div>
+                {/*
+                 for each column, output a cell, even tho with errors
+                 not sure we even need to do this
+                 not sure we even have errors anymore!
+                 */}
+                <div>Row data for error here...</div>
 
             </div>
         }
 
 
-        // iterate over array of url objects to create rendered output
-        const urlRows = filteredUrls.map((u, i) => {
+        // Iterate over the filtered URL objects to generate rendered output for rows.
 
-            // TODO: we should sanitize earlier on in the process to save time here...
+        const dataRows = filteredUrls.map((u, i) => {
 
-            // if url object is problematic, return as error row
+            // if u (our url object) is problematic, return as error row
             if (!u || u.url === undefined || u.status_code === undefined) {
 
-                const errText = !u ? `URL data not defined for index ${i}`
-                    : !u.url ? `URL missing for index ${i}`
-                        : u.status_code === undefined ? `URL status code undefined (try Force Refresh)`
+                const errText = !u
+                    ? `URL data not defined for index ${i}`
+                    : !u.url
+                        ? `URL missing for index ${i}`
+                        : u.status_code === undefined
+                            ? `URL status code undefined (try Force Refresh)`
                             : 'Unknown error'  // this last case should not happen
 
-                // TODO do something akin to "myMethodRenderer.getErrorRow"
-                return getErrorRow(u, i, errText)
+                return renderErrorRow(u, i, errText)
             }
 
-            // otherwise show "normal" data row
-            // TODO change this to something like:
-            //  return myCheckMethod.renderRow(u)
-
-            return getDataRow(u, i)
+            return renderDataRow(u, i)
 
         })
 
-        return [urlRows, filteredUrls]  // urlRows is markup for filteredUrls
+        return [dataRows, filteredUrls]  // urlRows is markup for filteredUrls
 
     }  // end getUrlRows
 
-    const getHeaderRow = () => {
 
-        return <ColumnSortContext.Provider value={columnSort}>
+    const renderHeaderRow = () => {
 
-            <div className={"flock-header"} ref={headerRef}>
+        const renderRole = renderRoles.header
 
-                <ColumnBox
-                    content={<><br/>URL Link</>}
-                    columnClass={"url-name flock-col"}
-                    columnKey={"url-name"}
-                />
+        return (
+            <ColumnSortContext.Provider value={columnSort}>  {/* provides current sort scenario */}
 
-                <ColumnBox
-                    content={<>Live<br/>Status</>}
-                    columnClass={"url-live_status flock-col"}
-                    columnKey={"url-live_status"}
-                />
-                <ColumnBox
-                    content={archiveFilterDefs['iabot']._.name}
-                    columnClass={"url-archive_status flock-col"}
-                    columnKey={"url-archive_status"}
-                />
-                <ColumnBox
-                    content={<>Action<br/>Items</>}
-                    columnClass={"url-actionable flock-col"}
-                    columnKey={"url-actionable"}
-                />
+                <div className={"flock-header"} ref={headerRef}>
 
-                {/* signals column is special... */}
+                    {Object.entries(monitoredColumns).map( ([key, columnDef]) => {
 
-                <div className={"url-signals"}>
-                    <div>
-                        <SignalBadges badgeContextKey={BadgeContexts.sort.key}
-                                      monitoredSignals={monitoredSignals}
-                                      onAction={onAction}
+                        if (!columnDef) return null
+
+                        return <FlockHeaderCell
+                            columnDef={columnDef}
+                            renderRole={renderRole}
                         />
-                    </div>
+
+                    })}
+
                 </div>
 
-            </div>
-
-        </ColumnSortContext.Provider>
+            </ColumnSortContext.Provider>
+        )
 
     }
 
 
-    // fades feedback text (iare alert) in and out
-    //
-    // //  NB   T H I S   E F F E C T   I S   N O T   R E A D Y   Y E T
-    //
-    //
+    /* Copy functions */  // NB TODO retool to be in an IARE tools module: copyUrlDetails( urlArray )
 
-    React.useEffect(() => {
-        // this is an attempt to show feedback text for a short time before disappearing
-        if (feedbackText) {
-
-            const displayTimer = setTimeout(() => {
-                setFeedbackText('');
-            }, 6000);
-
-            // const displayTimer = setTimeout(() => {
-            //     setFeedbackFadeout(true)
-            //     setTimeout(() => {
-            //         setFeedbackText('');
-            //     }, 5000)
-            // }, 3000);
-
-            // const clearTimer = setTimeout(() => {
-            //     clearTimeout(displayTimer);
-            // }, 5000);
-
-            return () => {
-                clearTimeout(displayTimer);
-                // clearTimeout(clearTimer);
-            };
-        }
-    }, [feedbackText]);
-
-    const handleFeedback = (feedback) => {
-        setFeedbackText(feedback)
-    }
-
-    const spanFeedback =  // placeholder to show disappearing messages
-        <div className={`feedback-div ${feedbackText ? 'feedback-fade-text' : ''}`}>
-            {feedbackText && <span>{feedbackText}</span>}
-        </div>
-
-
-    /* Copy functions */
-
-    // NB TODO retool to be in an IARE tools module: copyUrlDetails( urlArray )
     const handleCopyUrlDetails = () => {
 
         const urlArrayData = [...flockArray].sort(   // NB "..." used so that copy of array is sorted, not original flock array
@@ -783,6 +556,7 @@ const urlFlock = React.memo(function UrlFlock({
 
     }
 
+    
     const buttonCopyList =
         <button onClick={handleCopyUrlList} className={'btn utility-button small-button'}><span>Copy URL List</span>
         </button>
@@ -808,7 +582,7 @@ const urlFlock = React.memo(function UrlFlock({
 
     /* flock info */
 
-    const [flockDataRows, flockArray] = getUrlRows(urlArray, urlFilters);
+    const [flockDataRows, flockArray] = renderDataRows(urlArray, urlFilters);
         // flockDataRows is array of row markup; flockArray is array of url data that markup represents
 
     const flockInfo = `${flockDataRows.length} ` +
@@ -825,23 +599,32 @@ const urlFlock = React.memo(function UrlFlock({
 
         <div className={"sub-caption"}>
             <div>{flockInfo}</div>
-            <div>{spanFeedback} </div>
         </div>
     </>
 
-    const flockHeader = getHeaderRow()
+    const flockHeader = renderHeaderRow()
     const flockRows = <div className={"flock-rows"} ref={bodyRef}>
         {flockDataRows}
     </div>
 
-    const flock = <div className={"flock-container"}
-                       data-tooltip-id="master-tooltip"
-                       onClick={onClickFlockRow}
-                       onMouseOver={onHoverFlockRow} >
-        {flockHeader}
-        {flockRows}
-        {/*<div className={"testcase"}>One or two</div>*/}
-    </div>
+
+    const flock = (
+        <div className={"flock-container"}
+             data-tooltip-id="master-tooltip"
+             onClick={onClickFlockRow}
+
+             onMouseOver={onHoverFlockRow}
+             // onMouseEnter={onHoverFlockRow}
+
+             // NB Defines "--url-list-grid-columns" for header and rows CSS to pick up
+             style={{"--url-list-grid-columns": gridTemplateColumns}}
+
+        >
+            {flockHeader}
+            {flockRows}
+        </div>
+    )
+
 
     React.useEffect(() => {
         // syncs scroll left and right of header row and data rows
@@ -880,79 +663,17 @@ const urlFlock = React.memo(function UrlFlock({
 
     return <>
 
-        {/*<div data-tooltip-id={tooltipId}         // passed in tooltipId for this flock*/}
-        {/*     data-tooltip-html={urlTooltipHtml}  // set urlTooltipHtml to set tooltip contents*/}
-
-        {/*    ><FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>*/}
-
-        {/*</div>*/}
         <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>
 
-
-        {/* NB we nay not need these popups, as we are using pinned tooltips for info
-                but lets leave them here for now in case we want to popup more dense info later
-        */}
-
-        <Popup isOpen={isSignalsDocsPopupOpen}
-               onClose={() => {
-                   setIsSignalsDocsPopupOpen(false)
-               }}
-               title={"What is WikiSignals?"}
-               className={"wiki-signals-docs-popup"}
-               initialSize={{width: 684, height: 441}}
-               initialPosition={{x: 420, y: 160}}
-        >
-            <SignalsDocs onClose={() => {
-                setIsSignalsDocsPopupOpen(false)
-            }}/>
-
-        </Popup>
-
-        {/* popup title, data and open status set in handleSignalClick function */}
-        <Popup isOpen={isSignalDetailsPopupOpen}
-               onClose={() => {
-                   setIsSignalDetailsPopupOpen(false)
-               }}
-               title={signalDetailsPopupTitle}
-               className={"signal-details-popup"}
-               initialSize={{width: 800, height: 780}}
-               initialPosition={{x: 160, y: 50}}
-               onClickHeader={onClickDetailsPopupHeader}
-        >
-            {signalDetailsPopupContents}
-        </Popup>
-
-        {/* Popover for showing column definition details */}
-        {/*<div ref={popoverColDefRef}*/}
-        {/*     id={popoverColDefId}*/}
-        {/*     popover={"auto"}*/}
-        {/*     className="pop-col-def-container"*/}
-        {/*>*/}
-        {/*    <div className="pop-col-def-content">*/}
-        {/*        {popoverColDefMarkup}*/}
-        {/*        <button popoverTarget={popoverColDefId} */}
-        {/*                popoverTargetAction="close"*/}
-        {/*                className="btn close-button"*/}
-        {/*        >*/}
-        {/*        Close*/}
-        {/*        </button>*/}
-        {/*    </div>*/}
-        {/*</div>*/}
-
-        <dialog ref={popoverColDefRef}
-             id={popoverColDefId}
-             popover={"manual"}
-             className="pop-col-def-container"
-             onClick={handleDialogClick}
+        <dialog  // Popover for showing column definition details
+            ref={popoverColDefRef}
+            id={popoverColDefId}
+            popover={"manual"}
+            className="pop-col-def-container"
+            onClick={handleDialogClick}
         >
             <div className="pop-col-def-content">
                 {popoverColDefMarkup}
-                {/*<button popoverTarget={popoverColDefId}*/}
-                {/*        popoverTargetAction="close"*/}
-                {/*        className="btn close-button"*/}
-                {/*>*/}
-                {/*    Close*/}
-                {/*</button>*/}
                 <button className="btn close-button"
                         onClick={closePopover}
                 >

@@ -464,7 +464,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    /*background-color: #c27186;*/
+    text-align: center;
 }
 
 .header-cell-sort {
@@ -485,11 +485,11 @@
     color: #bcbcbc;
 }
 
-.sort-asc .sort-indicator .triangle-up {
+.sort-asc .sort-indicator .triangle-down {
     color: black;
 }
 
-.sort-desc .sort-indicator .triangle-down {
+.sort-desc .sort-indicator .triangle-up {
     color: black;
 }
 

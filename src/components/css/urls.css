@@ -82,7 +82,7 @@
 
     /*--height-filter-box-rows: 26.5rem;*/
     --height-filter-box-rows: calc(100vh - 15rem);
-    --margin-url-column: .2rem;
+    --margin-url-column: .3rem;
     --padding-row-header-top: .075rem;
     --padding-row-header-bottom: .2rem;
 
@@ -90,12 +90,8 @@
 }
 
 /* special debug */
-.flock-header div:last-child,
-.url-row div:last-child {
-    /*background-color: deeppink;*/
-}
 
-*.xxx {  /* debug to outline all elements */
+*.xxx {  /* outline all elements with translucent red */
     outline: 1px solid rgba(255, 0, 0, 0.2);
 }
 
@@ -112,7 +108,7 @@
 }
 
 .flock-header,
-.url-row
+.flock-row
 {
     /*min-width: 100%;*/
     column-gap: var(--margin-url-column);
@@ -153,13 +149,52 @@
 }
 
 
+/* special case url_name column in header and data rows */
+.flock-header .header-cell-url_name .header-cell-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.flock-header .header-cell-url_name .header-cell-sort {
+    width: 100%;
+    display: flex;
+    align-items: normal;
+    justify-content: flex-start;
+}
+
+.flock-header .header-cell-url_name {
+    padding-left: var(--margin-url-column);
+}
+
+.flock-row .flock-col.data-cell-url_name {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+
+    padding-left: var(--margin-url-column);
+    overflow-wrap: break-word;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+
+            /*.flock-row .flock-col,*/
+            /*.flock-header > div{*/
+            /*    margin-right: var(--margin-url-column);*/
+            /*}*/
+
 .flock-rows {
     min-height: 0;      /* critical flex fix */
     overflow: auto;     /* 👈 THIS is the scroll boundary */
-    /*background-color: var(--iare-test-color) !important;*/
 }
 
-.flock-rows .url-row
+.flock-rows .flock-row
 {
     display: grid;
     cursor: pointer;
@@ -174,11 +209,11 @@
     /*min-width: fit-content;*/
 }
 
-.flock-rows .url-row:last-child {
+.flock-rows .flock-row:last-child {
     border-bottom: none;
 }
 
-.flock-rows .url-row:hover {
+.flock-rows .flock-row:hover {
     /*color:var(--color-list-fg-hover);*/
     background-color: var(--color-list-bg-hover-fancy);
 }
@@ -188,16 +223,15 @@
     background-color: var(--color-list-bg-selected);
 }
 
-.url-row > div,
-.flock-header > div{
-    margin-right: var(--margin-url-column);
-}
+/*.flock-row > div,*/
+/*.flock-header > div{*/
+/*    margin-right: var(--margin-url-column);*/
+/*}*/
 
-.url-row > div {
-    text-align: center;
-    padding:var(--url-list-padding-url) 0;
-}
-
+/*.flock-row > div {*/
+/*    text-align: center;*/
+/*    padding:var(--url-list-padding-url) 0;*/
+/*}*/
 
 
 /*
@@ -206,13 +240,13 @@
      TODO: are widths still necessary when using display:grid for row? i think not.
  */
 
-.url-row a,
-.url-row .url-name {
-    overflow-wrap: break-word;
-}
+                /*.flock-row a,*/
+                /*.flock-row .url-name {*/
+                /*    overflow-wrap: break-word;*/
+                /*}*/
 
 
-.url-row.url-row-error {
+.flock-row.url-row-error {
     background-color: darkred;
     color:white;
 
@@ -220,86 +254,95 @@
 
 }
 
-.url-row .url-info
-{
-    padding-left: var(--url-list-padding-url) !important;
-    text-align: left;
-}
 
-.flock-header .url-name,
-.url-row .url-name
-{
-    text-align:left !important;
-    padding-left: var(--url-list-padding-url) !important;
-
-    white-space: nowrap;
+.flock-row .flock-col {
+    text-align: center;
+    padding:var(--url-list-padding-url) 0;
+    overflow: auto;
     text-overflow: ellipsis;
-    overflow: hidden;
+    white-space: nowrap;
 }
 
+/*.url-row .url-info*/
+/*{*/
+/*    padding-left: var(--url-list-padding-url) !important;*/
+/*    text-align: left;*/
+/*}*/
 
-.flock-header .url-live_status,
-.url-row .url-live_status {
-}
+/*.flock-header .url-name,*/
+/*.url-row .url-name*/
+/*{*/
+/*    text-align:left !important;*/
+/*    padding-left: var(--url-list-padding-url) !important;*/
 
-.flock-header .url-archive_status,
-.url-row .url-archive_status
-{
-    border-right: var(--width-cell-border);
-    border-right-color: var(--color-cell-border);
-}
-.url-row .url-archive_status {
-    padding:.25rem 0 0;
-}
-.url-row .url-archive_status:has(> .archive-book) {
-    padding-top: .4rem;
-}
+/*    white-space: nowrap;*/
+/*    text-overflow: ellipsis;*/
+/*    overflow: hidden;*/
+/*}*/
 
-.url-row .archive-yes {
+/*.flock-header .url-live_status,*/
+/*.url-row .url-live_status {*/
+/*}*/
+
+/*.flock-header .url-archive_status,*/
+/*.url-row .url-archive_status*/
+/*{*/
+/*    border-right: var(--width-cell-border);*/
+/*    border-right-color: var(--color-cell-border);*/
+/*}*/
+/*.url-row .url-archive_status {*/
+/*    padding:.25rem 0 0;*/
+/*}*/
+
+/*.url-row .url-archive_status:has(> .archive-book) {*/
+/*    !*padding-top: .4rem;*!*/
+/*}*/
+
+.flock-row .archive-yes {
     width:var(--width-archive-icon-list);
     height:var(--height-archive-icon-list);
     content: url('../../images/wbm.link.yes.png');
 }
-.url-row .archive-no {
+.flock-row .archive-no {
     width:var(--width-archive-icon-list);
     height:var(--height-archive-icon-list);
     content: url('../../images/wbm.link.ex.grey.v3.png');
 }
-.url-row .archive-book {
+.flock-row .archive-book {
     width:var(--width-archive-book-list);
     height:var(--height-archive-book-list);
     content: url('../../images/wbm.book.ia.svg');
 }
 
 
-.flock-header .url-citations,
-.url-row .url-citations
-{
-    text-align: left;
-    /*border-left: 1px solid black;*/
-    width: var(--width-url-citations);
-    max-width: var(--width-url-citations);
-    min-width: var(--width-url-citations);
-}
+/*.flock-header .url-citations,*/
+/*.url-row .url-citations*/
+/*{*/
+/*    text-align: left;*/
+/*    !*border-left: 1px solid black;*!*/
+/*    width: var(--width-url-citations);*/
+/*    max-width: var(--width-url-citations);*/
+/*    min-width: var(--width-url-citations);*/
+/*}*/
 
-.flock-header .url-templates,
-.url-row .url-templates
-{
-    text-align: left;
-    /*border-left: 1px solid black;*/
-    width: var(--width-url-templates);
-    max-width: var(--width-url-templates);
-}
+/*.flock-header .url-templates,*/
+/*.url-row .url-templates*/
+/*{*/
+/*    text-align: left;*/
+/*    !*border-left: 1px solid black;*!*/
+/*    width: var(--width-url-templates);*/
+/*    max-width: var(--width-url-templates);*/
+/*}*/
 
-.flock-header .url-actionable,
-.url-row .url-actionable
-{
-}
+/*.flock-header .url-actionable,*/
+/*.url-row .url-actionable*/
+/*{*/
+/*}*/
 
-.url-row .yes-actionable {
+.flock-row .yes-actionable {
     position: relative;
 }
-.url-row .yes-actionable .icon-area {
+.flock-row .yes-actionable .icon-area {
     content: "";
     position:relative;
     top:2pt;
@@ -313,24 +356,24 @@
 }
 
 .flock-header .url-signals,
-.url-row .url-signals
+.flock-row .url-signals
 {
     text-align: left;
 }
 
 .flock-header .url-sections,
-.url-row .url-sections
+.flock-row .url-sections
 {
     width: var(--width-url-sections);
     max-width: var(--width-url-sections);
     min-width: var(--width-url-sections);
 }
-.url-row .url-sections {
+.flock-row .url-sections {
     text-align: left !important;
 }
 
 .flock-header .url-perennial,
-.url-row .url-perennial
+.flock-row .url-perennial
 {
     width: var(--width-url-perennial);
     max-width: var(--width-url-perennial);
@@ -340,19 +383,19 @@
 
 /* row-wide treatments of url row */
 
-.url-row.url-is-unknown .url-status {
+.flock-row.url-is-unknown .url-status {
     /*color: #a5a5a5 !important;*/
     color: #999999 !important;
     font-size: 1.4em;
     font-family: Times, serif, sans-serif;
 }
-.url-row.url-is-redirect .url-status {
+.flock-row.url-is-redirect .url-status {
     /*color: #b700ff !important;*/
 }
-.url-row.url-is-notfound .url-status {
+.flock-row.url-is-notfound .url-status {
     color: red !important;
 }
-.url-row.url-is-error .url-status {
+.flock-row.url-is-error .url-status {
     /*color: var(--color-http-error-bg) !important;*/
     color: red !important;
 }

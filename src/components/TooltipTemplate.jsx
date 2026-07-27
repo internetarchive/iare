@@ -15,10 +15,7 @@ export default function TooltipTemplate({
     return (
         <div className="tooltip-template">
             {header}
-            <div className="tooltip-content">
-                {content}
-            </div>
-
+            <div className="tooltip-content">{content}</div>
         </div>
     );
 }

@@ -7,13 +7,12 @@ import {getArchiveStatusInfoGrok} from "../../../utils/urlUtils.jsx";
 import {ACTIONABLE_FILTER_MAP} from "../../../constants/actionableMap.jsx";
 import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../../constants/urlFilterMaps.jsx";
 import {httpStatusCodes, iabotLiveStatusCodes} from "../../../constants/httpStatusCodes.jsx"
-import {urlColumnRegistry} from "../../../constants/urlColumnRegistry.jsx";
+import {urlColumnRegistry} from "../../../constants/urlColumnRegistry.tsx";
 import Popup from "../../Popup.jsx";
 
 import '../../css/grok.css';
 import Checkbox from "../../Checkbox.jsx";
 import MakeLink from "../../MakeLink.jsx";
-import SignalsDocs from "../../SignalsDocs.jsx";
 
 
 /*

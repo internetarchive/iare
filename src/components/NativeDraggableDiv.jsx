@@ -32,11 +32,14 @@ export default function NativeDraggableDiv() {
     // Inline styles replace the need for an external CSS import entirely
     const baseBoxStyle = {
         width: '27rem',
-        height: '1.5rem',
-        color: 'white',
+        height: '2.25rem',
+        color: 'black',
+        padding: '.25rem .3rem .25rem .3rem',
         display: 'flex',
-        alignItems: 'center',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
         justifyContent: 'center',
+        textAlign: 'left',
         borderRadius: '8px',
         userSelect: 'none',
         position: 'absolute',
@@ -56,7 +59,8 @@ export default function NativeDraggableDiv() {
             className={`debugBox drag-box ${isDragging ? 'dragging' : 'idle'}`}
             style={baseBoxStyle}
         >
-            Drag me safely! Line here! or children!!
+            <div style={{fontSize:"75%",color:"red"}}>debug dragger only in LOCAL env</div>
+            <div style={{}}>Drag me safely! Line here! or children!!</div>
         </div>
 
     /*

@@ -7,3 +7,13 @@
     /*background-color: red;*/
 
 }
+
+
+.flock-icon-wrapper img {
+    height: 100%;
+    width: 100%;           /* maintain aspect ratio */
+    /*width: auto;           !* maintain aspect ratio *!*/
+    object-fit: contain;   /* prevent distortion */
+    display: block;        /* removes inline gap */
+}
+

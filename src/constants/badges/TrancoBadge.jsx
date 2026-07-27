@@ -1,6 +1,6 @@
 import React from "react";
 import {BadgeContexts} from "../badgeContexts.jsx";
-import Badge from "../../components/Badge.jsx";
+import Badge from "../../../_notes/_archive/Badge.jsx";
 import {getNormalizedCount, getNormalizedScore, getPrettyCount} from "../../utils/generalUtils.js";
 import signalBadgeRegistry from "./signalBadgeRegistry.jsx";
 

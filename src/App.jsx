@@ -722,17 +722,17 @@ export default function App(
 
         {isShowHamburger && (
             <div className={"iare-hamburger-menu"}
-                popover={"auto"}
-                popover-id={""}
+                // popover={"auto"}
+                // popover-id={""}
             >
                 <div className={"menu-header"}>
                     <div>IARE version {versionInfo}</div>
                 </div>
 
                 <div>
+                    <div>{iariSourceInfo}</div>
                     <div>{buttonScrollFix}</div>
                     <div>{siteInfo}</div>
-                    <div>{iariSourceInfo}</div>
                     <div>{buttonShowDebug}</div>
                 </div>
             </div>

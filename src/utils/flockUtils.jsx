@@ -1,43 +1,44 @@
-import {urlColumnRegistry} from "../constants/urlColumnRegistry.jsx";
-import signalBadgeRegistry, {signalBadgePrefix} from "../constants/badges/signalBadgeRegistry.jsx";
-import {marked} from "marked";
+import {urlColumnRegistry} from "../constants/urlColumnRegistry.tsx";
+// import signalBadgeRegistry, {signalBadgePrefix} from "../constants/badges/signalBadgeRegistry.jsx";
+// import {marked} from "marked";
+// import DOMPurify from "dompurify";
 import {httpStatusCodes, iabotLiveStatusCodes} from "../constants/httpStatusCodes.jsx";
 import {ACTIONABLE_FILTER_MAP} from "../constants/actionableMap.jsx";
 import Markdown from "react-markdown";
 
+            //
+            // const getSignalColumnTooltip = (columnClass) => {
+            //
+            //     if (!columnClass) return null
+            //
+            //     const badgeKey = columnClass.split('signal-')[1] // Extract badgeKey from columnClass
+            //     const badgeDef = signalBadgeRegistry[badgeKey]
+            //
+            //                     // if (badgeDef?.tooltipHtml) return badgeDef.tooltipHtml
+            //
+            //     if (badgeDef?.tooltipMarkup) {
+            //         // return marked(badgeDef.tooltipMarkup) // marked converts MD (markdown) text to html
+            //         return DOMPurify.sanitize(marked(badgeDef.tooltipMarkup));
+            //
+            //     }
+            //
+            //     if (badgeDef?.description) return <div>{badgeDef.description}</div>
+            //
+            //     return <div>tooltip for {columnClass}</div>
+            // }
 
-const getSignalColumnTooltip = (columnClass) => {
-
-    if (!columnClass) return null
-
-    const badgeKey = columnClass.split('signal-')[1] // Extract badgeKey from columnClass
-    const badgeDef = signalBadgeRegistry[badgeKey]
-
-                    // if (badgeDef?.tooltipHtml) return badgeDef.tooltipHtml
-
-    if (badgeDef?.tooltipMarkup) {
-        // return marked(badgeDef.tooltipMarkup) // marked converts MD (markdown) text to html
-        return <Markdown>{badgeDef.tooltipMarkup}</Markdown>
-
-    }
-
-    if (badgeDef?.description) return <div>{badgeDef.description}</div>
-
-    return <div>tooltip for {columnClass}</div>
-}
-
-
-const getUrlColumnTooltip = (columnKey) => {
-
-    if (!columnKey) return null
-    const columnDef = urlColumnRegistry.columns[columnKey]
-    if (!columnDef) return null
-
-    if (columnDef.ttMarkup) return <Markdown>{columnDef.ttMarkup}</Markdown>
-    if (columnDef.ttCaption) return <div>{columnDef.ttCaption}</div>
-
-    return <div>Tooltip for {columnKey}</div>  // unhandled column - we should not get here
-}
+            //
+            // const getUrlColumnTooltip = (columnKey) => {
+            //
+            //     if (!columnKey) return null
+            //     const columnDef = urlColumnRegistry.columns[columnKey]
+            //     if (!columnDef) return null
+            //
+            //     if (columnDef.ttMarkup) return DOMPurify.sanitize(marked(columnDef.ttMarkup));
+            //     if (columnDef.ttCaption) return <div>{columnDef.ttCaption}</div>
+            //
+            //     return <div>Tooltip for {columnKey}</div>  // unhandled column - we should not get here
+            // }
 
 
 export const getColumnTooltip = (e) => {
@@ -68,8 +69,17 @@ export const getColumnTooltip = (e) => {
 
         console.log(`flockUtils:: getColumnTooltipHtml: .flock-header columnClass is: ${columnKey}`)
 
-        // else get from signal hierarchy
-        return getColumnHeaderTooltip(columnKey)
+// else get from signal hierarchy
+                    // return getColumnHeaderTooltip(columnKey)
+
+        // if (!columnKey) return null
+        const columnDef = urlColumnRegistry.columns[columnKey]
+        if (!columnDef) return null
+
+        if (columnDef.ttMarkup) return <Markdown>{columnDef.ttMarkup}</Markdown>
+        if (columnDef.ttCaption) return <div>{columnDef.ttCaption}</div>
+        return <div>Tooltip for {columnKey}</div>  // unhandled column - we should not get here
+
     }
 
     // if error row...
@@ -82,44 +92,56 @@ export const getColumnTooltip = (e) => {
     rowEl = e.target.closest('.url-row')
     if (rowEl) {
         const columnClass = e.target.closest('.url-row > *')?.classList[0]  // get first class in list to get column type
-        return getColumnDataTooltip(rowEl, columnClass)
+
+        const dataset = rowEl.dataset
+
+        /* new: */
+        el = e.target.closest('.flock-col')
+        const columnKey = el ? el.dataset.columnKey : null
+        const columnDef = urlColumnRegistry.columns[columnKey]
+        if (!columnDef) return null
+        return columnDef.ttData(dataset)
+
+        // /// return getColumnDataTooltip(dataset, columnClass)
     }
 
     return null
 }
 
-export const getColumnDataTooltip = (rowEl, columnClass) => {
+// export const getColumnDataTooltip = (rowEl, columnClass) => {
+export const getColumnDataTooltip = (dataset, columnClass) => {
 
-    const d = rowEl.dataset
+    // const dataset = rowEl.dataset
 
     if (columnClass === "url-live_status") {
-        const statusDescription = httpStatusCodes[d.status_code]
-        return <div>Live Status:<br/>{d.status_code}: {statusDescription}</div>
+        const statusDescription = httpStatusCodes[dataset.status_code]
+        return <div>Live Status:<br/>{dataset.status_code}: {statusDescription}</div>
     }
 
     if (columnClass === "url-archive_status") {
-        if (d.is_book === "true") {
+        if (dataset.is_book === "true") {
             return <div>Book</div>
         }
 
-        return d.live_state
-            ? <div>{d.archive_status === "true"
+        return dataset.live_state
+            ? <div>{dataset.archive_status === "true"
                 ? 'Archived'
                 : 'Not Archived'}
-            <br/>IABot live_state: {d.live_state} - {iabotLiveStatusCodes[d.live_state]}</div>
+            <br/>IABot live_state: {dataset.live_state} - {iabotLiveStatusCodes[dataset.live_state]}</div>
 
-            : <div>Archive status = {d.archive_status}<br/>IABot live_state is undefined</div>
+            : <div>Archive status = {dataset.archive_status}<br/>
+                IABot live_state is undefined</div>
     }
 
     if (columnClass === "url-citations") {
-        return d.citation_status && d.citation_status !== '--'
-            ? <div>Link Status {'"' + d.citation_status + '"'} as indicated in Citation</div>
+        return dataset.citation_status && dataset.citation_status !== '--'
+            ? <div>Link Status {'"' + dataset.citation_status + '"'} as indicated in Citation</div>
             : <div>No Link Status defined in Citation</div>
 
     }
 
     if (columnClass === "url-actionable" || columnClass === "yes-actionable") {
-        const actionableKey = d.actionable
+        const actionableKey = dataset.actionable
         const desc = ACTIONABLE_FILTER_MAP[actionableKey]?.desc
         return desc
             ? <div>Actionable Item:<br/>{desc}<br/>Click to fix.</div>
@@ -139,44 +161,10 @@ export const getColumnDataTooltip = (rowEl, columnClass) => {
     return null
 }
 
-export const getColumnHeaderTooltip = (columnKey) => {
-    // if (!columnClass) return null
 
-    if (columnKey?.startsWith('signal-') ) return getSignalColumnTooltip(columnKey)
-    // else ...
-    return getUrlColumnTooltip(columnKey)
-
-}
-
-// NB THIS IS TEMPORARY! until we match columnKey with sort keys
-const columnKeyAssociation = {
-    "url-name": "name",
-    "url-live_status": "status",
-    "url-archive_status": "archive_status",
-    "url-actionable": "actionable",
-}
-
-export const getSortKeyForColumn= (e) => {
-    let elCol = null
-    let sortKey = null
-
-    elCol = e.target.closest('.signal-badge')
-    if (elCol) {
-        // if Signal Badge column...return sortKey based on badgeKey
-        const badgeKey = elCol.dataset.badgekey
-        sortKey = `${signalBadgePrefix}${badgeKey}`  // e.g. "signal_wayback"
-
-    } else {
-        elCol = e.target.closest('.flock-col')
-        if (elCol) {
-            // return sortKey based on columnKey
-            const columnKey = elCol.dataset.columnKey
-            sortKey = columnKeyAssociation[columnKey]
-
-            console.log(`onClickFlockHeaderRow: column sort: ${sortKey}`)
-        }
-    }
-
+export const getSortKeyForColumn = (e) => {
+    const sortKey = e.target.closest('.flock-col')?.dataset?.columnKey
+    console.log(`getSortKeyForColumn: sortKey: ${sortKey}`)
     return sortKey
 }
 
@@ -188,4 +176,13 @@ export const getUrlLiveStatusClass = (u = null) => {
                 : u.status_code >= 400 && u.status_code < 500 ? ' url-is-notfound'
                     : u.status_code >= 500 && u.status_code < 600 ? ' url-is-error'
                         : '')
+}
+
+export const getDatasetProps = (dataProps = {}) => {
+    return Object.fromEntries(
+        Object.entries(dataProps).map(([key, value]) => [
+            `data-${key.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`)}`,
+            value
+        ])
+    )
 }

@@ -227,7 +227,7 @@
 }
 
 /* header row formatting adjustments */
-.flock-header > div {
+.ref-view .flock-header .flock-col {
     padding:var(--url-list-padding-url-small) 0 0;
     text-align:center;
 }

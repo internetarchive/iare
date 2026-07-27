@@ -440,17 +440,17 @@ svg.score-badge-text .text-shadow {
 }
 
 
-.tooltip-iare-display .info-spec {
-    margin-bottom: .5rem;
+/*.tooltip-iare-display .info-spec {*/
+/*    margin-bottom: .5rem;*/
 
-}
+/*}*/
 
-.tooltip-iare-display .info-label {
-    display: block;
-    font-style: italic;
-    /*color: color-mix(in srgb, currentColor 80%, black);*/
-    color: #ddd;
-    font-weight: bold;
-}
+/*.tooltip-iare-display .info-label {*/
+/*    display: block;*/
+/*    font-style: italic;*/
+/*    !*color: color-mix(in srgb, currentColor 80%, black);*!*/
+/*    color: #ddd;*/
+/*    font-weight: bold;*/
+/*}*/
 
 

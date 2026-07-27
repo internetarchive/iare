@@ -6,12 +6,13 @@ import {getArchiveStatusInfo} from "../../../../utils/urlUtils.jsx";
 import {
     // getColumnHeaderTooltip,
     getColumnTooltip,
-    getUrlLiveStatusClass} from "../../../../utils/flockUtils.jsx";
-import SignalBadges from "../../../SignalBadges.jsx";
-import ColumnBox from "../../../ColumnBox.jsx";
-import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../../../constants/urlFilterMaps.jsx";
-import {BadgeContexts} from "../../../../constants/badgeContexts.jsx";
-import signalBadgeRegistry from "../../../../constants/badges/signalBadgeRegistry.jsx";
+    // getUrlLiveStatusClass
+    } from "../../../../utils/flockUtils.jsx";
+// import SignalBadges from "../../../../../_notes/_archive/SignalBadges.jsx";
+// import FlockHeaderCell from "../../../flock/FlockHeaderCell.tsx";
+// import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../../../constants/urlFilterMaps.jsx";
+// import {BadgeContexts} from "../../../../constants/badgeContexts.jsx";
+// import signalBadgeRegistry from "../../../../constants/badges/signalBadgeRegistry.jsx";
 
 
 export default function RefUrls({
@@ -25,42 +26,44 @@ export default function RefUrls({
     const { t, i18n } = useTranslation();
     const [urlTooltipHtml, setUrlTooltipHtml] = useState(null);
 
-    const monitoredSignals = [  // NB could get this from component property or context
-        signalBadgeRegistry.score.key,
-        signalBadgeRegistry.wayback.key,
-        signalBadgeRegistry.enwiki.key,
-        signalBadgeRegistry.mbfc.key,
-        signalBadgeRegistry.tranco.key,
-    ]
+                    // const monitoredSignals = [  // NB could get this from component property or context
+                    //     signalBadgeRegistry.score.key,
+                    //     signalBadgeRegistry.wayback.key,
+                    //     signalBadgeRegistry.enwiki.key,
+                    //     signalBadgeRegistry.mbfc.key,
+                    //     signalBadgeRegistry.tranco.key,
+                    // ]
 
     // assumes u is an url object
     const getDataRow = (u, i) => {
 
-        if (!u) return <div className={"url-row"} key={i}>Undefined URL encountered. (index {i})</div>
+        // if (!u) return <div className={"url-row"} key={i}>Undefined URL encountered. (index {i})</div>
+        //
+        // return <div className={"url-row " + getUrlLiveStatusClass(u.status_code)}
+        //     key={i}
+        //
+        //     data-url={u.url}
+        //     data-status_code={u.status_code}
+        //     data-archive_status={u.archive_status?.hasArchive}
+        //     data-live_state={u.archive_status?.live_state}
+        //     data-is_book={u.isBook}
+        // >
+        //     <div className={"url-name"}><MakeLink href={u.url} linkText={u.url}/></div>
+        //     <div className={"url-live_status"}>{u.status_code}</div>
+        //     <div className={"url-archive_status"}>{getArchiveStatusInfo(u)}</div>
+        //
+        //     <div className={"url-signals"}>
+        //         <SignalBadges urlObj = {u}
+        //                       badgeContextKey={BadgeContexts.inline.key}
+        //                       signalData={u?.signal_data?.signals ?? {}}
+        //                       monitoredSignals={monitoredSignals}
+        //                       onAction={onAction}
+        //         />
+        //     </div>
+        //
+        // </div>
 
-        return <div className={"url-row " + getUrlLiveStatusClass(u.status_code)}
-            key={i}
-
-            data-url={u.url}
-            data-status_code={u.status_code}
-            data-archive_status={u.archive_status?.hasArchive}
-            data-live_state={u.archive_status?.live_state}
-            data-is_book={u.isBook}
-        >
-            <div className={"url-name"}><MakeLink href={u.url} linkText={u.url}/></div>
-            <div className={"url-live_status"}>{u.status_code}</div>
-            <div className={"url-archive_status"}>{getArchiveStatusInfo(u)}</div>
-
-            <div className={"url-signals"}>
-                <SignalBadges urlObj = {u}
-                              badgeContextKey={BadgeContexts.inline.key}
-                              signalData={u?.signal_data?.signals ?? {}}
-                              monitoredSignals={monitoredSignals}
-                              onAction={onAction}
-                />
-            </div>
-
-        </div>
+        return <div className={"url-row"}>url row here!!!</div>
 
     }
 
@@ -68,33 +71,7 @@ export default function RefUrls({
     const getHeaderRow = () => {
 
         return <div className={"flock-header"} key={0}>
-
-            <ColumnBox
-                content={<><br/>URL Link</>}
-                columnClass={"url-name flock-col"}
-                columnKey={"url-name"}
-            />
-
-            <ColumnBox
-                content={<>Live<br/>Status</>}
-                columnClass={"url-live_status flock-col"}
-                columnKey={"url-live_status"}
-            />
-            <ColumnBox
-                content={archiveFilterDefs['iabot']._.name}
-                columnClass={"url-archive_status flock-col"}
-                columnKey={"url-archive_status"}
-            />
-
-            {/* signals column is special... */}
-            <div className={"url-signals flock-col"}>
-                <div>
-                    <SignalBadges badgeContextKey={BadgeContexts.refview.key}
-                                  monitoredSignals={monitoredSignals}
-                                  onAction={onAction}
-                    />
-                </div>
-            </div>
+            <div>header row here!!</div>
 
         </div>
 
