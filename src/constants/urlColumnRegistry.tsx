@@ -2,17 +2,16 @@
 import type {ColumnDef} from "../components/flock/flockTypes";
 import * as React from "react";
 
-import {getNormalizedCount} from "../utils/generalUtils";
+import {getNormalizedCount, getPrettyCount} from "../utils/generalUtils";
 
 // import ScoreBadge from "./badges/ScoreBadge.jsx";
 import imgScoreLogo from "../images/columns/wikisignals.logo.v1r4.png";
 import imgWaybackLogo from "../images/columns/badge.logo.wayback.small.png";
-// import imgWaybackLogo from "./images/badge.logo.wayback.small.png"
+import imgWikiLogo from "../images/columns/badge.logo.wiki.png"
 
 // import imgScoreLogo from "./images/wikisignals.logo.v1r4.png"
 // import imgTrancoLogo from './images/badge.logo.tranco.png'
 // import imgMbfcLogo from "./images/badge.logo.mbfc.png";
-// import imgEnwikiLogo from "./images/badge.logo.w
 
 type ColumnRegistry = {
     columns: Record<string, ColumnDef>;
@@ -246,6 +245,7 @@ See [WikiSignals.org](https://wikisignals.org) for more details.`,
 
         },
 
+
         "wayback": {
             key: "wayback",
 
@@ -319,6 +319,76 @@ See See [Wayback Machine](https://web.archive.org).`,
 
             logo: imgWaybackLogo,
             logoAlt: "Wayback Legacy",
+
+        },
+
+
+        "enwiki": {
+            key: "enwiki",
+
+            label: "Wikipedia Usage",
+            caption: <>Wikipedia<br/>Usage</>,
+
+            logo: imgWikiLogo,
+            logoAlt: "Wikipedia",
+
+            ttMarkup:
+`##### English Wikipedia Usage
+ 
+The number of times the domain appeared in links within English Wikipedia (English) articles\
+         (including the Citations, References, Notes and External Links sections).`,
+
+            popMarkup:
+`##### English Wikipedia Usage
+ 
+The number of times the domain appeared in links within English Wikipedia (English) articles\
+
+Links are extracted from the Citations, References, Notes and External Links sections.
+
+See [Wikipedia.org](Wikipedia.org)`,
+
+            ttCell: (dataset) => {  // tooltip when hover data cell
+                return <div>UNDER CONSTRUCTION<br/>#times here</div>
+            },
+
+            renderCell: (urlObj: Object) => {
+                /*
+
+                                try {
+                                    const meta = signals?.meta || {}
+                                    // const wikiCount = trimifyNumber(meta["ws_wiki_cite_en"] ?? 0)
+                                    const count = getPrettyCount(meta["ws_wiki_cite_en"]);
+                                    badgeData = {"wikicount": count}
+
+                                    if (count < 0) {  // -1 means not provided
+                                        badgeText = <div>{noDataProvidedText}</div>
+                                        badgeClass += " missing-value"
+                                    } else {
+                                        // badgeText = <div>{`Wiki Count: ${count}`}</div>
+                                        badgeText = <div>{`${count}`}</div>
+                                    }
+                */
+                const count = getPrettyCount(meta["ws_wiki_cite_en"]);
+
+                return <div>{count}</div>
+            },
+
+
+            sortable: true,
+            sortFunction: (a, b, dir: number = 1) => {
+                const signalA = a?.signal_data?.signals?.meta
+                    ? a?.signal_data?.signals?.meta?.ws_wiki_cite_en ?? 0
+                    : -1
+                const signalB = b?.signal_data?.signals?.meta
+                    ? b?.signal_data?.signals?.meta?.ws_wiki_cite_en ?? 0
+                    : -1
+
+                if (signalA > signalB) return dir * -1;
+                if (signalA < signalB) return columnSort.sorts['signal_enwiki']?.dir;
+                return 0;
+
+            },
+
 
         },
 

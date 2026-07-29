@@ -1,44 +1,7 @@
 import {urlColumnRegistry} from "../constants/urlColumnRegistry.tsx";
-// import signalBadgeRegistry, {signalBadgePrefix} from "../constants/badges/signalBadgeRegistry.jsx";
-// import {marked} from "marked";
-// import DOMPurify from "dompurify";
 import {httpStatusCodes, iabotLiveStatusCodes} from "../constants/httpStatusCodes.jsx";
 import {ACTIONABLE_FILTER_MAP} from "../constants/actionableMap.jsx";
 import Markdown from "react-markdown";
-
-            //
-            // const getSignalColumnTooltip = (columnClass) => {
-            //
-            //     if (!columnClass) return null
-            //
-            //     const badgeKey = columnClass.split('signal-')[1] // Extract badgeKey from columnClass
-            //     const badgeDef = signalBadgeRegistry[badgeKey]
-            //
-            //                     // if (badgeDef?.tooltipHtml) return badgeDef.tooltipHtml
-            //
-            //     if (badgeDef?.tooltipMarkup) {
-            //         // return marked(badgeDef.tooltipMarkup) // marked converts MD (markdown) text to html
-            //         return DOMPurify.sanitize(marked(badgeDef.tooltipMarkup));
-            //
-            //     }
-            //
-            //     if (badgeDef?.description) return <div>{badgeDef.description}</div>
-            //
-            //     return <div>tooltip for {columnClass}</div>
-            // }
-
-            //
-            // const getUrlColumnTooltip = (columnKey) => {
-            //
-            //     if (!columnKey) return null
-            //     const columnDef = urlColumnRegistry.columns[columnKey]
-            //     if (!columnDef) return null
-            //
-            //     if (columnDef.ttMarkup) return DOMPurify.sanitize(marked(columnDef.ttMarkup));
-            //     if (columnDef.ttCaption) return <div>{columnDef.ttCaption}</div>
-            //
-            //     return <div>Tooltip for {columnKey}</div>  // unhandled column - we should not get here
-            // }
 
 
 export const getColumnTooltip = (e) => {
@@ -108,58 +71,58 @@ export const getColumnTooltip = (e) => {
     return null
 }
 
-// export const getColumnDataTooltip = (rowEl, columnClass) => {
-export const getColumnDataTooltip = (dataset, columnClass) => {
-
-    // const dataset = rowEl.dataset
-
-    if (columnClass === "url-live_status") {
-        const statusDescription = httpStatusCodes[dataset.status_code]
-        return <div>Live Status:<br/>{dataset.status_code}: {statusDescription}</div>
-    }
-
-    if (columnClass === "url-archive_status") {
-        if (dataset.is_book === "true") {
-            return <div>Book</div>
-        }
-
-        return dataset.live_state
-            ? <div>{dataset.archive_status === "true"
-                ? 'Archived'
-                : 'Not Archived'}
-            <br/>IABot live_state: {dataset.live_state} - {iabotLiveStatusCodes[dataset.live_state]}</div>
-
-            : <div>Archive status = {dataset.archive_status}<br/>
-                IABot live_state is undefined</div>
-    }
-
-    if (columnClass === "url-citations") {
-        return dataset.citation_status && dataset.citation_status !== '--'
-            ? <div>Link Status {'"' + dataset.citation_status + '"'} as indicated in Citation</div>
-            : <div>No Link Status defined in Citation</div>
-
-    }
-
-    if (columnClass === "url-actionable" || columnClass === "yes-actionable") {
-        const actionableKey = dataset.actionable
-        const desc = ACTIONABLE_FILTER_MAP[actionableKey]?.desc
-        return desc
-            ? <div>Actionable Item:<br/>{desc}<br/>Click to fix.</div>
-            : null
-
-    }
-
-    if (columnClass === "url-signals") {
-        return null
-        // return "signal data not yet implemented"
-    }
-
-    // if not a special case column, show tooltip from column definition
-    const ttCaption = urlColumnRegistry.columns[columnClass]?.ttCaption
-    if (ttCaption) return <div>{ttCaption}</div>
-
-    return null
-}
+            // // export const getColumnDataTooltip = (rowEl, columnClass) => {
+            // export const getColumnDataTooltip = (dataset, columnClass) => {
+            //
+            //     // const dataset = rowEl.dataset
+            //
+            //     if (columnClass === "url-live_status") {
+            //         const statusDescription = httpStatusCodes[dataset.status_code]
+            //         return <div>Live Status:<br/>{dataset.status_code}: {statusDescription}</div>
+            //     }
+            //
+            //     if (columnClass === "url-archive_status") {
+            //         if (dataset.is_book === "true") {
+            //             return <div>Book</div>
+            //         }
+            //
+            //         return dataset.live_state
+            //             ? <div>{dataset.archive_status === "true"
+            //                 ? 'Archived'
+            //                 : 'Not Archived'}
+            //             <br/>IABot live_state: {dataset.live_state} - {iabotLiveStatusCodes[dataset.live_state]}</div>
+            //
+            //             : <div>Archive status = {dataset.archive_status}<br/>
+            //                 IABot live_state is undefined</div>
+            //     }
+            //
+            //     if (columnClass === "url-citations") {
+            //         return dataset.citation_status && dataset.citation_status !== '--'
+            //             ? <div>Link Status {'"' + dataset.citation_status + '"'} as indicated in Citation</div>
+            //             : <div>No Link Status defined in Citation</div>
+            //
+            //     }
+            //
+            //     if (columnClass === "url-actionable" || columnClass === "yes-actionable") {
+            //         const actionableKey = dataset.actionable
+            //         const desc = ACTIONABLE_FILTER_MAP[actionableKey]?.desc
+            //         return desc
+            //             ? <div>Actionable Item:<br/>{desc}<br/>Click to fix.</div>
+            //             : null
+            //
+            //     }
+            //
+            //     if (columnClass === "url-signals") {
+            //         return null
+            //         // return "signal data not yet implemented"
+            //     }
+            //
+            //     // if not a special case column, show tooltip from column definition
+            //     const ttCaption = urlColumnRegistry.columns[columnClass]?.ttCaption
+            //     if (ttCaption) return <div>{ttCaption}</div>
+            //
+            //     return null
+            // }
 
 
 export const getSortKeyForColumn = (e) => {

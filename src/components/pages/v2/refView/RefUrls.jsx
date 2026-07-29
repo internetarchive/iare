@@ -8,6 +8,7 @@ import {
     getColumnTooltip,
     // getUrlLiveStatusClass
     } from "../../../../utils/flockUtils.jsx";
+import FlockBox from "../../../FlockBox.jsx";
 // import SignalBadges from "../../../../../_notes/_archive/SignalBadges.jsx";
 // import FlockHeaderCell from "../../../flock/FlockHeaderCell.tsx";
 // import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../../../constants/urlFilterMaps.jsx";
@@ -107,10 +108,11 @@ export default function RefUrls({
     const flockRows = <div className={"flock-rows ref-view-url-flock-rows"}>
         {dataRows}
     </div>
-    
+
+
     return <div
-        data-tooltip-id={tooltipId}         // passed in tooltipId for this flock
-        data-tooltip-html={urlTooltipHtml}  // set urlTooltipHtml to set tooltip contents
+        // data-tooltip-id={tooltipId}         // passed in tooltipId for this flock
+        // data-tooltip-html={urlTooltipHtml}  // set urlTooltipHtml to set tooltip contents
     >
         <div className="ref-view-section ref-view-urls">
             <RefSectionHeader leftPart={<h3>{t('Ratings')}</h3>}/>
@@ -122,6 +124,23 @@ export default function RefUrls({
                 {flockHeader}
                 {flockRows}
             </div>
+
+            <FlockBox caption={flockCaption} className={"ref-url-flock"}>
+
+                <div className={"flock-container"}
+                     // data-tooltip-id="master-tooltip"
+                     onClick={onClickFlockRow}
+                     onMouseOver={onHoverFlockRow}
+                    // onMouseEnter={onHoverFlockRow}
+
+                    // NB Defines "--url-list-grid-columns" for header and rows CSS to pick up
+                     style={{"--url-list-grid-columns": gridTemplateColumns}}
+                >
+                    {flockHeader}
+                    {flockRows}
+                </div>
+
+            </FlockBox>
 
         </div>
     </div>

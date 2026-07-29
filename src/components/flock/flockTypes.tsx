@@ -4,30 +4,25 @@ export type ColumnDef = {
     key: string;         // duplicate of object key index; used for global sort
     priority?: number;   // default column order when displaying
 
-    caption: React.ReactNode;   // jsx capable display text
     label: string;              // straight text
-            //// columnClass: string;  // superceded by dataset.columnKey
+    caption: React.ReactNode;   // jsx capable display text
+
+    logo?: string;      // path to logo
+    logoAlt?: string;   // alt text for image
+
     width?: string;
 
     ttMarkup?: string;   // hover content for column header
     popMarkup?: string;  // md rich description of column, allowing links
     ttCell?: (dataset: Record<string, any>) => React.ReactNode;
         // tooltip display for when data cell itself is hovered.
-        // uses values placed in cell's dataset...could base it on urlObj instead...
+        // currently uses dataset values passed in...
+        // TODO base data from urlObj itself for supporting row and cell display
     renderCell?: (urlObj: Object) => React.ReactNode;
-        // returns markup for display cell data
+        // returns markup for cell's data display
 
     sortable: boolean;  // index for global sort scenario ??? may use key for this?
     sortFunction?: (a: any, b: any, dir: number) => number;  // sort function called when this column is sorted
-
-    logo?: string;      // path to logo
-    logoAlt?: string;   // alt text for image
-
-                // // component: ScoreBadge,
-                // component: string; // should code or javascript or json?
-                // // this will soon be a property of type function that wiull return
-                // // the required fields for rendering a column  badge object (at least)
-
 
 }
 
