@@ -1,5 +1,6 @@
 //
 import {ColumnDef, RenderRole} from "./flockTypes"
+import {collateDatasetProps} from "../../utils/generalUtils";
 
 type ColumnProps = {
     columnDef: ColumnDef;
@@ -28,13 +29,10 @@ export default function FlockDataCell({ columnDef, renderRole, cellData }: Colum
 
     // dataset stuff...
 
-    const cellDataset = {columnKey: columnDef.key}
-    const datasetProps = Object.fromEntries(
-        Object.entries(cellDataset).map(([key, value]) => [
-            `data-${key.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`)}`,
-            value
-        ])
-    )
+    const datasetProps = collateDatasetProps({
+        columnKey: columnDef.key,
+        // status_code: cellData?.status_code,
+    })
 
 
     return (
@@ -44,33 +42,4 @@ export default function FlockDataCell({ columnDef, renderRole, cellData }: Colum
             </div>
         </div>
     )
-
-
-        //     if (!columnDef) return null
-        //
-        //     const {
-        //         caption,
-        //         columnClass,
-        //         logo,
-        //         logoAlt = "Logo",
-        //         sortable = true,
-        //         priority = 1000,
-        //         getContent
-        //     } = columnDef;
-        //
-        // function RenderColumn({ columnDef, rowData }) {
-        //     const value = rowData[columnDef.key];
-        //
-        //     return (
-        //         <td className={columnDef.colClass}>
-        //             {columnDef.render
-        //                 ? columnDef.render({
-        //                     value,
-        //                     rowData,
-        //                     columnDef,
-        //                 })
-        //                 : value
-        //             }
-        //         </td>
-        //     );
 }

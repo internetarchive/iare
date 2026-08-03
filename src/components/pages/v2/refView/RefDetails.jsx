@@ -3,7 +3,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import RefTemplates from "./RefTemplates.jsx";
 import RefActionables from "./RefActionables.jsx";
 import RefWikitext from "./RefWikitext.jsx";
-import RefUrls from "./RefUrls.jsx";
+import RefUrls from "./RefUrls.tsx";
 import {ACTIONS_IARE} from "../../../../constants/actionsIare.jsx";
 // import RefWikitextNew from "./RefWikitextNew.jsx";
 import RefCitationDisplayHtml from "./RefCitationDisplayHtml.jsx";
@@ -166,7 +166,7 @@ function RefDetails({ refDetails,
             {/*<RefProbes reference={refDetails} pageData={pageData} />*/}
 
             <RefUrls
-                urlArray={refDetails?.urls}
+                urlArray={refDetails?.urls}  // show urls that this reference owns
                 pageData={pageData}
                 onAction={onAction}
                 tooltipId={tooltipId}

@@ -739,10 +739,10 @@ export default function PageData({rawPageData = {}, viewType = "archives"}) {
 
 
     const processSignals = useCallback((pageData, urlSignalResults) => {
-        // urlResults is an array of result objects from get_url_info results
-        // we loop through urlResults, and append to corresponding urlDict entries
+        // loop through urlSignalResults, and append corresponding
+        // signal data to pageData.urlDict[*].signal_data entries
         //
-        // as of 2026.02.11 we are focussing on signal results only
+        // as of 2026.02.11 we are focusing on signal results only
 
         if (!pageData?.urlDict) return  // do nothing if nothing to do
 

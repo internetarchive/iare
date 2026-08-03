@@ -1,23 +1,33 @@
-import React, {useCallback, useState} from 'react';
+import React, {useState} from 'react';
 import { useTooltip } from "../../../contexts/TooltipContext";
-import { convertToCSV, copyToClipboard, iareAlert, iareDebug } from "../../../utils/generalUtils.js";
-import { getColumnTooltip, getSortKeyForColumn, getDatasetProps } from "../../../utils/flockUtils.jsx";
+import Markdown from "react-markdown";
+import {
+    collateClasses,
+    collateDatasetProps,
+    convertToCSV,
+    copyToClipboard,
+    iareAlert,
+    iareDebug
+} from "../../../utils/generalUtils.js";
+import {
+    getColumnTooltip,
+    getSortKeyForColumn
+} from "../../../utils/flockUtils.jsx";
 
 import {ACTIONS_IARE} from "../../../constants/actionsIare.jsx";
 
-import FlockBox from "../../FlockBox.jsx";
-import FlockHeaderCell from "../../flock/FlockHeaderCell.tsx";
-import FlockDataCell from "../../flock/FlockDataCell.js";
+import FlockBox from "../../FlockBox";
+import FlockHeaderCell from "../../flock/FlockHeaderCell";
+import FlockDataCell from "../../flock/FlockDataCell";
 import "../../css/flock.css"
 import "../../css/popover.css"
 
 // context to provide global flag for sorting value
-// TODO move this into main config context, i think??
-import { ColumnSortContext } from "../../../contexts/ColumnSortContext.tsx"
-import Markdown from "react-markdown";
+// TODO move this sort info into main config context, i think??
+import { ColumnSortContext } from "../../../contexts/ColumnSortContext"
 
 import { renderRoles } from "../../flock/renderRoles.js";
-import { urlColumnRegistry } from "../../../constants/urlColumnRegistry.tsx";
+import { urlColumnRegistry } from "../../../constants/urlColumnRegistry";
 
 /*
 assumes urlArray is an array of url objects:
@@ -63,24 +73,18 @@ const urlFlock = React.memo(function UrlFlock({
         urlColumnRegistry.columns.url_name,
         urlColumnRegistry.columns.live_status,
         urlColumnRegistry.columns.archive_status,
-        // urlColumnRegistry.columns.actionable,
         urlColumnRegistry.columns.ws_score,
         urlColumnRegistry.columns.wayback,
-        // urlColumnRegistry.columns.ws_score,
+
+        // urlColumnRegistry.columns.actionable,
     ]
 
-    const [signalDetailsPopupTitle, setSignalDetailsPopupTitle] = useState(<>Modal Title</>);
-    const [signalDetailsPopupContents, setSignalDetailsPopupContents] = useState(null);
+            // const [feedbackText, setFeedbackText] = useState("")
 
-    const [isSignalDetailsPopupOpen, setIsSignalDetailsPopupOpen] = useState(false)
-    const [isSignalsDocsPopupOpen, setIsSignalsDocsPopupOpen] = useState(false)
-
-    // const [feedbackText, setFeedbackText] = useState("")
-
-    // const [urlTooltipHtml, setUrlTooltipHtml] = useState('<div>ToolTip' +
-    //     '<br>UrlFlock<br />second line');
-    // TODO there is a bug where sort re-renders list every time tooltip text/html property is updated
-    // TODO maybe fix using React.useRef somehow???
+            // const [urlTooltipHtml, setUrlTooltipHtml] = useState('<div>ToolTip' +
+            //     '<br>UrlFlock<br />second line');
+            // TODO there is a bug where sort re-renders list every time tooltip text/html property is updated
+            // TODO maybe fix using React.useRef somehow???
 
     /**
      * State for column sorting configuration.
@@ -108,13 +112,13 @@ const urlFlock = React.memo(function UrlFlock({
             // TODO fix this by implementing chained sorts
     })
 
-    // const monitoredSignals = [
-    //     signalBadgeRegistry.score.key,
-    //     signalBadgeRegistry.wayback.key,
-    //     signalBadgeRegistry.enwiki.key,
-    //     signalBadgeRegistry.mbfc.key,
-    //     signalBadgeRegistry.tranco.key,
-    // ]
+            // const monitoredSignals = [
+            //     signalBadgeRegistry.score.key,
+            //     signalBadgeRegistry.wayback.key,
+            //     signalBadgeRegistry.enwiki.key,
+            //     signalBadgeRegistry.mbfc.key,
+            //     signalBadgeRegistry.tranco.key,
+            // ]
 
     // dynamic column width grid setting
     const gridTemplateColumns = monitoredColumns
@@ -321,6 +325,37 @@ const urlFlock = React.memo(function UrlFlock({
 
     }
 
+
+    const renderHeaderRow = () => {
+
+        const renderRole = renderRoles.header
+
+        return (
+            <ColumnSortContext.Provider value={columnSort}>  {/* provides current sort scenario */}
+
+                <div className={"flock-header"} ref={headerRef}>
+
+                    {Object.entries(monitoredColumns).map( ([key, columnDef]) => {
+
+                        if (!columnDef) return null
+
+                        return <FlockHeaderCell
+                            columnDef={columnDef}
+                            renderRole={renderRole}
+                        />
+
+                    })}
+
+                </div>
+
+            </ColumnSortContext.Provider>
+        )
+
+    }
+
+    // <ColumnSortContext.Provider value={columnSort}>  {/* provides current sort scenario */}
+    // </ColumnSortContext.Provider>
+
     /**
      * Processes and renders rows of URL data for the flock component.
      *
@@ -329,11 +364,10 @@ const urlFlock = React.memo(function UrlFlock({
      * @returns {[Array, Array]} - An array of rendered rows and the corresponding filtered URL objects.
      */
     const renderDataRows = (urlArray, flockFilters) => {
-        // return [<h4>Under Construction - No URLs to show</h4>, []]
 
         // Return a default message if the input URL array is empty or undefined.
         if (!urlArray || urlArray.length === 0) {
-            return [<h4>No URLs to show</h4>, []]
+            return [<h4 style={{padding:".3rem"}}>No URL Links to show</h4>, []]
         }
 
         // Ensure filters object is initialized to prevent null errors.
@@ -391,25 +425,24 @@ const urlFlock = React.memo(function UrlFlock({
 
         const renderDataRow = (urlObj, i) => {
 
-            const rowClass = [
+            const rowClass = collateClasses([
                 "flock-row",
                 (urlObj.url === selectedUrl ? ' url-selected' : '')
-            ].filter(Boolean).join(" ")
+            ])
 
 
             // dataset stuff...
 
-            const datasetProps = getDatasetProps(
+            const datasetProps = collateDatasetProps(
                 {
-                    url: urlObj.url
+                    url: urlObj.url,
+                    status_code: urlObj.status_code,
+                    archive_status: urlObj.archive_status?.hasArchive,
+                    is_book: urlObj.isBook,
                 }
             )
-            // data-url={urlObj.url}
-            // data-status_code={urlObj.status_code}
-            // data-archive_status={urlObj.archive_status?.hasArchive}
             // data-live_state={urlObj.archive_status?.live_state}
             // data-actionable={urlObj.actionable ? urlObj.actionable[0] : null}  // return first actionable only (for now)
-            // data-is_book={urlObj.isBook}
             //
             return <div className={rowClass}
                         key={i}
@@ -458,54 +491,26 @@ const urlFlock = React.memo(function UrlFlock({
         const dataRows = filteredUrls.map((u, i) => {
 
             // if u (our url object) is problematic, return as error row
-            if (!u || u.url === undefined || u.status_code === undefined) {
-
-                const errText = !u
-                    ? `URL data not defined for index ${i}`
-                    : !u.url
-                        ? `URL missing for index ${i}`
-                        : u.status_code === undefined
-                            ? `URL status code undefined (try Force Refresh)`
-                            : 'Unknown error'  // this last case should not happen
-
-                return renderErrorRow(u, i, errText)
-            }
+            // if (!u || u.url === undefined || u.status_code === undefined) {
+            //
+            //     const errText = !u
+            //         ? `URL data not defined for index ${i}`
+            //         : !u.url
+            //             ? `URL missing for index ${i}`
+            //             : u.status_code === undefined
+            //                 ? `URL status code undefined (try Force Refresh)`
+            //                 : 'Unknown error'  // this last case should not happen
+            //
+            //     return renderErrorRow(u, i, errText)
+            // }
 
             return renderDataRow(u, i)
 
         })
 
-        return [dataRows, filteredUrls]  // urlRows is markup for filteredUrls
+        return [dataRows, filteredUrls]  // dataRows is markup for filteredUrls array
 
     }  // end getUrlRows
-
-
-    const renderHeaderRow = () => {
-
-        const renderRole = renderRoles.header
-
-        return (
-            <ColumnSortContext.Provider value={columnSort}>  {/* provides current sort scenario */}
-
-                <div className={"flock-header"} ref={headerRef}>
-
-                    {Object.entries(monitoredColumns).map( ([key, columnDef]) => {
-
-                        if (!columnDef) return null
-
-                        return <FlockHeaderCell
-                            columnDef={columnDef}
-                            renderRole={renderRole}
-                        />
-
-                    })}
-
-                </div>
-
-            </ColumnSortContext.Provider>
-        )
-
-    }
 
 
     /* Copy functions */  // NB TODO retool to be in an IARE tools module: copyUrlDetails( urlArray )
@@ -663,9 +668,11 @@ const urlFlock = React.memo(function UrlFlock({
 
     return <>
 
-        <FlockBox caption={flockCaption} className={"url-flock"}>{flock}</FlockBox>
+        <FlockBox caption={flockCaption} className={"url-flock"}>
+            {flock}
+        </FlockBox>
 
-        <dialog  // Popover for showing column definition details
+        <dialog  // Popover for Column Definition Details
             ref={popoverColDefRef}
             id={popoverColDefId}
             popover={"manual"}

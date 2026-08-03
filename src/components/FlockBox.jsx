@@ -1,6 +1,6 @@
 import React from "react";
 import './css/components.css';
-import './css/flockbox.css';
+import './css/flock.css';
 
 /* FlockBox component
 

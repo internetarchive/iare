@@ -8,6 +8,7 @@ import {getNormalizedCount, getPrettyCount} from "../utils/generalUtils";
 import imgScoreLogo from "../images/columns/wikisignals.logo.v1r4.png";
 import imgWaybackLogo from "../images/columns/badge.logo.wayback.small.png";
 import imgWikiLogo from "../images/columns/badge.logo.wiki.png"
+import {httpStatusCodes} from "./httpStatusCodes";
 
 // import imgScoreLogo from "./images/wikisignals.logo.v1r4.png"
 // import imgTrancoLogo from './images/badge.logo.tranco.png'
@@ -31,7 +32,7 @@ export const urlColumnRegistry: ColumnRegistry = {
 
             caption: <><br/>URL Link</>,
             label: "URL Link",
-            width: "11.5rem",
+            width: "minmax(11.5rem, 22rem)",
 
             ttMarkup:
 `##### Citation URL Link
@@ -86,7 +87,8 @@ Uses LiveWebCheck from Wayback machine.
 Click on row to open Reference Detail view.`,
 
             ttCell: (dataset) => {
-                return <div>{dataset.status_code} : {dataset.status_desc}</div>
+                const statusDesc = httpStatusCodes[dataset.status_code] || "Unknown status";
+                return <div>{dataset.status_code} : {statusDesc}</div>;
             },
             renderCell: (urlObj: Object) => {
                 return urlObj.status_code
@@ -126,7 +128,8 @@ Archive exists in IABot database
 Click here for IABot database.`,
 
             ttCell: (dataset) => {
-                return <div>{dataset.status_code} : {dataset.status_desc}</div>
+                const statusDesc = httpStatusCodes[dataset?.status_code] || "Unknown status";
+                return <div>{dataset.archive_status} : {dataset.is_book}</div>
             },
             renderCell: (urlObj: Object) => {
                 return <span className=
@@ -391,6 +394,13 @@ See [Wikipedia.org](Wikipedia.org)`,
 
 
         },
+
+        /* do these still:
+
+            signalBadgeRegistry.mbfc.key,
+            signalBadgeRegistry.tranco.key,
+
+         */
 
     },
 };

@@ -224,13 +224,14 @@
 .ref-view-section-contents {
     border:var(--iare-section-border) !important;
     border-radius: var(--iare-section-border-radius);
+    overflow: hidden;
 }
 
-/* header row formatting adjustments */
-.ref-view .flock-header .flock-col {
-    padding:var(--url-list-padding-url-small) 0 0;
-    text-align:center;
-}
+            /*!* header row formatting adjustments *!*/
+            /*.ref-view .flock-header .flock-col {*/
+            /*    padding:var(--url-list-padding-url-small) 0 0;*/
+            /*    text-align:center;*/
+            /*}*/
 
 /* Templates section of ref view details */
 
@@ -297,7 +298,7 @@
 }
 .ref-view-templates {
 }
-.ref-view-urls {
+.ref-view-analysis {
     /* this should count as a member of a flex or grid*/
     /*width:30%;*/
 }

@@ -1,6 +1,6 @@
 import {urlColumnRegistry} from "../constants/urlColumnRegistry.tsx";
-import {httpStatusCodes, iabotLiveStatusCodes} from "../constants/httpStatusCodes.jsx";
-import {ACTIONABLE_FILTER_MAP} from "../constants/actionableMap.jsx";
+// import {httpStatusCodes, iabotLiveStatusCodes} from "../constants/httpStatusCodes.jsx";
+// import {ACTIONABLE_FILTER_MAP} from "../constants/actionableMap.jsx";
 import Markdown from "react-markdown";
 
 
@@ -8,64 +8,43 @@ export const getColumnTooltip = (e) => {
     let el = null
 
     // if header sort row...
-    let rowEl = e.target.closest('.header-cell-sort')
-    if (rowEl) {
+    el = e.target.closest('.header-cell-sort')
+    if (el) {
         return <div>Click to Sort</div>
         // TODO: place more specific text here for what is sorting and how and what high and low means
     }
 
     // if header row...
-    rowEl = e.target.closest('.flock-header')
-    if (rowEl) {
-        let columnKey = ""
-
-        el = e.target.closest('.signal-badge')
-        if (el) {
-            columnKey = 'signal-' + el.dataset.badgekey
-        } else {
-            el = e.target.closest('.flock-col')
-            if (el) {
-                // if normal column, get from dataset columnKey
-                columnKey = el.dataset.columnKey;
-            }
-        }
-
-        console.log(`flockUtils:: getColumnTooltipHtml: .flock-header columnClass is: ${columnKey}`)
-
-// else get from signal hierarchy
-                    // return getColumnHeaderTooltip(columnKey)
-
-        // if (!columnKey) return null
+    el = e.target.closest('.flock-header .flock-col')
+    if (el) {
+        const columnKey = el.dataset.columnKey;
         const columnDef = urlColumnRegistry.columns[columnKey]
         if (!columnDef) return null
 
         if (columnDef.ttMarkup) return <Markdown>{columnDef.ttMarkup}</Markdown>
-        if (columnDef.ttCaption) return <div>{columnDef.ttCaption}</div>
+        if (columnDef.caption) return <div>{columnDef.caption}</div>
         return <div>Tooltip for {columnKey}</div>  // unhandled column - we should not get here
-
     }
 
     // if error row...
-    rowEl = e.target.closest('.url-row-error')
-    if (rowEl) {
-        return rowEl.currentTarget.getAttribute('data-err-text');
+    el = e.target.closest('.url-row-error')
+    if (el) {
+        return el.currentTarget.getAttribute('data-err-text');
     }
 
     // if data row...
-    rowEl = e.target.closest('.url-row')
+    const rowEl = e.target.closest('.flock-row')
     if (rowEl) {
-        const columnClass = e.target.closest('.url-row > *')?.classList[0]  // get first class in list to get column type
-
+        // get dataset from row's data...
         const dataset = rowEl.dataset
 
-        /* new: */
         el = e.target.closest('.flock-col')
         const columnKey = el ? el.dataset.columnKey : null
         const columnDef = urlColumnRegistry.columns[columnKey]
         if (!columnDef) return null
-        return columnDef.ttData(dataset)
-
-        // /// return getColumnDataTooltip(dataset, columnClass)
+        // return columnDef.ttCell(dataset)
+        return columnDef.ttCell(dataset)
+        // NB TODO *could* get this info directly from urlObj data
     }
 
     return null
@@ -132,20 +111,5 @@ export const getSortKeyForColumn = (e) => {
 }
 
 
-export const getUrlLiveStatusClass = (u = null) => {
-    if (!u) return null
-    return (u.status_code === 0 ? ' url-is-unknown'
-            : u.status_code >= 300 && u.status_code < 400 ? ' url-is-redirect'
-                : u.status_code >= 400 && u.status_code < 500 ? ' url-is-notfound'
-                    : u.status_code >= 500 && u.status_code < 600 ? ' url-is-error'
-                        : '')
-}
 
-export const getDatasetProps = (dataProps = {}) => {
-    return Object.fromEntries(
-        Object.entries(dataProps).map(([key, value]) => [
-            `data-${key.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`)}`,
-            value
-        ])
-    )
-}
+

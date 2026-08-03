@@ -38,13 +38,34 @@ export type RenderRole = {
 
     className: string,
     useIcon?: boolean,
-    useCaption?: boolean
+    useCaption?: boolean,
+    hasSort?: boolean,
 
     // isHeaderCell: true,  // NB CHANGE THIS! TODO do we need this?
 
 }
 
+/*****
+ **
+ *
 
+ "urlDict": {
+     "https://books.google.com/books?id=ECQY4M13-yoC": {
+     "url": "https://books.google.com/books?id=ECQY4M13-yoC",
+     "netloc": "books.google.com",
+     "pay_level_domain": "google.com",
+     "status_code": 200,
+     "status_code_method": "LIVEWEBCHECK",
+     "status_code_error_details": "",
+     "archive_status": {
+     "archive_status_method": "iabot_searchurldata",
+     "hasArchive": false,
+     "live_state": "permalive"
+ },
+
+
+ * *
+ * *****/
                 // export type RenderArgs = {
                 //     content: null;
                 //     sort?: null;

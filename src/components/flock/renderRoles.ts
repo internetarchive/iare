@@ -1,10 +1,12 @@
 import type { RenderRole } from "./flockTypes";
 
 export const renderRoles = {
+
     header: {
         className: "header-cell",
         useIcon: true,
         useCaption: true,
+        hasSort: true,
     },
 
     cell: {

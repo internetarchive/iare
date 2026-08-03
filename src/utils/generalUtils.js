@@ -1,4 +1,16 @@
 
+export const collateClasses = (classes=[]) => classes.filter(Boolean).join(" ")
+// allows empty, blank or otherwise "falsey" values to be skipped
+
+export const collateDatasetProps = (props= {}) => {
+    return Object.fromEntries(
+        Object.entries(props).map(([key, value]) => [
+            `data-${key.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`)}`,
+            value
+        ])
+    )
+}
+
 
 export const isEmpty = (o) => {
     // // return true if null or undefined, empty object (no keys) or empty array
@@ -258,3 +270,5 @@ export const iareDebug = (msg, contextId) => {
     //         targetElement.innerHTML = DOMPurify.sanitize(msg);
     //     }
 }
+
+

@@ -300,8 +300,9 @@ export default function RefView({
                 }
                 // onMouseMove={(e) => {stopAndShow(e, "contents::onMouseMove")}}
                 // onMouseDown={(e) => {stopAndShow(e, "onMouseDown")}}
-                onScroll={(e) => {stopAndShow(e, "contents:onScroll")}}
-                onScrollCapture={(e) => {stopAndShow(e, "contents:onScrollCapture")}}
+
+                 // onScroll={(e) => {stopAndShow(e, "contents:onScroll")}}
+                // onScrollCapture={(e) => {stopAndShow(e, "contents:onScrollCapture")}}
             >
 
                 {refViewTitleBar}

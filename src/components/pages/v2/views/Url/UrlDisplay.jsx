@@ -1,5 +1,5 @@
 import React, {useCallback, useState} from 'react';
-import UrlFlock from "../../UrlFlock.jsx";
+import UrlFlock from "../../UrlFlock.tsx";
 import RefFlock from "../../RefFlock.jsx";
 import UrlFilterPanel from "./UrlFilterPanel.jsx";
 import '../../../../css/urls.css';

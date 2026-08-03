@@ -1,6 +1,7 @@
 import {useColumnSort} from "../../contexts/ColumnSortContext"
 import {ColumnDef, RenderRole} from "./flockTypes"
 import SortBox from "../SortBox.jsx";
+import {collateClasses, collateDatasetProps} from "../../utils/generalUtils";
 // import {BadgeContexts} from "../constants/badgeContexts.jsx";
 // import {urlColumnRegistry} from "../constants/urlColumnRegistry.tsx";
 
@@ -10,30 +11,38 @@ type HeaderColumnProps = {
     renderRole: RenderRole;
 };
 
-export default function FlockHeaderCell({ columnDef, renderRole }: HeaderColumnProps) {
+export default function FlockHeaderCell({columnDef, renderRole}: HeaderColumnProps) {
 
     if (!columnDef) return null
 
 
     // sort stuff...
 
-    const globalSort = useColumnSort()
-    const globalSortKey = globalSort?.sortBy?.[0]
-
     let sortMarkup: any
 
     // display the sort box if this column is sortable (NOT if it's sorted! that's different)
     if (columnDef.sortable) {
-        const mySortKey = columnDef.key
-        const mySortDir = mySortKey === globalSortKey  // if this column is the primary sort column...
-            ? globalSort?.sorts?.[mySortKey]?.dir ?? 0
-            : 0  // no sort in this column if not specified in global sort
-        sortMarkup =<div className={"header-cell-sort"}>
-            <SortBox
-                className={"flock-element"}
-                direction={mySortDir}
-            />
-        </div>
+        if (renderRole.hasSort) {
+            const globalSort = useColumnSort();
+            // todo exception trap this...
+            //  display err no sort if caught...
+            //  we must be inside a sort context for useColumnSort to be valid
+            const globalSortKey = globalSort?.sortBy?.[0];
+
+            const mySortKey = columnDef.key
+            const mySortDir = mySortKey === globalSortKey  // if this column is the primary sort column...
+                ? globalSort?.sorts?.[mySortKey]?.dir ?? 0
+                : 0;  // no sort in this column if not specified in global sort
+            sortMarkup = <div className={"header-cell-sort"}>
+                <SortBox
+                    className={"flock-element"}
+                    direction={mySortDir}
+                />
+            </div>
+        } else {
+            sortMarkup = null
+            // sortMarkup = <span className="triangle-icon-exclamation">!</span>
+        }
     } else {
         sortMarkup = null
     }
@@ -53,31 +62,17 @@ export default function FlockHeaderCell({ columnDef, renderRole }: HeaderColumnP
     }
 
 
-    // className stuff...
-
-    const headerCellClass = [
-        "flock-col",
-        renderRole.className,
-        `${renderRole.className}-${columnDef.key}`,
-        // ...other classes here...
-    ].filter(Boolean).join(" ")  // clever way of joining strings with spaces
-
-
     // dataset stuff...
 
-    const cellDataset = { columnKey: columnDef.key }
-    const datasetProps = Object.fromEntries(
-        Object.entries(cellDataset).map(([key, value]) => [
-            `data-${key.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`)}`,
-            value
-        ])
-    )
+    const datasetProps = collateDatasetProps({
+        columnKey: columnDef.key
+    })
 
     return (
-        <div className={headerCellClass}
+        <div className={`flock-col ${renderRole.className}-${columnDef.key}`}
              {...datasetProps}
         >
-            <div className={"header-cell-content"}>
+            <div className={"header-cell"}>
                 {content}
             </div>
             {sortMarkup}
