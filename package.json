@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.3.1.49",
-  "version_name": "0.3.1.49 boxslide",
+  "version": "0.3.2.0",
+  "version_name": "0.3.2.0 column formatting",
   "private": true,
   "type": "module",
   "dependencies": {
