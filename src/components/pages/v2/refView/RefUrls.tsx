@@ -51,6 +51,12 @@ export default function RefUrls({
     const headerRef = React.useRef(null);
     const bodyRef = React.useRef(null);
 
+    const popoverColDefRef = React.useRef(null);
+    const popoverColDefId = "refview-popover-col-def"
+    const previousColDefAnchorRef = React.useRef(null)
+    const [popoverColDefMarkup, setPopoverColDefMarkup] = useState("--refview-popover-col-def-anchor");
+
+
     // dynamic grid column width setting
     const gridTemplateColumns = monitoredColumns
         .map((colDef) => {
@@ -263,6 +269,47 @@ export default function RefUrls({
         {dataRows}
     </div>
 
+    const handleDialogClick = (event) => {
+        if (event.target === event.currentTarget) {
+            event.currentTarget.close();
+        }
+    }
+
+    const openPopover = (markup, anchorElement) => {
+        if (!anchorElement || !popoverColDefRef.current) {
+            return;
+        }
+
+        // Remove anchor from previous element
+        if (previousColDefAnchorRef.current) {
+            previousColDefAnchorRef.current.style.anchorName = "";
+            previousColDefAnchorRef.current.style.backgroundColor = "initial";
+        }
+
+        // Give the supplied element a CSS anchor name
+        anchorElement.style.anchorName = "--active-popover-anchor";
+
+        previousColDefAnchorRef.current = anchorElement;
+        setPopoverColDefMarkup(markup);
+
+        closeTooltip()
+
+        // requestAnimationFrame(() => {
+        //     popover.showPopover();
+        // });
+        // popoverColDefRef.current.showPopover();
+        popoverColDefRef.current.showModal();
+
+    }
+
+    const closePopover = () => {
+        if (previousColDefAnchorRef.current) {
+            previousColDefAnchorRef.current.style.anchorName = "";
+            previousColDefAnchorRef.current = null;
+        }
+        popoverColDefRef.current?.close();
+
+    }
 
     return <div className="ref-view-section ref-view-analysis">
             <RefSectionHeader leftPart={<h3>{t('Ratings')}</h3>} >{null}</RefSectionHeader>
@@ -284,7 +331,7 @@ export default function RefUrls({
                      onMouseOver={onHoverDataRow}
                     // onMouseEnter={onHoverFlockRow}
 
-                    // NB Defines "--url-list-grid-columns" for header and rows CSS to pick up
+                    // NB Defines "--url-list-grid-columns" for dynamic CSS grid display
                      style={{"--url-list-grid-columns": gridTemplateColumns}}
                 >
                     {flockHeader}
@@ -292,6 +339,23 @@ export default function RefUrls({
                 </div>
 
             </FlockBox>
+
+            <dialog  // Popover for Column Definition Details
+                ref={popoverColDefRef}
+                id={popoverColDefId}
+                popover={"manual"}
+                className="pop-col-def-container"
+                onClick={handleDialogClick}
+            >
+                <div className="pop-col-def-content">
+                    {popoverColDefMarkup}
+                    <button className="btn close-button"
+                            onClick={closePopover}
+                    >
+                        ×
+                    </button>
+                </div>
+            </dialog>
 
         </div>
     </div>
