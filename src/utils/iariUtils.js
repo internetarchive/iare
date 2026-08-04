@@ -261,7 +261,8 @@ const fetchUrl = async ({iariBase, url, refresh=false, timeout=0, method=''}) =>
 
             error_code: response.status,
             error_text: response.statusText ? response.statusText : "error from server",
-            // TODO: would be nice to use response.statusText, but as of 2023.04.08, response.statusText is empty
+            // TODO: would be nice to use response.statusText,
+            //  but as of 2023.04.08, response.statusText is empty
         }
     }
 
@@ -306,88 +307,89 @@ const fetchUrl = async ({iariBase, url, refresh=false, timeout=0, method=''}) =>
 }
 
 
-/* fetches iabot's archive data from IARI for specified url, and returns object as such: (* means optional):
-{
-    url              original url to check archive for
-    hasArchive       if true, then archive_url and live_state is set
-    archive_url *    full url of archive
-    live_state *     iabot's "live_state" status - unclear if this is useful or not
-    error_reason *   short reason for error
-    error_details *  longer description if available
-}
-*/
-const fetchUrlArchive = async (iariBase, url, refresh=false) => {
-
-    const endpoint = `${iariBase}/check-url-archive`
-        + `?refresh=${refresh ? "true" : "false"}`
-        + `&url=${encodeURIComponent(url)}`
-
-    let endpoint_status_code = 0;
-
-    const archiveData = await fetch(endpoint, {cache: "no-cache"})
-
-        .then( response => {
-
-            endpoint_status_code = response.status
-
-            if (response.ok) {
-                return response.json().then(data => {
-                    return Promise.resolve(getArchiveStatusFromData(data))
-                })
-
-            } else {
-                // we may have a 504 or other erroneous status_code on the check-url-archive call
-                console.warn(`fetchStatusUrl: Error fetching url: ${url}`)
-
-                return Promise.resolve({
-                    url: url,
-                    hasArchive: false,
-                    error_reason: response.status,
-                    error_details: response.statusText ? response.statusText : "error from server",
-                    // TODO: would be nice to use response.statusText, but as of 2023.04.08, response.statusText is empty
-                })
-
-            }
-        })
-
-        .catch( (_e) => { // if something bad happened, return fake synthesized url object
-
-                console.warn(`utils::fetchUrlArchive: Unknown error when fetching url: ${url}`)
-
-                // return fake data object to not break interface
-                return Promise.resolve({
-                    url: url,
-                    hasArchive: false,
-                    error_reason: "unknown",
-                    error_details: "Error during check from server",
-                    // TODO Fill this out with more accurate information from call
-                })
-            }
-        );
-
-    return { data: archiveData, status_code: endpoint_status_code };
-}
-
-
-// returns a promise containing array of results of checking archive status of urls in irlArray
-export const fetchUrlArchives = async ({
-                                           iariBase= '',
-                                           urlArray=[],
-                                           refresh=false,
-                                       } = {}) => {
-
-    // return empty array if urlArray is falsey (null, undefined, or 0 length)
-    if (!urlArray?.length) return Promise.resolve([])
-
-    const promises = urlArray.map(urlObj => {
-        return fetchUrlArchive(iariBase, urlObj, refresh)
-    })
-
-    // assumes all promises successful
-    // TODO: error trap this promise call with a .catch
-    return await Promise.all(promises);
-
-}
+            // /* fetches iabot's archive data from IARI for specified url,
+            //     and returns object as such: (* means optional):
+            // {
+            //     url              original url to check archive for
+            //     hasArchive       if true, then archive_url and live_state is set
+            //     archive_url *    full url of archive
+            //     live_state *     iabot's "live_state" status - unclear if this is useful or not
+            //     error_reason *   short reason for error
+            //     error_details *  longer description if available
+            // }
+            // */
+            // const fetchUrlArchive = async (iariBase, url, refresh=false) => {
+            //
+            //     const endpoint = `${iariBase}/check-url-archive`
+            //         + `?refresh=${refresh ? "true" : "false"}`
+            //         + `&url=${encodeURIComponent(url)}`
+            //
+            //     let endpoint_status_code = 0;
+            //
+            //     const archiveData = await fetch(endpoint, {cache: "no-cache"})
+            //
+            //         .then( response => {
+            //
+            //             endpoint_status_code = response.status
+            //
+            //             if (response.ok) {
+            //                 return response.json().then(data => {
+            //                     return Promise.resolve(getArchiveStatusFromData(data))
+            //                 })
+            //
+            //             } else {
+            //                 // we may have a 504 or other erroneous status_code on the check-url-archive call
+            //                 console.warn(`fetchStatusUrl: Error fetching url: ${url}`)
+            //
+            //                 return Promise.resolve({
+            //                     url: url,
+            //                     hasArchive: false,
+            //                     error_reason: response.status,
+            //                     error_details: response.statusText ? response.statusText : "error from server",
+            //                     // TODO: would be nice to use response.statusText, but as of 2023.04.08, response.statusText is empty
+            //                 })
+            //
+            //             }
+            //         })
+            //
+            //         .catch( (_e) => { // if something bad happened, return fake synthesized url object
+            //
+            //                 console.warn(`utils::fetchUrlArchive: Unknown error when fetching url: ${url}`)
+            //
+            //                 // return fake data object to not break interface
+            //                 return Promise.resolve({
+            //                     url: url,
+            //                     hasArchive: false,
+            //                     error_reason: "unknown",
+            //                     error_details: "Error during check from server",
+            //                     // TODO Fill this out with more accurate information from call
+            //                 })
+            //             }
+            //         );
+            //
+            //     return { data: archiveData, status_code: endpoint_status_code };
+            // }
+            //
+            //
+            // // returns a promise containing array of results of checking archive status of urls in irlArray
+            // export const fetchUrlArchives = async ({
+            //                                            iariBase= '',
+            //                                            urlArray=[],
+            //                                            refresh=false,
+            //                                        } = {}) => {
+            //
+            //     // return empty array if urlArray is falsey (null, undefined, or 0 length)
+            //     if (!urlArray?.length) return Promise.resolve([])
+            //
+            //     const promises = urlArray.map(urlObj => {
+            //         return fetchUrlArchive(iariBase, urlObj, refresh)
+            //     })
+            //
+            //     // assumes all promises successful
+            //     // TODO: error trap this promise call with a .catch
+            //     return await Promise.all(promises);
+            //
+            // }
 
 const fetchUrlsIari = async (urlLinks, iariBase, method, refresh, timeout) => {
                 // // assumes all promises successful

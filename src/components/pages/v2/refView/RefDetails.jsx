@@ -3,7 +3,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import RefTemplates from "./RefTemplates.jsx";
 import RefActionables from "./RefActionables.jsx";
 import RefWikitext from "./RefWikitext.jsx";
-import RefUrls from "./RefUrls.jsx";
+import RefUrls from "./RefUrls.tsx";
 import {ACTIONS_IARE} from "../../../../constants/actionsIare.jsx";
 // import RefWikitextNew from "./RefWikitextNew.jsx";
 import RefCitationDisplayHtml from "./RefCitationDisplayHtml.jsx";
@@ -146,7 +146,7 @@ function RefDetails({ refDetails,
     return <div className={"ref-view-details"}>
 
         <div className={"ref-citation-claim"}>
-            <RefCitationClaim reference={refDetails} pageData={pageData} />
+            <RefCitationClaim reference={refDetails} pageData={pageData} onAction={onAction}/>
 
             <RefCitationDisplayHtml reference={refDetails} onClick={handleCitationClick} onAction={onAction}/>
 
@@ -160,17 +160,17 @@ function RefDetails({ refDetails,
             {/*/>*/}
         </div>
 
+        <RefActionables actionables={refDetails?.actionable}/>
+
         <div className={"ref-analysis"}>
             {/*<RefProbes reference={refDetails} pageData={pageData} />*/}
 
             <RefUrls
-                urlArray={refDetails?.urls}
+                urlArray={refDetails?.urls}  // show urls that this reference owns
                 pageData={pageData}
                 onAction={onAction}
                 tooltipId={tooltipId}
             />
-
-            <RefActionables actionables={refDetails?.actionable}/>
 
             {showWikitext &&
                 <RefWikitext wikitext={refDetails?.wikitext} ref_details={refDetails} onAction={handleRefViewAction}/>}

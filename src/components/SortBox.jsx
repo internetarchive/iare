@@ -1,29 +1,20 @@
 import React from "react";
-import { BadgeContexts } from "../constants/badgeContexts.jsx";
 
 export default function SortBox({
-                                    sortKey = "",
                                     className = "",
-                                    context = null,
+                                    role = null,
                                     direction = 0,
-                                    label = "",
-
-                                    caption = "",
-                                    description = "",
-                                    disabled = false,
-                                    onClick = null,
-                                    children = null,
                                 }) {
 
-    const dir = direction === 1
+    const dirString = direction === 1
         ? "asc"
         : (direction === -1 ? "desc" : "none");
 
     const sortBoxClassName = [
         "sort-box",
         className,
-        context ? `sort-box-${context}` : "",
-        `sort-${dir}`,
+        role ? `sort-box-${role}` : "",
+        `sort-${dirString}`,
     ]
         .filter(Boolean)
         .join(" ");

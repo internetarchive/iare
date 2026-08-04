@@ -3,13 +3,13 @@ export const BadgeContexts = {
         key: "sort",
         className: "signal-badges-sort",
         hasIcon: true,
-        headerCell: true
+        isHeaderCell: true
     },
     "refview": {  // header cells for refView URL list
         key: "refview",
         className: "signal-badges-refview",
         hasIcon: true,
-        headerCell: true
+        isHeaderCell: true
     },
     "inline": {  // data cells in normal or RefView URL list rows
         key: "inline",

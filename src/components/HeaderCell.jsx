@@ -4,13 +4,13 @@ import { BadgeContexts } from "../constants/badgeContexts.jsx";
 export default function HeaderCell({
                                        content = null,
                                        sort = null,
-                                       badgeKey = "",
                                        headerClass = "",
                                        cellData = {},
                                    }) {
 
     const headerCellClassName = [
         "header-cell",
+        "flock-col",
         headerClass,
     ].filter(Boolean).join(" ")  // skips headerClass if not defined
 

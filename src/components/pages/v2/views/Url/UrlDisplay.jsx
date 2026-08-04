@@ -1,5 +1,5 @@
 import React, {useCallback, useState} from 'react';
-import UrlFlock from "../../UrlFlock.jsx";
+import UrlFlock from "../../UrlFlock.tsx";
 import RefFlock from "../../RefFlock.jsx";
 import UrlFilterPanel from "./UrlFilterPanel.jsx";
 import '../../../../css/urls.css';
@@ -707,29 +707,34 @@ export default function UrlDisplay ({ pageData, options } ) {
     : null
 
     const urlDisplayBody = <>
-        <div className={"url-display-body"} style={{display: "flex", height:'100%'}}>
+        <div className={"url-display-flocks"} xxstyle={{display: "flex", height:'100%'}}>
 
-            <UrlFlock urlDict={pageData.urlDict}
-                      urlArray={pageData.urlArray}
-                      urlFilters={urlFilters}
-                      onAction={handleAction}
-                      options={{showFilters: isShowFilters, showRefs: isShowRefs}}
-                      selectedUrl={selectedUrl}
-                      fetchMethod={myConfig.urlStatusMethod}
-                      tooltipId={"tooltip-url-display"} />
+            <div className="url-display-url-flock">
 
-            {isShowRefs && <RefFlock pageData={pageData}
-                                     refArray={refArray}
-                                     refFilter={refFilter}
-                                     onAction={handleRefClick}
-                                     options={{
-                                         show_header: false,
-                                         show_filter_description: false,
-                                         caption: "References List",
-                                     }}
-                                     tooltipId={"tooltip-url-display"}
-                                     context={"UrlDisplay"} />
-            }
+                <UrlFlock urlDict={pageData.urlDict}
+                          urlArray={pageData.urlArray}
+                          urlFilters={urlFilters}
+                          onAction={handleAction}
+                          options={{showFilters: isShowFilters, showRefs: isShowRefs}}
+                          selectedUrl={selectedUrl}
+                          fetchMethod={myConfig.urlStatusMethod}
+                          tooltipId={"tooltip-url-display"}
+                />
+            </div>
+
+            {isShowRefs && <div className="url-display-ref-flock">
+                <RefFlock pageData={pageData}
+                          refArray={refArray}
+                          refFilter={refFilter}
+                          onAction={handleRefClick}
+                          options={{
+                              show_header: false,
+                              show_filter_description: false,
+                              caption: "References List",
+                          }}
+                          tooltipId={"tooltip-url-display"}
+                          context={"UrlDisplay"}/>
+            </div>}
 
         </div>
     </>
@@ -739,16 +744,17 @@ export default function UrlDisplay ({ pageData, options } ) {
 
         <div className={"url-display-header"}>
             {false && <div>url-display-header</div>}
+            {/*{true && <div>url-display-header</div>}*/}
             {overviewColumn}
         </div>
 
         {/* we add "style: pointerEvents" to avoid conflict with RefView popup */}
         <div className={"url-display-contents"}
-            style={{
-                pointerEvents: isRefViewModalOpen ? "none" : "auto",
-                // color:"red"
+             style={{
+                 pointerEvents: isRefViewModalOpen ? "none" : "auto",
+                 // color:"red"
 
-        }}>
+             }}>
 
             <div className={"iare-ux-container"}>
 
@@ -759,20 +765,20 @@ export default function UrlDisplay ({ pageData, options } ) {
                         conditions={currentConditions}
                         onAction={handleAction}/>
 
-                    {/*<div>ShowRefs: {isShowRefs ? "true" : "false"}</div>*/}
                     {/*<div className={"test-tooltip-display"}>ShowRefs: {isShowRefs ? "true" : "false"}</div>*/}
 
-                </div>{/* iare-ux-header */}
+                </div>
+                {/* iare-ux-header */}
 
                 <div className={"iare-ux-body"}>
                     {urlDisplayBody}
-                </div> {/* iare-ux-body */}
+                </div>
+                {/* iare-ux-body */}
 
-            </div> {/* iare-ux-container */}
+            </div>
+            {/* iare-ux-container */}
 
         </div>
-
-
 
 
         {/*
@@ -819,7 +825,7 @@ export default function UrlDisplay ({ pageData, options } ) {
         />
         {/* TODO tooltipId should be passed in to this UrlDisplay component.
                       It should be universal and not created here...
-                       more so, a local tooltip should be created if passed in tooltipId is invalid*/}
+                       however, a local tooltip should be created if passed in tooltipId is invalid*/}
 
     </div>
 }

@@ -701,48 +701,48 @@ export default function PageData({rawPageData = {}, viewType = "archives"}) {
     }, [])
 
 
-    // const processProbes = useCallback( (pageData, urlResults) => {
-    //     // urlResults is an array of result objects from get_url_info results
-    //     // we loop through urlResults, and append to corresponding urlDict entries
-    //     //
-    //     // as of 2025.08.24 we are focussing on probe results only
-    //     //  - we also want to process archive data for each urlDict that is a primary link
-    //
-    //     if (!pageData?.urlDict) return
-    //     const urlDict = pageData.urlDict
-    //
-    //     if (urlResults) {
-    //         urlResults.forEach(result => {
-    //
-    //             // NB assumes d.data is valid
-    //
-    //             // must account for results "d.data" level of hierarchy
-    //             const myUrl = result.data.url
-    //             const probe_results = result.data.results?.probe_results
-    //
-    //             // calc score for each probe in probe
-    //             if (probe_results) {
-    //                 calcProbeScores(probe_results)
-    //             }
-    //
-    //             // add probe_data to urlDict entry for url
-    //             const urlObj = urlDict[myUrl]
-    //             if (urlObj) {
-    //                 urlObj["probe_results"] = urlObj.isBook ? null : probe_results
-    //             }
-    //
-    //         })
-    //     }
-    //
-    //
-    // }, [])
-
-
-    const processSignals = useCallback((pageData, urlSignalResults) => {
+    const processProbes = useCallback( (pageData, urlResults) => {
         // urlResults is an array of result objects from get_url_info results
         // we loop through urlResults, and append to corresponding urlDict entries
         //
-        // as of 2026.02.11 we are focussing on signal results only
+        // as of 2025.08.24 we are focussing on probe results only
+        //  - we also want to process archive data for each urlDict that is a primary link
+
+        if (!pageData?.urlDict) return
+        const urlDict = pageData.urlDict
+
+        if (urlResults) {
+            urlResults.forEach(result => {
+
+                // NB assumes d.data is valid
+
+                // must account for results "d.data" level of hierarchy
+                const myUrl = result.data.url
+                const probe_results = result.data.results?.probe_results
+
+                // calc score for each probe in probe
+                if (probe_results) {
+                    calcProbeScores(probe_results)
+                }
+
+                // add probe_data to urlDict entry for url
+                const urlObj = urlDict[myUrl]
+                if (urlObj) {
+                    urlObj["probe_results"] = urlObj.isBook ? null : probe_results
+                }
+
+            })
+        }
+
+
+    }, [])
+
+
+    const processSignals = useCallback((pageData, urlSignalResults) => {
+        // loop through urlSignalResults, and append corresponding
+        // signal data to pageData.urlDict[*].signal_data entries
+        //
+        // as of 2026.02.11 we are focusing on signal results only
 
         if (!pageData?.urlDict) return  // do nothing if nothing to do
 
@@ -830,6 +830,7 @@ export default function PageData({rawPageData = {}, viewType = "archives"}) {
 
                 // fetch url data for each url and process received data - TODO this should eventually be done in IARI
                 const myUrls = await fetchPageUrls()
+
                 processUrls(pageData, myUrls)  // creates pageData.urlDict and pageData.urlArray; loads pageData.errors
                 associateUrlsWithRefs(pageData)  // associates url links with references
 
@@ -844,8 +845,8 @@ export default function PageData({rawPageData = {}, viewType = "archives"}) {
                 // processProbes(pageData, urlProbesInfo)
 
                 const urlSignalsInfo = await fetchSignalInfo(pageData.urlDict)
-                // for each URL in urlDict, fetch probe info and assign to probe property of url
-                // this is temporary, as eventually the probe data will be included with the url
+                // for each URL in urlDict, fetch probe info and assign to "signals" property of url
+                // this is temporary, as eventually the signal data will be included with the url
                 // data when initially retrieved (with get_url_info vs. check_url IARI endpoint)
                 processSignals(pageData, urlSignalsInfo)
 
