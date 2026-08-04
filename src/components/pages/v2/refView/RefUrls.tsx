@@ -218,12 +218,12 @@ export default function RefUrls({
                 // }
 ``
 
-    const onHoverFlockRow = e => {  // handle hover for header and data row
+    const onHoverDataRow = e => {  // handle hover for header and data row
         e.stopPropagation()  // prevents onHover from propagating engaging and erasing tooltip
-        showTooltip({content: getColumnTooltip(e)})
+        showTooltip({content: getColumnTooltip(e, pageData?.urlDict)})
     }
 
-    const onClickFlockRow = (e) => {
+    const onClickDataRow = (e) => {
         e.stopPropagation()
 
         console.log("onClickFlockRow - RefView")
@@ -280,8 +280,8 @@ export default function RefUrls({
 
                 <div className={"flock-container"}
                      data-tooltip-id="master-tooltip"
-                     onClick={onClickFlockRow}
-                     onMouseOver={onHoverFlockRow}
+                     onClick={onClickDataRow}
+                     onMouseOver={onHoverDataRow}
                     // onMouseEnter={onHoverFlockRow}
 
                     // NB Defines "--url-list-grid-columns" for header and rows CSS to pick up

@@ -2,7 +2,7 @@
 import type {ColumnDef} from "../components/flock/flockTypes";
 import * as React from "react";
 
-import {getNormalizedCount, getPrettyCount} from "../utils/generalUtils";
+import {formatNumberWithLocale, getNormalizedCount, getPrettyCount, trimifyNumber} from "../utils/generalUtils";
 
 // import ScoreBadge from "./badges/ScoreBadge.jsx";
 import imgScoreLogo from "../images/columns/wikisignals.logo.v1r4.png";
@@ -19,6 +19,11 @@ type ColumnRegistry = {
     specs: Record<string, any>
 };
 
+const msgClickForMore = "*Click to explore more...*"
+const STR_BADVALUE = "!"
+const URL_IABOT_EXPLORER = "https://tss.toolforge.org/?house=activity&group=es_iabot_wayback&metrics=iabot_wayback&grain=year&display=grid"
+const URL_TRANCO_EXPLORER = "https://tranco-list.eu/tranco-list/"
+const URL_MBFC_EXPLORER = "https://mbfc.toolforge.org/"
 
 export const urlColumnRegistry: ColumnRegistry = {
     specs: {  // TODO rename to "defaults"
@@ -37,7 +42,9 @@ export const urlColumnRegistry: ColumnRegistry = {
             ttMarkup:
 `##### Citation URL Link
 
-URL of Citation Source.`,
+URL of Citation Source.
+
+${msgClickForMore}`,
 
             popMarkup:
 `##### Citation URL Link
@@ -75,7 +82,9 @@ Click on row to open Reference Detail view.`,
 
 Most recent status when querying.
 
-Uses LiveWebCheck from Wayback machine.`,
+Uses LiveWebCheck from Wayback machine.
+
+${msgClickForMore}`,
 
             popMarkup:
 `##### HTTP Status code
@@ -115,22 +124,42 @@ Click on row to open Reference Detail view.`,
             caption: <>Archive<br/>Status</>,
             label: "Archive Status of URL",
 
+            // storedFunctions: {
+            //     functions repeatable for this column def
+            // },
+
             ttMarkup:
 `##### Archive Status
 
-Archive exists in IABot database`,
+This is a Book Reference, or,
+
+Archive Status in IABot database
+
+${msgClickForMore}`,
 
             popMarkup:
 `##### Archive Status
 
 Archive exists in IABot database
 
-Click here for IABot database.`,
+Click [here](${URL_IABOT_EXPLORER}) to 
+[explore IABot database](${URL_IABOT_EXPLORER}).`,
 
-            ttCell: (dataset) => {
-                const statusDesc = httpStatusCodes[dataset?.status_code] || "Unknown status";
-                return <div>{dataset.archive_status} : {dataset.is_book}</div>
+            ttCell: (dataset, urlDict) => {
+
+                const url = dataset.url
+                const urlObj = urlDict[url]
+
+                if (!urlObj) return "Unreachable URL object"
+
+                const displayArchive = urlObj.isBook
+                    ? "This is a book"
+                    : urlObj.archive_status?.hasArchive
+                        ? "This link is archived."
+                        : "This link is NOT archived."
+                return <span>{displayArchive}</span>
             },
+
             renderCell: (urlObj: Object) => {
                 return <span className=
                                  {urlObj.isBook
@@ -167,36 +196,7 @@ Click here for IABot database.`,
         },
 
 
-//         "actionable": {
-//             colCaption: <>Action<br/>Items</>,
-//             colClass: "actionable",
-//
-//             sortable: true,
-//
-//             ttCaption: `Actions that can be taken to improve citation`,
-//             ttMarkup: `##### Actionable
-// Action can be taken to improve citation`,
-//             ttData: `<div>Actions that can be taken to improve citation</div>`,
-//             popMarkup: `
-// ##### Actionable
-//
-// When actionable, places have been identified that could use improvement.
-//
-// Click row to open details for Citation Reference link.
-// `,
-//         },
-//
-//
-// // Extract actionable information from URLs and render corresponding components.
-// const getActionableInfo = (u => {
-//     return !u.actionable
-//         ? null
-//         : u.actionable.map((key, i) => {
-//             return <div className={"yes-actionable"} key={i}>
-//                 <span className={"icon-area"}></span>
-//             </div>
-//         })
-// })
+
 
         "ws_score": {
             key: "ws_score",
@@ -207,7 +207,11 @@ Click here for IABot database.`,
             ttMarkup:
 `##### WikiSignals Score
 
-*Click to know more...*`,
+A website reliability estimate (0.0 – 1.0).
+
+A higher score is better, with 1.0 being the highest possible.
+
+${msgClickForMore}`,
 
             popMarkup: `
 ##### WikiSignals Score
@@ -218,9 +222,30 @@ A higher score is better, with 1.0 being the highest possible score.
 
 See [WikiSignals.org](https://wikisignals.org) for more details.`,
 
-            ttCell: (dataset) => {  // tooltip when hover data cell
-                return <div>UNDER CONSTRUCTION<br/>{dataset.ws_score} : {dataset.ws_score_analysis}</div>
+            ttCell: (dataset, urlDict) => {
+                // return JSON.stringify(dataset)
+                // // tooltip when hover over data cell
+                //
+
+                const url = dataset.url
+                const urlObj = urlDict[url]
+
+                if (!urlObj) return "Unreachable URL object"
+
+                const meta = urlObj.signal_data?.signals?.meta
+                if (!meta) return "No Wayback signal data"
+
+                const score = parseFloat(urlObj.signal_data?.signals?.meta?.ws_score) || null;
+                const scoreDisplay = typeof score === "number"
+                    ? score.toFixed(2).replace(/^0+/, '')
+                    : 'N/A'
+
+                return <>
+                    <span>WikiSignals: {scoreDisplay} out of 1</span><br/>
+                    <span>Analysis: {"TBD"}</span>
+                </>
             },
+
             renderCell: (urlObj: Object) => {
 
                 const value = parseFloat(urlObj.signal_data?.signals?.meta?.ws_score) || "-";
@@ -258,44 +283,76 @@ See [WikiSignals.org](https://wikisignals.org) for more details.`,
             ttMarkup:
 `##### Wayback Machine History
 
-Number shows time span between first capture and last capture.
+Display is Year of first capture of domain in Wayback Machine.
 
-Longer times does not necessarily mean more reliable.`,
+Time span is years between first capture and last capture.
+
+Longer times do not necessarily imply more reliable sources.
+
+${msgClickForMore}`,
 
             popMarkup:
 `##### Wayback Machine History
 
-Number shows time span between first capture and last capture.
 
-Longer times does not necessarily mean more reliable.
+Display is Year of first capture of domain in Wayback Machine.
+
+Time span is years between first capture and last capture.
+
+Longer times do not necessarily imply more reliable sources.
 
 See See [Wayback Machine](https://web.archive.org).`,
 
-            ttCell: (dataset) => {  // tooltip when hover data cell
-                return <div>UNDER CONSTRUCTION<br/>{dataset.ws_score} : {dataset.ws_score_analysis}</div>
+            ttCell: (dataset, urlDict) => {
+                // return JSON.stringify(dataset)
+                // // tooltip when hover over data cell
+                //
+
+                const url = dataset.url
+                const urlObj = urlDict[url]
+
+                if (!urlObj) return "Unreachable URL object"
+
+                const meta = urlObj.signal_data?.signals?.meta
+                if (!meta) return "No Wayback signal data"
+
+                // const ia_count = trimifyNumber(getNormalizedCount(meta["ws_wbm_total"]))
+                const ia_count = formatNumberWithLocale(getNormalizedCount(meta["ws_wbm_total"]))
+                const dateWaybackFirst = meta["ws_wbm_first"] ? new Date(meta["ws_wbm_first"]) : null
+                const dateWaybackLast = meta["ws_wbm_last"] ? new Date(meta["ws_wbm_last"]) : null
+                const ia_first = dateWaybackFirst ? dateWaybackFirst?.toISOString().slice(0, 4) : 'N/A'
+                const ia_span = ((dateWaybackLast - dateWaybackFirst) /
+                        (1000 * 60 * 60 * 24 * 365)).toFixed(1)
+
+                return <>
+                    <span>First archive: {ia_first}</span><br/>
+                    <span>Timespan: {ia_span}y</span><br/>
+                    <span>Captures: {ia_count}</span>
+                </>
             },
+
             renderCell: (urlObj: Object) => {
 
                 const badValue = "!"
 
-                let data = ""
                 const meta = urlObj.signal_data?.signals?.meta
                 if (!meta) return "--"  // TODO make ttCell also indicate no meta data
 
-                const count = getNormalizedCount(meta["ws_wbm_total"]);
-                const wayback_first = meta["ws_wbm_first"] ?? 'N/A';
-                const wayback_last = meta["ws_wbm_last"] ?? 'N/A';
+                const count = getNormalizedCount(meta["ws_wbm_total"])
+                const dateWaybackFirst = meta["ws_wbm_first"] ? new Date(meta["ws_wbm_first"]) : null
+                const dateWaybackLast = meta["ws_wbm_last"] ? new Date(meta["ws_wbm_last"]) : null
+                // const displayWaybackFirst = dateWaybackFirst ? dateWaybackFirst?.toISOString().slice(0, 7) : 'N/A'
+                const displayWaybackFirst = dateWaybackFirst ? dateWaybackFirst?.toISOString().slice(0, 4) : 'N/A'
 
-                if (count < 0) {  // getNormalizedCount returns -1 if NaN
+                if (count < 0 || dateWaybackFirst === null || dateWaybackLast === null) {  // getNormalizedCount returns -1 if NaN
                     return <div>{badValue}</div>  // ttCell returns message also
                 } else {
                     return <>
-                        <span>{((new Date(wayback_last) - new Date(wayback_first)) /
-                            (1000 * 60 * 60 * 24 * 365)).toFixed(1)} y</span>
+                        <span>{displayWaybackFirst}</span><br/>
+                        <span>{((dateWaybackLast - dateWaybackFirst) /
+                            (1000 * 60 * 60 * 24 * 365)).toFixed(1)}y</span>
                     </>
                 }
-                ///if (count < 0) className += " missing-value"
-
             },
 
 
@@ -339,7 +396,9 @@ See See [Wayback Machine](https://web.archive.org).`,
 `##### English Wikipedia Usage
  
 The number of times the domain appeared in links within English Wikipedia (English) articles\
-         (including the Citations, References, Notes and External Links sections).`,
+         (including the Citations, References, Notes and External Links sections).
+
+${msgClickForMore}`,
 
             popMarkup:
 `##### English Wikipedia Usage
@@ -395,13 +454,112 @@ See [Wikipedia.org](Wikipedia.org)`,
 
         },
 
+        "domain": {
+            key: "domain",
+
+            label: "Domain",
+            caption: <>Domain</>,
+
+            logo: null,
+            logoAlt: "Domain",
+
+            ttMarkup:
+`##### Domain
+ 
+The domain of the url link.
+
+${msgClickForMore}`,
+
+            popMarkup:
+`##### Domain
+
+The domain of the url link.
+
+*maybe other things to go to regrarding this domain...*
+*domain intensity on wikipedia, for instance*`,
+
+            ttCell: (dataset) => {
+                // tooltip when hover data cell
+                return <div>what goes here???</div>
+            },
+
+            renderCell: (urlObj: Object) => {
+                /*
+
+                                try {
+                                    const meta = signals?.meta || {}
+                                    // const wikiCount = trimifyNumber(meta["ws_wiki_cite_en"] ?? 0)
+                                    const count = getPrettyCount(meta["ws_wiki_cite_en"]);
+                                    badgeData = {"wikicount": count}
+
+                                    if (count < 0) {  // -1 means not provided
+                                        badgeText = <div>{noDataProvidedText}</div>
+                                        badgeClass += " missing-value"
+                                    } else {
+                                        // badgeText = <div>{`Wiki Count: ${count}`}</div>
+                                        badgeText = <div>{`${count}`}</div>
+                                    }
+                */
+                const domain =  urlObj.url
+                return <div>{count}</div>
+            },
+
+
+            sortable: true,
+            sortFunction: (a, b, dir: number = 1) => {
+                const signalA = a?.signal_data?.signals?.meta
+                    ? a?.signal_data?.signals?.meta?.ws_wiki_cite_en ?? 0
+                    : -1
+                const signalB = b?.signal_data?.signals?.meta
+                    ? b?.signal_data?.signals?.meta?.ws_wiki_cite_en ?? 0
+                    : -1
+
+                if (signalA > signalB) return dir * -1;
+                if (signalA < signalB) return columnSort.sorts['signal_enwiki']?.dir;
+                return 0;
+
+            },
+
+
+        },
+
         /* do these still:
 
-            signalBadgeRegistry.mbfc.key,
-            signalBadgeRegistry.tranco.key,
+           .mbfc.key,
+           .tranco.key,
 
          */
 
     },
-};
+}
 
+//         "actionable": {
+//             colCaption: <>Action<br/>Items</>,
+//             colClass: "actionable",
+//
+//             sortable: true,
+//
+//             ttCaption: `Actions that can be taken to improve citation`,
+//             ttMarkup: `##### Actionable
+// Action can be taken to improve citation`,
+//             ttData: `<div>Actions that can be taken to improve citation</div>`,
+//             popMarkup: `
+// ##### Actionable
+//
+// When actionable, places have been identified that could use improvement.
+//
+// Click row to open details for Citation Reference link.
+// `,
+//         },
+//
+//
+// // Extract actionable information from URLs and render corresponding components.
+// const getActionableInfo = (u => {
+//     return !u.actionable
+//         ? null
+//         : u.actionable.map((key, i) => {
+//             return <div className={"yes-actionable"} key={i}>
+//                 <span className={"icon-area"}></span>
+//             </div>
+//         })
+// })

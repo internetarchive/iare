@@ -59,6 +59,8 @@ export default function App(
         myEnv === "env-local"
     );
 
+    const [isShowPageInfo, setIsShowPageInfo] = useState(false);
+
     const [isShowDebugInfo, setIsShowDebugInfo] = useState(false);
     const [isShowDebugComponents, setIsShowDebugComponents] = useState(false);
 
@@ -564,6 +566,22 @@ export default function App(
             // dn triangle: <>&#9660;</>
         }</button>
 
+    const togglePageInfo = <div class={"toggle-prop-text"}
+                onClick={() => {
+                    setIsShowPageInfo(prevState => {
+                        return !prevState
+                    })
+                }}
+                >
+        {isShowPageInfo ? "Hide PageInfo" : "Show PageInfo"}
+    </div>
+
+    useEffect(() => {
+        const setVal = isShowPageInfo ? 'inherit' : 'none';
+        document.querySelector(
+            '.page-info'
+        )?.style.setProperty('display', setVal)
+    }, [isShowPageInfo])
 
     const debugButtonFilters = <button // this is the 'show urls list' button
         className={"utility-button debug-button"}
@@ -733,6 +751,7 @@ export default function App(
                     <div>{iariSourceInfo}</div>
                     <div>{buttonScrollFix}</div>
                     <div>{siteInfo}</div>
+                    <div>{togglePageInfo}</div>
                     <div>{buttonShowDebug}</div>
                 </div>
             </div>

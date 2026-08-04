@@ -14,12 +14,10 @@ export type ColumnDef = {
 
     ttMarkup?: string;   // hover content for column header
     popMarkup?: string;  // md rich description of column, allowing links
-    ttCell?: (dataset: Record<string, any>) => React.ReactNode;
-        // tooltip display for when data cell itself is hovered.
-        // currently uses dataset values passed in...
-        // TODO base data from urlObj itself for supporting row and cell display
-    renderCell?: (urlObj: Object) => React.ReactNode;
-        // returns markup for cell's data display
+    ttCell?: (dataset: Record<string, any>, urlDict?: Record<string, any>) => React.ReactNode;
+    // tooltip display for when data cell itself is hovered.
+    renderCell?: (urlObj?: Object) => React.ReactNode;
+    // returns markup for cell's data display
 
     sortable: boolean;  // index for global sort scenario ??? may use key for this?
     sortFunction?: (a: any, b: any, dir: number) => number;  // sort function called when this column is sorted

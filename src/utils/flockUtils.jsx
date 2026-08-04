@@ -4,17 +4,24 @@ import {urlColumnRegistry} from "../constants/urlColumnRegistry.tsx";
 import Markdown from "react-markdown";
 
 
-export const getColumnTooltip = (e) => {
+/**
+ * Determines and returns the tooltip content for a given column or row in a table-like structure.
+ *
+ * @param {Event} e - The event object used to identify the target element for tooltip generation.
+ * @param {Object} urlDict - (Optional) A dictionary mapping URLs to related data, used for tooltips in specific scenarios.
+ * @returns {React.ReactNode|null} A React element representing the tooltip's content, or null if no suitable content is found.
+ */
+export const getColumnTooltip = (e, urlDict = {}) => {
     let el = null
 
-    // if header sort row...
+    // for header sort row...
     el = e.target.closest('.header-cell-sort')
     if (el) {
         return <div>Click to Sort</div>
         // TODO: place more specific text here for what is sorting and how and what high and low means
     }
 
-    // if header row...
+    // for header row...
     el = e.target.closest('.flock-header .flock-col')
     if (el) {
         const columnKey = el.dataset.columnKey;
@@ -26,13 +33,13 @@ export const getColumnTooltip = (e) => {
         return <div>Tooltip for {columnKey}</div>  // unhandled column - we should not get here
     }
 
-    // if error row...
+    // for data error row...
     el = e.target.closest('.url-row-error')
     if (el) {
         return el.currentTarget.getAttribute('data-err-text');
     }
 
-    // if data row...
+    // for data row...
     const rowEl = e.target.closest('.flock-row')
     if (rowEl) {
         // get dataset from row's data...
@@ -43,7 +50,7 @@ export const getColumnTooltip = (e) => {
         const columnDef = urlColumnRegistry.columns[columnKey]
         if (!columnDef) return null
         // return columnDef.ttCell(dataset)
-        return columnDef.ttCell(dataset)
+        return columnDef.ttCell(dataset, urlDict)
         // NB TODO *could* get this info directly from urlObj data
     }
 

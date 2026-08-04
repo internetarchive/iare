@@ -202,9 +202,9 @@ const urlFlock = React.memo(function UrlFlock({
     }
 
 
-    const onHoverFlockRow = e => {
+    const onHoverDataRow = e => {
         e.stopPropagation()  // prevents onHover from propagating engaging and erasing tooltip
-        const tooltip = getColumnTooltip(e)
+        const tooltip = getColumnTooltip(e, urlDict)
         //// console.log(`onHoverFlockRow: tooltip = ${JSON.stringify(tooltip)}`)
         showTooltip({content: tooltip})
     }
@@ -618,7 +618,7 @@ const urlFlock = React.memo(function UrlFlock({
              data-tooltip-id="master-tooltip"
              onClick={onClickFlockRow}
 
-             onMouseOver={onHoverFlockRow}
+             onMouseOver={onHoverDataRow}
              // onMouseEnter={onHoverFlockRow}
 
              // NB Defines "--url-list-grid-columns" for header and rows CSS to pick up

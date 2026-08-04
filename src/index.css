@@ -584,6 +584,12 @@ font-weight:normal;
     display: contents;
 }
 
+#master-tooltip p {
+    margin-bottom: .67rem;
+}
+.pop-col-def-content p {
+    margin-bottom: .67rem;
+}
 #master-tooltip,
 #tooltip-url-display {
     font-size:0.8rem;
@@ -606,10 +612,6 @@ font-weight:normal;
     border-radius: .3rem;
     max-width: 23rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-#master-tooltip p:last-child {
-    margin-bottom: 0;
 }
 
 .test-tooltip-display {

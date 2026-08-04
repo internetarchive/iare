@@ -19,7 +19,7 @@
     box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
-.debugBox {
+.draggableDebugBox {
     text-align: left !important;
     justify-content: left !important;
     padding: 0.5rem;

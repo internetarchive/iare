@@ -1,7 +1,16 @@
-
+/**
+ * Combines an array of class names into a single string, skipping falsy values.
+ * @param {Array<string>} classes - An array of class names.
+ * @returns {string} A string of space-separated class names.
+ */
 export const collateClasses = (classes=[]) => classes.filter(Boolean).join(" ")
 // allows empty, blank or otherwise "falsey" values to be skipped
 
+/**
+ * Converts an object into a dataset-compatible format with attributes prefixed by 'data-'.
+ * @param {Object} props - Object with key-value pairs to be converted.
+ * @returns {Object} A new object with keys transformed into data-* attributes.
+ */
 export const collateDatasetProps = (props= {}) => {
     return Object.fromEntries(
         Object.entries(props).map(([key, value]) => [
@@ -12,6 +21,11 @@ export const collateDatasetProps = (props= {}) => {
 }
 
 
+/**
+ * Checks if an object, array, or value is empty.
+ * @param {*} o - The value to check.
+ * @returns {boolean} True if the value is null, undefined, an empty object, or an empty array.
+ */
 export const isEmpty = (o) => {
     // // return true if null or undefined, empty object (no keys) or empty array
     // if (o === null || o === undefined) return true
@@ -27,6 +41,11 @@ export const isEmpty = (o) => {
 
 }
 
+/**
+ * Determines if an HTTP status code represents a successful response.
+ * @param {number} statusCode - The HTTP status code to evaluate.
+ * @returns {boolean} True if the status code is in the 200-399 range, false otherwise.
+ */
 export const isLinkStatusGood = (statusCode) => {
     return statusCode >= 200 && statusCode < 400
 }
@@ -43,7 +62,15 @@ export const normalizeUrlArray = (urlArray=[]) => {
     if (!urlArray || !urlArray.length) return [];
     return urlArray.map( uData => uData.data )
 }
-
+/**
+ * Formats a number with thousands separators according to the specified locale.
+ * @param {number} number - The number to format.
+ * @param {string} [locale="en-US"] - Optional locale for formatting. Defaults to "en-US".
+ * @returns {string} The formatted number.
+ */
+export const formatNumberWithLocale = (number, locale = "en-US") => {
+    return number.toLocaleString(locale);
+};
 /*
 
 onComplete: function to call when the copy is completed. If not provided, does an alert.
@@ -248,20 +275,25 @@ export const iareAlert = (s, contextId) => {
 }
 
 
-import DOMPurify from 'dompurify';
-
+/**
+ * Logs a debug message to a specific DOM element or a default debug box.
+ * @param {string} msg - The debug message to display.
+ * @param {string} [contextId] - The ID of the target DOM element. If not provided,
+ *                              defaults to an element with the class 'draggableDebugBox'.
+ */
 export const iareDebug = (msg, contextId) => {
     // if contextId specified, use that element to display message; 
-    // otherwise use default class 'debugBox'
+    // otherwise use default class 'draggableDebugBox'
 
     const targetElement = contextId
         ? document.querySelector(`#${contextId}`)
-        : document.querySelector(`.debugBox`);
+        : document.querySelector(`.draggableDebugBox`);
 
     if (targetElement) {
         targetElement.innerText = msg;
     } else {
-        console.warn("Debug target element not found.");
+        console.warn(`Debug target element (${contextId}) not found,
+        and there is no .draggableDebugBox element to display debug messages in.`)
     }
     // if (targetElement) {
     //     if (typeof msg === "string") {

@@ -48,7 +48,8 @@ export default function NativeDraggableDiv() {
         // Dynamic positions and styles update based on class/state
         transform: `translate3d(${position.x}px, ${position.y}px, 0px)`,
         // backgroundColor: isDragging ? '#2980b9' : '#3498db',
-        backgroundColor: isDragging ? '#29b948' : '#63db34',
+        backgroundColor: isDragging ? '#1CFF15' : '#2CFF05',  ////'#29b948' : '#63db34',1CFF15
+        // backgroundColor: isDragging ? 'red' : 'blue',  ////'#29b948' : '#63db34',1CFF15
         cursor: isDragging ? 'grabbing' : 'grab',
         boxShadow: isDragging ? '0 10px 25px rgba(0,0,0,0.3)' : 'none',
     };
@@ -56,7 +57,7 @@ export default function NativeDraggableDiv() {
     return (
         <div
             onMouseDown={handleMouseDown}
-            className={`debugBox drag-box ${isDragging ? 'dragging' : 'idle'}`}
+            className={`draggableDebugBox drag-box ${isDragging ? 'dragging' : 'idle'}`}
             style={baseBoxStyle}
         >
             <div style={{fontSize:"75%",color:"red"}}>debug dragger only in LOCAL env</div>
