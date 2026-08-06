@@ -3,12 +3,12 @@ import type {ColumnDef} from "../components/flock/flockTypes";
 import * as React from "react";
 
 import {formatNumberWithLocale, getNormalizedCount, getPrettyCount, trimifyNumber} from "../utils/generalUtils";
+import {httpStatusCodes} from "./httpStatusCodes";
 
-// import ScoreBadge from "./badges/ScoreBadge.jsx";
 import imgScoreLogo from "../images/columns/wikisignals.logo.v1r4.png";
 import imgWaybackLogo from "../images/columns/badge.logo.wayback.small.png";
 import imgWikiLogo from "../images/columns/badge.logo.wiki.png"
-import {httpStatusCodes} from "./httpStatusCodes";
+import imgTrancoLogo from '../images/columns/badge.logo.tranco.png'
 
 // import imgScoreLogo from "./images/wikisignals.logo.v1r4.png"
 // import imgTrancoLogo from './images/badge.logo.tranco.png'
@@ -21,9 +21,11 @@ type ColumnRegistry = {
 
 const msgClickForMore = "*Click to explore more...*"
 const STR_BADVALUE = "!"
+const STR_MISSING_DATA = "--"
 const URL_IABOT_EXPLORER = "https://tss.toolforge.org/?house=activity&group=es_iabot_wayback&metrics=iabot_wayback&grain=year&display=grid"
 const URL_TRANCO_EXPLORER = "https://tranco-list.eu/tranco-list/"
 const URL_MBFC_EXPLORER = "https://mbfc.toolforge.org/"
+const STR_UNREACHABLE_URL_OBJ = "Unreachable URL object"
 
 export const urlColumnRegistry: ColumnRegistry = {
     specs: {  // TODO rename to "defaults"
@@ -333,10 +335,8 @@ See See [Wayback Machine](https://web.archive.org).`,
 
             renderCell: (urlObj: Object) => {
 
-                const badValue = "!"
-
                 const meta = urlObj.signal_data?.signals?.meta
-                if (!meta) return "--"  // TODO make ttCell also indicate no meta data
+                if (!meta) return STR_MISSING_DATA  // NB ttCell also indicates no meta data
 
                 const count = getNormalizedCount(meta["ws_wbm_total"])
                 const dateWaybackFirst = meta["ws_wbm_first"] ? new Date(meta["ws_wbm_first"]) : null
@@ -345,7 +345,7 @@ See See [Wayback Machine](https://web.archive.org).`,
                 const displayWaybackFirst = dateWaybackFirst ? dateWaybackFirst?.toISOString().slice(0, 4) : 'N/A'
 
                 if (count < 0 || dateWaybackFirst === null || dateWaybackLast === null) {  // getNormalizedCount returns -1 if NaN
-                    return <div>{badValue}</div>  // ttCell returns message also
+                    return <div>{STR_BADVALUE}</div>  // ttCell returns message also
                 } else {
                     return <>
                         <span>{displayWaybackFirst}</span><br/>
@@ -380,7 +380,7 @@ See See [Wayback Machine](https://web.archive.org).`,
             logo: imgWaybackLogo,
             logoAlt: "Wayback Legacy",
 
-        },
+        },  // end wayback entry
 
 
         "enwiki": {
@@ -521,7 +521,96 @@ The domain of the url link.
             },
 
 
-        },
+        },  // end enwiki entry
+
+
+        "tranco": {
+            key: "tranco",
+
+            caption: <>Tranco<br/>Rating</>,
+            label: "Tranco Ranking",
+
+            ttMarkup:
+`##### Tranco Ranking
+        
+Measures a website's global popularity based on the Tranco Top Sites list.
+ 
+Values range from 1 to 20 million. For display purposes, the Log10 of the ranking is displayed..
+
+A low (good) Tranco rank means a site is widely visited, but it 
+doesn't necessarily mean the site is safe, accurate, or reputable.
+
+${msgClickForMore}`,
+
+            popMarkup:
+`##### Tranco Ranking
+        
+Measures a website's global popularity based on the [Tranco Top Sites](https://tranco-list.eu/) list
+ 
+Values range from 1 to 20 million. For display purposes, the Log10 of the ranking is displayed..
+
+A low (good) Tranco rank means a site is widely visited, but it 
+doesn't necessarily mean the site is safe, accurate, or reputable.
+
+See the [Tranco website](https://tranco-list.eu/) for more details.)`,
+
+            ttCell: (dataset, urlDict) => {
+                // show Tranco number in full form, for now
+
+                const url = dataset.url
+                const urlObj = urlDict[url]
+
+                if (!urlObj) return STR_UNREACHABLE_URL_OBJ
+
+                const meta = urlObj.signal_data?.signals?.meta
+                if (!meta) return "No Tranco signal data"
+                // TODO: change this to urlObj.signal_data.tranco
+
+                const tranco_number = getNormalizedCount(meta["ws_web_rank"]);
+                if (tranco_number < 0) {  // -1 means not undefined or otherwise not provided
+                    return "Missing Tranco data"
+                }
+                const tranco_log_fixed = Math.log10(tranco_number).toFixed(1)
+                return <>
+                    <span>Tranco number: {formatNumberWithLocale(tranco_number)}</span><br/>
+                    <span>Log10: {tranco_log_fixed}</span><br/>
+                </>
+            },
+
+            renderCell: (urlObj: Object) => {
+                if (!urlObj) return STR_UNREACHABLE_URL_OBJ
+
+                const meta = urlObj.signal_data?.signals?.meta
+                if (!meta) return STR_MISSING_DATA
+                // TODO: change this to use urlObj.signal_data.tranco when available
+
+                const tranco_number = getNormalizedCount(meta["ws_web_rank"]);
+                if (tranco_number < 0) {  // -1 means not undefined or otherwise not provided
+                    return STR_MISSING_DATA
+                }
+                return Math.log10(tranco_number).toFixed(1)
+            },
+
+
+            sortable: true,
+            sortFunction: (a, b, dir: number = 1) => {
+                const trancoA = a?.signal_data?.signals?.meta
+                    ? a.signal_data?.signals?.meta["ws_web_rank"] ?? 0
+                    : -1
+                const trancoB = b?.signal_data?.signals?.meta
+                    ? b.signal_data?.signals?.meta["ws_web_rank"] ?? 0
+                    : -1
+
+                if (trancoA > trancoB) return dir * -1;
+                if (trancoA < trancoB) return dir;
+                return 0;
+            },
+
+            logo: imgTrancoLogo,
+            logoAlt: "Tranco rating",
+
+        },  // end tranco entry
+
 
         /* do these still:
 

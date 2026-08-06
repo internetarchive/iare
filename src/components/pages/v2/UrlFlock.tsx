@@ -75,6 +75,7 @@ const urlFlock = React.memo(function UrlFlock({
         urlColumnRegistry.columns.archive_status,
         urlColumnRegistry.columns.ws_score,
         urlColumnRegistry.columns.wayback,
+        urlColumnRegistry.columns.tranco,
 
         // urlColumnRegistry.columns.actionable,
     ]
