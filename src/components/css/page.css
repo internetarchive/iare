@@ -4,6 +4,13 @@
     display:none;  /* for now, to give more white space */
 }
 
+.page-info .page-info-content {
+    display:flex;
+    flex-direction:column;
+    flex-wrap:wrap;
+    justify-content: space-between;
+}
+
 .page-info .page-stats-header {
     display:flex;
     flex-direction:row;

@@ -163,15 +163,17 @@ export default function PageInfo({ pageData, onAction }) {
     </button>
 
     return <div className="page-info">
-        <h6 className={"page-stats-header"}>
-            <div>Wiki Page Analyzed: {linkPageSource}{true && oresResults}
-                {viewOptionsButton}
-            </div>
-            <div>{buttonMoreDetails}</div>
-        </h6>
+        <div className="page-info-content">
+            <h6 className={"page-stats-header"}>
+                <div>Wiki Page Analyzed: {linkPageSource}{true && oresResults}
+                    {viewOptionsButton}
+                </div>
+                <div>{buttonMoreDetails}</div>
+            </h6>
 
-        {showDetail && pageInfoDetails}
+            {showDetail && pageInfoDetails}
 
+        </div>
     </div>
 
 }

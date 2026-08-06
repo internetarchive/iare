@@ -154,7 +154,7 @@ const urlFlock = React.memo(function UrlFlock({
         // - toggle sort direction of specified sort
         // - set new sort state with setSort
 
-        console.log(`updateFlockSort: sortKey = ${sortKey}`)
+        console.log(`[${new Date().toISOString()}] updateFlockSort: sortKey = ${sortKey}`)
 
         // NB TODO what happens if null sortKey?
 
@@ -217,7 +217,7 @@ const urlFlock = React.memo(function UrlFlock({
         const elSort = e.target.closest('.header-cell-sort')
         if (elSort) {
             const sortKey = getSortKeyForColumn(e)
-            console.debug(`onClickFlockHeaderRow: sortKey = ${sortKey}`)
+            console.debug(`[${new Date().toISOString()}] onClickFlockHeaderRow: sortKey = ${sortKey}`)
             updateFlockSort(sortKey)
             return
         }
@@ -300,7 +300,7 @@ const urlFlock = React.memo(function UrlFlock({
     const onClickFlockRow = (e) => {
         e.stopPropagation()
 
-        console.log("onClickFlockRow")
+        console.log(`[${new Date().toISOString()}] onClickFlockRow`)
 
         let rowEl = null
 
@@ -411,7 +411,7 @@ const urlFlock = React.memo(function UrlFlock({
             const sortDir = columnSort.sorts[sortKey]?.dir
             const columnDef = urlColumnRegistry.columns[sortKey]
             const sortFunction = columnDef.sortFunction ?? sortByNative
-            console.log(`sorting rows by: ${sortKey}, ${sortDir}`)
+            console.log(`[${new Date().toISOString()}] sorting rows by: ${sortKey}, ${sortDir}`)
             // filteredUrls.sort(sortFunction)
             // filteredUrls.sort((a,b) => sortDir * sortFunction(a,b))
             filteredUrls.sort((a,b) => sortFunction(a,b,sortDir))

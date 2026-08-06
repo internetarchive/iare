@@ -326,7 +326,7 @@ See See [Wayback Machine](https://web.archive.org).`,
 
                 return <>
                     <span>First archive: {ia_first}</span><br/>
-                    <span>Timespan: {ia_span}y</span><br/>
+                    <span>Timespan: {ia_span} years</span><br/>
                     <span>Captures: {ia_count}</span>
                 </>
             },

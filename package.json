@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.3.2.1",
-  "version_name": "0.3.2.0 column formatting; also for refView",
+  "version": "0.3.2.2",
+  "version_name": "0.3.2.2 ",
   "private": true,
   "type": "module",
   "dependencies": {
