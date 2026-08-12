@@ -76,6 +76,7 @@ const urlFlock = React.memo(function UrlFlock({
         urlColumnRegistry.columns.ws_score,
         urlColumnRegistry.columns.wayback,
         urlColumnRegistry.columns.tranco,
+        urlColumnRegistry.columns.simppl,
 
         // urlColumnRegistry.columns.actionable,
     ]
@@ -155,6 +156,8 @@ const urlFlock = React.memo(function UrlFlock({
         // - toggle sort direction of specified sort
         // - set new sort state with setSort
 
+        iareDebug(`updateFlockSort: sortKey = ${sortKey}`)
+
         console.log(`[${new Date().toISOString()}] updateFlockSort: sortKey = ${sortKey}`)
 
         // NB TODO what happens if null sortKey?
@@ -206,7 +209,10 @@ const urlFlock = React.memo(function UrlFlock({
     const onHoverDataRow = e => {
         e.stopPropagation()  // prevents onHover from propagating engaging and erasing tooltip
         const tooltip = getColumnTooltip(e, urlDict)
+
         //// console.log(`onHoverFlockRow: tooltip = ${JSON.stringify(tooltip)}`)
+        // iareDebug(`onHoverDataRow: tooltip = ${JSON.stringify(tooltip)}`)
+
         showTooltip({content: tooltip})
     }
 
@@ -413,12 +419,12 @@ const urlFlock = React.memo(function UrlFlock({
             const columnDef = urlColumnRegistry.columns[sortKey]
             const sortFunction = columnDef.sortFunction ?? sortByNative
             console.log(`[${new Date().toISOString()}] sorting rows by: ${sortKey}, ${sortDir}`)
-            // filteredUrls.sort(sortFunction)
-            // filteredUrls.sort((a,b) => sortDir * sortFunction(a,b))
             filteredUrls.sort((a,b) => sortFunction(a,b,sortDir))
         } else {
             // do nothing???
             filteredUrls.sort(sortByNative)
+            console.log(`[${new Date().toISOString()}] sorting rows by: Native`)
+
         }
 
 

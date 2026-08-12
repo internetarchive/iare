@@ -8,6 +8,10 @@ import {httpStatusCodes} from "./httpStatusCodes";
 import imgScoreLogo from "../images/columns/wikisignals.logo.v1r4.png";
 import imgWaybackLogo from "../images/columns/badge.logo.wayback.small.png";
 import imgWikiLogo from "../images/columns/badge.logo.wiki.png"
+// import imgSimPLLLogo from "../images/columns/simppl.logo.full.v2r1.png"
+import imgSimPLLLogo from "../images/columns/simppl.logo.letters.v1r1.png"
+
+
 import imgTrancoLogo from '../images/columns/badge.logo.tranco.png'
 
 // import imgScoreLogo from "./images/wikisignals.logo.v1r4.png"
@@ -21,18 +25,21 @@ type ColumnRegistry = {
 
 const msgClickForMore = "*Click to explore more...*"
 const STR_BADVALUE = "!"
-const STR_MISSING_DATA = "--"
+const STR_MISSING_DATA = "-?-"
 const URL_IABOT_EXPLORER = "https://tss.toolforge.org/?house=activity&group=es_iabot_wayback&metrics=iabot_wayback&grain=year&display=grid"
 const URL_TRANCO_EXPLORER = "https://tranco-list.eu/tranco-list/"
 const URL_MBFC_EXPLORER = "https://mbfc.toolforge.org/"
 const STR_UNREACHABLE_URL_OBJ = "Unreachable URL object"
+const STR_NA = "N/A"
 
 export const urlColumnRegistry: ColumnRegistry = {
     specs: {  // TODO rename to "defaults"
         defaultColumnWidth: "3.5rem"
     },
 
+
     columns: {
+
 
         "url_name": {
             key: "url_name",
@@ -42,14 +49,14 @@ export const urlColumnRegistry: ColumnRegistry = {
             width: "minmax(11.5rem, 22rem)",
 
             ttMarkup:
-`##### Citation URL Link
+                `##### Citation URL Link
 
 URL of Citation Source.
 
 ${msgClickForMore}`,
 
             popMarkup:
-`##### Citation URL Link
+                `##### Citation URL Link
 
 URL of Citation Source.
 
@@ -73,6 +80,18 @@ Click on row to open Reference Detail view.`,
         },
 
 
+
+
+
+
+
+
+
+
+
+
+
+
         "live_status": {  // NB leaning towards using this one for now...
             key: "live_status",
 
@@ -80,7 +99,7 @@ Click on row to open Reference Detail view.`,
             label: "HTTP Status Code of URL",
 
             ttMarkup:
-`##### HTTP Status Code of URL
+                `##### HTTP Status Code of URL
 
 Most recent status when querying.
 
@@ -89,7 +108,7 @@ Uses LiveWebCheck from Wayback machine.
 ${msgClickForMore}`,
 
             popMarkup:
-`##### HTTP Status code
+                `##### HTTP Status code
 
 Live status of URL as of last check.
 
@@ -120,6 +139,17 @@ Click on row to open Reference Detail view.`,
         },
 
 
+
+
+
+
+
+
+
+
+
+
+
         "archive_status": {
             key: "archive_status",
 
@@ -131,7 +161,7 @@ Click on row to open Reference Detail view.`,
             // },
 
             ttMarkup:
-`##### Archive Status
+                `##### Archive Status
 
 This is a Book Reference, or,
 
@@ -140,7 +170,7 @@ Archive Status in IABot database
 ${msgClickForMore}`,
 
             popMarkup:
-`##### Archive Status
+                `##### Archive Status
 
 Archive exists in IABot database
 
@@ -200,6 +230,15 @@ Click [here](${URL_IABOT_EXPLORER}) to
 
 
 
+
+
+
+
+
+
+
+
+
         "ws_score": {
             key: "ws_score",
 
@@ -207,7 +246,7 @@ Click [here](${URL_IABOT_EXPLORER}) to
             label: "WikiSignals Score",
 
             ttMarkup:
-`##### WikiSignals Score
+                `##### WikiSignals Score
 
 A website reliability estimate (0.0 – 1.0).
 
@@ -276,6 +315,17 @@ See [WikiSignals.org](https://wikisignals.org) for more details.`,
         },
 
 
+
+
+
+
+
+
+
+
+
+
+
         "wayback": {
             key: "wayback",
 
@@ -283,7 +333,7 @@ See [WikiSignals.org](https://wikisignals.org) for more details.`,
             label: "Wayback Machine History",
 
             ttMarkup:
-`##### Wayback Machine History
+                `##### Wayback Machine History
 
 Display is Year of first capture of domain in Wayback Machine.
 
@@ -294,7 +344,7 @@ Longer times do not necessarily imply more reliable sources.
 ${msgClickForMore}`,
 
             popMarkup:
-`##### Wayback Machine History
+                `##### Wayback Machine History
 
 
 Display is Year of first capture of domain in Wayback Machine.
@@ -324,7 +374,7 @@ See See [Wayback Machine](https://web.archive.org).`,
                 const dateWaybackLast = meta["ws_wbm_last"] ? new Date(meta["ws_wbm_last"]) : null
                 const ia_first = dateWaybackFirst ? dateWaybackFirst?.toISOString().slice(0, 4) : 'N/A'
                 const ia_span = ((dateWaybackLast - dateWaybackFirst) /
-                        (1000 * 60 * 60 * 24 * 365)).toFixed(1)
+                    (1000 * 60 * 60 * 24 * 365)).toFixed(1)
 
                 return <>
                     <span>First archive: {ia_first}</span><br/>
@@ -383,6 +433,15 @@ See See [Wayback Machine](https://web.archive.org).`,
         },  // end wayback entry
 
 
+
+
+
+
+
+
+
+
+
         "enwiki": {
             key: "enwiki",
 
@@ -393,7 +452,7 @@ See See [Wayback Machine](https://web.archive.org).`,
             logoAlt: "Wikipedia",
 
             ttMarkup:
-`##### English Wikipedia Usage
+                `##### English Wikipedia Usage
  
 The number of times the domain appeared in links within English Wikipedia (English) articles\
          (including the Citations, References, Notes and External Links sections).
@@ -401,7 +460,7 @@ The number of times the domain appeared in links within English Wikipedia (Engli
 ${msgClickForMore}`,
 
             popMarkup:
-`##### English Wikipedia Usage
+                `##### English Wikipedia Usage
  
 The number of times the domain appeared in links within English Wikipedia (English) articles\
 
@@ -454,6 +513,12 @@ See [Wikipedia.org](Wikipedia.org)`,
 
         },
 
+
+
+
+
+
+
         "domain": {
             key: "domain",
 
@@ -464,14 +529,14 @@ See [Wikipedia.org](Wikipedia.org)`,
             logoAlt: "Domain",
 
             ttMarkup:
-`##### Domain
+                `##### Domain
  
 The domain of the url link.
 
 ${msgClickForMore}`,
 
             popMarkup:
-`##### Domain
+                `##### Domain
 
 The domain of the url link.
 
@@ -500,7 +565,7 @@ The domain of the url link.
                                         badgeText = <div>{`${count}`}</div>
                                     }
                 */
-                const domain =  urlObj.url
+                const domain = urlObj.url
                 return <div>{count}</div>
             },
 
@@ -524,35 +589,18 @@ The domain of the url link.
         },  // end enwiki entry
 
 
+
+
+
+
+
+
+
         "tranco": {
             key: "tranco",
 
             caption: <>Tranco<br/>Rating</>,
             label: "Tranco Ranking",
-
-            ttMarkup:
-`##### Tranco Ranking
-        
-Measures a website's global popularity based on the Tranco Top Sites list.
- 
-Values range from 1 to 20 million. For display purposes, the Log10 of the ranking is displayed..
-
-A low (good) Tranco rank means a site is widely visited, but it 
-doesn't necessarily mean the site is safe, accurate, or reputable.
-
-${msgClickForMore}`,
-
-            popMarkup:
-`##### Tranco Ranking
-        
-Measures a website's global popularity based on the [Tranco Top Sites](https://tranco-list.eu/) list
- 
-Values range from 1 to 20 million. For display purposes, the Log10 of the ranking is displayed..
-
-A low (good) Tranco rank means a site is widely visited, but it 
-doesn't necessarily mean the site is safe, accurate, or reputable.
-
-See the [Tranco website](https://tranco-list.eu/) for more details.)`,
 
             ttCell: (dataset, urlDict) => {
                 // show Tranco number in full form, for now
@@ -612,10 +660,85 @@ See the [Tranco website](https://tranco-list.eu/) for more details.)`,
         },  // end tranco entry
 
 
+
+
+
+
+
+        "simppl": {
+            key: "simppl",
+
+            caption: <>SimPPL<br/>Rating</>,
+            label: "SimPPL Rating",
+
+            logo: imgSimPLLLogo,
+            logoAlt: "SimPPL Rating",
+
+            sortable: true,
+            sortFunction: (a, b, dir: number = 1) => {
+                return 0;  // no reason for any judgement right yet...
+            },
+
+            ttMarkup: `##### SimPPL Rating
+        
+--* Waiting for description of SimPPL system! *--
+
+${msgClickForMore}`,
+
+            popMarkup: `##### SimPPL Rating
+        
+Measures a website's ...
+
+Values range from ...
+
+A (good) SimPPL rank means a site is . . . 
+. . . doesn't necessarily mean the site is ...
+
+See the [SimPPL website](https://www.simppl.org/) for more details.)`,
+
+            ttCell: (dataset, urlDict) => {
+                // shows any thing SimPPL provides for rating.
+                // could just be a launching pad to details, esp. if deemed "bad"...
+
+                const url = dataset.url
+                const urlObj = urlDict[url]
+
+                // grab simppl ratings...
+                // this is from urlObj.signal_data.simppl
+
+                if (!urlObj) return STR_UNREACHABLE_URL_OBJ
+
+                const simppl = urlObj.signal_data?.simppl
+                if (!simppl) return "No SimPPL signal data"
+
+                // return <>
+                //     <span>SimPPL: {formatNumberWithLocale(simPPL_number)}</span><br/>
+                //     <span>Log10: {simPPL_log_fixed}</span><br/>
+                // </>
+                return `SimPPL:
+
+*not yet*
+`},
+
+            renderCell: (urlObj: Object) => {
+                if (!urlObj) return STR_UNREACHABLE_URL_OBJ
+
+                const simppl = urlObj.signal_data?.simppl
+                if (!simppl) return STR_MISSING_DATA
+
+                return "SIMPPL"
+            },
+
+
+
+
+
+        },  // end simPPL entry
+
+
         /* do these still:
 
            .mbfc.key,
-           .tranco.key,
 
          */
 
