@@ -37,6 +37,7 @@ export default function RefUrls({
         urlColumnRegistry.columns.archive_status,
         urlColumnRegistry.columns.ws_score,
         urlColumnRegistry.columns.wayback,
+        urlColumnRegistry.columns.tranco,
         urlColumnRegistry.columns.simppl,
     ]
 

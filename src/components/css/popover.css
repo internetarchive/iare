@@ -106,9 +106,9 @@
 
     padding: .25rem .5rem .2rem .5rem !important;
     line-height: 1.0rem;
-    border: 2.0pt solid;
-    border-radius: .25rem;
-    border-color: var(--color-tooltip-border) !important; /* must use !important otherwise tooltip uses "color" property value */
+    border: .25rem solid;
+    border-radius: .5rem;
+    border-color: var(--color-popover-border) !important; /* must use !important otherwise tooltip uses "color" property value */
 
     opacity: .95;
 

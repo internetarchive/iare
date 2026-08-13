@@ -8,24 +8,17 @@ import {httpStatusCodes} from "./httpStatusCodes";
 import imgScoreLogo from "../images/columns/wikisignals.logo.v1r4.png";
 import imgWaybackLogo from "../images/columns/badge.logo.wayback.small.png";
 import imgWikiLogo from "../images/columns/badge.logo.wiki.png"
-// import imgSimPLLLogo from "../images/columns/simppl.logo.full.v2r1.png"
-import imgSimPLLLogo from "../images/columns/simppl.logo.letters.v1r1.png"
-
-
+import imgSimPLLLogo from "../images/columns/simppl.logo.full.v2r4.png"
 import imgTrancoLogo from '../images/columns/badge.logo.tranco.png'
 
-// import imgScoreLogo from "./images/wikisignals.logo.v1r4.png"
-// import imgTrancoLogo from './images/badge.logo.tranco.png'
-// import imgMbfcLogo from "./images/badge.logo.mbfc.png";
-
 type ColumnRegistry = {
-    columns: Record<string, ColumnDef>;
     specs: Record<string, any>
+    columns: Record<string, ColumnDef>;
 };
 
 const msgClickForMore = "*Click to explore more...*"
 const STR_BADVALUE = "!"
-const STR_MISSING_DATA = "-?-"
+const STR_MISSING_DATA = "∅"  // \u25FB"
 const URL_IABOT_EXPLORER = "https://tss.toolforge.org/?house=activity&group=es_iabot_wayback&metrics=iabot_wayback&grain=year&display=grid"
 const URL_TRANCO_EXPLORER = "https://tranco-list.eu/tranco-list/"
 const URL_MBFC_EXPLORER = "https://mbfc.toolforge.org/"
@@ -335,7 +328,7 @@ See [WikiSignals.org](https://wikisignals.org) for more details.`,
             ttMarkup:
                 `##### Wayback Machine History
 
-Display is Year of first capture of domain in Wayback Machine.
+Year is first capture of domain in Wayback Machine.
 
 Time span is years between first capture and last capture.
 
@@ -602,6 +595,43 @@ The domain of the url link.
             caption: <>Tranco<br/>Rating</>,
             label: "Tranco Ranking",
 
+            logo: imgTrancoLogo,
+            logoAlt: "Tranco Ranking",
+
+            sortable: true,
+            sortFunction: (a, b, dir: number = 1) => {
+                const trancoA = a?.signal_data?.signals?.meta
+                    ? a.signal_data?.signals?.meta["ws_web_rank"] ?? 0
+                    : -1
+                const trancoB = b?.signal_data?.signals?.meta
+                    ? b.signal_data?.signals?.meta["ws_web_rank"] ?? 0
+                    : -1
+
+                // if (trancoA > trancoB) return dir * -1;
+                // if (trancoA < trancoB) return dir;
+                // return 0;
+                return (trancoA - trancoB) * dir;
+            },
+
+
+            ttMarkup: `##### Tranco Ranking
+            
+Tranco is a stable, research-oriented ranking of the world’s most popular websites.
+        
+${msgClickForMore}`,
+
+            popMarkup: `##### Tranco Ranking
+            
+A research-oriented ranking of the most popular websites,
+designed to be stable, reproducible, and resistant to manipulation.
+
+Currently the ranking is derived from five providers: 
+Cisco Umbrella, Majestic, Farsight, the Chrome User Experience Report (CrUX), and
+Cloudflare Radar.
+        
+See the [Tranco website](https://tranco-list.eu) for more details.)`,
+
+
             ttCell: (dataset, urlDict) => {
                 // show Tranco number in full form, for now
 
@@ -639,24 +669,6 @@ The domain of the url link.
                 return Math.log10(tranco_number).toFixed(1)
             },
 
-
-            sortable: true,
-            sortFunction: (a, b, dir: number = 1) => {
-                const trancoA = a?.signal_data?.signals?.meta
-                    ? a.signal_data?.signals?.meta["ws_web_rank"] ?? 0
-                    : -1
-                const trancoB = b?.signal_data?.signals?.meta
-                    ? b.signal_data?.signals?.meta["ws_web_rank"] ?? 0
-                    : -1
-
-                if (trancoA > trancoB) return dir * -1;
-                if (trancoA < trancoB) return dir;
-                return 0;
-            },
-
-            logo: imgTrancoLogo,
-            logoAlt: "Tranco rating",
-
         },  // end tranco entry
 
 
@@ -680,21 +692,27 @@ The domain of the url link.
             },
 
             ttMarkup: `##### SimPPL Rating
-        
---* Waiting for description of SimPPL system! *--
+
+*Description of SimPPL forthcoming.*
 
 ${msgClickForMore}`,
 
             popMarkup: `##### SimPPL Rating
         
-Measures a website's ...
-
-Values range from ...
-
-A (good) SimPPL rank means a site is . . . 
-. . . doesn't necessarily mean the site is ...
+*Description of SimPPL forthcoming.*
 
 See the [SimPPL website](https://www.simppl.org/) for more details.)`,
+
+//             popMarkup: `##### SimPPL Rating
+//
+// Measures a website's ...
+//
+// Values range from ...
+//
+// A (good) SimPPL rank means a site is . . .
+// . . . doesn't necessarily mean the site is ...
+//
+// See the [SimPPL website](https://www.simppl.org/) for more details.)`,
 
             ttCell: (dataset, urlDict) => {
                 // shows any thing SimPPL provides for rating.
