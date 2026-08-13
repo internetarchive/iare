@@ -24,7 +24,7 @@
     --iare-color-hamburger-bg: #ffffff;
     --iare-color-text-dark: #0d0d0d;
     --iare-color-header: var(--iare-color-basic-blue-dark);
-
+    --iare-color-togle-hover: var(--iare-color-basic-blue);
 
     --iare-section-border: 1.5pt solid #b4b4b7 !important;
     --iare-section-border-radius:0.42rem;
@@ -328,7 +328,13 @@ body.env-other .iare-hamburger-menu span.non-production {
     margin-bottom: .35rem;
 }
 
-
+.toggle-prop-text {
+    cursor: pointer;
+}
+.toggle-prop-text:hover {
+    color: var(--iare-color-basic-blue);
+    cursor: pointer;
+}
 
 
 /* global element settings */
