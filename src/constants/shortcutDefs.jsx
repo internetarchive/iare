@@ -7,13 +7,19 @@ This is so that common examples can be quickly entered with the click of a butto
 
 // define array of shortcuts to use depending on environment
 export const envShortcutLists = {
-    prod: ['easterIsland', 'internetArchive', 'pdfCovid',],  // production mode limited shortcuts
-    stage: ['easterIsland', 'internetArchive', 'mlk', 'grok_easter_island', 'short_test', ],  // staging shows a little more for testing
-    other: ['grok_easter_island', 'grok_internet_archive', 'missMeyers', 'grok_island_local', 'assam', 'marc_bolan', 'easterIsland', 'easter_island_short', 'kennewick_man', 'mlk', 'internetArchive', 'short_test'],  // everything else (my dev env, e.g.) shows lots more
+    prod: ['easterIsland', 'nuclear_war', 'mlk', 'internetArchive', 'pdfCovid',],  // production mode limited shortcuts
+    stage: ['easterIsland', 'nuclear_war', 'mlk', 'internetArchive', 'grok_easter_island', 'short_test', ],  // staging shows a little more for testing
+    other: ['easterIsland', 'easter_island_short', 'nuclear_war', 'mlk', 'internetArchive', 'grok_easter_island', 'grok_internet_archive', 'missMeyers', 'grok_island_local', 'assam', 'marc_bolan', 'kennewick_man', 'short_test'],  // everything else (my dev env, e.g.) shows lots more
 }
 
 
 export const ShortcutDefs = {
+
+    "nuclear_war"  : {
+        label : "Nuclear Warfare",
+        value : "https://en.wikipedia.org/wiki/Nuclear_warfare"
+    },
+
     "grok_easter_island"  : {
         label : "Grok: Easter Island",
         value : "https://grokipedia.com/page/Easter_Island"
@@ -25,7 +31,7 @@ export const ShortcutDefs = {
     },
 
     "grok_island_local"  : {
-        label : "Grok Island Local",
+        label : "Grok: Easter Island - Local copy",
         value : "https://grokipedia.com/page/Easter_Island.crop",
         use_local_cache: true
     },
@@ -39,7 +45,7 @@ export const ShortcutDefs = {
         value : "https://en.wikipedia.org/wiki/Israel–Hamas_war"
     },
     "mlk"  : {
-        label : "enwiki: MLK",
+        label : "MLK",
         value : "https://en.wikipedia.org/wiki/Martin_Luther_King_Jr."
     },
     "karen_bakker"  : {
@@ -55,11 +61,11 @@ export const ShortcutDefs = {
         value : "https://en.wikipedia.org/wiki/Lindsay_Lohan"
     },
     "easterIsland"  : {
-        label : "enwiki: Easter Island",
+        label : "Easter Island",
         value : "https://en.wikipedia.org/wiki/Easter_Island"
     },
     "internetArchive"  : {
-        label : "enwiki: Internet Archive",
+        label : "Internet Archive",
         value : "https://en.wikipedia.org/wiki/Internet_Archive"
     },
     "assam" : {
