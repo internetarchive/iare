@@ -314,14 +314,8 @@ export default function RefUrls({
     }
 
     return <div className="ref-view-section ref-view-analysis">
-            <RefSectionHeader leftPart={<h3>{t('Ratings')}</h3>} >{null}</RefSectionHeader>
-            {/*<div className={"ref-view-section-contents flock-container"}*/}
-            {/*    // onClick={onClickFlockRow}*/}
-            {/*     onClick={null}*/}
-            {/*     onMouseOver={onHoverFlockRow}>*/}
-            {/*    {flockHeader}*/}
-            {/*    {flockRows}*/}
-            {/*</div>*/}
+
+        <RefSectionHeader leftPart={<h3>{t('Ratings')}</h3>}>{null}</RefSectionHeader>
 
         <div className={"ref-view-section-contents"}>
 

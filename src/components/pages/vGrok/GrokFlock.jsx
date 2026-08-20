@@ -736,17 +736,6 @@ const grokFlock = React.memo(function GrokFlock({
             <FlockBox caption={captionBox} className={"grok-flock"}>{flock}</FlockBox>
         </div>
 
-        <Popup isOpen={isSignalsDocsPopupOpen}
-               onClose={() => {
-                   setIsSignalsDocsPopupOpen(false)
-               }}
-               title={"WikiSignals Documentation?"}
-               initialSize={{ width: 600, height: 300 }}
-               initialPosition={{ x: 600, y: 160 }}
-        >
-            <SignalsDocs/>
-        </Popup>
-
         <Popup isOpen={isSignalPopupOpen}
                onClose={() => { setIsSignalPopupOpen(false) }}
                title={signalPopupTitle}>

@@ -218,7 +218,7 @@ export default function App(
     // }, [isDebug, handleResize]);
 
 
-    function getIariVersion(pageData, endpointPath) {
+    function getDisplayVersion(pageData, endpointPath) {
         // eslint-disable-next-line
         const regexVersion1 = new RegExp("\/v1\/");
         // eslint-disable-next-line
@@ -286,7 +286,6 @@ export default function App(
 
         console.log("APP: fetchArticleData: mediaType = ", myMediaType)
 
-        // const myEndpoint = getPagePathEndpoint(myIariSourceId, pathName, cacheData, myMediaType, refresh);
         const pageEndpoint = getPagePathEndpoint({
             iariSourceId: myIariSourceId,
             path: pathName,
@@ -311,15 +310,15 @@ export default function App(
                 const data = await res.json(); // parse JSON even for 500 errors
                 if (!res.ok) {
                     /*
-                    "data" variable expected to be like:
-                    {
-                        errors: [
-                            {
-                                error: "WikipediaApiFetchError",
-                                details: "Error fetching details"
-                            }
-                        ]
-                     }
+                        "data" variable expected to be like:
+                        {
+                            errors: [
+                                {
+                                    error: "WikipediaApiFetchError",
+                                    details: "Error fetching details"
+                                }
+                            ]
+                         }
                     */
                     const details =
                         data?.errors?.[0]?.details ??
@@ -338,12 +337,12 @@ export default function App(
                 data.pathName = pathName;
                 data.endpoint = pageEndpoint;
                 data.iariSource = IariSources[myIariSourceId]?.proxy;
+                data.iariVersion = data.iariVersion ? data.iariVersion : "unknown";
                 data.iariParseMethod = parseMethod;
                 data.checkStatusMethod = checkMethod;
                 data.forceRefresh = refresh;
                 data.mediaType = myMediaType; // decorate based on mediaType?
-                data.version = getIariVersion(data, pageEndpoint);  // version of pageData - determines display components
-                data.iari_version = data.iari_version ? data.iari_version : "unknown";
+                data.displayVersion = getDisplayVersion(data, pageEndpoint);  // version of pageData - determines display components
 
                 // and set the new pageData state
                 setPageData(data);
@@ -658,8 +657,9 @@ export default function App(
         <p><span className={'label'}>IARE Version:</span> {versionInfo}</p>
         <p><span className={'label'}>IARI Source:</span> {myIariSourceId} <span
             className={'lolite'}>({IariSources[myIariSourceId]?.proxy})</span></p>
-        <p><span className={'label'}>IARI Version:</span> {pageData?.iari_version ? pageData.iari_version : "unknown"}
-        </p>
+        <p><span className={'label'}>IARI Version:</span> {pageData?.iariVersion
+            ? pageData.iariVersion
+            : "unknown"}</p>
         <p><span className={'label'}>Parse Method:</span> {ParseMethods[parseMethod].caption}</p>
         <p><span className={'label'}>Check Method:</span> {checkMethod} <span
             className={'lolite'}>({UrlStatusCheckMethods[checkMethod].caption})</span></p>
@@ -757,18 +757,6 @@ export default function App(
             </div>
         )}
 
-        {/*<div ref={popoverHamburgerRef}*/}
-        {/*     id={popoverHamburgerId}*/}
-        {/*     popover={"auto"}*/}
-        {/*     className="pop-container">*/}
-        {/*    <div className="pop-content">*/}
-        {/*        <h2>{popoverTitle}</h2>*/}
-        {/*        {popoverHamburgerContents}*/}
-        {/*        <button popoverTarget={popoverHamburgerId} popoverTargetAction="close" className="btn">*/}
-        {/*            Close*/}
-        {/*        </button>*/}
-        {/*    </div>*/}
-        {/*</div>*/}
     </div>
 
     

@@ -1,10 +1,9 @@
-// PageDisplay
-/*
+/* PageDisplay
 
 redirects to appropriate page display component based on pageData.mediaType
 
- */
-//
+*/
+
 import React from "react";
 import {KNOWN_MEDIA_TYPES} from "../constants/knownMediaTypes.jsx";
 import PageDisplayV2 from "./pages/v2/PageDisplayV2.jsx";
@@ -19,8 +18,6 @@ import PageDisplayGrok from "./pages/vGrok/PageDisplayGrok.jsx";
 //     // Your component code here
 // });
 // export default MyComponent;
-
-
 const PageDisplay = React.memo( ({
             pageData,
             onAction
@@ -33,14 +30,14 @@ const PageDisplay = React.memo( ({
 
     if (!pageData) return <p className={'text-primary'}>{messageNoData}</p>
 
-    if (pageData.version === "v2") {
+    if (pageData.displayVersion === "v2") {
 
         if (pageData.mediaType === KNOWN_MEDIA_TYPES.WIKI.key)
             // WIKI gets "normal" V2 display; enwiki assumed.
             return <PageDisplayV2 pageData={pageData} onAction={onAction} />;
 
         if (pageData.mediaType === KNOWN_MEDIA_TYPES.PDF.key)
-            // PDF gets V2PDFtreatment...needs work!
+            // PDF gets V2PDF treatment...needs work!
             return <PageDisplayV2PDF pageData={pageData} />;
 
         if (pageData.mediaType === KNOWN_MEDIA_TYPES.GROK.key)
@@ -51,7 +48,7 @@ const PageDisplay = React.memo( ({
     }
 
     // else we do not support this version
-    return <h3>Unsupported version/media type: {pageData.version}/{pageData.mediaType}.</h3>
+    return <h3>Unsupported Display Version/Media Type: {pageData.displayVersion}/{pageData.mediaType}.</h3>
 
 })
 
