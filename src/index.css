@@ -11,6 +11,7 @@
 
 :root {
     --iare-color-basic-blue: #2299e8;
+    --iare-color-basic-blue-light: #65b4e8;
     --iare-color-basic-blue-dark: #0478e0;
     /*--iare-color-text-blue:  hsl(215.75deg 98.36% 52.16%);*/
     --iare-color-blue: hsl(215.75deg 98.36% 52.16%);
@@ -329,10 +330,11 @@ body.env-other .iare-hamburger-menu span.non-production {
 }
 
 .toggle-prop-text {
+    color: var(--iare-color-basic-blue-dark);
     cursor: pointer;
 }
 .toggle-prop-text:hover {
-    color: var(--iare-color-basic-blue);
+    color: var(--iare-color-basic-blue-light);
     cursor: pointer;
 }
 

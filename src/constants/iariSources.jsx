@@ -1,7 +1,3 @@
-
-// export const IARI_V2_URL_BASE = 'https://archive.org/services/context/iari-prod/v2';
-// export const API_V2_STAGE_URL_BASE = 'https://archive.org/services/context/iari/v2stage';
-
 export const IariSources = {
     iari: {
         key: 'iari',
@@ -31,12 +27,6 @@ export const IariSources = {
         caption: 'IARI Local',
         proxy: 'http://localhost:5001/v2',
     },
-
-    // iari_stage_r6: {  // iari_researcher6
-    //     key: 'iari_stage_r6',
-    //     caption: 'IARI researcher6 Stage',
-    //     proxy: 'http://researcher6.fnf.archive.org:5088/v2/',
-    // },
 
 }
 

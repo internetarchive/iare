@@ -1,6 +1,9 @@
 import React, { useState, useRef } from 'react';
 import './css/draggable.css';
 
+const DEFAULT_DDB_WIDTH = "17rem"  // debug-data-box
+const DEFAULT_DDB_HEIGHT = "5.5rem"
+
 export default function NativeDraggableDiv() {
     const [position, setPosition] = useState({ x: 800, y: 3 });
     const [isDragging, setIsDragging] = useState(false);
@@ -31,8 +34,8 @@ export default function NativeDraggableDiv() {
 
     // Inline styles replace the need for an external CSS import entirely
     const baseBoxStyle = {
-        width: '27rem',
-        height: '2.25rem',
+        width: DEFAULT_DDB_WIDTH,
+        height: DEFAULT_DDB_HEIGHT,
         color: 'black',
         padding: '.25rem .3rem .25rem .3rem',
         display: 'flex',
@@ -43,8 +46,11 @@ export default function NativeDraggableDiv() {
         borderRadius: '8px',
         userSelect: 'none',
         position: 'absolute',
+        // right: "10rem",
         left: 0,
+        // right: 0,
         top: 0,
+        zIndex: 10000,
         // Dynamic positions and styles update based on class/state
         transform: `translate3d(${position.x}px, ${position.y}px, 0px)`,
         // backgroundColor: isDragging ? '#2980b9' : '#3498db',
@@ -64,14 +70,5 @@ export default function NativeDraggableDiv() {
             <div style={{}}>Drag me safely! Line here! or children!!</div>
         </div>
 
-    /*
-        const debugStaticDisplay = <div className="debug-static-display">
-        Scroll Y: {scrollY}<br/>
-        Window H: {windowHeight}<br/>
-        LowerSection Top: {lowerSectionTopY}
-    </div>
-
-
-     */
     );
 }

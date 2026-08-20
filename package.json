@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.3.2.7",
-  "version_name": "0.3.2.7 changed getiariVersion to getDisplayVersion",
+  "version": "0.3.2.8",
+  "version_name": "0.3.2.8 Hamburger Menu changes",
   "private": true,
   "type": "module",
   "dependencies": {

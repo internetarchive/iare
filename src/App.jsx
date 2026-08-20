@@ -337,7 +337,7 @@ export default function App(
                 data.pathName = pathName;
                 data.endpoint = pageEndpoint;
                 data.iariSource = IariSources[myIariSourceId]?.proxy;
-                data.iariVersion = data.iariVersion ? data.iariVersion : "unknown";
+                data.iariVersion = data.iari_version ? data.iari_version : "unknown";
                 data.iariParseMethod = parseMethod;
                 data.checkStatusMethod = checkMethod;
                 data.forceRefresh = refresh;
@@ -502,12 +502,14 @@ export default function App(
     };
 
 
-    const siteInfo = (myEnv !== 'env-production')  // TODO implement IareEnvironments
-        ? `Server: ${myEnv !== 'env-staging' ? ' LOCAL ' : ' STAGING '}`
+    const appServerInfo = (myEnv !== 'env-production')  // TODO implement IareEnvironments
+        ? `App Server: ${myEnv !== 'env-staging' ? ' LOCAL ' : ' STAGING '}`
         : ''  // do not show myEnv in production environment
 
 
-    const iariSourceInfo = `IARI: ${IariSources[myIariSourceId]?.caption}`
+    const iariServerInfo = `IARI Server: ${IariSources[myIariSourceId]?.caption}`
+
+    const iariVersionInfo = `IARI Version: ${pageData?.iariVersion ?? 'unknown'}`
 
     const svgLockIconOpen = <svg className={"svg-icon-box"} xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                  viewBox="0 0 16 16"
@@ -533,7 +535,7 @@ export default function App(
 
         {/*// NB this is an experimental feature so far... */}
 
-        <div>Scroll: <span className={"lock-icon"}
+        <div>Scroll Fix (maybe): <span className={"lock-icon"}
                            onClick={toggleScrollFix}
                            data-tooltip-id="app-tooltip-id"
                            data-tooltip-content={isScrollFix
@@ -565,7 +567,7 @@ export default function App(
             // dn triangle: <>&#9660;</>
         }</button>
 
-    const togglePageInfo = <div class={"toggle-prop-text"}
+    const togglePageInfo = <div className={"toggle-prop-text"}
                 onClick={() => {
                     setIsShowPageInfo(prevState => {
                         return !prevState
@@ -740,18 +742,19 @@ export default function App(
 
         {isShowHamburger && (
             <div className={"iare-hamburger-menu"}
-                // popover={"auto"}
-                // popover-id={""}
+                            // popover={"auto"}
+                            // popover-id={""}
             >
                 <div className={"menu-header"}>
                     <div>IARE version {versionInfo}</div>
                 </div>
 
                 <div>
-                    <div>{iariSourceInfo}</div>
-                    <div>{buttonScrollFix}</div>
-                    <div>{siteInfo}</div>
+                    <div>{appServerInfo}</div>
+                    <div>{iariServerInfo}</div>
+                    <div>{iariVersionInfo}</div>
                     <div>{togglePageInfo}</div>
+                    <div>{buttonScrollFix}</div>
                     <div>{buttonShowDebug}</div>
                 </div>
             </div>
@@ -762,10 +765,10 @@ export default function App(
     
     return <MyTooltipProvider>
 
-        {/* This is Debug Static Display, that lives at the top, right of the screen */}
-        {(myEnv === 'env-local') &&
-            <NativeDraggableDiv />}
-        {/*{debugStaticDisplay}*/}
+        {/* This is a Static Debug Display, a floatable debug
+            window that starts out at the top, right of the screen.
+            This only shows up when running in local environment */}
+        {(myEnv === 'env-local') && <NativeDraggableDiv />}
 
         <ConfigContext.Provider value={config}>
 

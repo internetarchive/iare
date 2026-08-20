@@ -185,7 +185,8 @@ const UrlFilterPanel = React.memo(({
             </FilterBox>
 
 
-            <FilterBox name={"books"} caption="Links to Books"
+            <FilterBox name={"books"}
+                       caption="Links to Books"
                        showContents={expand.books}
                        onToggle={onToggleShow}>
                 <BooksChart pageData={pageData}
@@ -199,7 +200,8 @@ const UrlFilterPanel = React.memo(({
             </FilterBox>
 
 
-            <FilterBox name={"papers"} caption="Links to Papers and DOIs"
+            <FilterBox name={"papers"}
+                       caption="Links to Papers and DOIs"
                        showContents={expand.papers}
                        onToggle={onToggleShow}>
                 <PapersChart pageData={pageData} onAction={onAction}
