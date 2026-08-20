@@ -25,6 +25,7 @@ const UrlFilterPanel = React.memo(({
             pageData,
             options,
             onAction,
+            // urlFilters=null,
             currentState,
             tooltipId=null
 }) => {
@@ -34,7 +35,7 @@ const UrlFilterPanel = React.memo(({
     // todo create a structure called "filters" or "myFilters", defining a key
     // for each filter we want to have here.
 
-    const [expand, setExpand] = useState({
+    const [expandedFilters, setExpandedFilters] = useState({
         "actionable" : false,
         "reference_stats" : false,
         "domains" : false,
@@ -64,7 +65,7 @@ const UrlFilterPanel = React.memo(({
     myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
 
     const onToggleShow = (name) => {
-        setExpand(prevState => {
+        setExpandedFilters(prevState => {
             const newState = {}
             // init newState with all false if autoExpand
             Object.keys(prevState).forEach( state => {
@@ -86,7 +87,7 @@ const UrlFilterPanel = React.memo(({
             type="button"
             className={`btn small-button utility-button`}
             onClick={() => {
-                setExpand(prevState => {
+                setExpandedFilters(prevState => {
                     const newState = {}
                     Object.keys(prevState).forEach(key => {
                         newState[key] = true
@@ -104,7 +105,7 @@ const UrlFilterPanel = React.memo(({
             type="button"
             className={`btn small-button utility-button`}
             onClick={() => {
-                setExpand(prevState => {
+                setExpandedFilters(prevState => {
                     const newState = {}
                     Object.keys(prevState).forEach(key => {
                         newState[key] = false
@@ -119,7 +120,7 @@ const UrlFilterPanel = React.memo(({
         </button>
 
     const debugFilters = myConfig.isShowDebugComponents && <>
-        <FilterBox name={"reference_stats"} caption={"Reference Stats"} showContents={expand.reference_stats}
+        <FilterBox name={"reference_stats"} caption={"Reference Stats"} showContents={expandedFilters.reference_stats}
                    onToggle={onToggleShow}  // gets passed filter name when clicked from within FilterBox
             >
             <ReferenceStats
@@ -169,16 +170,21 @@ const UrlFilterPanel = React.memo(({
 
             {debugFilters}  {/* eventually all filters will be in one variable with config-controlled inclusion */}
 
-            <FilterBox name={"actionable"} caption={"Actionable"} className={'actionable-filter-box'}
-                       showContents={expand.actionable}
+            <FilterBox name={"actionable"}
+                       caption={"Actionable"}
+                       currentState={currentState}
+                       className={'actionable-filter-box'}
+                       showContents={expandedFilters.actionable}
                        onToggle={onToggleShow}>
                 <ActionableChart pageData={pageData} onAction={onAction}
                                  currentState={currentState?.actionable}
                                  tooltipId={tooltipId}/>
             </FilterBox>
 
-            <FilterBox name={"link_status"} caption="Link Status Codes"
-                       showContents={expand.link_status}
+            <FilterBox name={"link_status"}
+                       caption="Link Status Codes"
+                       currentState={currentState}
+                       showContents={expandedFilters.link_status}
                        onToggle={onToggleShow}>
                 <LinkStatusChart pageData={pageData} onAction={onAction}
                                  currentState={currentState?.link_status}/>
@@ -187,8 +193,11 @@ const UrlFilterPanel = React.memo(({
 
             <FilterBox name={"books"}
                        caption="Links to Books"
-                       showContents={expand.books}
-                       onToggle={onToggleShow}>
+                       currentState={currentState}
+                       showContents={expandedFilters.books}
+                       onToggle={onToggleShow}
+                       // isActive={}
+            >
                 <BooksChart pageData={pageData}
                             options={{
                                 colors: iareColors,
@@ -202,32 +211,46 @@ const UrlFilterPanel = React.memo(({
 
             <FilterBox name={"papers"}
                        caption="Links to Papers and DOIs"
-                       showContents={expand.papers}
+                       currentState={currentState}
+                       showContents={expandedFilters.papers}
                        onToggle={onToggleShow}>
                 <PapersChart pageData={pageData} onAction={onAction}
                              currentState={currentState?.papers}/>
             </FilterBox>
 
 
-            <FilterBox name={"domains"} caption="Pay Level Domains" className={'domains-filter-box'}
-                       showContents={expand.domains}
+            <FilterBox name={"domains"}
+                       caption="Pay Level Domains"
+                       className={'domains-filter-box'}
+                       currentState={currentState}
+                       showContents={expandedFilters.domains}
                        onToggle={onToggleShow}>
                 <PayLevelDomainsChart pageData={pageData} onAction={onAction}
                                       currentState={currentState?.domains}/>
             </FilterBox>
 
-            <FilterBox name={"reliability"} caption="Reliability Statistics" showContents={expand.reliability}
+            <FilterBox name={"reliability"}
+                       caption="Reliability Statistics"
+                       currentState={currentState}
+                       showContents={expandedFilters.reliability}
                        onToggle={onToggleShow}>
                 <PerennialChart pageData={pageData} onAction={onAction}
                                 currentState={currentState?.perennial}/>
             </FilterBox>
 
-            <FilterBox name={"tld"} caption="Top Level Domains" showContents={expand.tld} onToggle={onToggleShow}>
+            <FilterBox name={"tld"}
+                       caption="Top Level Domains"
+                       currentState={currentState}
+                       showContents={expandedFilters.tld}
+                       onToggle={onToggleShow}>
                 <TldChart pageData={pageData} onAction={onAction}
                           currentState={currentState?.tld}/>
             </FilterBox>
 
-            <FilterBox name={"templates"} caption="Template Occurrences" showContents={expand.templates}
+            <FilterBox name={"templates"}
+                       caption="Template Occurrences"
+                       currentState={currentState}
+                       showContents={expandedFilters.templates}
                        onToggle={onToggleShow}>
                 <TemplateChart pageData={pageData} onAction={onAction}
                                currentState={currentState?.templates}/>

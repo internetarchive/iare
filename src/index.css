@@ -299,7 +299,7 @@ body.env-other .iare-hamburger-menu span.non-production {
     position: absolute;
     top: 100%;
     right: 0;
-    z-index: 1000;
+    z-index: 999;
 
     width: 8.5rem;
 

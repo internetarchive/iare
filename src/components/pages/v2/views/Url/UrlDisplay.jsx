@@ -74,6 +74,7 @@ export default function UrlDisplay ({ pageData, options } ) {
     //  of all filters except the one specified to be null. Only 1 filter at a
     //  time will be in a "selected" state
     const setFilterState = (whichFilter, value) => {
+
         setCurrentState(prevState => {
             const newState = prevState
             Object.keys(prevState).forEach( state => {
@@ -701,6 +702,7 @@ export default function UrlDisplay ({ pageData, options } ) {
                 <UrlFilterPanel pageData={pageData}
                                 options={{}}
                                 onAction={handleAction}
+                                // urlFilters={urlFilters}
                                 currentState={currentState}
                                 tooltipId={"tooltip-url-display"}/>
             </div>

@@ -1,0 +1,85 @@
+/* filter boxes - charts in overview on left side */
+:root {
+    --filter-box-border: 2px solid var(--g-color-function-box-caption-outline) !important;
+}
+
+.filter-box {
+    margin-bottom:var(--margin-box-bottom);
+    /*z-index: 1000;*/
+}
+
+/*.section-caption,*/
+.filter-box-caption {
+    /*border: 2px solid var(--g-color-function-box-caption-outline);*/
+    border: var(--filter-box-border);
+    border-radius: var(--border-box-radius);
+    padding: 0.2rem 0.35rem 0.3rem !important;
+    color: var(--color-filter-box-caption) !important;
+    background-color: var(--color-filter-box-caption-bg);
+    font-size: 0.85rem;
+    font-weight: bold;
+    line-height:1.2;
+
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+}
+
+.filter-box-caption .inferior {
+    font-size:88%;
+    font-weight:normal;
+    font-style:italic;
+}
+
+.filter-box-label {
+    /*color:green;*/
+    /*margin-right:.5rem;*/
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+.filter-box-contents {
+    display:block;
+    /*margin-top:var(--margin-box-top);*/
+    padding:.33rem;
+    padding-bottom: .56rem;
+    border: var(--iare-section-border);
+    border-radius: var(--border-box-radius);
+    background-color: var(--color-filter-box-contents);
+}
+.actionable-filter-box .filter-box-contents {
+    margin-top:var(--margin-box-top);
+    border: none;
+    background-color: inherit;
+    padding:0;
+}
+
+.filter-box-show {
+    float:right;
+    font-weight:normal;
+    xheight: 1rem;
+    width:1.5rem;
+    cursor: pointer;
+}
+.filter-box-show.open {
+    content: url('../../images/eye_open.svg');
+}
+.filter-box-show.closed {
+    content: url('../../images/eye_closed.svg');
+}
+
+.filter-box-active {
+    /*border: 2px solid var(--g-color-function-box-caption-outline);*/
+    content: url('../../images/checkmark.svg');
+    object-fit: contain;
+    height: 100%;
+    /*width: 1.5rem;*/
+    margin-right: .25rem;
+
+    /*height: 80%;*/
+    /*width: auto;*/
+    /*margin-right: .25rem;*/
+
+}

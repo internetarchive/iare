@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import './css/draggable.css';
 
 const DEFAULT_DDB_WIDTH = "17rem"  // debug-data-box
-const DEFAULT_DDB_HEIGHT = "5.5rem"
+const DEFAULT_DDB_HEIGHT = "3.5rem"
 
 export default function NativeDraggableDiv() {
     const [position, setPosition] = useState({ x: 800, y: 3 });
