@@ -22,6 +22,7 @@ import FlockDataCell from "../../flock/FlockDataCell";
 import "../../css/flock.css"
 import "../../css/popover.css"
 import copyDocumentsIcon from "@/images/icons/document_copy_icon.svg"
+import tapestryIcon from "@/images/icons/tapestry.icon.v1r1.png"
 
 // context to provide global flag for sorting value
 // TODO move this sort info into main config context, i think??
@@ -583,6 +584,9 @@ const urlFlock = React.memo(function UrlFlock({
 
     }
 
+    const handleTapestryExport = () => {
+        iareAlert("Tapestry Export: Not yet implemented", urlFeedbackElement)
+    }
 
     const buttonCopyDetails =
         <button onClick={handleCopyUrlDetails} className={'btn utility-button small-button'}>
@@ -606,15 +610,15 @@ const urlFlock = React.memo(function UrlFlock({
         <button onClick={handleCopyUrlList} className={'btn utility-button small-button'}><span>Copy URL List</span>
         </button>
 
+    const buttonTapestryExport =
+        <button onClick={handleTapestryExport}
+                className={'btn utility-button small-button'}
+        >
+            <img src={tapestryIcon} alt="Tapestry Icon" style={{marginRight: '.5rem', height: '1rem', width: '1rem'}}/>
+            <span>Tapestry</span>
+        </button>
+    
     const buttonCopyUrls =
-        // <button
-        //     onClick={handleCopyUrlList}
-        //     className={'btn utility-button small-button'}>
-        //     <svg aria-label="Copy URLs to clipboard"
-        //          viewBox={"0 0 24 24"}>
-        //         <use href={`${copyIcon}#document-copy`}/>
-        //     </svg>
-        // </button>
         <div onClick={handleCopyUrlList}
              className={"document-copy-button"}
              style={{
@@ -654,6 +658,7 @@ const urlFlock = React.memo(function UrlFlock({
             }}>
                 <div id={urlFeedbackElement} className={"iare-feedback"} />
                 <div className={"flock-caption-buttons"}>
+                    {buttonTapestryExport}
                     {buttonShowHideFilters}
                     {buttonShowHideRefs}
                     {buttonCopyUrls}

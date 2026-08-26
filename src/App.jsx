@@ -64,7 +64,7 @@ export default function App(
     const [isShowDebugInfo, setIsShowDebugInfo] = useState(false);
     const [isShowDebugComponents, setIsShowDebugComponents] = useState(false);
 
-    const [isShowViewOptions, setIsShowViewOptions] = useState(false);
+    const [isShowViewOptions, setIsShowViewOptions] = useState(true);
     const [isShowHamburger, setIsShowHamburger] = useState(false);
 
     // params settable from from address url
@@ -430,7 +430,8 @@ export default function App(
         else if (action ===
             ACTIONS_IARE.TOGGLE_SHOW_VIEW_OPTIONS.key
         ) {
-            iareAlert("will toggle view options")
+            // iareAlert("ARF ARF will toggle view options")
+            setIsShowViewOptions(prevState => !prevState)
         }
 
         else {

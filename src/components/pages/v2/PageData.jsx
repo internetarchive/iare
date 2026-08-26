@@ -906,7 +906,7 @@ export default function PageData({rawPageData = {}, viewType = "archives"}) {
         },
         "refs": {
             key: "refs",
-            caption: "Reference Types"
+            caption: "Reference Stats"
         },
         "domains": {
             key: "domains",
@@ -914,12 +914,13 @@ export default function PageData({rawPageData = {}, viewType = "archives"}) {
         },
         "archives": {
             key: "archives",
-            caption: "URL Archives"
+            caption: "URL Archives",
+            enabled: false,
         },
         "stats": {
             key: "stats",
-            caption: "Statistics",
-            enabled: false,
+            caption: "Raw page data",
+            enabled: true,
         },
         "grok": {
             key: "grok",
@@ -931,11 +932,24 @@ export default function PageData({rawPageData = {}, viewType = "archives"}) {
         // },
     }
 
+    const viewOptionsList = [
+        viewOptions.urls.key,
+        viewOptions.refs.key,
+        viewOptions.domains.key,
+        viewOptions.archives.key,
+        viewOptions.stats.key,
+    ]
+
+
     const viewOptionsDisplay = <div className={"view-options-selection"}>
         <div className={'list-label'}>View Options:</div>
-        {Object.entries(viewOptions)
-            .filter(([_, opt]) => opt.enabled !== false) // filter out disabled
-            .map(([viewOptionKey, opt]) => (
+        {//Object.entries(viewOptions)
+            //.filter(([_, opt]) => opt.enabled !== false) // filter out disabled
+        viewOptionsList
+            .map((viewOptionKey) => {
+                const opt = viewOptions[viewOptionKey]
+                if (opt.enabled === false) return null
+                return (
                 <div key={viewOptionKey}>
                     <label>
                         <input
@@ -947,7 +961,10 @@ export default function PageData({rawPageData = {}, viewType = "archives"}) {
                         className={selectedViewType === viewOptionKey ? 'selected-choice' : ''}>{opt.caption}</span>
                     </label>
                 </div>
-            ))}
+                )
+                }
+            )
+        }
     </div>
 
     if (!pageData) return null;
@@ -975,7 +992,7 @@ export default function PageData({rawPageData = {}, viewType = "archives"}) {
     }
 
     const errorDisplay = getErrorDisplay(pageErrors)
-    const myShowViewOptions = myConfig.isShowViewOptions ?? false
+    const myShowViewOptions = myConfig.isShowViewOptions ?? true
 
     console.log(`PageData: rendering...${new Date().toISOString().slice(11, 23)}`)
 
