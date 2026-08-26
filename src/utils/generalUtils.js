@@ -83,7 +83,7 @@ export const copyToClipboard = (copyText, label="Data", onComplete) => {
             if (onComplete) {
                 onComplete(`${label} copied to Clipboard`)
             } else {
-                alert(`${label} copied to clipboard.`);
+                iareAlert(`${label} Copied to clipboard.`);
             }
         })
         .catch((error) => {
@@ -271,7 +271,28 @@ export const iareAlert = (s, contextId) => {
     // if contextId specified, use that element to fade in alert text and then fadeout
     // otherwise just use alert
 
-    alert(s)
+    const timeWait = 2500
+
+    const targetElement = contextId
+        ? document.querySelector(`#${contextId}`)
+        : null;
+
+    if (targetElement) {
+        targetElement.innerText = s;
+        targetElement.style.transition = "opacity 0.5s ease-in";
+        targetElement.style.opacity = "1";
+
+        setTimeout(() => {
+            targetElement.style.transition = "opacity 0.5s ease-out";
+            targetElement.style.opacity = "0";
+
+            setTimeout(() => {
+                targetElement.innerText = "";
+            }, 500);
+        }, timeWait);
+    } else {
+        alert(s);
+    }
 }
 
 

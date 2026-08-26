@@ -161,3 +161,45 @@
     /*text-shadow: 0 0 4px var(--color-sort-glow), 0 0 6px var(--color-sort-glow), 0 0 8px var(--color-sort-glow);*/
     text-shadow: 0 0 4px var(--color-sort-glow), 0 0 6px var(--color-sort-glow);
 }
+
+.flock-caption-buttons {
+    display:flex;
+    flex-flow: wrap;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.flock-caption-button-icon img {
+    height: 1.0rem;
+    width: auto;
+    object-fit: contain;   /* prevent distortion */
+    display: inline-block;        /* removes inline gap */
+}
+
+.flock-caption-buttons .document-copy-button {
+    /*color: mediumvioletred !important;*/
+    transition: color 0.15s ease;
+    cursor: pointer;
+    /*color: #ffb703;*/
+    color: #eaeaea;
+}
+
+.flock-caption-buttons .document-copy-button:hover {
+    /*color: lightpink !important;*/
+    /*color: #ffd166;*/
+    color: #b6b6b6;
+}
+
+/*.flock-caption-buttons .document-copy-button-svg {*/
+/*    color: mediumvioletred !important;*/
+/*}*/
+
+.iare-feedback {
+    font-weight: normal;
+    color:var(--iare-color-text-light);
+}
+
+.flock-caption-buttons button.utility-button.small-button {
+    margin-top: 0.15rem;
+    margin-bottom: 0.25rem;
+}

@@ -1,11 +1,22 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
+// import path from 'path'
+import { fileURLToPath, URL } from 'node:url'
 
 
 export default defineConfig({
 
     base: '/iare/',
+
+    resolve: {
+        alias: {
+            '@': fileURLToPath(new URL('./src', import.meta.url)),
+        },
+        // alias: {
+        //     '@': path.resolve(__dirname, 'src'), // Alias '@' to the 'src' directory
+        // },
+    },
 
     build: {
         outDir: 'dist',  /// changed from "/build"
@@ -46,9 +57,4 @@ export default defineConfig({
     //     },
     // },
 
-    // resolve: {
-    //     alias: {
-    //         '@': path.resolve(__dirname, 'src'), // Alias '@' to the 'src' directory
-    //     },
-    // },
 });

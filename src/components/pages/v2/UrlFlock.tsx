@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { useTooltip } from "../../../contexts/TooltipContext";
+import {useTooltip} from "../../../contexts/TooltipContext";
 import Markdown from "react-markdown";
 import {
     collateClasses,
@@ -21,13 +21,14 @@ import FlockHeaderCell from "../../flock/FlockHeaderCell";
 import FlockDataCell from "../../flock/FlockDataCell";
 import "../../css/flock.css"
 import "../../css/popover.css"
+import copyDocumentsIcon from "@/images/icons/document_copy_icon.svg"
 
 // context to provide global flag for sorting value
 // TODO move this sort info into main config context, i think??
-import { ColumnSortContext } from "../../../contexts/ColumnSortContext"
+import {ColumnSortContext} from "../../../contexts/ColumnSortContext"
 
-import { renderRoles } from "../../flock/renderRoles.js";
-import { urlColumnRegistry } from "../../../constants/urlColumnRegistry";
+import {renderRoles} from "../../flock/renderRoles.js";
+import {urlColumnRegistry} from "../../../constants/urlColumnRegistry";
 
 /*
 assumes urlArray is an array of url objects:
@@ -56,6 +57,9 @@ example filterDef element:
     }
 
 */
+
+const urlFeedbackElement= "url-feedback-element"
+
 const urlFlock = React.memo(function UrlFlock({
                                                   urlDict,
                                                   urlArray,
@@ -81,46 +85,48 @@ const urlFlock = React.memo(function UrlFlock({
         // urlColumnRegistry.columns.actionable,
     ]
 
-            // const [feedbackText, setFeedbackText] = useState("")
+    // const [feedbackText, setFeedbackText] = useState("")
 
-            // const [urlTooltipHtml, setUrlTooltipHtml] = useState('<div>ToolTip' +
-            //     '<br>UrlFlock<br />second line');
-            // TODO there is a bug where sort re-renders list every time tooltip text/html property is updated
-            // TODO maybe fix using React.useRef somehow???
+    // const [urlTooltipHtml, setUrlTooltipHtml] = useState('<div>ToolTip' +
+    //     '<br>UrlFlock<br />second line');
+    // TODO there is a bug where sort re-renders list every time tooltip text/html property is updated
+    // TODO maybe fix using React.useRef somehow???
 
     /**
      * State for column sorting configuration.
      *
-     * - sorts: An object that keeps track of the sort status for each column type (e.g., status, signal_score).
-     *          Each key represents a column name, and its value is another object with the following properties:
-     *              - name: Name of the sort key.
-     *              - dir: Direction of sorting: 1 = ascending, -1 = descending, 0 = none.
+     * - sorts: An object that keeps track of the sort status for each column type
+     *   (e.g., status, signal_score). Each key represents a column name, and its
+     *   value is another object with the following properties:
+     *     - name: Name of the sort key.
+     *     - dir: Direction of sorting: 1 = ascending, -1 = descending, 0 = none.
      *
-     *          Example:
-     *          {
-     *              "status": {name: "status", dir: 1},  // dir: 1 is ascending
-     *              "signal_score": {name: "signal_score", dir: -1},  // dir: -1 is descending
-     *          }
+     *   Example:
+     *   {
+     *       "status": {name: "status", dir: 1},  // dir: 1 is ascending
+     *       "signal_score": {name: "signal_score", dir: -1},  // dir: -1 is descending
+     *   }
      *
-     * - sortBy: An array indicating the order of sorts to be applied. For now, it supports only single-column sorting.
+     * - sortBy: An array indicating the order of sorts to be applied. For now, it
+     *   supports only single-column sorting.
      *
-     *          Example:
-     *          ["status"]  // Only the 'status' column is sorted.
+     *   Example:
+     *   ["status"]  // Only the 'status' column is sorted.
      */
     const [columnSort, setColumnSort] = useState({
         sorts: {},  // holds sort defs: {columnKey, dir}
         sortBy: []  // holds ordered list of columns to sort (currently only one...will enhance later)
-            // NB for now, sort just respects first item in list
-            // TODO fix this by implementing chained sorts
+        // NB for now, sort just respects first item in list
+        // TODO fix this by implementing chained sorts
     })
 
-            // const monitoredSignals = [
-            //     signalBadgeRegistry.score.key,
-            //     signalBadgeRegistry.wayback.key,
-            //     signalBadgeRegistry.enwiki.key,
-            //     signalBadgeRegistry.mbfc.key,
-            //     signalBadgeRegistry.tranco.key,
-            // ]
+    // const monitoredSignals = [
+    //     signalBadgeRegistry.score.key,
+    //     signalBadgeRegistry.wayback.key,
+    //     signalBadgeRegistry.enwiki.key,
+    //     signalBadgeRegistry.mbfc.key,
+    //     signalBadgeRegistry.tranco.key,
+    // ]
 
     // dynamic column width grid setting
     const gridTemplateColumns = monitoredColumns
@@ -174,7 +180,7 @@ const urlFlock = React.memo(function UrlFlock({
             // do a 3-state sort state round-robin style
 
             const prevDir = prevState.sorts[sortKey].dir
-            const sortDir = ({ 1: -1, '-1': 0 }[prevDir] ?? 1); // 1=asc, -1=desc, 0=none
+            const sortDir = ({1: -1, '-1': 0}[prevDir] ?? 1); // 1=asc, -1=desc, 0=none
             // if 1 (asc), then next is -1 (desc)
             // if -1 (desc), then next is 0 (none)
             // if 0 (none), then next is 1 (asc)
@@ -217,7 +223,6 @@ const urlFlock = React.memo(function UrlFlock({
     }
 
 
-
     const onClickHeaderRow = (e) => {
 
         // if clicked in sort element, sort by that column
@@ -242,7 +247,7 @@ const urlFlock = React.memo(function UrlFlock({
                     openPopover(<Markdown
                         // rehypePlugins={[rehypeRaw]}
                         components={{
-                            a: ({ node, ...props }) => (
+                            a: ({node, ...props}) => (
                                 <a
                                     {...props}
                                     target="_blank"
@@ -342,7 +347,7 @@ const urlFlock = React.memo(function UrlFlock({
 
                 <div className={"flock-header"} ref={headerRef}>
 
-                    {Object.entries(monitoredColumns).map( ([key, columnDef]) => {
+                    {Object.entries(monitoredColumns).map(([key, columnDef]) => {
 
                         if (!columnDef) return null
 
@@ -366,21 +371,24 @@ const urlFlock = React.memo(function UrlFlock({
     /**
      * Processes and renders rows of URL data for the flock component.
      *
-     * @param {Array} urlArray - Array of URL objects, each containing details like URL, status, archive status, etc.
-     * @param {Object} flockFilters - Object containing filter definitions to apply to the URL data.
-     * @returns {[Array, Array]} - An array of rendered rows and the corresponding filtered URL objects.
+     * @param {Array} urlArray - Array of URL objects, each containing details
+     *   like URL, status, archive status, etc.
+     * @param {Object} flockFilters - Object containing filter definitions to
+     *   apply to the URL data.
+     * @returns {[Array, Array]} - An array of rendered rows and the
+     *   corresponding filtered URL objects.
      */
     const renderDataRows = (urlArray, flockFilters) => {
 
         // Return a default message if the input URL array is empty or undefined.
         if (!urlArray || urlArray.length === 0) {
-            return [<h4 style={{padding:".3rem"}}>No URL Links to show</h4>, []]
+            return [<h4 style={{padding: ".3rem"}}>No URL Links to show</h4>, []]
         }
 
         // Ensure filters object is initialized to prevent null errors.
         if (!flockFilters) flockFilters = {}
-            // TODO what to do if flockFilters is not an object of keyed FlockFilter's?
-            //  Can we make flockFilters a custom "FlockFilters" type?
+        // TODO what to do if flockFilters is not an object of keyed FlockFilter's?
+        //  Can we make flockFilters a custom "FlockFilters" type?
 
 
         // Filter URLs based on filters designated in flockFilters
@@ -419,7 +427,7 @@ const urlFlock = React.memo(function UrlFlock({
             const columnDef = urlColumnRegistry.columns[sortKey]
             const sortFunction = columnDef.sortFunction ?? sortByNative
             console.log(`[${new Date().toISOString()}] sorting rows by: ${sortKey}, ${sortDir}`)
-            filteredUrls.sort((a,b) => sortFunction(a,b,sortDir))
+            filteredUrls.sort((a, b) => sortFunction(a, b, sortDir))
         } else {
             // do nothing???
             filteredUrls.sort(sortByNative)
@@ -479,7 +487,7 @@ const urlFlock = React.memo(function UrlFlock({
             return <div className={`url-row url-row-error`} key={i}
                         data-url={u.url}
                         data-err-text={errText}
-                        // onMouseOver={onHoverErrorRow}
+                // onMouseOver={onHoverErrorRow}
                         onMouseLeave={() => showTooltip({})}
             >
                 {/*
@@ -564,14 +572,17 @@ const urlFlock = React.memo(function UrlFlock({
             return u.url
         })
 
-        copyToClipboard(urlArrayData.join("\n"), `${urlArrayData.length} URLs`, handleFeedback)
+        // copyToClipboard(urlArrayData.join("\n"), `${urlArrayData.length} URLs`,
+        //     iareAlert)
+
+        copyToClipboard(urlArrayData.join("\n"), `${urlArrayData.length} URLs`,
+            () => {
+                // iareAlert("Arf!", urlFeedbackElement)
+                iareAlert("Copied to clipboard", urlFeedbackElement)
+            })
 
     }
 
-    
-    const buttonCopyList =
-        <button onClick={handleCopyUrlList} className={'btn utility-button small-button'}><span>Copy URL List</span>
-        </button>
 
     const buttonCopyDetails =
         <button onClick={handleCopyUrlDetails} className={'btn utility-button small-button'}>
@@ -591,11 +602,40 @@ const urlFlock = React.memo(function UrlFlock({
             <span>{options.showFilters ? "Hide Filters" : "Show Filters"}</span>
         </button>
 
+    const buttonCopyList =
+        <button onClick={handleCopyUrlList} className={'btn utility-button small-button'}><span>Copy URL List</span>
+        </button>
+
+    const buttonCopyUrls =
+        // <button
+        //     onClick={handleCopyUrlList}
+        //     className={'btn utility-button small-button'}>
+        //     <svg aria-label="Copy URLs to clipboard"
+        //          viewBox={"0 0 24 24"}>
+        //         <use href={`${copyIcon}#document-copy`}/>
+        //     </svg>
+        // </button>
+        <div onClick={handleCopyUrlList}
+             className={"document-copy-button"}
+             style={{
+                 height: "1.0rem", width: "1.0rem",
+                 marginLeft: ".25rem",
+                 // height: "1.5rem", width: "1.5rem",
+                 // cursor: "pointer",
+                 // display: "inline-block"
+             }}>
+            <svg aria-label="Copy URLs to clipboard"
+                 viewBox={"0 0 512 512"}
+                // className={"document-copy-button-svg"}
+            >
+                <use href={`${copyDocumentsIcon}#document-copy`}/>
+            </svg>
+        </div>
 
     /* flock info */
 
     const [flockDataRows, flockArray] = renderDataRows(urlArray, urlFilters);
-        // flockDataRows is array of row markup; flockArray is array of url data that markup represents
+    // flockDataRows is array of row markup; flockArray is array of url data that markup represents
 
     const flockInfo = `${flockDataRows.length} ` +
         `${flockDataRows.length === 1 ? 'URL' : 'URLs'}`
@@ -604,8 +644,22 @@ const urlFlock = React.memo(function UrlFlock({
 
         <div className={"main-caption"}>
             <div>URL Links</div>
-            <div>
-                <div style={{position: "relative", top: ".2rem"}}>{buttonShowHideFilters}{buttonShowHideRefs}{buttonCopyList}{buttonCopyDetails}</div>
+            <div style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                gap: ".25rem",
+                // paddingTop: ".25rem",
+            }}>
+                <div id={urlFeedbackElement} className={"iare-feedback"} />
+                <div className={"flock-caption-buttons"}>
+                    {buttonShowHideFilters}
+                    {buttonShowHideRefs}
+                    {buttonCopyUrls}
+                    {/*{buttonCopyList}*/}
+                    {/*{buttonCopyDetails}*/}
+                </div>
             </div>
         </div>
 
@@ -626,9 +680,9 @@ const urlFlock = React.memo(function UrlFlock({
              onClick={onClickFlockRow}
 
              onMouseOver={onHoverDataRow}
-             // onMouseEnter={onHoverFlockRow}
+            // onMouseEnter={onHoverFlockRow}
 
-             // NB Defines "--url-list-grid-columns" for header and rows CSS to pick up
+            // NB Defines "--url-list-grid-columns" for header and rows CSS to pick up
              style={{"--url-list-grid-columns": gridTemplateColumns}}
 
         >
@@ -638,6 +692,17 @@ const urlFlock = React.memo(function UrlFlock({
     )
 
 
+    /**
+     * Manages synchronized scrolling between the header row and data rows in
+     * the URL flock table.
+     *
+     * This effect ensures that when the user scrolls horizontally in one section
+     * (either the header row or the data rows), the corresponding other section
+     * scrols in perfect alignment. Listeners are attached to both header and body
+     * scroll events, and the scrolling behavior is managed efficiently with a
+     * "syncing" flag to prevent redundant updates. Cleanup ensures that unnecessary
+     * listeners are removed when the component unmounts.
+     */
     React.useEffect(() => {
         // syncs scroll left and right of header row and data rows
 
@@ -675,11 +740,15 @@ const urlFlock = React.memo(function UrlFlock({
 
     return <>
 
-        <FlockBox caption={flockCaption} className={"url-flock"}>
+        <FlockBox
+            caption={flockCaption}
+            className={"url-flock"}>
             {flock}
         </FlockBox>
 
-        <dialog  // Popover for Column Definition Details
+        <dialog
+            // Popover for Column Definition Details
+
             ref={popoverColDefRef}
             id={popoverColDefId}
             popover={"manual"}

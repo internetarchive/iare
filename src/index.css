@@ -24,6 +24,8 @@
     /*--iare-color-hamburger-bg: #b5ce21;*/
     --iare-color-hamburger-bg: #ffffff;
     --iare-color-text-dark: #0d0d0d;
+    /*--iare-color-text-light: #c0c0c0;*/
+    --iare-color-text-light: #d0d0d0;
     --iare-color-header: var(--iare-color-basic-blue-dark);
     --iare-color-togle-hover: var(--iare-color-basic-blue);
 
@@ -431,7 +433,7 @@ button.utility-button {
 button.utility-button.small-button {
     padding: 0.3em 0.55em 0.25em 0.4em;
     font-size: .56rem;
-    margin: -0.4rem 0 0 0.2rem;
+    /*margin: -0.4rem 0 0 0.2rem;*/
     background-color: #e9e9e9;
     color: #4d4d4d;
     border-color: #888888;
@@ -676,6 +678,6 @@ font-weight:normal;
 }
 
 .condition-box-contents {
-    display: none;
+    /*display: none;*/
 }
 

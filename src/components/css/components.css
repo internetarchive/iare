@@ -62,8 +62,8 @@
     border: var(--iare-section-border);
     margin-bottom:var(--margin-box-bottom);
     padding:.35rem;
-    height: 1.88rem;
-    max-height: 1.88rem;
+    /*height: 1.88rem;*/
+    /*max-height: 1.88rem;*/
 }
 
 .control-box-caption {
