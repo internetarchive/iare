@@ -585,7 +585,25 @@ const urlFlock = React.memo(function UrlFlock({
     }
 
     const handleTapestryExport = () => {
-        iareAlert("Tapestry Export: Not yet implemented", urlFeedbackElement)
+
+        // copy to clipboard stuff from this page
+        const urlArrayData = [...flockArray].sort(   // NB use "..." to copy array that can be sorted
+            (a, b) => (a.url > b.url) ? 1 : (a.url < b.url) ? -1 : 0  // sort by url
+
+        ).map(u => {  // get one row per line:
+            if (u.archive_status?.hasArchive) {
+                return u.archive_status.archive_url
+            }
+            return null
+        })
+
+        copyToClipboard(urlArrayData.join("\n"), `${urlArrayData.length} URLs`,
+            () => {
+                // iareAlert("Arf!", urlFeedbackElement)
+                iareAlert(`Copied ${urlArrayData.length} URLs to clipboard`, urlFeedbackElement)
+            })
+
+
     }
 
     const buttonCopyDetails =
@@ -606,10 +624,6 @@ const urlFlock = React.memo(function UrlFlock({
             <span>{options.showFilters ? "Hide Filters" : "Show Filters"}</span>
         </button>
 
-    const buttonCopyList =
-        <button onClick={handleCopyUrlList} className={'btn utility-button small-button'}><span>Copy URL List</span>
-        </button>
-
     const buttonTapestryExport =
         <button onClick={handleTapestryExport}
                 className={'btn utility-button small-button'}
@@ -617,7 +631,7 @@ const urlFlock = React.memo(function UrlFlock({
             <img src={tapestryIcon} alt="Tapestry Icon" style={{marginRight: '.5rem', height: '1rem', width: '1rem'}}/>
             <span>Tapestry</span>
         </button>
-    
+
     const buttonCopyUrls =
         <div onClick={handleCopyUrlList}
              className={"document-copy-button"}
@@ -635,6 +649,7 @@ const urlFlock = React.memo(function UrlFlock({
                 <use href={`${copyDocumentsIcon}#document-copy`}/>
             </svg>
         </div>
+
 
     /* flock info */
 
