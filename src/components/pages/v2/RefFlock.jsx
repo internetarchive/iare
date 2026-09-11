@@ -1,15 +1,20 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {ParseMethods} from "../../../constants/parseMethods.jsx";
-import {convertToCSV, copyToClipboard} from "../../../utils/generalUtils.js";
+import {convertToCSV, copyToClipboard, iareAlert} from "../../../utils/generalUtils.js";
 import CitationDisplayV1 from "./citations/CitationDisplayV1.jsx";
 import CitationDisplayV2 from "./citations/CitationDisplayV2.jsx";
 import FilterConditionBox from "../../FilterConditionBox.jsx";
 import FlockBox from "../../FlockBox.jsx";
+import copyDocumentsIcon from "@/images/icons/document_copy_icon.svg"
+import parseTapestry from "@/utils/parseTapestry.js";
+import tapestryIcon from "@/images/icons/tapestry.icon.v1r1.png"
 
             // const handleCiteRefClick = (e) => {
             //     e.stopPropagation()
             //     window.open(e.currentTarget.href, "_blank")
             // }
+
+const refFeedbackElement = "ref-feedback-element"
 
 function RefFlock({ pageData= {},
                       refArray,
@@ -81,6 +86,8 @@ function RefFlock({ pageData= {},
 
         const refElement = e.target.closest('button.ref-button')
         if (!refElement) return // if we didn't click on a ref button, bail
+
+        // get the reference ID from the button's dataset["ref_index"] attribute
         const refIndex = e.target.closest('button.ref-button').dataset["ref_index"]
 
         // send action up the calling component tree
@@ -119,7 +126,21 @@ function RefFlock({ pageData= {},
         // setTooltipHtmlRefList(html)
     }
 
-    const handleCopyRefsClick = () => { // used to copy url list and status
+    const handleTapestryRefExport = () => {
+
+        // copy to clipboard stuff from this page
+        // const tapestryData = getTapestryData(pageData)
+        const tapestryRefData = parseTapestry(pageData)
+        const tapestryRefDataStr = JSON.stringify(tapestryRefData, null, 2)
+
+        copyToClipboard(tapestryRefDataStr, `Tapestry reference data copied`,
+            () => {
+                iareAlert(`Tapestry data for references copied to the clipboard`, refFeedbackElement)
+            })
+    }
+
+
+    const handleCopyRefs = () => { // used to copy url list and status
 
         let refArrayData = filteredRefs
 
@@ -148,9 +169,15 @@ function RefFlock({ pageData= {},
             'urls',
         ] )
 
-        copyToClipboard(convertToCSV(refArrayData), `${numItems} References`)
+        copyToClipboard(convertToCSV(refArrayData), `${numItems} References`,
+            () => {
+                // iareAlert("Arf!", urlFeedbackElement)
+                iareAlert("Copied to clipboard", refFeedbackElement)
+            })
 
     }
+
+
 
     const handleNavPrev = () => {
         console.log(`RefFlock: handleNavPrev (context: ${options?.context}) (from ${selectedRefIndex}) `)
@@ -254,36 +281,61 @@ function RefFlock({ pageData= {},
         </div>
         : null
 
-    const refCountAndCopy = !options.show_ref_nav
-        ? <div className={"sub-caption"}>
-            <div>{filteredRefs.length} {filteredRefs.length === 1 ? 'Reference' : 'References'}</div>
-            <button onClick={handleCopyRefsClick} className={'utility-button small-button'} ><span>Copy References</span></button>
+
+    const buttonTapestryRefExport =
+        <button onClick={handleTapestryRefExport}
+                className={'btn utility-button small-button'}
+        >
+            <img src={tapestryIcon} alt="Tapestry Icon" style={{marginRight: '.5rem', height: '1rem', width: '1rem'}}/>
+            <span>Tapestry</span>
+        </button>
+
+    const buttonCopyRefs =
+        <div onClick={handleCopyRefs}
+             className={"document-copy-button"}
+             style={{
+                 height: "1.0rem", width: "1.0rem",
+                 marginLeft: ".25rem",
+                         // height: "1.5rem", width: "1.5rem",
+                         // cursor: "pointer",
+                         // display: "inline-block"
+             }}>
+            <svg aria-label="Copy References to Clipboard"
+                 viewBox={"0 0 512 512"}
+                // className={"document-copy-button-svg"}
+            >
+                <use href={`${copyDocumentsIcon}#document-copy`}/>
+            </svg>
         </div>
-        :null
+
+    const captionText = options?.caption ?? "References List"
+
+    const flockInfo = <div>{filteredRefs.length} {filteredRefs.length === 1 ? 'Reference' : 'References'}</div>
 
     const flockCaption = <>
-        {options?.caption ? <div className={"ref-list-caption"}>{options.caption}</div> :null}
-        {refCountAndCopy}
-        {refNavigation}
-        {filterDescription}
+
+        <div className={"main-caption ref-list-caption"}>
+            {captionText}
+            <div style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                gap: ".25rem",
+            }}>
+                <div id={refFeedbackElement} className={"iare-feedback"}/>
+                <div className={"flock-caption-buttons"}>
+                    {buttonTapestryRefExport}
+                    {buttonCopyRefs}
+                </div>
+            </div>
+        </div>
+
+        <div className={"sub-caption"}>
+            <div>{flockInfo}</div>
+        </div>
     </>
 
-
-    /*
-    within a reference display, there may be links from the original citation.
-    fully resolved links, with https// will work fine, but there
-    are probably many relative links relative to wikipedia that
-    wont work here, as they will be relative to the top if IARE.
-
-    Also, if the link is not an external reference, i imagine we want to carry thru
-    the default action of exposing the reference details in the reference sectoin
-
-    this is accomplished by propagating up the "message event" to display
-    the details for the reference clicked.
-
-    SO, in conclusion, we will always just find the surrounding ref button, and
-    pass back up the "showRefDetails(refId)" message (or, selectReferenceId")
-    */
 
     const flockList = <>
         {flockListHeader}
@@ -310,8 +362,6 @@ function RefFlock({ pageData= {},
                      className={`ref-flock ${className ? ` ${className}` : ''}`}>
 
         {flockList}
-
-        {/*<RefView details={refDetails} open={openModal} onClose={() => setOpenModal(false)} />*/}
 
     </FlockBox>
 

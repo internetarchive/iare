@@ -713,7 +713,8 @@ export default function UrlDisplay ({ pageData, options } ) {
 
             <div className="url-display-url-flock">
 
-                <UrlFlock urlDict={pageData.urlDict}
+                <UrlFlock pageData={pageData}
+                          urlDict={pageData.urlDict}
                           urlArray={pageData.urlArray}
                           urlFilters={urlFilters}
                           onAction={handleAction}

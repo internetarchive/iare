@@ -315,7 +315,10 @@ export default function RefUrls({
 
     return <div className="ref-view-section ref-view-analysis">
 
-        <RefSectionHeader leftPart={<h3>{t('Ratings')}</h3>}>{null}</RefSectionHeader>
+        <RefSectionHeader
+            leftPart={<h3>{t('Ratings')}</h3>}
+        >{null}</
+            RefSectionHeader>
 
         <div className={"ref-view-section-contents"}>
 

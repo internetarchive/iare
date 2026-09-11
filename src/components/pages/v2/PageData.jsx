@@ -524,8 +524,8 @@ export default function PageData({rawPageData = {}, viewType = "archives"}) {
         })
 
 
-        // for each url, reduce various reference info into the url's reference_info property
-        // for now, reference_info contains:
+        // for each url, reduce various reference info into the url's reference_summary property
+        // for now, reference_summary contains:
         // - url status from templates
         // - template names
         // - sections where reference came from
@@ -573,7 +573,7 @@ export default function PageData({rawPageData = {}, viewType = "archives"}) {
                 }
 
             })
-            myUrl["reference_info"] = {
+            myUrl["reference_summary"] = {
                 "statuses": statuses,
                 "templates": templates,
                 "sections": sections,

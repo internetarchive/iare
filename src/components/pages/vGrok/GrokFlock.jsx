@@ -510,10 +510,10 @@ const grokFlock = React.memo(function GrokFlock({
 
         const getDataRow = (u, i, classes) => {
 
-            const citationStatus = !u.reference_info?.statuses?.length
+            const citationStatus = !u.reference_summary?.statuses?.length
                 // TODO rethink this column - could have a JSON array version
                 ? null
-                : u.reference_info.statuses[0]  // just return first one
+                : u.reference_summary.statuses[0]  // just return first one
 
             const url = useHotLinks
                 ? <MakeLink href={u.url}/>
@@ -658,7 +658,7 @@ const grokFlock = React.memo(function GrokFlock({
                 u.url,
                 u.live_status,
                 u.archive_status?.hasArchive,
-                u.reference_info?.templates ? u.reference_info?.templates.join(",") : null,
+                u.reference_summary?.templates ? u.reference_summary?.templates.join(",") : null,
                 u.status_code_errors?.reason ? u.status_code_errors.reason : null,
                 u.status_code_errors?.message ? u.status_code_errors.message : null,
             ]

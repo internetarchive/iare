@@ -769,7 +769,7 @@ export default function App(
         {/* This is a Static Debug Display, a floatable debug
             window that starts out at the top, right of the screen.
             This only shows up when running in local environment */}
-        {(myEnv === 'env-local') && <NativeDraggableDiv />}
+        {/*{(myEnv === 'env-local') && <NativeDraggableDiv />}*/}
 
         <ConfigContext.Provider value={config}>
 

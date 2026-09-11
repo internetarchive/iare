@@ -30,6 +30,8 @@ import {ColumnSortContext} from "../../../contexts/ColumnSortContext"
 
 import {renderRoles} from "../../flock/renderRoles.js";
 import {urlColumnRegistry} from "../../../constants/urlColumnRegistry";
+import {getTapestryData} from "../../../utils/tapestryUtils";
+import parseTapestry from "../../../utils/parseTapestry"
 
 /*
 assumes urlArray is an array of url objects:
@@ -59,9 +61,10 @@ example filterDef element:
 
 */
 
-const urlFeedbackElement= "url-feedback-element"
+const urlFeedbackElement = "url-feedback-element"
 
 const urlFlock = React.memo(function UrlFlock({
+                                                  pageData,
                                                   urlDict,
                                                   urlArray,
                                                   urlFilters = {},  // keyed object of filter definitions to apply to urlArray for final url list display
@@ -90,8 +93,9 @@ const urlFlock = React.memo(function UrlFlock({
 
     // const [urlTooltipHtml, setUrlTooltipHtml] = useState('<div>ToolTip' +
     //     '<br>UrlFlock<br />second line');
-    // TODO there is a bug where sort re-renders list every time tooltip text/html property is updated
+    // TODO BUG: sort re-renders list every time tooltip text/html property is updated
     // TODO maybe fix using React.useRef somehow???
+
 
     /**
      * State for column sorting configuration.
@@ -112,22 +116,16 @@ const urlFlock = React.memo(function UrlFlock({
      *   supports only single-column sorting.
      *
      *   Example:
-     *   ["status"]  // Only the 'status' column is sorted.
-     */
+     *  ["status"]  // Only the 'status' column is sorted.
+     *  ["status", "signal_score"]  // Still only the 'status' column is sorted - only first item in list is used.
+     *  */
+
     const [columnSort, setColumnSort] = useState({
         sorts: {},  // holds sort defs: {columnKey, dir}
         sortBy: []  // holds ordered list of columns to sort (currently only one...will enhance later)
         // NB for now, sort just respects first item in list
         // TODO fix this by implementing chained sorts
     })
-
-    // const monitoredSignals = [
-    //     signalBadgeRegistry.score.key,
-    //     signalBadgeRegistry.wayback.key,
-    //     signalBadgeRegistry.enwiki.key,
-    //     signalBadgeRegistry.mbfc.key,
-    //     signalBadgeRegistry.tranco.key,
-    // ]
 
     // dynamic column width grid setting
     const gridTemplateColumns = monitoredColumns
@@ -344,7 +342,8 @@ const urlFlock = React.memo(function UrlFlock({
         const renderRole = renderRoles.header
 
         return (
-            <ColumnSortContext.Provider value={columnSort}>  {/* provides current sort scenario */}
+            <ColumnSortContext.Provider value={columnSort}>
+                {/* support for current sort scenario */}
 
                 <div className={"flock-header"} ref={headerRef}>
 
@@ -541,7 +540,7 @@ const urlFlock = React.memo(function UrlFlock({
                 u.url,
                 u.status_code,
                 u.archive_status?.hasArchive,
-                u.reference_info?.templates ? u.reference_info?.templates.join(",") : null,
+                u.reference_summary?.templates ? u.reference_summary?.templates.join(",") : null,
                 u.status_code_errors?.reason ? u.status_code_errors.reason : null,
                 u.status_code_errors?.message ? u.status_code_errors.message : null,
             ]
@@ -587,23 +586,15 @@ const urlFlock = React.memo(function UrlFlock({
     const handleTapestryExport = () => {
 
         // copy to clipboard stuff from this page
-        const urlArrayData = [...flockArray].sort(   // NB use "..." to copy array that can be sorted
-            (a, b) => (a.url > b.url) ? 1 : (a.url < b.url) ? -1 : 0  // sort by url
+        // const tapestryData = getTapestryData(pageData)
+        const tapestryData = parseTapestry(pageData)
+        const tapestryDataStr = JSON.stringify(tapestryData, null, 2)
 
-        ).map(u => {  // get one row per line:
-            if (u.archive_status?.hasArchive) {
-                return u.archive_status.archive_url
-            }
-            return null
-        })
-
-        copyToClipboard(urlArrayData.join("\n"), `${urlArrayData.length} URLs`,
+        copyToClipboard(tapestryDataStr, `Tapestry data copied`,
             () => {
                 // iareAlert("Arf!", urlFeedbackElement)
-                iareAlert(`Copied ${urlArrayData.length} URLs to clipboard`, urlFeedbackElement)
+                iareAlert(`Tapestry data copied to clipboard`, urlFeedbackElement)
             })
-
-
     }
 
     const buttonCopyDetails =
@@ -671,7 +662,7 @@ const urlFlock = React.memo(function UrlFlock({
                 gap: ".25rem",
                 // paddingTop: ".25rem",
             }}>
-                <div id={urlFeedbackElement} className={"iare-feedback"} />
+                <div id={urlFeedbackElement} className={"iare-feedback"}/>
                 <div className={"flock-caption-buttons"}>
                     {buttonTapestryExport}
                     {buttonShowHideFilters}
@@ -694,6 +685,9 @@ const urlFlock = React.memo(function UrlFlock({
     </div>
 
 
+    /* flock itself; consists of header and body rows, sunc together horizontascrollingly,
+    * thus the ```ref={bodyRef}``` in flockRows  */
+
     const flock = (
         <div className={"flock-container"}
              data-tooltip-id="master-tooltip"
@@ -704,7 +698,6 @@ const urlFlock = React.memo(function UrlFlock({
 
             // NB Defines "--url-list-grid-columns" for header and rows CSS to pick up
              style={{"--url-list-grid-columns": gridTemplateColumns}}
-
         >
             {flockHeader}
             {flockRows}
@@ -713,16 +706,21 @@ const urlFlock = React.memo(function UrlFlock({
 
 
     /**
-     * Manages synchronized scrolling between the header row and data rows in
-     * the URL flock table.
+     * useEffect([]) - run once upon component
      *
-     * This effect ensures that when the user scrolls horizontally in one section
-     * (either the header row or the data rows), the corresponding other section
-     * scrols in perfect alignment. Listeners are attached to both header and body
-     * scroll events, and the scrolling behavior is managed efficiently with a
-     * "syncing" flag to prevent redundant updates. Cleanup ensures that unnecessary
-     * listeners are removed when the component unmounts.
-     */
+     * Manages synchronized scrolling between header row section and data rows
+     * (body) section in the URL Flock display.
+     *
+     * Ensures horizontal scrolling in one section (header row or the data rows)
+     * results in perfectly aligned scrolling in the other section.
+     *
+     * Event Listeners are attached to both header and body scroll events, and the scrolling
+     * behavior is managed efficiently with a "syncing" flag to prevent redundant updates.
+     *
+     * Cleanup ensures that unnecessary listeners are removed when the component unmounts.
+     *
+     * */
+
     React.useEffect(() => {
         // syncs scroll left and right of header row and data rows
 
@@ -761,10 +759,14 @@ const urlFlock = React.memo(function UrlFlock({
     return <>
 
         <FlockBox
+
             caption={flockCaption}
             className={"url-flock"}>
+
             {flock}
+
         </FlockBox>
+
 
         <dialog
             // Popover for Column Definition Details

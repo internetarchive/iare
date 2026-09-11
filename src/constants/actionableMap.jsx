@@ -32,10 +32,10 @@ export const ACTIONABLE_FILTER_MAP = {
         tooltip: `<div>Original URL link status is NOT 2XX or 3XX<br/>AND<br/>"url_status" template parameter is set to "live"</div>`,
 
         filterFunction: () => (u) => {
-            // reference_info.statuses is an aggregate of
+            // reference_summary.statuses is an aggregate of
             return (u.status_code < 200 || u.status_code >= 400)
                 &&
-                (u.reference_info?.statuses?.length && u.reference_info.statuses.includes('live'));
+                (u.reference_summary?.statuses?.length && u.reference_summary.statuses.includes('live'));
         },
 
         refFilterFunction: () => (urlDict, ref) => {  // NB inclusion of urlDict when filter function called with .bind

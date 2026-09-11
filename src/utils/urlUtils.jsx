@@ -69,9 +69,9 @@ export const getPerennialInfo = (u => {
 
 export const getCitationInfo = (u => {
     // for now, returns array of statuses from url's associated references
-    return !u.reference_info?.statuses
+    return !u.reference_summary?.statuses
         ? null
-        : u.reference_info.statuses.map( (s,i) => {
+        : u.reference_summary.statuses.map( (s,i) => {
             const display = s === "--"  // this is what PageData set status to if not there - TODO do this better!
                 ? ""
                 : s.charAt(0).toUpperCase() + s.slice(1)
