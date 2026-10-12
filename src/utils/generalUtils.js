@@ -303,8 +303,6 @@ export const iareAlert = (s, contextId) => {
  *                              defaults to an element with the class 'draggableDebugBox'.
  */
 export const iareDebug = (msg, contextId) => {
-    // if contextId specified, use that element to display message; 
-    // otherwise use default class 'draggableDebugBox'
 
     const targetElement = contextId
         ? document.querySelector(`#${contextId}`)
@@ -313,15 +311,9 @@ export const iareDebug = (msg, contextId) => {
     if (targetElement) {
         targetElement.innerText = msg;
     } else {
-        console.warn(`Debug target element (${contextId}) not found,
-        and there is no .draggableDebugBox element to display debug messages in.`)
+        console.warn(`Debug target element (#${contextId}) not found,
+        and there is no .draggableDebugBox element to log debug messages to.`)
     }
-    // if (targetElement) {
-    //     if (typeof msg === "string") {
-    //         targetElement.innerText = msg;
-    //     } else {
-    //         targetElement.innerHTML = DOMPurify.sanitize(msg);
-    //     }
 }
 
 

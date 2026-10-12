@@ -1,9 +1,8 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
-// import path from 'path'
+import path from 'node:path'
 import { fileURLToPath, URL } from 'node:url'
-
 
 export default defineConfig({
 
@@ -12,10 +11,11 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url)),
+            'tapestry-parser': path.resolve(
+                __dirname,
+                '../tapestry-parser/src/index.js',
+            ),
         },
-        // alias: {
-        //     '@': path.resolve(__dirname, 'src'), // Alias '@' to the 'src' directory
-        // },
     },
 
     build: {
@@ -35,6 +35,7 @@ export default defineConfig({
     server: {
         port: 3000, // Optional: Change port if needed
         open: true,
+        fs: { allow: ['..', '/Users/chris/_jobs/archive.org/tapestry-parser'] },
     },
 
     css: {

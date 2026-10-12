@@ -317,7 +317,8 @@ export default function RefView({
                                   options={{
                                       show_header: false,
                                       show_extra: false,
-                                      show_ref_nav: true,
+                                      show_ref_nav: false,
+                                      show_tapestry: false,
                                       show_filter_description: true,
                                       context: "RefView",
                                       caption: "References List",

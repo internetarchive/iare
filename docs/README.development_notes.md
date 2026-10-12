@@ -23,7 +23,7 @@ const filteredRefs = refFilter
 Correspondingly, when the filter function is defined, as, for example in
 ```UrlDisplay``` component, it must accommodate the urlDict param. Also,
 note that the filter function definition is a "function defining function": note the
-empty argument, followed by a typical callback function definition.
+empty argument parentheses, followed by a typical callback function definition.
 ```
 filterFunction: () => (urlDict, ref) => {
     if (!templateName?.length) return true  // always let reference through if templateName is empty

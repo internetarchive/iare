@@ -1,177 +1,105 @@
-# Internet Archive Reference Explorer (IARE) App
+# Internet Archive Reference Explorer (IARE)
 
-_This document is under development._
+A visual interface that gives a comprehensive view of the citations in one or more online articles.
 
-This project uses the React.js framework.
+IARE takes the URL of a Wikipedia article (or a PDF, or a Grokipedia page), sends it to the
+**IARI** API (Internet Archive Reference Inventory) for parsing, and then presents every
+reference and every linked URL in an interactive, filterable display: live link status,
+Wayback Machine archive status, source reliability, WikiSignals scores, books, papers/DOIs,
+domains, citation templates and more.
 
-## Running reference explorer
+- **Staging:** https://internetarchive.github.io/iare/
+- **Issues:** https://github.com/internetarchive/iare/issues
 
-### From browser
+## Documentation
 
-\<iare host>
-#### allowed params:
+| Document | Audience |
+|---|---|
+| [User Guide](docs/USER_GUIDE.md) | People using IARE to explore an article's references |
+| [Architecture](docs/ARCHITECTURE.md) | Developers working on the IARE codebase |
+| [Development notes](docs/README.development_notes.md) | Filter/flock implementation details |
+| [Release notes](docs/release_notes/) | Per-version release notes |
+| [CHANGELOG](CHANGELOG.md) | Older (v0.2.x) changelog |
 
-	| Parameter       | Description               |
-	|-----------------|---------------------------|
-	| url             | The URL to fetch data for |
-	| refresh         | Refresh cache if set      |
-	| iari-source     | Source for IARI data      |
-	| method          | Live Status method to use |
-	| parse_method    | Method for parsing data   |
-	| use_local_cache | Use local cache if true   |
-	| debug           | Enable debug mode         |
+## Quick start
 
-*Note:* Build process is now with ___vite___. Build instructions coming soon.
+Requirements: Node.js 20+ and npm.
 
-Builds are accomplished with standard node/React scripts.
-
-From the project directory:
-
-## Development Scripts
-
-*Note:* Build process is now with ___vite___. Build instructions coming soon.
-
-Builds are accomplished with standard node/React scripts.
-
-From the project directory:
-
-### `npm start`
-
-Runs the IARE app in development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-Changes made in the source code automatically reloads the page.\
-Any lint errors found during compilation are shown in the console.
-
-### `npm run build`
-
-Builds a production IARE app to the project's `build` folder.\
-The build is minified and ready to be deployed for testing purposes.
-
-## Automatic deployment
-
-Whenever a new commit is uploaded to the main branch of the IARE repo, a GitHub action is triggered to create a stable version of the IARE app. This is considered a STAGING release and is available via this url:
-
-```
-https://internetarchive.github.io/iare/
+```bash
+npm install
+npm run dev
 ```
 
+The dev server runs at http://localhost:3000/iare/ (the app is built with `base: '/iare/'`).
 
-## Regular Maintenance
+> **Tapestry export dependency:** `vite.config.js` aliases the `tapestry-parser` package to a
+> sibling checkout at `../tapestry-parser`. Clone that repo next to this one before running
+> or building, or the import in `RefFlock.jsx` will fail to resolve.
 
-To ensure testing tools respect latest browser specs, it is a good idea to run the following command regularly:
+### Scripts
 
-### `npx update-browserslist-db@latest`
+| Command | What it does |
+|---|---|
+| `npm run dev` | Starts the Vite dev server on port 3000 with hot reload |
+| `npm run build` | Builds a production bundle into `dist/` (with source maps) |
+| `npm run preview` | Serves the built `dist/` folder locally to check a production build |
 
+## URL parameters
 
-
-## Deploy in Docker
-
-Build a deployment Docker image:
-
-```
-$ docker image build -t iare .
-```
-
-Run a container from the newly built image:
-
-```
-$ docker container run --rm -it -p 3000:3000 iare
-````
-
-If you are running this locally, you can open the application in a web browser at http://localhost:3000
-
-## Under the Hood
-
-### General Coding Notes
-
-#### NB
-
-Throughout the code you may see "NB ..." in a comment. NB stands for ["Nota Bene"](https://en.wikipedia.org/wiki/Nota_bene), meaning "note well" in latin, and is 
-used to call out certain aspects in the code that aren't necessarily "TODO"s to be fixed.
-
-#### Using "ref" as a parameter name 
-
-You cannot use "ref" as a component parameter name in a react javascript project -
-it will give strange errors. If you need to use a variable to 
-represent a reference, use "_ref". (I found this out the hard way!)
-
-### External components used
-
-* ReactTooltip / react-tooltip
-* Chart.js
-* react-chartjs-2
-* chart.js/helpers
-* chart.js options
-* chartjs-plugin-datalabels
-
-### Component Architecture
-
-When page data is received from the fetch, it is rendered with the src/components/PageDisplay component, eventually resolving to the src/components/v2/PageDisplayV2 component for typical wiki pages.
-
-The PageDisplayV2 component combines the PageInfo (top-level page retrieval information) component and the PageData component. The PageData component does the heavy lifting of displaying the retrieved page data.
+IARE is driven by query parameters, so any analysis can be bookmarked or shared:
 
 ```
-<PageDisplayV2 pageData={pageData} >
-    <PageInfo pageData={pageData} />
-    <PageData pageData={pageData} />
-```
-#### PageData component
-
-Within the PageData component, the raw data is decorated with anything useful for further rendering, including:
-- fetching the status code of all the URLs
-- fetching the probe status info for all the URLs
-- transforming the references so that they can be filtered and displayed in a more comfortable manner.
-
-"Awaiting..." icon displayed while data is being fetched:
-
-```
-<Loader message="..."/> 
+https://internetarchive.github.io/iare/?url=https://en.wikipedia.org/wiki/Easter_Island
 ```
 
-Once the data is retrieved, it is displayed with the UrlDisplay component:
- ```
- <UrlDisplay pageData={pageData} <options> />
+| Parameter | Description | Default |
+|---|---|---|
+| `url` | Article to analyze (Wikipedia article, PDF URL, or Grokipedia page) | _(none)_ |
+| `refresh` | `true` forces IARI to re-fetch instead of using its cache | `false` |
+| `iari-source` | IARI backend: `iari_prod`, `iari_stage`, `iari_test`, `iari_local`, `iari` | `iari_stage` (`iari_local` on localhost) |
+| `method` | URL live-status check method: `LIVEWEBCHECK`, `IABOT`, `CORENTIN` | `LIVEWEBCHECK` |
+| `parse_method` | Article parser: `WIKIPARSE_XREF` (alias `XREF`), `WIKIPARSE_V1`, `WIKIPARSE_V2` | `WIKIPARSE_XREF` |
+| `use_local_cache` | Ask IARI to use its local parse cache (debug aid) | `false` |
+| `show_shortcuts` | Show the shortcut buttons for sample articles | `false` |
+| `debug` | Open the debug panel | `false` |
+
+In **production** (any `*.archive.org` host), `iari-source` is fixed to `iari_prod`, and
+`method` and `parse_method` are fixed to their defaults; the matching query parameters are ignored.
+
+## Deployment
+
+### Staging (GitHub Pages)
+
+Every push to `main` triggers [`.github/workflows/stage.yml`](.github/workflows/stage.yml),
+which runs `npm install && npm run build` on Node 20 and publishes `dist/` to GitHub Pages at
+https://internetarchive.github.io/iare/. You can also start it manually (`workflow_dispatch`).
+
+> The workflow checks out only this repository. While the `tapestry-parser` alias points to a
+> sibling directory, CI builds need that package to be vendored, published, or checked out
+> by the workflow.
+
+### Docker
+
+```bash
+docker image build -t iare .
 ```
 
-There are other display components that can be used to display the page data in different ways from different perspectives. These are less developed than UrlDisplay, but present a rich future of display possibilities. For example:
-```
-<RefDisplay pageData={pageData} <options> />
-```
-
-#### UrlDisplay component
-```
-<UrlDisplay>
-    <UrlOverview>
-    <UrlFlock>
-    <RefFlock>
+```bash
+docker container run --rm -it -p 3000:3000 iare
 ```
 
-###### UrlOverview
+> The `Dockerfile` and `builder.sh` were written for the older Create React App build and
+> still serve or copy a `build/` folder. Vite now outputs to `dist/`, so update both to
+> `dist` before relying on them.
 
-Contains the graphs and charts depicting URL statistics. Clicking on these charts produces a filter that is applied the URL List (represented by UrlFlock) and the References list (represented by RefFlock)
+## Maintenance
 
-###### FldDisplay
-_(Fld is the legacy moniker for "First Level Domain". It just means the Domains view)_:
+Keep the browser-compatibility data current:
+
+```bash
+npx update-browserslist-db@latest
 ```
-<FldDisplay>
-    <FldFlock>
-    <RefFlock>
-```
-###### RefDisplay
-```
-<RefDisplay>
-    <RefOverview>
-    <RefFlock>
-```
-You will notice that each display type includes the RefFlock component. This is because each view is essentially a grandiose filter for the list of references. The RefFlock component can display a list of references, and receive a filter definition "from the outside".
-### Filter / Flock Architecture
 
-TBD
+## License
 
-## Bugs and Features
-
-
-### GitHub Issues
-
-https://github.com/internetarchive/iare/issues
+See [LICENSE](LICENSE).

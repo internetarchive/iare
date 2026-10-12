@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.3.2.12",
-  "version_name": "0.3.2.11 Tapestry Export with tapestry-parser",
+  "version": "0.3.2.14",
+  "version_name": "0.3.2.14 Documentation",
   "private": true,
   "type": "module",
   "dependencies": {

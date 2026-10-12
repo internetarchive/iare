@@ -6,13 +6,15 @@ import CitationDisplayV2 from "./citations/CitationDisplayV2.jsx";
 import FilterConditionBox from "../../FilterConditionBox.jsx";
 import FlockBox from "../../FlockBox.jsx";
 import copyDocumentsIcon from "@/images/icons/document_copy_icon.svg"
-import parseTapestry from "@/utils/parseTapestry.js";
 import tapestryIcon from "@/images/icons/tapestry.icon.v1r1.png"
+
+import { parseRefTapestry } from 'tapestry-parser'
 
             // const handleCiteRefClick = (e) => {
             //     e.stopPropagation()
             //     window.open(e.currentTarget.href, "_blank")
             // }
+
 
 const refFeedbackElement = "ref-feedback-element"
 
@@ -130,7 +132,25 @@ function RefFlock({ pageData= {},
 
         // copy to clipboard stuff from this page
         // const tapestryData = getTapestryData(pageData)
-        const tapestryRefData = parseTapestry(pageData)
+
+        // Format current date/time as "YYYY.MM.DD HH:mm"
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const dateTimeStr = `${year}.${month}.${day} ${hours}:${minutes}`;
+
+        const titleWithDateTime = `${pageData.page_title} : ${dateTimeStr}`;
+
+        const tapestryRefData = parseRefTapestry(
+            pageData,
+            options = {
+                "title": titleWithDateTime,
+                "backgroundColor": "#69a55d"
+            }
+        )
         const tapestryRefDataStr = JSON.stringify(tapestryRefData, null, 2)
 
         copyToClipboard(tapestryRefDataStr, `Tapestry reference data copied`,
@@ -296,7 +316,8 @@ function RefFlock({ pageData= {},
              style={{
                  height: "1.0rem", width: "1.0rem",
                  marginLeft: ".25rem",
-                         // height: "1.5rem", width: "1.5rem",
+                 marginTop: ".25rem",
+                 // height: "1.5rem", width: "1.5rem",
                          // cursor: "pointer",
                          // display: "inline-block"
              }}>
@@ -325,11 +346,13 @@ function RefFlock({ pageData= {},
             }}>
                 <div id={refFeedbackElement} className={"iare-feedback"}/>
                 <div className={"flock-caption-buttons"}>
-                    {buttonTapestryRefExport}
+                    {options?.show_tapestry ? buttonTapestryRefExport : null}
                     {buttonCopyRefs}
                 </div>
             </div>
         </div>
+
+        {refNavigation}
 
         <div className={"sub-caption"}>
             <div>{flockInfo}</div>

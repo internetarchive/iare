@@ -340,13 +340,13 @@ ${msgClickForMore}`,
                 `##### Wayback Machine History
 
 
-Display is Year of first capture of domain in Wayback Machine.
+First line is year of first capture of domain in Wayback Machine.
 
-Time span is years between first capture and last capture.
+Second Line is span between first capture and last capture of domain, in years.
 
 Longer times do not necessarily imply more reliable sources.
 
-See See [Wayback Machine](https://web.archive.org).`,
+Click here for the [Wayback Machine](https://web.archive.org).`,
 
             ttCell: (dataset, urlDict) => {
                 // return JSON.stringify(dataset)

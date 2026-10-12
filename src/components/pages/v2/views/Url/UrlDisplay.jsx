@@ -5,20 +5,20 @@ import UrlFilterPanel from "./UrlFilterPanel.jsx";
 import '../../../../css/urls.css';
 import '../../../../css/components.css';
 import './urlDisplay.css';
-import {LINK_STATUS_MAP} from "../../../../../constants/linkStatusMap.jsx";
-import {ACTIONABLE_FILTER_MAP} from "../../../../../constants/actionableMap.jsx";
-import {REF_FILTER_DEFS} from "../../../../../constants/refFilterMaps.jsx";
-import {ConfigContext} from "../../../../../contexts/ConfigContext.jsx";
-import {reliabilityMap} from "../../../../../constants/perennialList.jsx";
+import {LINK_STATUS_MAP} from "@/constants/linkStatusMap.jsx";
+import {ACTIONABLE_FILTER_MAP} from "@/constants/actionableMap.jsx";
+import {REF_FILTER_DEFS} from "@/constants/refFilterMaps.jsx";
+import {ConfigContext} from "@/contexts/ConfigContext.jsx";
+import {reliabilityMap} from "@/constants/perennialList.jsx";
 import RefView from "../../refView/RefView.jsx";
 import ConditionsBox from "../../../../ConditionsBox.jsx";
 
 import {Tooltip as MyTooltip} from "react-tooltip";
-import {REFERENCE_STATS_MAP} from "../../../../../constants/referenceStatsMap.jsx";
-import {ACTIONS_IARE} from "../../../../../constants/actionsIare.jsx";
-import {isBookUrl, bookTemplates, noBookLink, bookDefs} from "../../../../../utils/iariUtils.js";
-import {getTestOverviewColumnData} from "../../../../../utils/testUtils.jsx";
-import {iareAlert} from "../../../../../utils/generalUtils.js";
+import {REFERENCE_STATS_MAP} from "@/constants/referenceStatsMap.jsx";
+import {ACTIONS_IARE} from "@/constants/actionsIare.jsx";
+import {isBookUrl, bookTemplates, noBookLink, bookDefs} from "@/utils/iariUtils.js";
+import {getTestOverviewColumnData} from "@/utils/testUtils.jsx";
+import {iareAlert} from "@/utils/generalUtils.js";
 import {sign} from "chart.js/helpers";
 
 
@@ -733,6 +733,7 @@ export default function UrlDisplay ({ pageData, options } ) {
                           options={{
                               show_header: false,
                               show_filter_description: false,
+                              show_tapestry: true,
                               caption: "References List",
                           }}
                           tooltipId={"tooltip-url-display"}
