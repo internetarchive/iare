@@ -22,8 +22,6 @@ filters fit together. For setup and scripts, see the [README](../README.md).
 Vite needs JSX files to use the `.jsx` extension (it is not configured to read JSX inside
 `.js` files). Newer code is written in TypeScript (`.ts`/`.tsx`).
 
-The `@` import alias maps to `src/`. The `tapestry-parser` alias maps to a sibling checkout
-at `../tapestry-parser` (see [Tapestry export](#tapestry-export)).
 
 ## Directory layout
 
@@ -222,9 +220,7 @@ and `iareAlert()` shows a short message that fades out.
 
 Tapestry is a canvas document format: items are placed on a grid and grouped by article
 section. `utils/parseTapestry.ts` contains the URL-based version (gather → process → render).
-The reference-based version comes from the separate `tapestry-parser` package, which
-`vite.config.js` aliases to `../tapestry-parser/src/index.js`. `server.fs.allow` lets the dev
-server read files outside the project root.
+The reference-based version comes from the separate `tapestry-parser` package from src/lib/tapestry-parser.
 
 ## IARI integration
 
@@ -278,6 +274,4 @@ test runner (for example Vitest) is configured, so the tests don't currently run
 ## Known issues
 
 - `Dockerfile` and `builder.sh` still use the CRA `build/` folder. Vite outputs to `dist/`.
-- The GitHub Pages workflow doesn't check out `tapestry-parser`, which the build needs.
-- `vite.config.js` contains an absolute, machine-specific path in `server.fs.allow`.
 - The app is not mobile-friendly yet.
