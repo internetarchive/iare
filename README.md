@@ -32,10 +32,6 @@ npm run dev
 
 The dev server runs at http://localhost:3000/iare/ (the app is built with `base: '/iare/'`).
 
-> **Tapestry export dependency:** `vite.config.js` aliases the `tapestry-parser` package to a
-> sibling checkout at `../tapestry-parser`. Clone that repo next to this one before running
-> or building, or the import in `RefFlock.jsx` will fail to resolve.
-
 ### Scripts
 
 | Command | What it does |
@@ -74,9 +70,6 @@ Every push to `main` triggers [`.github/workflows/stage.yml`](.github/workflows/
 which runs `npm install && npm run build` on Node 20 and publishes `dist/` to GitHub Pages at
 https://internetarchive.github.io/iare/. You can also start it manually (`workflow_dispatch`).
 
-> The workflow checks out only this repository. While the `tapestry-parser` alias points to a
-> sibling directory, CI builds need that package to be vendored, published, or checked out
-> by the workflow.
 
 ### Docker
 
