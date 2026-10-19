@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import RefParameters from "./RefParameters.jsx";
 // import RefTemplateUrl from "./RefTemplateUrl.jsx";
-import RefSectionHeader from "./RefSectionHeader.jsx";
+import RefSectionHeader from "./RefSectionHeader.tsx";
 
 /*
 shows parameters of Template with Expand/Collapse

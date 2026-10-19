@@ -1,5 +1,5 @@
 import React from "react";
-import RefSectionHeader from "./RefSectionHeader.jsx";
+import RefSectionHeader from "./RefSectionHeader.tsx";
 import CitationDisplayInfo from "../citations/CitationDisplayInfo.jsx";
 
 function RefCitationClaim({ reference = null, pageData={}, onAction}) {

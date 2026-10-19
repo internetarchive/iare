@@ -1,5 +1,7 @@
 /* definitions of url list column headers */
-import type {ColumnDef} from "../components/flock/flockTypes";
+import type {ColumnDef, RenderRole} from "../components/flock/flockTypes";
+import {renderRoles} from "../components/flock/renderRoles";
+import MakeLink from "../components/MakeLink";
 import * as React from "react";
 
 import {formatNumberWithLocale, getNormalizedCount, getPrettyCount, trimifyNumber} from "../utils/generalUtils";
@@ -56,8 +58,15 @@ URL of Citation Source.
 Click on row to open Reference Detail view.`,
 
             ttCell: (dataset) => <div>Link Text of URL</div>,
-            renderCell: (urlObj: Object) => {
-                return urlObj.url
+            // renderCell: (urlObj: Object) => {
+            //     return urlObj.url
+            // },
+            renderCell: (urlObj?: Record<string, any>, renderRole?: RenderRole) => {
+                if (!urlObj) return null;
+                if (renderRole === renderRoles.refviewCell || renderRole?.className === "refview-data-cell") {
+                    return <MakeLink href={urlObj.url} />;
+                }
+                return urlObj.url;
             },
 
             sortable: true,

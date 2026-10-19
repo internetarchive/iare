@@ -1,6 +1,6 @@
 import React from "react";
 import {ACTIONABLE_FILTER_MAP} from "../../../../constants/actionableMap.jsx";
-import RefSectionHeader from "./RefSectionHeader.jsx";
+import RefSectionHeader from "./RefSectionHeader.tsx";
 import { useTranslation } from 'react-i18next';
 
 /*

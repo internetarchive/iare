@@ -1,6 +1,6 @@
 import React from "react";
 import DOMPurify from 'dompurify';
-import RefSectionHeader from "./RefSectionHeader.jsx";
+import RefSectionHeader from "./RefSectionHeader.tsx";
 
 function RefCitationDisplayHtml({ reference = null,
                                  onClick,

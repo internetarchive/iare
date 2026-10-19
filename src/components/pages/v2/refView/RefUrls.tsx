@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {useTranslation} from 'react-i18next';
 import MakeLink from "../../../MakeLink.jsx";
-import RefSectionHeader from "./RefSectionHeader.jsx";
+import RefSectionHeader from "./RefSectionHeader.tsx";
 import {getArchiveStatusInfo} from "../../../../utils/urlUtils.jsx";
 import {
     // getColumnHeaderTooltip,
@@ -193,39 +193,6 @@ export default function RefUrls({
     }
 
 
-                // ``const getDataRow = (u, i) => {  // assumes u is an url object
-                //
-                //     // if (!u) return <div className={"url-row"} key={i}>Undefined URL encountered. (index {i})</div>
-                //     //
-                //     // return <div className={"url-row " + getUrlLiveStatusClass(u.status_code)}
-                //     //     key={i}
-                //     //
-                //     //     data-url={u.url}
-                //     //     data-status_code={u.status_code}
-                //     //     data-archive_status={u.archive_status?.hasArchive}
-                //     //     data-live_state={u.archive_status?.live_state}
-                //     //     data-is_book={u.isBook}
-                //     // >
-                //     //     <div className={"url-name"}><MakeLink href={u.url} linkText={u.url}/></div>
-                //     //     <div className={"url-live_status"}>{u.status_code}</div>
-                //     //     <div className={"url-archive_status"}>{getArchiveStatusInfo(u)}</div>
-                //     //
-                //     //     <div className={"url-signals"}>
-                //     //         <SignalBadges urlObj = {u}
-                //     //                       badgeContextKey={BadgeContexts.inline.key}
-                //     //                       signalData={u?.signal_data?.signals ?? {}}
-                //     //                       monitoredSignals={monitoredSignals}
-                //     //                       onAction={onAction}
-                //     //         />
-                //     //     </div>
-                //     //
-                //     // </div>
-                //
-                //     return <div className={"url-row"}>url row here!!!</div>
-                //
-                // }
-``
-
     const onHoverDataRow = e => {  // handle hover for header and data row
         e.stopPropagation()  // prevents onHover from propagating engaging and erasing tooltip
         showTooltip({content: getColumnTooltip(e, pageData?.urlDict)})
@@ -315,10 +282,7 @@ export default function RefUrls({
 
     return <div className="ref-view-section ref-view-analysis">
 
-        <RefSectionHeader
-            leftPart={<h3>{t('Ratings')}</h3>}
-        >{null}</
-            RefSectionHeader>
+        <RefSectionHeader leftPart={<h3>{t('Ratings')}</h3>}>{null}</RefSectionHeader>
 
         <div className={"ref-view-section-contents"}>
 
@@ -329,6 +293,7 @@ export default function RefUrls({
                      onClick={onClickDataRow}
                      onMouseOver={onHoverDataRow}
                     // onMouseEnter={onHoverFlockRow}
+
 
                     // NB Defines "--url-list-grid-columns" for dynamic CSS grid display
                      style={{"--url-list-grid-columns": gridTemplateColumns}}

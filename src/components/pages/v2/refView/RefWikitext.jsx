@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {copyToClipboard, iareAlert} from "../../../../utils/generalUtils.js";
 // import { RichTextarea } from "rich-textarea.jsx";
-import RefSectionHeader from "./RefSectionHeader.jsx";
+import RefSectionHeader from "./RefSectionHeader.tsx";
 import {ConfigContext} from "../../../../contexts/ConfigContext.jsx";
 // import {ACTIONS_IARE} from "../../../constants/actionsIare.jsx";
 // import refDetails from "./RefDetails.jsx";  // https://www.npmjs.com/package/rich-textarea

@@ -1,6 +1,10 @@
 import React from "react";
 
-export default function RefSectionHeader({ leftPart = null, rightPart = null, children }) {
+export default function RefSectionHeader({ leftPart = null, rightPart = null, children }: {
+    leftPart?: null | any,
+    rightPart?: any,
+    children?: any
+}) {
     return <div className={"header-full-width"}>
 
         {leftPart && <div className={"header-left-part"}>
@@ -15,4 +19,3 @@ export default function RefSectionHeader({ leftPart = null, rightPart = null, ch
 
     </div>
 }
-

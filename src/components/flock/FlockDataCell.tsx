@@ -24,7 +24,7 @@ export default function FlockDataCell({ columnDef, renderRole, cellData }: Colum
 
     // content and image stuff...
 
-    const content = columnDef.renderCell(cellData)
+    const content = columnDef.renderCell ? columnDef.renderCell(cellData, renderRole) : null
 
 
     // dataset stuff...

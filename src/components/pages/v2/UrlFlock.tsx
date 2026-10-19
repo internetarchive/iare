@@ -210,10 +210,24 @@ const urlFlock = React.memo(function UrlFlock({
         return indexA - indexB  // neg, 0, or pos
     }
 
+    const getFlockTooltip = (e) => {
+        const elClass = e?.currentTarget?.className
+        if (elClass && elClass.includes("document-copy-button")) {
+            return "Copy URL Details"
+        }
+        return null
+    }
 
     const onHoverFlock = (e: Event) => {
         e.stopPropagation()  // prevents onHover from propagating engaging and erasing tooltip
-        const tooltip = getColumnTooltip(e, urlDict)
+
+        // check if tooltip item from local element
+        let tooltip = getFlockTooltip(e)
+
+        // if not, get tooltip from column data
+        if (!tooltip) {
+            tooltip = getColumnTooltip(e, urlDict)
+        }
 
         iareDebug(`onHoverFlock: tooltip = ${JSON.stringify(tooltip)}`)
 
@@ -625,6 +639,7 @@ const urlFlock = React.memo(function UrlFlock({
     const buttonCopyUrls =
         <div onClick={handleCopyUrlList}
              className={"document-copy-button"}
+             onMouseOver={onHoverFlock}
              style={{
                  height: "1.0rem", width: "1.0rem",
                  marginLeft: ".25rem",
@@ -664,7 +679,7 @@ const urlFlock = React.memo(function UrlFlock({
             }}>
                 <div id={urlFeedbackElement} className={"iare-feedback"}/>
                 <div className={"flock-caption-buttons"}>
-                    {buttonTapestryExport}
+                    {/*{buttonTapestryExport}*/}
                     {buttonShowHideFilters}
                     {buttonShowHideRefs}
                     {buttonCopyUrls}

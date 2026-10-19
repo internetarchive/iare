@@ -16,7 +16,8 @@ export type ColumnDef = {
     popMarkup?: string;  // md rich description of column, allowing links
     ttCell?: (dataset: Record<string, any>, urlDict?: Record<string, any>) => React.ReactNode;
     // tooltip display for when data cell itself is hovered.
-    renderCell?: (urlObj?: Object) => React.ReactNode;
+    // renderCell?: (urlObj?: Object | undefined) => React.ReactNode;
+    renderCell?: (urlObj: Record<string, any>, renderRole?: RenderRole) => React.ReactNode;
     // returns markup for cell's data display
 
     sortable: boolean;  // index for global sort scenario ??? may use key for this?
