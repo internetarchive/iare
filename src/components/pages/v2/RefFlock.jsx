@@ -5,6 +5,7 @@ import CitationDisplayV1 from "./citations/CitationDisplayV1.jsx";
 import CitationDisplayV2 from "./citations/CitationDisplayV2.jsx";
 import FilterConditionBox from "../../FilterConditionBox.jsx";
 import FlockBox from "../../FlockBox.jsx";
+import {ConfigContext} from "../../../contexts/ConfigContext.jsx";
 import copyDocumentsIcon from "@/images/icons/document_copy_icon.svg"
 import tapestryIcon from "@/images/icons/tapestry.icon.v1r1.png"
 
@@ -30,6 +31,9 @@ function RefFlock({ pageData= {},
                       options = {},
                       tooltipId='',
                       } ) {
+
+    let myConfig = React.useContext(ConfigContext);
+    myConfig = myConfig ? myConfig : {} // prevents "undefined.<param>" errors
 
     const urlCount = pageData?.urlDict ? Object.keys(pageData.urlDict).length : 0
 
@@ -130,19 +134,18 @@ function RefFlock({ pageData= {},
 
     const handleTapestryRefExport = () => {
 
-        // copy to clipboard stuff from this page
-        // const tapestryData = getTapestryData(pageData)
+        // copy Tapestry JSON definition to clipboard
 
-        // Format current date/time as "YYYY.MM.DD HH:mm"
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const dateTimeStr = `${year}.${month}.${day} ${hours}:${minutes}`;
+                        // // Format current date/time as "YYYY.MM.DD HH:mm"
+                        // const now = new Date();
+                        // const year = now.getFullYear();
+                        // const month = String(now.getMonth() + 1).padStart(2, '0');
+                        // const day = String(now.getDate()).padStart(2, '0');
+                        // const hours = String(now.getHours()).padStart(2, '0');
+                        // const minutes = String(now.getMinutes()).padStart(2, '0');
+                        // const dateTimeStr = `${year}.${month}.${day} ${hours}:${minutes}`;
 
-        const titleWithDateTime = `${pageData.page_title} : ${dateTimeStr}`;
+        const titleWithDateTime = getTitleWithDateTime(pageData.page_title)
 
         const tapestryRefData = parseRefTapestry(
             pageData,
@@ -157,6 +160,75 @@ function RefFlock({ pageData= {},
             () => {
                 iareAlert(`Tapestry data for references copied to the clipboard`, refFeedbackElement)
             })
+    }
+
+    const getTitleWithDateTime = (title) => {
+        // Format current date/time as "YYYY.MM.DD HH:mm"
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const dateTimeStr = `${year}.${month}.${day} ${hours}:${minutes}`;
+        return `${title} : ${dateTimeStr}`;
+    }
+
+    const handleTapestryZipExport = async () => {
+
+        // send Tapestry JSON definition to IARI tapestry_zip endpoint,
+        // and offer the returned zip file to the user for download
+
+        const titleWithDateTime = getTitleWithDateTime(pageData.page_title)
+
+        const tapestryRefData = parseRefTapestry(
+            pageData,
+            {
+                "title": titleWithDateTime,
+                "backgroundColor": "#69a55d"
+            }
+        )
+
+        const endpoint = `${myConfig.iariSource}/tapestry_zip`
+
+        try {
+            const response = await fetch(endpoint, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(tapestryRefData),
+            })
+
+            if (!response.ok) {
+                // IARI returns {"error": "..."} on failure
+                const data = await response.json().catch(() => null)
+                throw new Error(data?.error ?? `${response.status} ${response.statusText}`)
+            }
+
+            const zipBlob = await response.blob()
+
+            // NB IARI's Content-Disposition header is not exposed to us via CORS,
+            // so we make the file name here, the same way IARI does
+            const fileStem = titleWithDateTime
+                .replace(/[^A-Za-z0-9._-]+/g, "_")
+                .replace(/^[._]+|[._]+$/g, "")
+                || "tapestry"
+
+            // offer zip to user by "clicking" a temporary download link
+            const blobUrl = URL.createObjectURL(zipBlob)
+            const link = document.createElement("a")
+            link.href = blobUrl
+            link.download = `${fileStem}.zip`
+            document.body.appendChild(link)
+            link.click()
+            link.remove()
+            URL.revokeObjectURL(blobUrl)
+
+            iareAlert(`Tapestry zip file created`, refFeedbackElement)
+
+        } catch (err) {
+            console.error(`RefFlock::handleTapestryZipExport: ${err.message}`)
+            iareAlert(`Tapestry zip export failed: ${err.message}`, refFeedbackElement)
+        }
     }
 
 
@@ -307,7 +379,15 @@ function RefFlock({ pageData= {},
                 className={'btn utility-button small-button'}
         >
             <img src={tapestryIcon} alt="Tapestry Icon" style={{marginRight: '.5rem', height: '1rem', width: '1rem'}}/>
-            <span>Tapestry</span>
+            {/*<span>Tapestry</span>*/}
+        </button>
+
+    const buttonTapestryZipExport =
+        <button onClick={handleTapestryZipExport}
+                className={'btn utility-button small-button'}
+        >
+            <img src={tapestryIcon} alt="Tapestry Icon" style={{marginRight: '.5rem', height: '1rem', width: '1rem'}}/>
+            <span>Zip</span>
         </button>
 
     const buttonCopyRefs =
@@ -346,7 +426,8 @@ function RefFlock({ pageData= {},
             }}>
                 <div id={refFeedbackElement} className={"iare-feedback"}/>
                 <div className={"flock-caption-buttons"}>
-                    {options?.show_tapestry ? buttonTapestryRefExport : null}
+                    {/*{options?.show_tapestry ? buttonTapestryRefExport : null}*/}
+                    {options?.show_tapestry ? buttonTapestryZipExport : null}
                     {buttonCopyRefs}
                 </div>
             </div>
