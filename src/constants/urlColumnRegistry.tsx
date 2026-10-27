@@ -7,11 +7,11 @@ import * as React from "react";
 import {formatNumberWithLocale, getNormalizedCount, getPrettyCount, trimifyNumber} from "../utils/generalUtils";
 import {httpStatusCodes} from "./httpStatusCodes";
 
-import imgScoreLogo from "../images/columns/wikisignals.logo.v1r4.png";
-import imgWaybackLogo from "../images/columns/badge.logo.wayback.small.png";
-import imgWikiLogo from "../images/columns/badge.logo.wiki.png"
-import imgSimPLLLogo from "../images/columns/simppl.logo.full.v2r4.png"
-import imgTrancoLogo from '../images/columns/badge.logo.tranco.png'
+import imgScoreLogo from "@/images/columns/wikisignals.logo.v1r4.png";
+import imgWaybackLogo from "@/images/columns/badge.logo.wayback.small.png";
+import imgWikiLogo from "@/images/columns/badge.logo.wiki.png"
+import imgSimPLLLogo from "@/images/columns/simppl.logo.full.v2r4.png"
+import imgTrancoLogo from '@/images/columns/badge.logo.tranco.png'
 
 type ColumnRegistry = {
     specs: Record<string, any>

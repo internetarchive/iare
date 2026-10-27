@@ -5,7 +5,7 @@ import {convertToCSV, copyToClipboard} from "../../../utils/generalUtils.js";
 import {getArchiveStatusInfoGrok} from "../../../utils/urlUtils.jsx";
 
 import {ACTIONABLE_FILTER_MAP} from "../../../constants/actionableMap.jsx";
-import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../../constants/urlFilterMaps.jsx";
+import {ARCHIVE_STATUS_FILTER_MAP as archiveFilterDefs} from "../../../constants/urlStatusFilterMaps.jsx";
 import {httpStatusCodes, iabotLiveStatusCodes} from "../../../constants/httpStatusCodes.jsx"
 import {urlColumnRegistry} from "../../../constants/urlColumnRegistry.tsx";
 import Popup from "../../Popup.jsx";

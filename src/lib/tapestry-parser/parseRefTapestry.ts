@@ -217,7 +217,7 @@ const WARNING_BACKGROUND = '#3a1f1f80'
 const TRANSPARENT_BACKGROUND = '#ffffff00'
 const WARNING_STYLE = 'color: rgb(255, 120, 120); font-size: 16px;'
 /** Twice the normal 16px body size. */
-const TITLE_STYLE = 'color: rgb(205, 205, 205); font-size: 32px;'
+const TITLE_STYLE = 'color: rgb(205, 205, 205); font-size: 64px;'
 
 /** Merge every template's parameters into one object; later templates win. */
 export function templateParams(ref: Reference): Record<string, string> {

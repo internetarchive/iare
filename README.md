@@ -2,14 +2,15 @@
 
 A visual interface that gives a comprehensive view of the citations in one or more online articles.
 
-IARE takes the URL of a Wikipedia article (or a PDF, or a Grokipedia page), sends it to the
+IARE takes the URL of a Wikipedia article, sends it to the
 **IARI** API (Internet Archive Reference Inventory) for parsing, and then presents every
-reference and every linked URL in an interactive, filterable display: live link status,
-Wayback Machine archive status, source reliability, WikiSignals scores, books, papers/DOIs,
-domains, citation templates and more.
+reference and every linked URL in an interactive, filterable display.
 
-- **Staging:** https://internetarchive.github.io/iare/
-- **Issues:** https://github.com/internetarchive/iare/issues
+Display attributes currently include live link status, Wayback Machine archive status, source reliability, WikiSignals scores, source type (article, book, papers/DOIs, etc.), citation templates and more.
+
+**Current Staging version:** https://internetarchive.github.io/iare/
+
+**Issues:** https://github.com/internetarchive/iare/issues
 
 ## Documentation
 
@@ -17,9 +18,14 @@ domains, citation templates and more.
 |---|---|
 | [User Guide](docs/USER_GUIDE.md) | People using IARE to explore an article's references |
 | [Architecture](docs/ARCHITECTURE.md) | Developers working on the IARE codebase |
-| [Development notes](docs/README.development_notes.md) | Filter/flock implementation details |
+| [Development notes](_notes/_archive/README.development_notes.md) | Filter/flock implementation details |
 | [Release notes](docs/release_notes/) | Per-version release notes |
-| [CHANGELOG](CHANGELOG.md) | Older (v0.2.x) changelog |
+
+## Limitations
+
+* There is support in the app for analyzing PDFs and Grokipedia pages, but it is experimental and incomplete.
+* Direct in-place modification of references in a Wikipedia article is an tended use of this tool, 
+but is not yet implemented.
 
 ## Quick start
 
