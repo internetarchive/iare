@@ -106,19 +106,6 @@ export const getPagePathEndpoint = ({
 }
 
 
-// TODO deprecate / delete
-export const getProbeEndpoint = (
-    {
-        url = '',
-        probes = '',
-        iariSourceId = IariSources['iari'].key,
-        refresh = false
-    }) =>
-{
-    const iariBase = IariSources[iariSourceId]?.proxy
-    return `${iariBase}${IariMethods.PROBE.endpoint}?probes=${probes}&url=${url}${refresh?"&refresh=true":""}`;
-}
-
 
 const getArchiveStatusFromData = (data) => {  // return dict of success or failure
     /*

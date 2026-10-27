@@ -19,7 +19,7 @@ import ArchiveDisplay from "./views/Archive/ArchiveDisplay.jsx";
 import GrokDisplay from "../vGrok/views/Grok/GrokDisplay.jsx";
 
 import {ACTIONABLE_FILTER_MAP} from "../../../constants/actionableMap.jsx";
-import {URL_STATUS_FILTER_MAP} from "../../../constants/urlFilterMaps.jsx";
+import {URL_STATUS_FILTER_MAP} from "../../../constants/urlStatusFilterMaps.jsx";
 import {REF_FILTER_DEFS} from "../../../constants/refFilterMaps.jsx";
 
 import {UrlStatusCheckMethods} from "../../../constants/checkMethods.jsx";

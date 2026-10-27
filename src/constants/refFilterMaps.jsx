@@ -149,90 +149,90 @@ export const REF_FILTER_TYPES = {
 };
 
 
-export const REF_LINK_STATUS_FILTERS = {
-    good_good: {
-        caption: "Link Status: Good, Good",
-        desc: "Template 'url' and 'archive_url' links are OK.",
-        lines: ["Original link is OK", "Archive link is OK"],
-        filterFunction: () => (d) => {
-            return d.link_status && d.link_status.includes('good_good')
-        },
-    },
-    good_bad: {
-        caption: "Link Status: Good, Bad",
-        desc: "Template 'url' link is OK, 'archive_url' link is not OK.",
-        lines: ["Original link is OK", "Archive link is NOT OK"],
-        filterFunction: () => (d) => {
-            return d.link_status && d.link_status.includes('good_bad')
-        },
-    },
-    good_none: {
-        caption: "Link Status: Good, None",
-        desc: "Template 'url' link is OK, 'archive_url' is missing.",
-        lines: ['Original link is OK', 'Archive link is missing'],
-        filterFunction: () => (d) => {
-            return d.link_status && d.link_status.includes('good_none')
-        },
-    },
-    bad_good: {
-        caption: "Link Status: Bad, Good",
-        desc: "Template 'url' link is not OK, 'archive_url' link is OK.",
-        lines: ['Original link is NOT OK', 'Archive link is OK'],
-        filterFunction: () => (d) => {
-            return d.link_status && d.link_status.includes('bad_good')
-        },
-    },
-    bad_bad: {
-        caption: "Link Status: Bad, Bad",
-        desc: "Template 'url' link is not OK, 'archive_url' link is not OK.",
-        lines: ['Original link is NOT OK', 'Archive link is NOT OK'],
-        filterFunction: () => (d) => {
-            return d.link_status && d.link_status.includes('bad_bad')
-        },
-    },
-    bad_none: {
-        caption: "Link Status: Bad, None",
-        desc: "Template 'url' link is not OK, 'archive_url' link is missing.",
-        lines: ['Original link is NOT OK', 'Archive link is missing'],
-        filterFunction: () => (d) => {
-            return d.link_status && d.link_status.includes('bad_none')
-        },
-    },
-
-    none_none: {
-        caption: "Link Status: None, None",
-        desc: "Template contains no 'url' or 'archive_url' parameters.",
-        lines: ['Original link is missing', 'Archive link is missing'],
-        filterFunction: () => (d) => {
-            return d.link_status && d.link_status.includes('none_none')
-        },
-    },
-
-    exotemplate_good: {
-        caption: "Link Status: No Template, Good link",
-        desc: "Non-template link is OK.",
-        lines: ["Link found outside of template", 'Link is OK'],
-        filterFunction: () => (d) => {
-            return d.link_status && d.link_status.includes('exotemplate_good')
-        },
-    },
-
-    exotemplate_bad: {
-        caption: "Link Status: No Template, Bad link",
-        desc: "Non-template link is not OK.",
-        lines: ['Link found outside of template', 'Link is bad'],
-        filterFunction: () => (d) => {
-            return d.link_status && d.link_status.includes('exotemplate_bad')
-        },
-    },
-
-    missing: {
-        caption: "Link Status: Missing",
-        desc: "Citation contains no links.",
-        lines: ['Citation has no templates', 'Citation has no links'],
-        filterFunction: () => (d) => {
-            return d.link_status && d.link_status.includes('missing')
-        },
-    },
-
-};
+            // export const REF_LINK_STATUS_FILTERS = {
+            //     good_good: {
+            //         caption: "Link Status: Good, Good",
+            //         desc: "Template 'url' and 'archive_url' links are OK.",
+            //         lines: ["Original link is OK", "Archive link is OK"],
+            //         filterFunction: () => (d) => {
+            //             return d.link_status && d.link_status.includes('good_good')
+            //         },
+            //     },
+            //     good_bad: {
+            //         caption: "Link Status: Good, Bad",
+            //         desc: "Template 'url' link is OK, 'archive_url' link is not OK.",
+            //         lines: ["Original link is OK", "Archive link is NOT OK"],
+            //         filterFunction: () => (d) => {
+            //             return d.link_status && d.link_status.includes('good_bad')
+            //         },
+            //     },
+            //     good_none: {
+            //         caption: "Link Status: Good, None",
+            //         desc: "Template 'url' link is OK, 'archive_url' is missing.",
+            //         lines: ['Original link is OK', 'Archive link is missing'],
+            //         filterFunction: () => (d) => {
+            //             return d.link_status && d.link_status.includes('good_none')
+            //         },
+            //     },
+            //     bad_good: {
+            //         caption: "Link Status: Bad, Good",
+            //         desc: "Template 'url' link is not OK, 'archive_url' link is OK.",
+            //         lines: ['Original link is NOT OK', 'Archive link is OK'],
+            //         filterFunction: () => (d) => {
+            //             return d.link_status && d.link_status.includes('bad_good')
+            //         },
+            //     },
+            //     bad_bad: {
+            //         caption: "Link Status: Bad, Bad",
+            //         desc: "Template 'url' link is not OK, 'archive_url' link is not OK.",
+            //         lines: ['Original link is NOT OK', 'Archive link is NOT OK'],
+            //         filterFunction: () => (d) => {
+            //             return d.link_status && d.link_status.includes('bad_bad')
+            //         },
+            //     },
+            //     bad_none: {
+            //         caption: "Link Status: Bad, None",
+            //         desc: "Template 'url' link is not OK, 'archive_url' link is missing.",
+            //         lines: ['Original link is NOT OK', 'Archive link is missing'],
+            //         filterFunction: () => (d) => {
+            //             return d.link_status && d.link_status.includes('bad_none')
+            //         },
+            //     },
+            //
+            //     none_none: {
+            //         caption: "Link Status: None, None",
+            //         desc: "Template contains no 'url' or 'archive_url' parameters.",
+            //         lines: ['Original link is missing', 'Archive link is missing'],
+            //         filterFunction: () => (d) => {
+            //             return d.link_status && d.link_status.includes('none_none')
+            //         },
+            //     },
+            //
+            //     exotemplate_good: {
+            //         caption: "Link Status: No Template, Good link",
+            //         desc: "Non-template link is OK.",
+            //         lines: ["Link found outside of template", 'Link is OK'],
+            //         filterFunction: () => (d) => {
+            //             return d.link_status && d.link_status.includes('exotemplate_good')
+            //         },
+            //     },
+            //
+            //     exotemplate_bad: {
+            //         caption: "Link Status: No Template, Bad link",
+            //         desc: "Non-template link is not OK.",
+            //         lines: ['Link found outside of template', 'Link is bad'],
+            //         filterFunction: () => (d) => {
+            //             return d.link_status && d.link_status.includes('exotemplate_bad')
+            //         },
+            //     },
+            //
+            //     missing: {
+            //         caption: "Link Status: Missing",
+            //         desc: "Citation contains no links.",
+            //         lines: ['Citation has no templates', 'Citation has no links'],
+            //         filterFunction: () => (d) => {
+            //             return d.link_status && d.link_status.includes('missing')
+            //         },
+            //     },
+            //
+            // };

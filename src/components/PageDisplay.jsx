@@ -24,9 +24,8 @@ const PageDisplay = React.memo( ({
 }) => {
 
     console.log(`PageDisplay (${pageData ? pageData.version + ' ' + pageData.mediaType : 'null'})`)
-    let messageNoData;
 
-    messageNoData = `Please enter a URL and click "Load References"`;
+    const messageNoData = `Please enter a URL and click "Load References"`;
 
     if (!pageData) return <p className={'text-primary'}>{messageNoData}</p>
 

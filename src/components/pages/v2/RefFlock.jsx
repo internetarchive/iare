@@ -9,12 +9,7 @@ import {ConfigContext} from "../../../contexts/ConfigContext.jsx";
 import copyDocumentsIcon from "@/images/icons/document_copy_icon.svg"
 import tapestryIcon from "@/images/icons/tapestry.icon.v1r1.png"
 
-// import { parseRefTapestry } from 'tapestry-parser'
 import parseRefTapestry from '@/lib/tapestry-parser/parseRefTapestry'
-            // const handleCiteRefClick = (e) => {
-            //     e.stopPropagation()
-            //     window.open(e.currentTarget.href, "_blank")
-            // }
 
 
 const refFeedbackElement = "ref-feedback-element"

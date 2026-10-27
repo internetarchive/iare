@@ -30,7 +30,6 @@ import {ColumnSortContext} from "../../../contexts/ColumnSortContext"
 
 import {renderRoles} from "../../flock/renderRoles.js";
 import {urlColumnRegistry} from "../../../constants/urlColumnRegistry";
-import {getTapestryData} from "../../../utils/tapestryUtils";
 import parseTapestry from "../../../utils/parseTapestry"
 
 /*
@@ -598,8 +597,7 @@ const urlFlock = React.memo(function UrlFlock({
 
     const handleTapestryExport = () => {
 
-        // copy to clipboard stuff from this page
-        // const tapestryData = getTapestryData(pageData)
+        // copy to clipboard tapestry data for this page
         const tapestryData = parseTapestry(pageData)
         const tapestryDataStr = JSON.stringify(tapestryData, null, 2)
 
@@ -628,6 +626,8 @@ const urlFlock = React.memo(function UrlFlock({
             <span>{options.showFilters ? "Hide Filters" : "Show Filters"}</span>
         </button>
 
+    // NB This is hidden from view for now - Tapestry just for references, not URLs, since
+    //  references are by sections, and URLs are not assigned a specific section in the page
     const buttonTapestryExport =
         <button onClick={handleTapestryExport}
                 className={'btn utility-button small-button'}

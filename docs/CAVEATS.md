@@ -2,11 +2,11 @@ i18n is implemented but not fully implemented. However, it is there when ready.
 
 PDF parsing and Grok parsing have been put on hold
 
-The Tapestry parser is a separate node component right now. 
-- It can be exported as a stand alone npm module, and imported.
-- it is a separate module so that it can be modified and tested outside of the IARI fromt end
+The Tapestry parser, parseRefTapestry, is a mirror of another node project. 
+- It should not be edited directly in the IARE codebase, but copied from the parseRefTapestry repo.
+- it is a separate module so that it can be modified and tested outside the IARI front end
 - it can be expanded later to take as input data formats other than iarePageData
-- IARE and tapestry-parser should really access a shared pageData data definition
+- IARE and parseRefTapestry should access a shared pageData data definition
 
 
 
