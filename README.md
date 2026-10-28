@@ -3,10 +3,9 @@
 A visual interface that gives a comprehensive view of the citations in one or more online articles.
 
 IARE takes the URL of a Wikipedia article, sends it to the
-**IARI** API (Internet Archive Reference Inventory) for parsing, and then presents every
-reference and every linked URL in an interactive, filterable display.
-
-Display attributes currently include live link status, Wayback Machine archive status, source reliability, WikiSignals scores, source type (article, book, papers/DOIs, etc.), citation templates and more.
+**IARI** (Internet Archive Reference Inventory) api for parsing, and then presents every
+reference and every linked URL in an interactive, filterable column display.
+Display columns currently include live link status, Wayback Machine archive status, source reliability, WikiSignals scores, source type (article, book, papers/DOIs, etc.), citation templates and more.
 
 **Current Staging version:** https://internetarchive.github.io/iare/
 
@@ -70,14 +69,25 @@ In **production** (any `*.archive.org` host), `iari-source` is fixed to `iari_pr
 
 ## Deployment
 
+
+### Local (Local Docker)
+
+In the local directory where iare is cloned, running `npm run dev` will start a local
+Vite dev server on port 3000. 
+
+Running `http://localhost:3000/iare/` in the browser will bring up iare.
+
+
 ### Staging (GitHub Pages)
 
-Every push to `main` triggers [`.github/workflows/stage.yml`](.github/workflows/stage.yml),
+In the github repo `github.com/internetarchive/iare`, every push to `main` in 
+will trigger [`.github/workflows/stage.yml`](.github/workflows/stage.yml),
 which runs `npm install && npm run build` on Node 20 and publishes `dist/` to GitHub Pages at
-https://internetarchive.github.io/iare/. You can also start it manually (`workflow_dispatch`).
+https://internetarchive.github.io/iare/. You can also start it manually (`workflow_dispatch`), by 
+clicking `Run Workflow', and choosing another branch to deploy if desired.
 
-
-### Docker
+<div style="background-color: #145261; padding: 15px; border-radius: 5px; margin-left:85px">
+#### Docker
 
 ```bash
 docker image build -t iare .
@@ -90,6 +100,12 @@ docker container run --rm -it -p 3000:3000 iare
 > The `Dockerfile` and `builder.sh` were written for the older Create React App build and
 > still serve or copy a `build/` folder. Vite now outputs to `dist/`, so update both to
 > `dist` before relying on them.
+
+</div>
+
+### Production
+
+There is currently no production deployment.
 
 ## Maintenance
 

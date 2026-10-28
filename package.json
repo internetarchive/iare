@@ -1,7 +1,7 @@
 {
   "name": "iare",
-  "version": "0.3.2.17",
-  "version_name": "0.3.2.17 Updated Docs",
+  "version": "0.3.2.18",
+  "version_name": "0.3.2.18 Updated Docs: Staging and Local deployment",
   "private": true,
   "type": "module",
   "dependencies": {
